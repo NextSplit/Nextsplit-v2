@@ -287,7 +287,7 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
 // ─── Main Today Component ─────────────────────────────────────────────────────
 
 export default function TodayClient() {
-  const { plan, currentWeek, loading: planLoading } = useActivePlan()
+  const { plan, currentWeek, loading: planLoading, advanceWeek } = useActivePlan()
   const { logs, logSession, undoSession, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
 
   const [dateOffset, setDateOffset] = useState(0)
@@ -674,6 +674,32 @@ export default function TodayClient() {
                 )}
               </div>
             )}
+            {/* Week complete → advance prompt (Sunday or all sessions done across whole week) */}
+            {isToday && plan && plan.current_week < plan.total_weeks && (() => {
+              // Check if the entire current week is done
+              const weekDone = currentWeek ? currentWeek.days.every((day, dayI) =>
+                day.sessions.length === 0 || day.sessions.every((_, sessI) =>
+                  logs[`${weekN}_${dayI}_${sessI}`]?.done
+                )
+              ) : false
+              if (!weekDone) return null
+              return (
+                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-emerald-700">Week {weekN} complete! 🎉</p>
+                      <p className="text-xs text-emerald-600 mt-0.5">Ready to move to Week {weekN + 1}?</p>
+                    </div>
+                    <button
+                      onClick={() => advanceWeek().catch(() => {})}
+                      className="px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold flex-shrink-0"
+                    >
+                      Next week →
+                    </button>
+                  </div>
+                </div>
+              )
+            })()}
           </>
         )}
       </div>
