@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
-import { getSessionType, fmtKm, formatDate, offsetDate } from '@/lib/sessionUtils'
+import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml } from '@/lib/sessionUtils'
 import type { PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
 import { getSessionXP } from '@/lib/xp'
@@ -14,18 +14,6 @@ import StravaSyncButton from '@/components/StravaSyncButton'
 import { useRouter } from 'next/navigation'
 
 /** Decode HTML entities like &middot; &ndash; &amp; */
-function decodeHtml(str: string): string {
-  return str
-    .replace(/&middot;/g, '·')
-    .replace(/&ndash;/g, '–')
-    .replace(/&mdash;/g, '—')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-}
-
 // ─── Session Log Modal ────────────────────────────────────────────────────────
 
 interface LogModalProps {
@@ -53,6 +41,17 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
   const [paceInput, setPaceInput] = useState(existingLog?.pace ?? '')
   const [saving, setSaving] = useState(false)
 
+  // Auto-calculate pace from km + duration when both are set and pace is empty
+  const autoPace = km > 0 && durationMins > 0 && !paceInput.trim()
+    ? (() => {
+        const totalSecs = durationMins * 60
+        const paceSecs = totalSecs / km
+        const m = Math.floor(paceSecs / 60)
+        const s = Math.round(paceSecs % 60)
+        return `${m}:${String(s).padStart(2, '0')}`
+      })()
+    : null
+
   async function handleSave() {
     setSaving(true)
     try {
@@ -65,7 +64,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
         km: km > 0 ? km : undefined,
         notes: notes.trim() || undefined,
         duration_secs: durationMins > 0 ? durationMins * 60 : undefined,
-        pace: paceInput.trim() || undefined,
+        pace: paceInput.trim() || autoPace || undefined,
       })
       onClose()
     } finally {
@@ -163,7 +162,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
                 type="text"
                 value={paceInput}
                 onChange={e => setPaceInput(e.target.value)}
-                placeholder="e.g. 5:30"
+                placeholder={autoPace ? `Auto: ${autoPace}` : 'e.g. 5:30'}
                 className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0D9488] pr-14"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">/km</span>

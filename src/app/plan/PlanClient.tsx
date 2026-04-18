@@ -3,18 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
-import { getSessionType, fmtKm } from '@/lib/sessionUtils'
+import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
 import type { PlanWeek, PlanDay, PlanSession } from '@/types/database'
-
-function decodeHtml(str: string): string {
-  return str
-    .replace(/&middot;/g, '·')
-    .replace(/&ndash;/g, '–')
-    .replace(/&mdash;/g, '—')
-    .replace(/&amp;/g, '&')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-}
 
 const PHASE_LABELS: Record<string, { label: string; colour: string }> = {
   p1: { label: 'Phase 1', colour: 'bg-teal-100 text-teal-800' },

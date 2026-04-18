@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
-import { offsetDate, formatDate } from '@/lib/sessionUtils'
+import { offsetDate, formatDate, decodeHtml } from '@/lib/sessionUtils'
 import type { NutritionEvent, PlanDay } from '@/types/database'
 
 // ─── Hydration Tracker ────────────────────────────────────────────────────────
@@ -83,16 +83,6 @@ const CAT_CONFIG: Record<string, { label: string; colour: string; text: string; 
 
 function getCat(cat: string) {
   return CAT_CONFIG[cat] ?? CAT_CONFIG['info']
-}
-
-function decodeHtml(str: string): string {
-  return str
-    .replace(/&middot;/g, '·')
-    .replace(/&ndash;/g, '–')
-    .replace(/&mdash;/g, '—')
-    .replace(/&amp;/g, '&')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
 }
 
 // ─── Nutrition entry card ─────────────────────────────────────────────────────

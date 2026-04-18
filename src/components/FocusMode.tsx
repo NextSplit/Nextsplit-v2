@@ -1,18 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import { getSessionType } from '@/lib/sessionUtils'
+import { getSessionType, decodeHtml } from '@/lib/sessionUtils'
 import type { PlanSession } from '@/types/database'
-
-function decodeHtml(str: string): string {
-  return str
-    .replace(/&middot;/g, '·')
-    .replace(/&ndash;/g, '–')
-    .replace(/&mdash;/g, '—')
-    .replace(/&amp;/g, '&')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-}
 
 interface Props {
   session: PlanSession

@@ -7,6 +7,19 @@ export interface SessionTypeConfig {
   emoji: string
 }
 
+/** Decode HTML entities from plan data strings */
+export function decodeHtml(str: string): string {
+  return str
+    .replace(/&middot;/g, '·')
+    .replace(/&ndash;/g, '–')
+    .replace(/&mdash;/g, '—')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+}
+
 const SESSION_TYPES: Record<string, SessionTypeConfig> = {
   'run-easy':   { label: 'Easy Run',   colour: 'bg-emerald-50',  textColour: 'text-emerald-700', dot: 'bg-emerald-400', emoji: '🟢' },
   'run-tempo':  { label: 'Tempo',      colour: 'bg-orange-50',   textColour: 'text-orange-700',  dot: 'bg-orange-400',  emoji: '🟠' },
