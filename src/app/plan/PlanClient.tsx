@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { getSessionType, fmtKm } from '@/lib/sessionUtils'
@@ -174,6 +174,16 @@ export default function PlanClient() {
   const { plan, weeks, currentWeek, loading, advanceWeek } = useActivePlan()
   const { logs, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
   const [advancing, setAdvancing] = useState(false)
+  const currentWeekRef = useRef<HTMLDivElement>(null)
+
+  // Scroll to current week on load
+  useEffect(() => {
+    if (!loading && plan && currentWeekRef.current) {
+      setTimeout(() => {
+        currentWeekRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 300)
+    }
+  }, [loading, plan])
 
   // Today's day index Mon=0..Sun=6
   const d = new Date().getDay()

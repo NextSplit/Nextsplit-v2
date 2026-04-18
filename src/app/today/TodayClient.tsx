@@ -38,7 +38,7 @@ interface LogModalProps {
   onClose: () => void
   onSave: (params: {
     week_n: number; day_i: number; session_i: number; done: boolean
-    effort?: number; km?: number; notes?: string; duration_secs?: number
+    effort?: number; km?: number; notes?: string; duration_secs?: number; hr?: number; pace?: string
   }) => Promise<void>
 }
 
@@ -231,13 +231,15 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
             </p>
           )}
           {done && (
-            <div className="flex items-center gap-2 mt-1.5">
+            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
               <span className="text-[10px] text-emerald-600 font-semibold">
-                ✓ Done{log?.effort ? ` · Effort ${log.effort}/10` : ''}
+                ✓ Done{log?.effort ? ` · RPE ${log.effort}` : ''}
               </span>
               {log?.km && <span className="text-[10px] text-gray-400">{log.km}km</span>}
               {log?.duration_secs && <span className="text-[10px] text-gray-400">{Math.round(log.duration_secs / 60)}min</span>}
-              {log?.notes && <span className="text-[10px] text-gray-400 italic truncate max-w-[120px]">{log.notes}</span>}
+              {log?.pace && <span className="text-[10px] text-gray-400">{log.pace}/km</span>}
+              {log?.hr && <span className="text-[10px] text-gray-400">♥ {log.hr}</span>}
+              {log?.notes && <span className="text-[10px] text-gray-400 italic truncate max-w-[100px]">{log.notes}</span>}
             </div>
           )}
         </div>
@@ -312,7 +314,7 @@ export default function TodayClient() {
 
   const handleLogSession = useCallback(async (params: {
     week_n: number; day_i: number; session_i: number; done: boolean
-    effort?: number; km?: number; notes?: string; duration_secs?: number
+    effort?: number; km?: number; notes?: string; duration_secs?: number; hr?: number; pace?: string
   }) => {
     if (!plan) return
     const log = await logSession({ plan_id: plan.id, ...params })
@@ -549,7 +551,7 @@ export default function TodayClient() {
                         dayIndex={planDayIndex}
                         sessionIndex={sessI}
                         planId={plan.id}
-                        onImported={async (effort, km, pace, duration_secs) => {
+                        onImported={async (effort, km, pace, duration_secs, hr) => {
                           await handleLogSession({
                             week_n: weekN,
                             day_i: planDayIndex,
@@ -558,6 +560,8 @@ export default function TodayClient() {
                             effort,
                             km,
                             duration_secs,
+                            hr: hr ?? undefined,
+                            pace: pace ?? undefined,
                             notes: `Imported from Strava`,
                           })
                         }}
