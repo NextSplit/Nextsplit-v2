@@ -10,6 +10,7 @@ import { getSessionXP } from '@/lib/xp'
 import WeatherWidget from '@/components/WeatherWidget'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
 import FocusMode from '@/components/FocusMode'
+import { useRouter } from 'next/navigation'
 
 /** Decode HTML entities like &middot; &ndash; &amp; */
 function decodeHtml(str: string): string {
@@ -251,6 +252,7 @@ export default function TodayClient() {
   const [undoXP, setUndoXP] = useState(0)
   const [undoSecsLeft, setUndoSecsLeft] = useState(8)
 
+  const router = useRouter()
   const viewDate = offsetDate(dateOffset)
   const isToday = dateOffset === 0
 
@@ -431,6 +433,7 @@ export default function TodayClient() {
             {todaySessions.map((session, sessI) => {
               const key = `${weekN}_${planDayIndex}_${sessI}`
               const log = logs[key] ?? null
+              const isGym = session.c.startsWith('gym')
               return (
                 <SessionCard
                   key={sessI}
@@ -440,7 +443,13 @@ export default function TodayClient() {
                   weekN={weekN}
                   planId={plan.id}
                   log={log}
-                  onTap={() => setModalSession({ session, dayI: planDayIndex, sessI })}
+                  onTap={() => {
+                    if (isGym) {
+                      router.push(`/gym/live/${weekN}/${planDayIndex}/${sessI}`)
+                    } else {
+                      setModalSession({ session, dayI: planDayIndex, sessI })
+                    }
+                  }}
                   onQuickDone={() => handleQuickDone(planDayIndex, sessI, session)}
                   onFocus={() => setFocusSession({ session, dayI: planDayIndex, sessI })}
                 />
