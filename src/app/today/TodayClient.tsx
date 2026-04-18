@@ -688,15 +688,26 @@ export default function TodayClient() {
             {/* Tomorrow's sessions preview — shown when today is all done */}
             {isToday && todaySessions.length > 0 && doneTodayCount === todaySessions.length && (() => {
               const tomorrowDayIndex = (planDayIndex + 1) % 7
-              const tomorrowSessions = currentWeek?.days[tomorrowDayIndex]?.sessions ?? []
+              // On Sunday (planDayIndex=6), tomorrow wraps to next week's Monday
+              const isLastDayOfWeek = planDayIndex === 6
+              const nextWeekN = weekN + 1
+              const nextWeekData = currentWeek && isLastDayOfWeek
+                ? (plan as any).weeks_data?.find?.((w: any) => w.n === nextWeekN) ?? null
+                : null
+              const tomorrowSessions = isLastDayOfWeek
+                ? (nextWeekData?.days?.[0]?.sessions ?? [])
+                : (currentWeek?.days[tomorrowDayIndex]?.sessions ?? [])
               if (tomorrowSessions.length === 0) return null
               return (
                 <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                   <div className="px-4 py-2.5 border-b border-gray-50 flex items-center gap-2">
                     <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Tomorrow</span>
+                    {isLastDayOfWeek && nextWeekData && (
+                      <span className="text-[10px] text-gray-400">· Week {nextWeekN}</span>
+                    )}
                   </div>
                   <div className="px-4 py-3 space-y-1.5">
-                    {tomorrowSessions.map((s, i) => {
+                    {tomorrowSessions.map((s: any, i: number) => {
                       const cfg = getSessionType(s.c)
                       return (
                         <div key={i} className="flex items-center gap-2.5">
