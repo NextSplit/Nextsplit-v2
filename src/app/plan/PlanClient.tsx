@@ -161,12 +161,25 @@ function WeekRow({ week, isCurrent, logs, todayDayIndex }: {
 }
 
 export default function PlanClient() {
-  const { plan, weeks, currentWeek, loading } = useActivePlan()
+  const { plan, weeks, currentWeek, loading, advanceWeek } = useActivePlan()
   const { logs, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
+  const [advancing, setAdvancing] = useState(false)
 
   // Today's day index Mon=0..Sun=6
   const d = new Date().getDay()
   const todayDayIndex = d === 0 ? 6 : d - 1
+
+  // Check if current week is fully done
+  const weekComplete = currentWeek ? currentWeek.days.every((day, dayI) =>
+    day.sessions.length === 0 || day.sessions.every((_, sessI) => logs[`${currentWeek.n}_${dayI}_${sessI}`]?.done)
+  ) : false
+  const canAdvance = weekComplete && plan && plan.current_week < plan.total_weeks
+
+  async function handleAdvance() {
+    if (!canAdvance) return
+    setAdvancing(true)
+    try { await advanceWeek() } finally { setAdvancing(false) }
+  }
 
   if (loading || logsLoading) {
     return (
@@ -225,6 +238,21 @@ export default function PlanClient() {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
+
+        {/* Week complete — advance prompt */}
+        {canAdvance && (
+          <div className="bg-emerald-50 rounded-2xl border border-emerald-100 px-4 py-4 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-bold text-emerald-700">Week {plan!.current_week} complete! 🎉</p>
+              <p className="text-xs text-emerald-600 mt-0.5">Ready to move to Week {plan!.current_week + 1}?</p>
+            </div>
+            <button onClick={handleAdvance} disabled={advancing}
+              className="px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold disabled:opacity-50 flex-shrink-0">
+              {advancing ? '…' : 'Next week →'}
+            </button>
+          </div>
+        )}
+
         {weeks.map(week => (
           <WeekRow
             key={week.n}

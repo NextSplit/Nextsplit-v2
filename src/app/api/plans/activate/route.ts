@@ -11,10 +11,10 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { template_id, name, race_date } = body
+  const { template_id, slug, name, race_date, plan_type } = body
 
-  if (!template_id || !name) {
-    return NextResponse.json({ error: 'template_id and name are required' }, { status: 400 })
+  if ((!template_id && !slug) || !name) {
+    return NextResponse.json({ error: 'template_id (or slug) and name are required' }, { status: 400 })
   }
 
   // Archive any existing active plan
@@ -24,12 +24,11 @@ export async function POST(req: Request) {
     .eq('user_id', user.id)
     .eq('status', 'active')
 
-  // Fetch full template (includes weeks_data)
-  const { data: template, error: tErr } = await supabase
-    .from('plan_templates')
-    .select('*')
-    .eq('id', template_id)
-    .single()
+  // Fetch full template — by id or slug
+  const query = supabase.from('plan_templates').select('*')
+  const { data: template, error: tErr } = template_id
+    ? await query.eq('id', template_id).single()
+    : await query.eq('slug', slug).single()
 
   if (tErr || !template) {
     return NextResponse.json({ error: 'Template not found' }, { status: 404 })
@@ -54,7 +53,7 @@ export async function POST(req: Request) {
     .insert({
       user_id: user.id,
       template_id,
-      plan_type: 'predetermined',
+      plan_type: (plan_type ?? 'predetermined') as 'predetermined' | 'ai_bespoke' | 'manual' | 'lifestyle',
       status: 'active',
       name: name.trim(),
       goal: null,
