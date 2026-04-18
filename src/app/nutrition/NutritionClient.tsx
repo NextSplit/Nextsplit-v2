@@ -15,7 +15,7 @@ function todayStr() { return new Date().toISOString().slice(0, 10) }
 
 function weekStartEnd(plan: { current_week: number; start_date: string } | null) {
   if (!plan) { const t = todayStr(); return { start: t, end: t } }
-  const start = new Date(plan.start_date)
+  const start = new Date(plan.start_date + 'T00:00:00')
   start.setDate(start.getDate() + (plan.current_week - 1) * 7)
   const end = new Date(start)
   end.setDate(end.getDate() + 6)
@@ -677,7 +677,7 @@ function RecipeCard({
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function NutritionClient() {
-  const { plan } = useActivePlan()
+  const { plan, weeks } = useActivePlan()
   const { profile } = useProfile()
   const { recipes, createRecipe, updateRecipe, deleteRecipe } = useRecipes()
 
@@ -692,17 +692,12 @@ export default function NutritionClient() {
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
   const [assigningSlot, setAssigningSlot] = useState<{ date: string; slot: MealSlotId } | null>(null)
 
-  // Day type for macro targets
-  const todayDayOfWeek = new Date().getDay()
-  const todayPlanDayIndex = todayDayOfWeek === 0 ? 6 : todayDayOfWeek - 1
-
   function getMacroTargets(date: string) {
     if (!profile?.weight_kg) return { kcal: 0, protein: 0, carbs: 0, fat: 0 }
     const d = new Date(date + 'T00:00:00')
     const dayI = d.getDay() === 0 ? 6 : d.getDay() - 1
-    const weekData = plan ? (plan as any).weeks_data : null
     const currentWeekN = plan?.current_week ?? 1
-    const week = weekData?.find?.((w: any) => w.n === currentWeekN)
+    const week = weeks.find(w => w.n === currentWeekN)
     const sessions = week?.days?.[dayI]?.sessions ?? []
     const dayType = getDayType(sessions)
     const cfg = DAY_TYPE_CONFIG[dayType]

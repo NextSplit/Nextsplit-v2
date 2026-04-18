@@ -5,7 +5,7 @@ import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useGymLog, type GymExercise } from '@/hooks/useGymLog'
 import { parseDetToExercises, suggestWeight, getRestTime, type ExerciseDef } from '@/lib/gymUtils'
-import { getSessionXP } from '@/lib/xp'
+import { getSessionXP } from '@/lib/rpg'
 import type { PlanSession } from '@/types/database'
 
 // ─── Rest Timer ───────────────────────────────────────────────────────────────

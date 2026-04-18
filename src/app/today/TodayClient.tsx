@@ -6,7 +6,7 @@ import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml } from '@/lib/sessionUtils'
 import type { PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
-import { getSessionXP } from '@/lib/xp'
+import { getSessionXP } from '@/lib/rpg'
 import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/streak'
 import WeatherWidget from '@/components/WeatherWidget'

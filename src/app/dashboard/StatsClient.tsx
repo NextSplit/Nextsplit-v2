@@ -453,12 +453,6 @@ const PRIORITY_CFG = {
   training: { label: 'Training', colour: 'bg-gray-50 text-gray-600 border-gray-200' },
 }
 
-function daysUntilRace(dateStr: string): number {
-  const t = new Date(dateStr); const now = new Date()
-  t.setHours(0,0,0,0); now.setHours(0,0,0,0)
-  return Math.ceil((t.getTime() - now.getTime()) / 86400000)
-}
-
 function fmtRaceDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' })
 }
@@ -599,7 +593,7 @@ function LogResultModal({ race, onClose, onLog }: { race: Race; onClose: () => v
 function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: () => void; onDelete: () => void }) {
   const [expanded, setExpanded] = useState(false)
   const cfg = PRIORITY_CFG[race.priority]
-  const days = daysUntilRace(race.race_date)
+  const days = daysUntil(race.race_date)
 
   return (
     <div className={`bg-white rounded-2xl border overflow-hidden transition-all ${expanded ? 'border-gray-200 shadow-sm' : 'border-gray-100'}`}>

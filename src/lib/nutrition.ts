@@ -25,8 +25,13 @@ export const DAY_TYPE_CONFIG: Record<DayType, {
   race:    { label: 'Race Day! 🏁', emoji: '🏆', colour: 'bg-yellow-50',  text: 'text-yellow-700', cals: 1.6, carbs: 65, protein: 20, fat: 15, note: 'Familiar foods only. Nothing new on race day.' },
 }
 
-/** BMR × activity factor → daily calorie target (Mifflin-St Jeor simplified) */
+/** Mifflin-St Jeor BMR × activity factor → daily calorie target.
+ *  Uses weight only (required). Height/age/sex default to population midpoints
+ *  for runners since we don't always have those fields.
+ */
 export function calcCalories(weightKg: number, dayType: DayType): number {
-  const bmr = 10 * weightKg + 6.25 * 170 - 5 * 30 + 50
-  return Math.round(bmr * DAY_TYPE_CONFIG[dayType].cals / 100) * 100
+  // 175cm, 35yo, male midpoint — good approximation for a mixed user base
+  const bmr = 10 * weightKg + 6.25 * 175 - 5 * 35 + 5
+  const target = bmr * DAY_TYPE_CONFIG[dayType].cals
+  return Math.round(target / 50) * 50  // round to nearest 50 kcal
 }
