@@ -7,6 +7,7 @@ import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml } from '@/lib
 import type { PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
 import { getSessionXP } from '@/lib/xp'
+import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import WeatherWidget from '@/components/WeatherWidget'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
 import FocusMode from '@/components/FocusMode'
@@ -45,6 +46,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
   )
   const [paceInput, setPaceInput] = useState(existingLog?.pace ?? '')
   const [saving, setSaving] = useState(false)
+  const [expanded, setExpanded] = useState(!!existingLog) // expand if editing
 
   // Auto-calculate pace from km + duration when both are set and pace is empty
   const autoPace = km > 0 && durationMins > 0 && !paceInput.trim()
@@ -139,6 +141,22 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
           </div>
         )}
 
+        {/* Progressive disclosure — duration, pace, notes */}
+        <button
+          onClick={() => setExpanded(e => !e)}
+          className="flex items-center gap-2 text-xs font-semibold text-[#0D9488] mb-4"
+        >
+          <svg className={`w-3.5 h-3.5 transition-transform ${expanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+          {expanded ? 'Less details' : 'Add more details'}
+          {(durationMins > 0 || paceInput || notes) && !expanded && (
+            <span className="text-[10px] text-gray-400 font-normal">· {[durationMins > 0 && `${durationMins}min`, paceInput && `${paceInput}/km`, notes && 'note'].filter(Boolean).join(' · ')}</span>
+          )}
+        </button>
+
+        {expanded && (
+          <>
         {/* Duration input */}
         <div className="mb-5">
           <label className="text-sm font-semibold text-gray-700 block mb-2">Duration (optional)</label>
@@ -186,6 +204,8 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
             className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-transparent"
           />
         </div>
+          </>
+        )}
 
         </div>{/* end scrollable area */}
 
@@ -310,6 +330,7 @@ export default function TodayClient() {
   const [undoInfo, setUndoInfo] = useState<{ logId: string; timer: ReturnType<typeof setTimeout> } | null>(null)
   const [undoLabel, setUndoLabel] = useState('')
   const [undoXP, setUndoXP] = useState(0)
+  const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
   const [undoSecsLeft, setUndoSecsLeft] = useState(8)
 
   const router = useRouter()
@@ -351,13 +372,27 @@ export default function TodayClient() {
     if (!plan) return
     const log = await logSession({ plan_id: plan.id, ...params })
 
+    // Check for new personal best
+    if (params.km && params.pace && params.done) {
+      const existingLogs = Object.values(logs)
+      const existingPBs = computePersonalBests(existingLogs)
+      const pb = checkNewPB(
+        { km: params.km, pace: params.pace, week_n: params.week_n, logged_at: new Date().toISOString(), done: true },
+        existingPBs
+      )
+      if (pb) {
+        setNewPB({ distance: pb.distance, timeStr: pb.timeStr })
+        setTimeout(() => setNewPB(null), 6000)
+      }
+    }
+
     if (undoInfo) clearTimeout(undoInfo.timer)
     const session = planDay?.sessions[params.session_i]
     setUndoLabel(session?.n ?? 'session')
     setUndoXP(session ? getSessionXP(session.c) : 10)
     const timer = setTimeout(() => setUndoInfo(null), 8000)
     setUndoInfo({ logId: log.id, timer })
-  }, [plan, logSession, undoInfo, planDay])
+  }, [plan, logSession, undoInfo, planDay, logs])
 
   const handleQuickDone = useCallback(async (dayI: number, sessI: number, session: PlanSession) => {
     const key = `${weekN}_${dayI}_${sessI}`
@@ -783,6 +818,21 @@ export default function TodayClient() {
             >
               Undo
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* PB Toast */}
+      {newPB && (
+        <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 pointer-events-none">
+          <div className="bg-gradient-to-r from-yellow-400 to-amber-400 text-white rounded-2xl px-4 py-3 shadow-xl animate-bounce-once">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🏆</span>
+              <div>
+                <div className="text-sm font-black">New Personal Best!</div>
+                <div className="text-xs font-semibold opacity-90">{newPB.distance} · {newPB.timeStr}</div>
+              </div>
+            </div>
           </div>
         </div>
       )}

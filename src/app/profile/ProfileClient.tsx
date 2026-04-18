@@ -11,6 +11,7 @@ import {
   getLevelForXP, getXPProgress, getSessionXP, BADGES, checkBadges,
   type BadgeStats
 } from '@/lib/xp'
+import { computePersonalBests } from '@/lib/personalBests'
 import type { TrainingLog } from '@/types/database'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -434,6 +435,10 @@ export default function ProfileClient({ email, displayName: initialDisplayName, 
   const badgeStats = useMemo(() => computeBadgeStats(logs, weeks, xp), [logs, weeks, xp])
   const earnedBadgeIds = useMemo(() => new Set(checkBadges(badgeStats)), [badgeStats])
   const level = getLevelForXP(xp)
+  const personalBests = useMemo(() => {
+    const allLogs = Object.values(logs)
+    return computePersonalBests(allLogs)
+  }, [logs])
 
   return (
     <div className="min-h-screen bg-[#f8f8f6] pb-24">
@@ -507,6 +512,38 @@ export default function ProfileClient({ email, displayName: initialDisplayName, 
 
         {/* Training summary */}
         <TrainingSummary logs={logs} />
+
+        {/* Personal Bests */}
+        {personalBests.length > 0 && (
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-50">
+              <span className="text-sm font-bold text-gray-900">Personal bests 🏆</span>
+            </div>
+            <div className="grid grid-cols-2 gap-0 divide-x divide-y divide-gray-50">
+              {personalBests.map(pb => (
+                <div key={pb.distance} className="px-4 py-3">
+                  <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{pb.distance}</div>
+                  <div className="text-lg font-black text-gray-900">{pb.timeStr}</div>
+                  <div className="text-[10px] text-[#0D9488] font-semibold">{pb.pacePerKm}/km</div>
+                  <div className="text-[9px] text-gray-400 mt-0.5">Week {pb.weekN}</div>
+                </div>
+              ))}
+              {/* Empty slots */}
+              {[5, 10, 21.0975, 42.195]
+                .filter(km => !personalBests.some(pb => Math.abs(pb.distanceKm - km) < 0.1))
+                .map(km => {
+                  const label = km === 5 ? '5K' : km === 10 ? '10K' : km < 22 ? 'Half' : 'Marathon'
+                  return (
+                    <div key={km} className="px-4 py-3 opacity-40">
+                      <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{label}</div>
+                      <div className="text-sm font-bold text-gray-300">—</div>
+                      <div className="text-[10px] text-gray-300">not yet</div>
+                    </div>
+                  )
+                })}
+            </div>
+          </div>
+        )}
 
         {/* Badges */}
         <BadgeGrid earned={earnedBadgeIds} />
