@@ -238,9 +238,12 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
         {/* Type indicator — tap for focus mode */}
         <button
           onClick={e => { e.stopPropagation(); onFocus() }}
-          className={`w-10 h-10 rounded-xl ${cfg.colour} flex items-center justify-center flex-shrink-0 text-lg active:scale-95 transition-transform`}
+          className={`flex flex-col items-center gap-0.5 flex-shrink-0`}
         >
-          {cfg.emoji}
+          <div className={`w-10 h-10 rounded-xl ${cfg.colour} flex items-center justify-center text-lg active:scale-95 transition-transform`}>
+            {cfg.emoji}
+          </div>
+          <span className="text-[8px] text-gray-400 font-medium">Focus</span>
         </button>
 
         <div className="flex-1 min-w-0">
