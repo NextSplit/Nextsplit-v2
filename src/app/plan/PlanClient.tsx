@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import React from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
@@ -75,9 +76,10 @@ function DayRow({ day, dayIndex, weekN, logs, isToday }: {
   )
 }
 
-function WeekRow({ week, isCurrent, logs, todayDayIndex }: {
+function WeekRow({ week, isCurrent, logs, todayDayIndex, weekRef }: {
   week: PlanWeek; isCurrent: boolean
   logs: Record<string, import('@/types/database').TrainingLog>; todayDayIndex: number
+  weekRef?: React.RefObject<HTMLDivElement | null>
 }) {
   const [open, setOpen] = useState(isCurrent)
   const phase = PHASE_LABELS[week.ph] ?? { label: week.ph, colour: 'bg-gray-100 text-gray-700' }
@@ -87,7 +89,7 @@ function WeekRow({ week, isCurrent, logs, todayDayIndex }: {
     acc + day.sessions.filter((_, sessI) => logs[`${week.n}_${dayI}_${sessI}`]?.done).length, 0)
 
   return (
-    <div className={`rounded-2xl border overflow-hidden ${isCurrent ? 'border-[#0D9488] shadow-sm' : 'border-gray-100'} bg-white`}>
+    <div ref={weekRef} className={`rounded-2xl border overflow-hidden ${isCurrent ? 'border-[#0D9488] shadow-sm' : 'border-gray-100'} bg-white`}>
       {/* Week header */}
       <button
         onClick={() => setOpen(o => !o)}
@@ -270,6 +272,7 @@ export default function PlanClient() {
             isCurrent={week.n === plan.current_week}
             logs={logs}
             todayDayIndex={todayDayIndex}
+            weekRef={week.n === plan.current_week ? currentWeekRef : undefined}
           />
         ))}
       </div>
