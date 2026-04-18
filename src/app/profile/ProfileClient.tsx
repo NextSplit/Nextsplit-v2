@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useSupabase } from '@/hooks/useSupabase'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
+import { useProfile } from '@/hooks/useProfile'
 import { signout } from '@/app/auth/actions'
 import {
   getLevelForXP, getXPProgress, getSessionXP, BADGES, checkBadges,
@@ -293,6 +294,108 @@ function TrainingSummary({ logs }: { logs: Record<string, TrainingLog> }) {
   )
 }
 
+// ─── Athlete profile settings ─────────────────────────────────────────────────
+
+function AthleteProfileSection() {
+  const { profile, loading, updateProfile } = useProfile()
+  const [editing, setEditing] = useState(false)
+  const [weight, setWeight] = useState('')
+  const [age, setAge] = useState('')
+  const [experience, setExperience] = useState<'beginner'|'intermediate'|'advanced'|''>('')
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (profile) {
+      setWeight(profile.weight_kg != null ? String(profile.weight_kg) : '')
+      setAge(profile.age != null ? String(profile.age) : '')
+      setExperience(profile.experience ?? '')
+    }
+  }, [profile])
+
+  async function handleSave() {
+    setSaving(true)
+    try {
+      await updateProfile({
+        weight_kg: weight ? Number(weight) : null,
+        age: age ? Number(age) : null,
+        experience: experience || null,
+      })
+      setEditing(false)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) return null
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-sm font-bold text-gray-900">Athlete profile</div>
+        {!editing && (
+          <button onClick={() => setEditing(true)}
+            className="text-xs font-semibold text-[#0D9488]">Edit</button>
+        )}
+      </div>
+
+      {!editing ? (
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { label: 'Weight', value: profile?.weight_kg ? `${profile.weight_kg}kg` : '—' },
+            { label: 'Age', value: profile?.age ? `${profile.age}y` : '—' },
+            { label: 'Level', value: profile?.experience ? profile.experience.charAt(0).toUpperCase() + profile.experience.slice(1) : '—' },
+          ].map(s => (
+            <div key={s.label} className="bg-gray-50 rounded-xl p-3 text-center">
+              <div className="text-sm font-bold text-gray-900">{s.value}</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-semibold text-gray-600 block mb-1">Weight (kg)</label>
+              <input type="number" value={weight} onChange={e => setWeight(e.target.value)}
+                placeholder="e.g. 70"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-600 block mb-1">Age</label>
+              <input type="number" value={age} onChange={e => setAge(e.target.value)}
+                placeholder="e.g. 32"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-600 block mb-1">Experience level</label>
+            <div className="flex gap-2">
+              {(['beginner','intermediate','advanced'] as const).map(l => (
+                <button key={l} onClick={() => setExperience(l)}
+                  className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-colors ${
+                    experience === l ? 'bg-[#0D9488] text-white border-transparent' : 'bg-white text-gray-500 border-gray-200'
+                  }`}>
+                  {l.charAt(0).toUpperCase() + l.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button onClick={() => setEditing(false)}
+              className="flex-1 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600">
+              Cancel
+            </button>
+            <button onClick={handleSave} disabled={saving}
+              className="flex-1 py-2.5 rounded-xl bg-[#0D9488] text-white text-xs font-semibold disabled:opacity-50">
+              {saving ? 'Saving…' : 'Save'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function ProfileClient({ email, displayName: initialDisplayName, isStravaConnected }: { email: string; displayName: string; isStravaConnected: boolean }) {
@@ -422,6 +525,9 @@ export default function ProfileClient({ email, displayName: initialDisplayName, 
 
         {/* Strava */}
         <StravaSection clientId={stravaClientId} isConnected={isStravaConnected} />
+
+        {/* Athlete profile */}
+        <AthleteProfileSection />
 
         {/* Sign out */}
         <form action={signout}>

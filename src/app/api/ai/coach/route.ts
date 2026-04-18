@@ -99,7 +99,20 @@ export async function POST(req: Request) {
   const chronic = chronicWeeks.reduce((a, w) => a + (kmByWeek[w] ?? 0), 0) / 4
   const acwr = chronic > 0 ? Math.round((acute / chronic) * 100) / 100 : null
 
-  // ── Wellness (localStorage not available server-side, skip) ────────────────
+  // ── Wellness (from Supabase) ───────────────────────────────────────────────
+  const todayStr = new Date().toISOString().split('T')[0]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: wellnessData } = await (supabase as any)
+    .from('wellness_logs')
+    .select('sleep, soreness, mood, log_date')
+    .eq('user_id', user.id)
+    .eq('log_type', 'daily')
+    .gte('log_date', new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0])
+    .order('log_date', { ascending: false })
+    .limit(7)
+
+  const recentWellness = (wellnessData ?? []) as Array<{ sleep: number|null; soreness: number|null; mood: number|null; log_date: string }>
+  const todayWellness = recentWellness.find(w => w.log_date === todayStr)
 
   // ── Recent session notes ───────────────────────────────────────────────────
   const recentNotes = logs
@@ -120,6 +133,7 @@ ATHLETE PROFILE:
 - Race date: ${raceDate ?? 'not set'}${daysToRace ? ` (${daysToRace} days away)` : ''}
 - Current week focus: ${currentWeek?.title ?? 'unknown'} (${currentWeek?.b === 'd' ? 'deload' : currentWeek?.b === 'r' ? 'race week' : 'build'})
 - ACWR: ${acwr ?? 'insufficient data'}${acwr ? (acwr > 1.3 ? ' ⚠️ HIGH' : acwr < 0.8 ? ' ⚠️ LOW' : ' ✅ GOOD') : ''}
+${todayWellness ? `- Today's readiness: sleep ${todayWellness.sleep}/5, soreness ${todayWellness.soreness}/5, mood ${todayWellness.mood}/5` : ''}
 
 LAST 4 WEEKS SUMMARY:
 ${weekSummaries.map(w =>

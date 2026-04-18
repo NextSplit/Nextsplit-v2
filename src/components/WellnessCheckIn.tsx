@@ -1,17 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useWellness } from '@/hooks/useWellness'
 
-interface WellnessData {
-  sleep: number      // 1-5
-  soreness: number   // 1-5
-  motivation: number // 1-5
-  date: string
-}
-
-function readinessScore(w: WellnessData): number {
-  // Weighted: sleep most important
-  return Math.round((w.sleep * 0.4 + w.motivation * 0.35 + (6 - w.soreness) * 0.25) * 2)
+function readinessScore(sleep: number, soreness: number, motivation: number): number {
+  return Math.round((sleep * 0.4 + motivation * 0.35 + (6 - soreness) * 0.25) * 2)
 }
 
 function readinessLabel(score: number): { label: string; colour: string; emoji: string } {
@@ -21,33 +14,29 @@ function readinessLabel(score: number): { label: string; colour: string; emoji: 
   return { label: 'Low', colour: 'text-red-500', emoji: '🔴' }
 }
 
-const STORAGE_KEY = 'nextsplit_wellness'
+const LS_KEY = 'nextsplit_wellness'
 
 function todayKey(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-interface SliderRowProps {
-  label: string
-  emoji: string
-  value: number
-  onChange: (v: number) => void
-  lowLabel: string
-  highLabel: string
+interface LocalWellness {
+  sleep: number; soreness: number; motivation: number; date: string
 }
 
-function SliderRow({ label, emoji, value, onChange, lowLabel, highLabel }: SliderRowProps) {
+function SliderRow({ label, emoji, value, onChange, lowLabel, highLabel }: {
+  label: string; emoji: string; value: number; onChange: (v: number) => void
+  lowLabel: string; highLabel: string
+}) {
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
         <span className="text-xs font-semibold text-gray-700">{emoji} {label}</span>
         <span className="text-sm font-bold text-[#0D9488]">{value}/5</span>
       </div>
-      <input
-        type="range" min={1} max={5} step={1} value={value}
+      <input type="range" min={1} max={5} step={1} value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#0D9488]"
-      />
+        className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#0D9488]" />
       <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
         <span>{lowLabel}</span><span>{highLabel}</span>
       </div>
@@ -60,72 +49,86 @@ interface Props {
 }
 
 export default function WellnessCheckIn({ onReadiness }: Props) {
-  const [existing, setExisting] = useState<WellnessData | null>(null)
+  const { today: dbToday, logWellness } = useWellness()
+
   const [open, setOpen] = useState(false)
   const [sleep, setSleep] = useState(3)
   const [soreness, setSoreness] = useState(2)
   const [motivation, setMotivation] = useState(4)
-  const [saved, setSaved] = useState(false)
+  const [localData, setLocalData] = useState<LocalWellness | null>(null)
+  const [saving, setSaving] = useState(false)
 
+  // Hydrate from localStorage first (instant)
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY)
+      const raw = localStorage.getItem(LS_KEY)
       if (raw) {
-        const data: WellnessData = JSON.parse(raw)
-        if (data.date === todayKey()) {
-          setExisting(data)
-          onReadiness?.(readinessScore(data))
-          setSleep(data.sleep)
-          setSoreness(data.soreness)
-          setMotivation(data.motivation)
+        const d: LocalWellness = JSON.parse(raw)
+        if (d.date === todayKey()) {
+          setLocalData(d)
+          setSleep(d.sleep); setSoreness(d.soreness); setMotivation(d.motivation)
+          onReadiness?.(readinessScore(d.sleep, d.soreness, d.motivation))
         }
       }
     } catch { /* ignore */ }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function handleSave() {
-    const data: WellnessData = { sleep, soreness, motivation, date: todayKey() }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-    setExisting(data)
-    onReadiness?.(readinessScore(data))
-    setSaved(true)
+  // Prefer DB if it has today's log
+  useEffect(() => {
+    if (dbToday) {
+      const s = dbToday.sleep ?? 3
+      const sor = dbToday.soreness ?? 2
+      const mot = dbToday.mood ?? 4
+      setSleep(s); setSoreness(sor); setMotivation(mot)
+      setLocalData({ sleep: s, soreness: sor, motivation: mot, date: todayKey() })
+      onReadiness?.(readinessScore(s, sor, mot))
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dbToday])
+
+  async function handleSave() {
+    setSaving(true)
+    const d: LocalWellness = { sleep, soreness, motivation, date: todayKey() }
+    localStorage.setItem(LS_KEY, JSON.stringify(d))
+    setLocalData(d)
+    onReadiness?.(readinessScore(sleep, soreness, motivation))
+    try {
+      await logWellness({ log_date: todayKey(), log_type: 'daily', sleep, soreness, mood: motivation })
+    } catch { /* non-fatal */ }
+    setSaving(false)
     setOpen(false)
-    setTimeout(() => setSaved(false), 2000)
   }
 
-  const score = readinessScore({ sleep, soreness, motivation, date: todayKey() })
-  const status = existing ? readinessLabel(readinessScore(existing)) : null
+  const checkedIn = localData
 
-  // Already checked in today
-  if (existing && !open) {
+  const score = readinessScore(sleep, soreness, motivation)
+
+  if (checkedIn && !open) {
+    const existScore = readinessScore(checkedIn.sleep, checkedIn.soreness, checkedIn.motivation)
+    const status = readinessLabel(existScore)
     return (
-      <button
-        onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3"
-      >
+      <button onClick={() => setOpen(true)}
+        className="w-full flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <span className="text-xl">{status?.emoji}</span>
+          <span className="text-xl">{status.emoji}</span>
           <div className="text-left">
             <div className="text-xs font-semibold text-gray-700">Readiness</div>
-            <div className={`text-sm font-bold ${status?.colour}`}>{status?.label}</div>
+            <div className={`text-sm font-bold ${status.colour}`}>{status.label}</div>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-black text-[#0D9488]">{readinessScore(existing)}</div>
+          <div className="text-2xl font-black text-[#0D9488]">{existScore}</div>
           <div className="text-[10px] text-gray-400">/10 · edit</div>
         </div>
       </button>
     )
   }
 
-  // Not yet checked in
   if (!open) {
     return (
-      <button
-        onClick={() => setOpen(true)}
-        className="w-full flex items-center gap-3 bg-white rounded-2xl border border-dashed border-gray-200 px-4 py-3"
-      >
+      <button onClick={() => setOpen(true)}
+        className="w-full flex items-center gap-3 bg-white rounded-2xl border border-dashed border-gray-200 px-4 py-3">
         <span className="text-xl">🌅</span>
         <div className="text-left">
           <div className="text-xs font-semibold text-gray-700">Morning check-in</div>
@@ -138,44 +141,26 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
     )
   }
 
-  // Check-in form
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="text-sm font-bold text-gray-900">How are you feeling?</div>
         <button onClick={() => setOpen(false)} className="text-gray-400 text-lg leading-none">×</button>
       </div>
-
       <div className="space-y-5 mb-5">
-        <SliderRow
-          label="Sleep quality" emoji="😴"
-          value={sleep} onChange={setSleep}
-          lowLabel="Terrible" highLabel="Great"
-        />
-        <SliderRow
-          label="Muscle soreness" emoji="💪"
-          value={soreness} onChange={setSoreness}
-          lowLabel="Fresh" highLabel="Very sore"
-        />
-        <SliderRow
-          label="Motivation" emoji="🔥"
-          value={motivation} onChange={setMotivation}
-          lowLabel="Low" highLabel="High"
-        />
+        <SliderRow label="Sleep quality" emoji="😴" value={sleep} onChange={setSleep} lowLabel="Terrible" highLabel="Great" />
+        <SliderRow label="Muscle soreness" emoji="💪" value={soreness} onChange={setSoreness} lowLabel="Fresh" highLabel="Very sore" />
+        <SliderRow label="Motivation" emoji="🔥" value={motivation} onChange={setMotivation} lowLabel="Low" highLabel="High" />
       </div>
-
       <div className="flex items-center justify-between mb-4">
         <div className="text-xs text-gray-500">Readiness score</div>
         <div className={`text-lg font-black ${readinessLabel(score).colour}`}>
           {score}/10 · {readinessLabel(score).label}
         </div>
       </div>
-
-      <button
-        onClick={handleSave}
-        className="w-full py-3 bg-[#0D9488] text-white rounded-xl text-sm font-semibold"
-      >
-        Save check-in
+      <button onClick={handleSave} disabled={saving}
+        className="w-full py-3 bg-[#0D9488] text-white rounded-xl text-sm font-semibold disabled:opacity-50">
+        {saving ? 'Saving…' : 'Save check-in'}
       </button>
     </div>
   )
