@@ -94,7 +94,8 @@ export async function POST(req: Request) {
   for (const log of logs) {
     if (log.done && log.km) kmByWeek[log.week_n] = (kmByWeek[log.week_n] ?? 0) + log.km
   }
-  const acute = (kmByWeek[currentWeekN] ?? 0) + (kmByWeek[currentWeekN - 1] ?? 0) / 2
+  // Acute = current week; Chronic = 4-week rolling average
+  const acute = kmByWeek[currentWeekN] ?? 0
   const chronicWeeks = [currentWeekN - 3, currentWeekN - 2, currentWeekN - 1, currentWeekN]
   const chronic = chronicWeeks.reduce((a, w) => a + (kmByWeek[w] ?? 0), 0) / 4
   const acwr = chronic > 0 ? Math.round((acute / chronic) * 100) / 100 : null

@@ -40,7 +40,7 @@ function weeklyKm(logs: TrainingLog[]): Record<number, number> {
   return out
 }
 
-/** ACWR: 7-day acute / 28-day chronic. Returns per-week values. */
+/** ACWR: current week (acute) vs 4-week rolling average (chronic). */
 function calcACWR(logs: TrainingLog[], weeks: PlanWeek[]): { week: number; acwr: number; acute: number; chronic: number }[] {
   const km = weeklyKm(logs)
   const result = []
@@ -48,7 +48,9 @@ function calcACWR(logs: TrainingLog[], weeks: PlanWeek[]): { week: number; acwr:
 
   for (let i = 0; i < weekNums.length; i++) {
     const w = weekNums[i]
-    const acute = (km[w] ?? 0) + (km[weekNums[i - 1]] ?? 0) / 2  // simple 7-day proxy
+    // Acute = current week's km
+    const acute = km[w] ?? 0
+    // Chronic = rolling 4-week average (including current week)
     const chronicWeeks = weekNums.slice(Math.max(0, i - 3), i + 1)
     const chronic = chronicWeeks.length > 0
       ? chronicWeeks.reduce((a, n) => a + (km[n] ?? 0), 0) / Math.max(chronicWeeks.length, 1)
@@ -58,6 +60,7 @@ function calcACWR(logs: TrainingLog[], weeks: PlanWeek[]): { week: number; acwr:
       result.push({ week: w, acwr: chronic > 0 ? acute / chronic : 0, acute, chronic })
     }
   }
+
   return result.slice(-8) // last 8 weeks
 }
 
