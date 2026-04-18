@@ -232,6 +232,62 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
   )
 }
 
+// ─── Splits Display ───────────────────────────────────────────────────────────
+
+function SplitsDisplay({ splits }: { splits: Array<{ distance: number; elapsed_time: number; moving_time: number; pace?: string }> }) {
+  const [open, setOpen] = useState(false)
+  if (splits.length === 0) return null
+
+  function secsToMMSS(secs: number): string {
+    const m = Math.floor(secs / 60)
+    const s = Math.round(secs % 60)
+    return `${m}:${String(s).padStart(2, '0')}`
+  }
+
+  // Calculate pace per km for each split
+  const withPace = splits.map((s, i) => {
+    const distKm = s.distance / 1000
+    const paceSecs = distKm > 0 ? s.moving_time / distKm : 0
+    return { ...s, distKm, paceSecs, lapNum: i + 1 }
+  })
+  const paces = withPace.map(s => s.paceSecs).filter(p => p > 0)
+  const minPace = Math.min(...paces)
+  const maxPace = Math.max(...paces)
+
+  return (
+    <div className="mt-2">
+      <button
+        onClick={e => { e.stopPropagation(); setOpen(o => !o) }}
+        className="flex items-center gap-1 text-[10px] text-orange-500 font-semibold"
+      >
+        <svg viewBox="0 0 24 24" fill="#f97316" className="w-3 h-3">
+          <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+        </svg>
+        {open ? 'Hide' : 'Show'} splits ({splits.length} laps)
+      </button>
+      {open && (
+        <div className="mt-2 space-y-1" onClick={e => e.stopPropagation()}>
+          {withPace.map(s => {
+            const pctFromFastest = maxPace > minPace ? (s.paceSecs - minPace) / (maxPace - minPace) : 0
+            const barColour = pctFromFastest < 0.33 ? 'bg-emerald-400' : pctFromFastest < 0.66 ? 'bg-amber-400' : 'bg-red-400'
+            return (
+              <div key={s.lapNum} className="flex items-center gap-2">
+                <span className="text-[9px] text-gray-400 w-6 shrink-0">km {s.lapNum}</span>
+                <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className={`h-full ${barColour} rounded-full`} style={{ width: `${Math.max(20, (1 - pctFromFastest) * 100)}%` }} />
+                </div>
+                <span className="text-[9px] font-mono text-gray-600 w-12 text-right shrink-0">
+                  {s.paceSecs > 0 ? secsToMMSS(s.paceSecs) + '/km' : '—'}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Session Card ─────────────────────────────────────────────────────────────
 
 interface SessionCardProps {
@@ -291,7 +347,12 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
               {log?.pace && <span className="text-[10px] text-gray-400">{log.pace}/km</span>}
               {log?.hr && <span className="text-[10px] text-gray-400">♥ {log.hr}</span>}
               {log?.notes && <span className="text-[10px] text-gray-400 italic truncate max-w-[100px]">{log.notes}</span>}
+              {log?.strava_id && <span className="text-[10px] text-orange-500 font-semibold">⚡ Strava</span>}
             </div>
+          )}
+          {/* Strava splits — shown when imported */}
+          {done && log?.splits && Array.isArray(log.splits) && log.splits.length > 0 && (
+            <SplitsDisplay splits={log.splits as Array<{ distance: number; elapsed_time: number; moving_time: number; pace?: string }> } />
           )}
         </div>
 
@@ -495,19 +556,63 @@ export default function TodayClient() {
             {isToday && <WellnessCheckIn onReadiness={setReadinessScore} />}
 
             {/* Low readiness suggestion */}
-            {isToday && readinessScore !== null && readinessScore <= 5 && todaySessions.length > 0 && (
-              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-base mt-0.5">🔄</span>
-                <div>
-                  <p className="text-[11px] font-bold text-amber-800 mb-0.5">Low readiness today</p>
-                  <p className="text-xs text-amber-700 leading-relaxed">
-                    {readinessScore <= 3
-                      ? 'Consider converting today\'s session to an easy walk or full rest. Recovery is training.'
-                      : 'You could reduce today\'s intensity — drop pace by 30s/km or cut volume by 20%. Listen to your body.'}
-                  </p>
+            {isToday && readinessScore !== null && readinessScore <= 5 && todaySessions.length > 0 && (() => {
+              const isVeryLow = readinessScore <= 3
+              const hasRunSessions = todaySessions.some(s => s.c.startsWith('run'))
+              return (
+                <div className="bg-amber-50 rounded-2xl border border-amber-100 p-4">
+                  <div className="flex items-start gap-2.5 mb-3">
+                    <span className="text-base mt-0.5">🔄</span>
+                    <div>
+                      <p className="text-[11px] font-bold text-amber-800 mb-0.5">Low readiness today</p>
+                      <p className="text-xs text-amber-700 leading-relaxed">
+                        {isVeryLow
+                          ? 'Readiness is very low. Recovery is training — a bad day forced is two bad days.'
+                          : 'Consider modifying today\'s session. Your body is telling you something.'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {hasRunSessions && !isVeryLow && (
+                      <button
+                        onClick={() => {
+                          // Quick-log all run sessions as easy
+                          todaySessions.forEach((session, sessI) => {
+                            if (session.c.startsWith('run') && !logs[`${weekN}_${planDayIndex}_${sessI}`]?.done) {
+                              handleLogSession({ week_n: weekN, day_i: planDayIndex, session_i: sessI, done: true, effort: 4, km: Math.round(session.km * 0.8) || undefined, notes: 'Adapted — low readiness day' })
+                            }
+                          })
+                        }}
+                        className="w-full py-2 rounded-xl bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold"
+                      >
+                        🏃 Log as easy effort (−20% volume)
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        todaySessions.forEach((_, sessI) => {
+                          if (!logs[`${weekN}_${planDayIndex}_${sessI}`]?.done) {
+                            handleLogSession({ week_n: weekN, day_i: planDayIndex, session_i: sessI, done: true, effort: 1, notes: 'Rest day — low readiness' })
+                          }
+                        })
+                      }}
+                      className="w-full py-2 rounded-xl bg-white border border-amber-200 text-amber-700 text-xs font-semibold"
+                    >
+                      😴 Rest instead (log as complete)
+                    </button>
+                    <button
+                      onClick={() => {
+                        /* dismiss — do nothing, card stays until readiness is re-logged */
+                        setReadinessScore(6) // bump above threshold to dismiss
+                      }}
+                      className="w-full py-1.5 text-[10px] text-amber-500 font-medium"
+                    >
+                      Keep original plan →
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )
+            })()}
 
             {/* Sunday coach banner — next week preview */}
             {isToday && viewDate.getDay() === 0 && plan && plan.current_week < plan.total_weeks && (

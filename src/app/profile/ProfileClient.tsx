@@ -594,6 +594,46 @@ export default function ProfileClient({ email, displayName: initialDisplayName, 
         {/* Athlete profile */}
         <AthleteProfileSection />
 
+        {/* Data export */}
+        <div className="bg-white rounded-2xl border border-gray-100 px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-gray-900">Export training data</p>
+              <p className="text-xs text-gray-400 mt-0.5">Download all your logs as JSON</p>
+            </div>
+            <button
+              onClick={() => {
+                const allLogs = Object.values(logs)
+                const exportData = {
+                  exported_at: new Date().toISOString(),
+                  plan: plan ? { name: plan.name, current_week: plan.current_week, total_weeks: plan.total_weeks, race_date: plan.race_date } : null,
+                  personal_bests: personalBests,
+                  training_logs: allLogs.map(l => ({
+                    week: l.week_n, day: l.day_i, session: l.session_i,
+                    done: l.done, effort: l.effort, km: l.km, pace: l.pace,
+                    hr: l.hr, duration_mins: l.duration_secs ? Math.round(l.duration_secs / 60) : null,
+                    notes: l.notes, logged_at: l.logged_at
+                  })),
+                  summary: {
+                    total_sessions: allLogs.filter(l => l.done).length,
+                    total_km: Math.round(allLogs.filter(l => l.done).reduce((a, l) => a + (l.km ?? 0), 0) * 10) / 10,
+                  }
+                }
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `nextsplit-export-${new Date().toISOString().slice(0,10)}.json`
+                a.click()
+                URL.revokeObjectURL(url)
+              }}
+              className="py-2 px-3 rounded-xl bg-gray-100 text-gray-700 text-xs font-semibold"
+            >
+              ↓ Export
+            </button>
+          </div>
+        </div>
+
         {/* Sign out */}
         <form action={signout} onSubmit={() => {
           // Clear user-specific localStorage data on signout

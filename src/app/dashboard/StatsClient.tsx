@@ -936,6 +936,34 @@ export default function StatsClient() {
               </div>
             ) : (
               <>
+                {/* Early-weeks guidance card */}
+                {(() => {
+                  const doneSessions = Object.values(logs).filter(l => l.done).length
+                  if (plan.current_week <= 4 && doneSessions < 4) {
+                    return (
+                      <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl border border-teal-100 p-4">
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl">🌱</span>
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-teal-800 mb-1">Building your baseline</p>
+                            <p className="text-xs text-teal-700 leading-relaxed">
+                              Log {Math.max(0, 4 - doneSessions)} more session{doneSessions === 3 ? '' : 's'} to unlock ACWR, pace trend, and training zones.
+                            </p>
+                            {doneSessions > 0 && (
+                              <div className="mt-2 flex items-center gap-2">
+                                <div className="flex-1 h-1.5 bg-teal-100 rounded-full overflow-hidden">
+                                  <div className="h-full bg-teal-400 rounded-full" style={{ width: `${(doneSessions / 4) * 100}%` }} />
+                                </div>
+                                <span className="text-[10px] font-semibold text-teal-600">{doneSessions}/4</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  }
+                  return null
+                })()}
                 {plan.race_date && <RaceCountdown raceDate={plan.race_date} planName={plan.name} />}
                 <CoachingCard />
                 <SessionSummary logs={logs} weeks={weeks} />

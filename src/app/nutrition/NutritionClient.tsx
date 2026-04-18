@@ -440,6 +440,9 @@ export default function NutritionClient() {
               </button>
               <span className="text-sm font-semibold text-gray-900">
                 {isToday ? 'Today' : dateOffset === -1 ? 'Yesterday' : formatDate(viewDate)}
+                {!isToday && viewWeekN !== plan?.current_week && (
+                  <span className="text-[10px] text-gray-400 ml-1">· W{viewWeekN}</span>
+                )}
               </span>
               <button onClick={() => setDateOffset(d => d + 1)}
                 disabled={dateOffset >= 0}
