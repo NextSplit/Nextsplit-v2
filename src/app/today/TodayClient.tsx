@@ -430,6 +430,43 @@ export default function TodayClient() {
               </div>
             )}
 
+            {/* Pre-session nutrition hint */}
+            {isToday && todaySessions.some(s => s.c.startsWith('run') || s.c.startsWith('gym')) && (
+              (() => {
+                const hasLong = todaySessions.some(s => s.c === 'run-long')
+                const hasRace = todaySessions.some(s => s.c === 'run-race')
+                const hasIntOrTempo = todaySessions.some(s => s.c === 'run-int' || s.c === 'run-tempo')
+                if (hasRace) return (
+                  <div className="bg-yellow-50 rounded-2xl border border-yellow-100 px-4 py-3 flex items-start gap-2.5">
+                    <span className="text-base mt-0.5">🏁</span>
+                    <div>
+                      <p className="text-[11px] font-bold text-yellow-800 mb-0.5">Race day fuel</p>
+                      <p className="text-xs text-yellow-700 leading-relaxed">Nothing new today. Stick to what you&apos;ve trained with. Caffeine 45–60 min before start.</p>
+                    </div>
+                  </div>
+                )
+                if (hasLong) return (
+                  <div className="bg-blue-50 rounded-2xl border border-blue-100 px-4 py-3 flex items-start gap-2.5">
+                    <span className="text-base mt-0.5">🍌</span>
+                    <div>
+                      <p className="text-[11px] font-bold text-blue-800 mb-0.5">Long run fuel</p>
+                      <p className="text-xs text-blue-700 leading-relaxed">Carbs 2–3 h before. Gel every 35–45 min during. Protein within 30 min after.</p>
+                    </div>
+                  </div>
+                )
+                if (hasIntOrTempo) return (
+                  <div className="bg-orange-50 rounded-2xl border border-orange-100 px-4 py-3 flex items-start gap-2.5">
+                    <span className="text-base mt-0.5">⚡</span>
+                    <div>
+                      <p className="text-[11px] font-bold text-orange-800 mb-0.5">Quality session fuel</p>
+                      <p className="text-xs text-orange-700 leading-relaxed">Light meal 2 h before. Avoid heavy food — you need to run hard.</p>
+                    </div>
+                  </div>
+                )
+                return null
+              })()
+            )}
+
             {/* Session cards */}
             {todaySessions.map((session, sessI) => {
               const key = `${weekN}_${planDayIndex}_${sessI}`

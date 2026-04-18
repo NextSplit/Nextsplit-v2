@@ -1,9 +1,75 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { offsetDate, formatDate } from '@/lib/sessionUtils'
 import type { NutritionEvent, PlanDay } from '@/types/database'
+
+// ─── Hydration Tracker ────────────────────────────────────────────────────────
+
+function HydrationTracker({ dateKey }: { dateKey: string }) {
+  const storageKey = `hydration_${dateKey}`
+  const [glasses, setGlasses] = useState(0)
+  const goal = 8
+
+  useEffect(() => {
+    const saved = localStorage.getItem(storageKey)
+    if (saved) setGlasses(Number(saved))
+    else setGlasses(0)
+  }, [storageKey])
+
+  function add() {
+    const next = Math.min(glasses + 1, 12)
+    setGlasses(next)
+    localStorage.setItem(storageKey, String(next))
+  }
+  function remove() {
+    const next = Math.max(glasses - 1, 0)
+    setGlasses(next)
+    localStorage.setItem(storageKey, String(next))
+  }
+
+  const pct = Math.min((glasses / goal) * 100, 100)
+  const done = glasses >= goal
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-base">💧</span>
+          <span className="text-sm font-bold text-gray-900">Hydration</span>
+        </div>
+        <span className={`text-xs font-semibold ${done ? 'text-emerald-600' : 'text-gray-400'}`}>
+          {glasses}/{goal} glasses{done ? ' ✓' : ''}
+        </span>
+      </div>
+      {/* Glasses grid */}
+      <div className="flex gap-1.5 flex-wrap mb-3">
+        {Array.from({ length: goal }).map((_, i) => (
+          <div key={i} className={`w-7 h-7 rounded-lg flex items-center justify-center text-sm transition-all ${
+            i < glasses ? 'bg-blue-100 text-blue-500' : 'bg-gray-100 text-gray-300'
+          }`}>
+            💧
+          </div>
+        ))}
+      </div>
+      {/* Progress bar */}
+      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-3">
+        <div className="h-full bg-blue-400 rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
+      </div>
+      <div className="flex gap-2">
+        <button onClick={remove} disabled={glasses === 0}
+          className="flex-1 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-500 disabled:opacity-30">
+          −
+        </button>
+        <button onClick={add}
+          className="flex-2 flex-grow-[2] py-2 rounded-xl bg-blue-50 text-blue-600 text-sm font-semibold border border-blue-100">
+          + Add glass
+        </button>
+      </div>
+    </div>
+  )
+}
 
 // ─── Category config ──────────────────────────────────────────────────────────
 
@@ -174,6 +240,7 @@ export default function NutritionClient() {
 
   const viewDate = offsetDate(dateOffset)
   const isToday = dateOffset === 0
+  const dateKey = viewDate.toISOString().split('T')[0]
 
   // Map viewed date to plan day
   const dayOfWeek = viewDate.getDay()
@@ -251,6 +318,9 @@ export default function NutritionClient() {
 
         {/* Day summary */}
         {entries.length > 0 && <DaySummary entries={entries} />}
+
+        {/* Hydration tracker — always visible */}
+        <HydrationTracker dateKey={dateKey} />
 
         {/* Category filter */}
         {categories.length > 1 && (
