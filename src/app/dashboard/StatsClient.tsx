@@ -5,6 +5,7 @@ import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useRaces } from '@/hooks/useRaces'
 import { useWellness } from '@/hooks/useWellness'
+import { computeStreak, computeConsistency, predictRaceTime } from '@/lib/streak'
 import CoachingCard from '@/components/CoachingCard'
 import type { PlanWeek, TrainingLog, Race } from '@/types/database'
 
@@ -965,6 +966,43 @@ export default function StatsClient() {
                   return null
                 })()}
                 {plan.race_date && <RaceCountdown raceDate={plan.race_date} planName={plan.name} />}
+                {/* Predicted race time — shown when race date set and enough logs exist */}
+                {plan.race_date && (() => {
+                  const allLogs = logsArray(logs)
+                  const targetKm = plan.goal?.toLowerCase().includes('marathon') ? 42.195
+                    : plan.goal?.toLowerCase().includes('half') ? 21.0975
+                    : plan.goal?.toLowerCase().includes('10k') ? 10
+                    : plan.goal?.toLowerCase().includes('5k') ? 5
+                    : plan.name?.toLowerCase().includes('marathon') ? 42.195
+                    : plan.name?.toLowerCase().includes('half') ? 21.0975
+                    : plan.name?.toLowerCase().includes('10k') ? 10
+                    : plan.name?.toLowerCase().includes('5k') ? 5
+                    : null
+                  if (!targetKm) return null
+                  const prediction = predictRaceTime(targetKm, allLogs, plan.current_week)
+                  if (!prediction) return null
+                  const confidenceColour = prediction.confidence === 'high' ? 'text-emerald-600' : prediction.confidence === 'medium' ? 'text-amber-600' : 'text-gray-400'
+                  const daysToRace = daysUntil(plan.race_date)
+                  return (
+                    <div className="bg-white rounded-2xl border border-gray-100 px-4 py-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Predicted finish time</p>
+                          <div className="text-3xl font-black text-gray-900">{prediction.predictedTimeStr}</div>
+                          <div className="text-xs text-gray-400 mt-0.5">{prediction.predictedPaceStr}/km · {prediction.basisLabel}</div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`text-[10px] font-bold uppercase ${confidenceColour}`}>
+                            {prediction.confidence} confidence
+                          </span>
+                          {daysToRace > 0 && (
+                            <p className="text-[10px] text-gray-400 mt-1">{daysToRace} days to improve</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })()}
                 <CoachingCard />
                 <SessionSummary logs={logs} weeks={weeks} />
                 <WeeklyVolumeChart logs={logs} weeks={weeks} />

@@ -12,6 +12,7 @@ import {
   type BadgeStats
 } from '@/lib/xp'
 import { computePersonalBests } from '@/lib/personalBests'
+import { computeStreak, computeConsistency } from '@/lib/streak'
 import type { TrainingLog } from '@/types/database'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -440,6 +441,13 @@ export default function ProfileClient({ email, displayName: initialDisplayName, 
     return computePersonalBests(allLogs)
   }, [logs])
 
+  const streak = useMemo(() => computeStreak(Object.values(logs)), [logs])
+  const consistency = useMemo(() => plan
+    ? computeConsistency(Object.values(logs), weeks, plan.current_week)
+    : { thisWeekPct: 0, last4WeekPct: 0 },
+    [logs, weeks, plan]
+  )
+
   return (
     <div className="min-h-screen bg-[#f8f8f6] pb-24">
       {/* Header */}
@@ -511,6 +519,30 @@ export default function ProfileClient({ email, displayName: initialDisplayName, 
         <XPBar xp={xp} />
 
         {/* Training summary */}
+        {/* Streak + Consistency */}
+        {streak.current > 0 || streak.totalDaysLogged > 0 ? (
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+            <div className="grid grid-cols-2 divide-x divide-gray-50">
+              <div className="px-4 py-4 text-center">
+                <div className={`text-3xl font-black ${streak.current >= 7 ? 'text-amber-500' : streak.current >= 3 ? 'text-orange-500' : 'text-gray-700'}`}>
+                  {streak.current > 0 ? `🔥 ${streak.current}` : '—'}
+                </div>
+                <div className="text-[10px] text-gray-400 mt-1">day streak</div>
+                {streak.longest > streak.current && (
+                  <div className="text-[9px] text-gray-300 mt-0.5">best: {streak.longest}</div>
+                )}
+              </div>
+              <div className="px-4 py-4 text-center">
+                <div className={`text-3xl font-black ${consistency.last4WeekPct >= 80 ? 'text-emerald-600' : consistency.last4WeekPct >= 60 ? 'text-amber-500' : 'text-gray-500'}`}>
+                  {consistency.last4WeekPct}%
+                </div>
+                <div className="text-[10px] text-gray-400 mt-1">4-week consistency</div>
+                <div className="text-[9px] text-gray-300 mt-0.5">this week: {consistency.thisWeekPct}%</div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         <TrainingSummary logs={logs} />
 
         {/* Personal Bests */}

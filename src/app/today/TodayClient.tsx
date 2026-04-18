@@ -8,6 +8,7 @@ import type { PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
 import { getSessionXP } from '@/lib/xp'
 import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
+import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/streak'
 import WeatherWidget from '@/components/WeatherWidget'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
 import FocusMode from '@/components/FocusMode'
@@ -381,7 +382,7 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
 // ─── Main Today Component ─────────────────────────────────────────────────────
 
 export default function TodayClient() {
-  const { plan, currentWeek, loading: planLoading, advanceWeek } = useActivePlan()
+  const { plan, weeks, currentWeek, loading: planLoading, advanceWeek } = useActivePlan()
   const { logs, logSession, undoSession, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
 
   const [dateOffset, setDateOffset] = useState(0)
@@ -479,6 +480,17 @@ export default function TodayClient() {
   const todaySessions = planDay?.sessions ?? []
   const doneTodayCount = todaySessions.filter((_, i) => logs[`${weekN}_${planDayIndex}_${i}`]?.done).length
 
+  // Streak + consistency
+  const allLogsArray = Object.values(logs)
+  const streak = computeStreak(allLogsArray)
+  const consistency = plan ? computeConsistency(allLogsArray, weeks, weekN) : { thisWeekPct: 0, last4WeekPct: 0 }
+
+  // Monday weekly report — shown on Mondays when current week has just started
+  const isMondayStart = new Date().getDay() === 1 && plan && weekN > 1
+  const weeklyReport = isMondayStart
+    ? computeWeeklyReport(allLogsArray, weeks, weekN)
+    : null
+
   return (
     <div className="min-h-screen bg-[#f8f8f6] pb-24">
       {/* Header */}
@@ -487,6 +499,16 @@ export default function TodayClient() {
           <div className="flex items-center justify-between mb-3">
             <span className="text-lg font-bold text-gray-900">NextSplit</span>
             <div className="flex items-center gap-2">
+              {/* Streak pill */}
+              {streak.current > 0 && (
+                <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 ${
+                  streak.current >= 7 ? 'bg-amber-100 text-amber-700' :
+                  streak.current >= 3 ? 'bg-orange-50 text-orange-600' :
+                  'bg-gray-100 text-gray-500'
+                }`}>
+                  🔥 {streak.current}
+                </span>
+              )}
               {plan && (
                 <span className="text-[11px] text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full font-medium">
                   W{weekN}/{plan.total_weeks}
@@ -554,6 +576,57 @@ export default function TodayClient() {
 
             {/* Wellness check-in — today only */}
             {isToday && <WellnessCheckIn onReadiness={setReadinessScore} />}
+
+            {/* Monday weekly report */}
+            {isToday && weeklyReport && (() => {
+              const r = weeklyReport
+              const vsArrow = r.vsLastWeek === 'up' ? '↑' : r.vsLastWeek === 'down' ? '↓' : '→'
+              const vsColour = r.vsLastWeek === 'up' ? 'text-emerald-600' : r.vsLastWeek === 'down' ? 'text-red-500' : 'text-gray-500'
+              return (
+                <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-violet-100/50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-[11px] font-bold text-violet-800 uppercase tracking-wide">Week {r.weekN} · {r.weekTitle}</p>
+                        <p className="text-xs text-violet-600 mt-0.5">Your weekly report</p>
+                      </div>
+                      <span className="text-2xl">{r.completionPct >= 90 ? '🌟' : r.completionPct >= 60 ? '✅' : '💪'}</span>
+                    </div>
+                  </div>
+                  <div className="px-4 py-3 grid grid-cols-3 gap-3 border-b border-violet-100/30">
+                    <div className="text-center">
+                      <div className="text-lg font-black text-violet-900">{r.completionPct}%</div>
+                      <div className="text-[10px] text-violet-500">sessions done</div>
+                      <div className="text-[9px] text-violet-400">{r.sessionsDone}/{r.sessionsPlanned}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-black text-violet-900">{r.kmLogged}</div>
+                      <div className="text-[10px] text-violet-500">km logged</div>
+                      <div className="text-[9px] text-violet-400">of {r.kmPlanned} planned</div>
+                    </div>
+                    <div className="text-center">
+                      <div className={`text-lg font-black ${vsColour}`}>{vsArrow} {r.lastWeekKm > 0 ? Math.abs(Math.round((r.kmLogged - r.lastWeekKm) * 10) / 10) : '—'}</div>
+                      <div className="text-[10px] text-violet-500">vs prev week</div>
+                      {r.avgEffort && <div className="text-[9px] text-violet-400">RPE {r.avgEffort} avg</div>}
+                    </div>
+                  </div>
+                  {(r.bestSession || r.lookAheadNote) && (
+                    <div className="px-4 py-3 space-y-1.5">
+                      {r.bestSession && (
+                        <p className="text-xs text-violet-700">
+                          <span className="font-semibold">Best session:</span> {r.bestSession}
+                        </p>
+                      )}
+                      {r.lookAheadNote && (
+                        <p className="text-xs text-violet-600 leading-relaxed line-clamp-2">
+                          <span className="font-semibold">This week:</span> {r.lookAheadNote}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
 
             {/* Low readiness suggestion */}
             {isToday && readinessScore !== null && readinessScore <= 5 && todaySessions.length > 0 && (() => {
