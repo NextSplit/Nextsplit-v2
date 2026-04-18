@@ -228,7 +228,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
         throw new Error(body.error ?? 'Failed to activate plan')
       }
       // Redirect to dashboard
-      window.location.href = '/dashboard'
+      window.location.href = '/today'
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
       setActivating(false)

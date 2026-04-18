@@ -329,6 +329,46 @@ export default function ProfileClient({ email, displayName }: { email: string; d
         {/* Badges */}
         <BadgeGrid earned={earnedBadgeIds} />
 
+        {/* Active plan + change */}
+        {plan && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+            <div className="flex items-center justify-between mb-1">
+              <div className="text-sm font-bold text-gray-900">Active Plan</div>
+              <a
+                href="/onboarding/predetermined"
+                className="text-xs font-semibold text-[#0D9488] bg-teal-50 px-3 py-1.5 rounded-full"
+              >
+                Change plan
+              </a>
+            </div>
+            <div className="text-sm text-gray-600 font-medium">{plan.name}</div>
+            <div className="text-xs text-gray-400 mt-0.5">
+              Week {plan.current_week} of {plan.total_weeks}
+              {plan.race_date && ` · Race: ${new Date(plan.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
+            </div>
+            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mt-3">
+              <div
+                className="h-full bg-[#0D9488] rounded-full"
+                style={{ width: `${Math.round((plan.current_week / plan.total_weeks) * 100)}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-amber-600 mt-2.5 bg-amber-50 rounded-lg px-2.5 py-1.5">
+              ⚠️ Switching plans archives your current plan. Your logs are kept.
+            </p>
+          </div>
+        )}
+
+        {!plan && (
+          <a
+            href="/onboarding/predetermined"
+            className="block bg-white rounded-2xl border border-dashed border-gray-200 p-5 text-center"
+          >
+            <div className="text-2xl mb-1">📋</div>
+            <div className="text-sm font-semibold text-gray-900">No active plan</div>
+            <div className="text-xs text-[#0D9488] mt-1 font-medium">Choose a plan →</div>
+          </a>
+        )}
+
         {/* Strava */}
         <StravaConnect clientId={stravaClientId} />
 
