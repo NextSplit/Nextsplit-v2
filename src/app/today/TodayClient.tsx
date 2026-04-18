@@ -356,14 +356,18 @@ export default function TodayClient() {
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
             <span className="text-lg font-bold text-gray-900">NextSplit</span>
-            {plan && todaySessions.length > 0 && isToday && (
-              <span className={`text-xs font-semibold ${doneTodayCount === todaySessions.length ? 'text-emerald-500' : 'text-gray-400'}`}>
-                {doneTodayCount}/{todaySessions.length} done
-              </span>
-            )}
-            {plan && (!todaySessions.length || !isToday) && (
-              <span className="text-xs text-gray-400">Week {weekN} of {plan.total_weeks}</span>
-            )}
+            <div className="flex items-center gap-2">
+              {plan && (
+                <span className="text-[11px] text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full font-medium">
+                  W{weekN}/{plan.total_weeks}
+                </span>
+              )}
+              {plan && todaySessions.length > 0 && isToday && (
+                <span className={`text-xs font-semibold ${doneTodayCount === todaySessions.length ? 'text-emerald-500' : 'text-gray-400'}`}>
+                  {doneTodayCount}/{todaySessions.length} done
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Date navigation */}

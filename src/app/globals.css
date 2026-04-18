@@ -36,6 +36,18 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Date inputs on dark backgrounds */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+/* Prevent iOS zoom on input focus */
+input, select, textarea {
+  font-size: 16px;
+}
+
 /* Range input styling */
 input[type="range"] {
   -webkit-appearance: none;
