@@ -7,6 +7,9 @@ import { getSessionType, fmtKm, formatDate, offsetDate } from '@/lib/sessionUtil
 import type { PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
 import { getSessionXP } from '@/lib/xp'
+import WeatherWidget from '@/components/WeatherWidget'
+import WellnessCheckIn from '@/components/WellnessCheckIn'
+import FocusMode from '@/components/FocusMode'
 
 /** Decode HTML entities like &middot; &ndash; &amp; */
 function decodeHtml(str: string): string {
@@ -166,9 +169,10 @@ interface SessionCardProps {
   log: TrainingLog | null
   onTap: () => void
   onQuickDone: () => void
+  onFocus: () => void
 }
 
-function SessionCard({ session, log, onTap, onQuickDone }: SessionCardProps) {
+function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardProps) {
   const cfg = getSessionType(session.c)
   const done = !!log?.done
 
@@ -177,10 +181,13 @@ function SessionCard({ session, log, onTap, onQuickDone }: SessionCardProps) {
       className={`rounded-2xl border transition-all ${done ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-100 bg-white'} overflow-hidden`}
     >
       <div className="flex items-start gap-3 p-4" onClick={onTap}>
-        {/* Type indicator */}
-        <div className={`w-10 h-10 rounded-xl ${cfg.colour} flex items-center justify-center flex-shrink-0 text-lg`}>
+        {/* Type indicator — tap for focus mode */}
+        <button
+          onClick={e => { e.stopPropagation(); onFocus() }}
+          className={`w-10 h-10 rounded-xl ${cfg.colour} flex items-center justify-center flex-shrink-0 text-lg active:scale-95 transition-transform`}
+        >
           {cfg.emoji}
-        </div>
+        </button>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
@@ -238,6 +245,7 @@ export default function TodayClient() {
 
   const [dateOffset, setDateOffset] = useState(0)
   const [modalSession, setModalSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
+  const [focusSession, setFocusSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
   const [undoInfo, setUndoInfo] = useState<{ logId: string; timer: ReturnType<typeof setTimeout> } | null>(null)
   const [undoLabel, setUndoLabel] = useState('')
   const [undoXP, setUndoXP] = useState(0)
@@ -377,6 +385,14 @@ export default function TodayClient() {
         {/* Sessions */}
         {!loading && plan && (
           <>
+            {/* Weather — today only, running sessions only */}
+            {isToday && todaySessions.some(s => s.c.startsWith('run')) && (
+              <WeatherWidget />
+            )}
+
+            {/* Wellness check-in — today only */}
+            {isToday && <WellnessCheckIn />}
+
             {/* Week note — shown at top on today only */}
             {isToday && currentWeek?.note && (
               <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
@@ -426,6 +442,7 @@ export default function TodayClient() {
                   log={log}
                   onTap={() => setModalSession({ session, dayI: planDayIndex, sessI })}
                   onQuickDone={() => handleQuickDone(planDayIndex, sessI, session)}
+                  onFocus={() => setFocusSession({ session, dayI: planDayIndex, sessI })}
                 />
               )
             })}
@@ -476,6 +493,19 @@ export default function TodayClient() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Focus mode */}
+      {focusSession && plan && (
+        <FocusMode
+          session={focusSession.session}
+          isLogged={!!logs[`${weekN}_${focusSession.dayI}_${focusSession.sessI}`]?.done}
+          onClose={() => setFocusSession(null)}
+          onLog={() => {
+            setFocusSession(null)
+            setModalSession(focusSession)
+          }}
+        />
       )}
 
       {/* Log modal */}
