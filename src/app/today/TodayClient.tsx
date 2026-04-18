@@ -50,6 +50,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
   const [durationMins, setDurationMins] = useState(
     existingLog?.duration_secs ? Math.round(existingLog.duration_secs / 60) : 0
   )
+  const [paceInput, setPaceInput] = useState(existingLog?.pace ?? '')
   const [saving, setSaving] = useState(false)
 
   async function handleSave() {
@@ -64,6 +65,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
         km: km > 0 ? km : undefined,
         notes: notes.trim() || undefined,
         duration_secs: durationMins > 0 ? durationMins * 60 : undefined,
+        pace: paceInput.trim() || undefined,
       })
       onClose()
     } finally {
@@ -131,7 +133,6 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
           </div>
         )}
 
-        {/* Notes */}
         {/* Duration input */}
         <div className="mb-5">
           <label className="text-sm font-semibold text-gray-700 block mb-2">Duration (optional)</label>
@@ -150,6 +151,23 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
             >+</button>
           </div>
         </div>
+
+        {/* Pace — running sessions only */}
+        {session.km > 0 && (
+          <div className="mb-5">
+            <label className="text-sm font-semibold text-gray-700 block mb-2">Pace (optional)</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={paceInput}
+                onChange={e => setPaceInput(e.target.value)}
+                placeholder="e.g. 5:30"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0D9488] pr-14"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">/km</span>
+            </div>
+          </div>
+        )}
 
         {/* Notes */}
         <div className="mb-6">
@@ -273,6 +291,7 @@ export default function TodayClient() {
   const { logs, logSession, undoSession, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
 
   const [dateOffset, setDateOffset] = useState(0)
+  const [readinessScore, setReadinessScore] = useState<number | null>(null)
   const [modalSession, setModalSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
   const [focusSession, setFocusSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
   const [undoInfo, setUndoInfo] = useState<{ logId: string; timer: ReturnType<typeof setTimeout> } | null>(null)
@@ -425,26 +444,35 @@ export default function TodayClient() {
             )}
 
             {/* Wellness check-in — today only */}
-            {isToday && <WellnessCheckIn />}
+            {isToday && <WellnessCheckIn onReadiness={setReadinessScore} />}
+
+            {/* Low readiness suggestion */}
+            {isToday && readinessScore !== null && readinessScore <= 5 && todaySessions.length > 0 && (
+              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
+                <span className="text-base mt-0.5">🔄</span>
+                <div>
+                  <p className="text-[11px] font-bold text-amber-800 mb-0.5">Low readiness today</p>
+                  <p className="text-xs text-amber-700 leading-relaxed">
+                    {readinessScore <= 3
+                      ? 'Consider converting today\'s session to an easy walk or full rest. Recovery is training.'
+                      : 'You could reduce today\'s intensity — drop pace by 30s/km or cut volume by 20%. Listen to your body.'}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Sunday coach banner — next week preview */}
-            {isToday && viewDate.getDay() === 0 && plan && (() => {
-              const nextWeek = plan.weeks_data && Array.isArray((plan as any).weeks_data)
-                ? null : null // weeks come from useActivePlan hook
-              const nextWeekData = currentWeek ? { n: weekN + 1 } : null
-              if (!nextWeekData) return null
-              return (
-                <div className="bg-gradient-to-r from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 px-4 py-3 flex items-start gap-2.5">
-                  <span className="text-base mt-0.5">🗓️</span>
-                  <div>
-                    <p className="text-[11px] font-bold text-violet-800 mb-0.5">Week {weekN} complete!</p>
-                    <p className="text-xs text-violet-700 leading-relaxed">
-                      Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what&apos;s ahead.
-                    </p>
-                  </div>
+            {isToday && viewDate.getDay() === 0 && plan && plan.current_week < plan.total_weeks && (
+              <div className="bg-gradient-to-r from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 px-4 py-3 flex items-start gap-2.5">
+                <span className="text-base mt-0.5">🗓️</span>
+                <div>
+                  <p className="text-[11px] font-bold text-violet-800 mb-0.5">Week {weekN} complete!</p>
+                  <p className="text-xs text-violet-700 leading-relaxed">
+                    Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what&apos;s ahead.
+                  </p>
                 </div>
-              )
-            })()}
+              </div>
+            )}
 
             {/* Week note — shown at top on today only */}
             {isToday && currentWeek?.note && (
@@ -571,6 +599,34 @@ export default function TodayClient() {
                 </div>
               )
             })}
+
+            {/* Inline nutrition strip — today only, if plan has nutrition data */}
+            {isToday && planDay?.nut && planDay.nut.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-gray-50 flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-gray-700">🍽️ Today&apos;s nutrition</span>
+                  <a href="/nutrition" className="text-[10px] text-[#0D9488] font-semibold">View all →</a>
+                </div>
+                <div className="divide-y divide-gray-50">
+                  {planDay.nut.slice(0, 3).map((entry, i) => (
+                    <div key={i} className="px-4 py-2 flex items-start gap-2.5">
+                      <span className="text-xs mt-0.5 flex-shrink-0">
+                        {entry.cat === 'hydration' ? '💧' : entry.cat === 'fuel' ? '⚡' : entry.cat === 'macro' ? '📊' : '🍽️'}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-gray-800 leading-tight">{entry.l}</div>
+                        {entry.t && <div className="text-[10px] text-gray-400 mt-0.5">{entry.t}</div>}
+                      </div>
+                    </div>
+                  ))}
+                  {planDay.nut.length > 3 && (
+                    <div className="px-4 py-2">
+                      <a href="/nutrition" className="text-[10px] text-[#0D9488]">+{planDay.nut.length - 3} more on Fuel tab</a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Sleep note */}
             {planDay?.sleep && (

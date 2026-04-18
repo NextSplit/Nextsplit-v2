@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { useSupabase } from '@/hooks/useSupabase'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
@@ -399,6 +400,7 @@ function AthleteProfileSection() {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function ProfileClient({ email, displayName: initialDisplayName, isStravaConnected }: { email: string; displayName: string; isStravaConnected: boolean }) {
+  const router = useRouter()
   const supabase = useSupabase()
   const { plan, weeks } = useActivePlan()
   const { logs } = useTrainingLog(plan?.id ?? null)
@@ -420,6 +422,7 @@ export default function ProfileClient({ email, displayName: initialDisplayName, 
       if (user) {
         await (supabase as any).from('profiles').upsert({ id: user.id, display_name: nameInput.trim() })
         setDisplayName(nameInput.trim())
+        router.refresh()
       }
     } finally {
       setSavingName(false)

@@ -111,7 +111,7 @@ function RaceCountdown({ raceDate, planName }: { raceDate: string; planName: str
             <circle
               cx="18" cy="18" r="15.9" fill="none"
               stroke="#0D9488" strokeWidth="3"
-              strokeDasharray={`${Math.max(0, Math.min(100, (1 - days / 365) * 100))} 100`}
+              strokeDasharray={`${Math.max(0, Math.min(100, (1 - Math.max(days, 0) / Math.max(daysUntil(raceDate) + days, 1)) * 100))} 100`}
               strokeLinecap="round"
             />
           </svg>
@@ -285,7 +285,7 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
 function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
   const paceData = useMemo(() => {
     return logsArray(logs)
-      .filter(l => l.done && l.pace && l.km && l.km >= 5)
+      .filter(l => l.done && l.pace && l.km && l.km >= 3)
       .map(l => ({ week: l.week_n, pace: paceToSecs(l.pace!), km: l.km! }))
       .sort((a, b) => a.week - b.week)
       .slice(-10)
@@ -413,7 +413,7 @@ function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; we
   )
 }
 
-// ─── Main Stats Component ─────────────────────────────────────────────────────
+// ─── Main Stats Component — see bottom of file ───────────────────────────────
 
 // ─── Helpers shared with Races/Pace ──────────────────────────────────────────
 
@@ -502,6 +502,7 @@ function AddRaceModal({ onClose, onAdd }: {
         <div className="mb-4">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Race date *</label>
           <input type="date" value={date} onChange={e => setDate(e.target.value)}
+            min={new Date().toISOString().split('T')[0]}
             className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
         </div>
         <div className="mb-4">
@@ -773,8 +774,10 @@ function WellnessTrend() {
   const trend = scores[scores.length - 1] - scores[0]
 
   const dayLabels = last7.map(l => {
-    const d = new Date(l.log_date)
-    return d.toLocaleDateString('en-GB', { weekday: 'short' }).slice(0, 1)
+    // Parse YYYY-MM-DD safely without timezone shift
+    const [y, mo, d] = l.log_date.split('-').map(Number)
+    const date = new Date(y, mo - 1, d)
+    return date.toLocaleDateString('en-GB', { weekday: 'short' }).slice(0, 1)
   })
 
   return (
