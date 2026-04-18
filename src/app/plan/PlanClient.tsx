@@ -1,0 +1,229 @@
+'use client'
+
+import { useState } from 'react'
+import { useActivePlan } from '@/hooks/useActivePlan'
+import { useTrainingLog } from '@/hooks/useTrainingLog'
+import { getSessionType, fmtKm } from '@/lib/sessionUtils'
+import type { PlanWeek, PlanDay, PlanSession } from '@/types/database'
+
+const PHASE_LABELS: Record<string, { label: string; colour: string }> = {
+  p1: { label: 'Phase 1', colour: 'bg-teal-100 text-teal-800' },
+  p2: { label: 'Phase 2', colour: 'bg-violet-100 text-violet-800' },
+  tr: { label: 'Travel', colour: 'bg-amber-100 text-amber-800' },
+}
+
+const WEEK_TYPE: Record<string, { label: string; colour: string }> = {
+  k: { label: 'Build', colour: 'text-blue-600' },
+  d: { label: 'Deload', colour: 'text-orange-500' },
+  p: { label: 'Peak', colour: 'text-red-600' },
+  r: { label: 'Race', colour: 'text-yellow-600' },
+}
+
+function SessionPill({ session }: { session: PlanSession }) {
+  const cfg = getSessionType(session.c)
+  return (
+    <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${cfg.colour} ${cfg.textColour} text-[10px] font-medium`}>
+      <span className={`w-1 h-1 rounded-full ${cfg.dot}`} />
+      {session.n.length > 22 ? session.n.slice(0, 22) + '…' : session.n}
+      {session.km > 0 && <span className="opacity-70 ml-0.5">{fmtKm(session.km)}</span>}
+    </div>
+  )
+}
+
+function DayRow({ day, dayIndex, weekN, logs, isToday }: {
+  day: PlanDay; dayIndex: number; weekN: number
+  logs: Record<string, import('@/types/database').TrainingLog>; isToday: boolean
+}) {
+  const allDone = day.sessions.length > 0 && day.sessions.every((_, i) => logs[`${weekN}_${dayIndex}_${i}`]?.done)
+
+  return (
+    <div className={`px-4 py-3 border-b border-gray-50 last:border-0 ${isToday ? 'bg-teal-50/40' : ''}`}>
+      <div className="flex items-start gap-3">
+        <div className="w-10 text-center flex-shrink-0">
+          <div className={`text-xs font-bold ${isToday ? 'text-[#0D9488]' : 'text-gray-400'}`}>{day.d}</div>
+          {isToday && <div className="text-[9px] text-[#0D9488]">Today</div>}
+        </div>
+        <div className="flex-1 min-w-0">
+          {day.sessions.length === 0 ? (
+            <span className="text-xs text-gray-400 italic">Rest</span>
+          ) : (
+            <div className="flex flex-wrap gap-1">
+              {day.sessions.map((s, i) => <SessionPill key={i} session={s} />)}
+            </div>
+          )}
+        </div>
+        {allDone && (
+          <div className="w-5 h-5 rounded-full bg-emerald-400 flex items-center justify-center flex-shrink-0">
+            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function WeekRow({ week, isCurrent, logs, todayDayIndex }: {
+  week: PlanWeek; isCurrent: boolean
+  logs: Record<string, import('@/types/database').TrainingLog>; todayDayIndex: number
+}) {
+  const [open, setOpen] = useState(isCurrent)
+  const phase = PHASE_LABELS[week.ph] ?? { label: week.ph, colour: 'bg-gray-100 text-gray-700' }
+  const weekType = WEEK_TYPE[week.b] ?? { label: '', colour: '' }
+  const totalSessions = week.days.reduce((a, d) => a + d.sessions.length, 0)
+  const doneSessions = week.days.reduce((acc, day, dayI) =>
+    acc + day.sessions.filter((_, sessI) => logs[`${week.n}_${dayI}_${sessI}`]?.done).length, 0)
+
+  return (
+    <div className={`rounded-2xl border overflow-hidden ${isCurrent ? 'border-[#0D9488] shadow-sm' : 'border-gray-100'} bg-white`}>
+      {/* Week header */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-3 p-4 text-left"
+      >
+        {/* Week number */}
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold ${
+          isCurrent ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-500'
+        }`}>
+          {week.n}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${phase.colour}`}>
+              {phase.label}
+            </span>
+            {weekType.label && (
+              <span className={`text-[10px] font-semibold ${weekType.colour}`}>{weekType.label}</span>
+            )}
+            {isCurrent && (
+              <span className="text-[10px] font-bold text-[#0D9488]">← Current</span>
+            )}
+          </div>
+          <div className="text-sm font-semibold text-gray-900 truncate">{week.title}</div>
+          <div className="text-[11px] text-gray-400 mt-0.5">
+            {week.s}–{week.e} · {week.kl[0]}–{week.kl[1]}km
+            {totalSessions > 0 && ` · ${doneSessions}/${totalSessions} done`}
+          </div>
+        </div>
+
+        {/* Progress for current week */}
+        {isCurrent && totalSessions > 0 && (
+          <div className="text-right flex-shrink-0">
+            <div className="text-lg font-bold text-[#0D9488]">{doneSessions}</div>
+            <div className="text-[10px] text-gray-400">/{totalSessions}</div>
+          </div>
+        )}
+
+        <div className={`text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}>
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </button>
+
+      {/* Week note */}
+      {open && week.note && (
+        <div className="px-4 pb-2">
+          <p className="text-xs text-amber-700 bg-amber-50 rounded-xl px-3 py-2 leading-relaxed">{week.note}</p>
+        </div>
+      )}
+
+      {/* Day rows */}
+      {open && (
+        <div className="border-t border-gray-50">
+          {week.days.map((day, dayI) => (
+            <DayRow
+              key={dayI}
+              day={day}
+              dayIndex={dayI}
+              weekN={week.n}
+              logs={logs}
+              isToday={isCurrent && dayI === todayDayIndex}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function PlanClient() {
+  const { plan, weeks, currentWeek, loading } = useActivePlan()
+  const { logs, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
+
+  // Today's day index Mon=0..Sun=6
+  const d = new Date().getDay()
+  const todayDayIndex = d === 0 ? 6 : d - 1
+
+  if (loading || logsLoading) {
+    return (
+      <div className="min-h-screen bg-[#f8f8f6] pb-24 pt-16">
+        <div className="max-w-lg mx-auto px-4 space-y-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (!plan) {
+    return (
+      <div className="min-h-screen bg-[#f8f8f6] pb-24 pt-16 flex items-center justify-center">
+        <div className="text-center px-4">
+          <div className="text-5xl mb-4">📋</div>
+          <h2 className="text-base font-bold text-gray-900 mb-2">No active plan</h2>
+          <a href="/onboarding" className="inline-block bg-[#0D9488] text-white px-6 py-3 rounded-xl text-sm font-semibold mt-4">
+            Choose a plan →
+          </a>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+        <div className="max-w-lg mx-auto">
+          <h1 className="text-lg font-bold text-gray-900">{plan.name}</h1>
+          <p className="text-xs text-gray-400 mt-0.5">
+            Week {plan.current_week} of {plan.total_weeks} · {weeks.length} weeks total
+            {plan.race_date && ` · Race: ${new Date(plan.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
+          </p>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="bg-white border-b border-gray-100 px-4 py-3">
+        <div className="max-w-lg mx-auto">
+          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#0D9488] rounded-full transition-all"
+              style={{ width: `${(plan.current_week / plan.total_weeks) * 100}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+            <span>Week 1</span>
+            <span>{Math.round((plan.current_week / plan.total_weeks) * 100)}% complete</span>
+            <span>Week {plan.total_weeks}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
+        {weeks.map(week => (
+          <WeekRow
+            key={week.n}
+            week={week}
+            isCurrent={week.n === plan.current_week}
+            logs={logs}
+            todayDayIndex={todayDayIndex}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}

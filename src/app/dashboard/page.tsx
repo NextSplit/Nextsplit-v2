@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation'
 import { signout } from '@/app/auth/actions'
 import type { Profile, UserPlan } from '@/types/database'
 
+// /dashboard redirects to /today — keeping the old route for backward compat
+// export { default } from '@/app/today/page'
+
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

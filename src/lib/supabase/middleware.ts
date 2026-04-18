@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (user && isAuthRoute && !url.pathname.startsWith('/auth/callback')) {
-    url.pathname = '/dashboard'
+    url.pathname = '/today'
     return NextResponse.redirect(url)
   }
 

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import BottomNavWrapper from '@/components/BottomNavWrapper'
 
 export const metadata: Metadata = {
   title: 'NextSplit — Intelligent Running Training',
@@ -25,8 +26,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: 'system-ui, -apple-system, sans-serif', margin: 0 }}>
+      <body style={{ fontFamily: 'system-ui, -apple-system, sans-serif', margin: 0, background: '#f8f8f6' }}>
         {children}
+        <BottomNavWrapper />
       </body>
     </html>
   )
