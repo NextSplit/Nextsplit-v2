@@ -685,6 +685,37 @@ export default function TodayClient() {
               </div>
             )}
             {/* Week complete → advance prompt (Sunday or all sessions done across whole week) */}
+            {/* Tomorrow's sessions preview — shown when today is all done */}
+            {isToday && todaySessions.length > 0 && doneTodayCount === todaySessions.length && (() => {
+              const tomorrowDayIndex = (planDayIndex + 1) % 7
+              const tomorrowSessions = currentWeek?.days[tomorrowDayIndex]?.sessions ?? []
+              if (tomorrowSessions.length === 0) return null
+              return (
+                <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                  <div className="px-4 py-2.5 border-b border-gray-50 flex items-center gap-2">
+                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Tomorrow</span>
+                  </div>
+                  <div className="px-4 py-3 space-y-1.5">
+                    {tomorrowSessions.map((s, i) => {
+                      const cfg = getSessionType(s.c)
+                      return (
+                        <div key={i} className="flex items-center gap-2.5">
+                          <span className={`w-7 h-7 rounded-lg ${cfg.colour} flex items-center justify-center text-sm flex-shrink-0`}>
+                            {cfg.emoji}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-xs font-semibold text-gray-800">{s.n}</span>
+                            {s.km > 0 && <span className="text-[10px] text-gray-400 ml-1.5">{fmtKm(s.km)}</span>}
+                          </div>
+                          <span className={`text-[10px] font-semibold ${cfg.textColour}`}>{cfg.label}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
+            {/* Week complete → advance prompt */}
             {isToday && plan && plan.current_week < plan.total_weeks && (() => {
               // Check if the entire current week is done
               const weekDone = currentWeek ? currentWeek.days.every((day, dayI) =>
