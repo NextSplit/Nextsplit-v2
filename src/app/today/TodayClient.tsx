@@ -102,7 +102,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
         {/* Effort slider */}
         <div className="mb-5">
           <div className="flex justify-between items-center mb-2">
-            <label className="text-sm font-semibold text-gray-700">Effort</label>
+            <label className="text-sm font-semibold text-gray-700">Effort (RPE)</label>
             <span className="text-2xl font-bold text-[#0D9488]">{effort}<span className="text-sm text-gray-400">/10</span></span>
           </div>
           <input

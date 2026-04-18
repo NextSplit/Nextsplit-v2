@@ -282,7 +282,7 @@ function TrainingSummary({ logs }: { logs: Record<string, TrainingLog> }) {
       {[
         { label: 'Sessions', value: all.length, unit: '' },
         { label: 'km logged', value: Math.round(totalKm), unit: 'km' },
-        { label: 'Avg effort', value: avgEffort, unit: '/10' },
+        { label: 'Avg RPE', value: avgEffort, unit: '/10' },
       ].map(stat => (
         <div key={stat.label} className="bg-white rounded-2xl border border-gray-100 p-4 text-center">
           <div className="text-xl font-black text-gray-900">
@@ -533,7 +533,13 @@ export default function ProfileClient({ email, displayName: initialDisplayName, 
         <AthleteProfileSection />
 
         {/* Sign out */}
-        <form action={signout}>
+        <form action={signout} onSubmit={() => {
+          // Clear user-specific localStorage data on signout
+          localStorage.removeItem('nextsplit_wellness')
+          localStorage.removeItem('strava_client_id')
+          // Clear hydration data (all dates)
+          Object.keys(localStorage).filter(k => k.startsWith('hydration_')).forEach(k => localStorage.removeItem(k))
+        }}>
           <button
             type="submit"
             className="w-full py-3 rounded-2xl border border-red-200 text-red-500 text-sm font-semibold bg-white"
