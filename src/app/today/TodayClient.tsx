@@ -76,9 +76,11 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
   return (
     <div className="fixed inset-0 z-50 flex items-end" onClick={onClose}>
       <div
-        className="w-full max-w-lg mx-auto bg-white rounded-t-3xl p-6 shadow-2xl"
+        className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl max-h-[92vh] flex flex-col"
         onClick={e => e.stopPropagation()}
       >
+        {/* Scrollable content */}
+        <div className="overflow-y-auto flex-1 p-6">
         {/* Handle */}
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
 
@@ -181,21 +183,25 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
           />
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex-1 py-3 rounded-xl bg-[#0D9488] text-white text-sm font-semibold disabled:opacity-50"
-          >
-            {saving ? 'Saving…' : existingLog ? 'Update' : 'Log it ✓'}
-          </button>
+        </div>{/* end scrollable area */}
+
+        {/* Sticky actions */}
+        <div className="px-6 pb-6 pt-3 border-t border-gray-50">
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 py-3 rounded-xl bg-[#0D9488] text-white text-sm font-semibold disabled:opacity-50"
+            >
+              {saving ? 'Saving…' : existingLog ? 'Update' : 'Log it ✓'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
