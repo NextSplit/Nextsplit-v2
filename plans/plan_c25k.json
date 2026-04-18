@@ -1,0 +1,1653 @@
+{
+  "meta": {
+    "id": "5k_couch_to_5k",
+    "name": "Couch to 5k",
+    "subtitle": "From your first steps to a continuous 5k run",
+    "distance": "5k",
+    "level": "beginner",
+    "weeks": 9,
+    "runs_per_week": 3,
+    "long_run_day": "Sat",
+    "training_days": [
+      "Tue",
+      "Thu",
+      "Sat"
+    ],
+    "gym_sessions": 0,
+    "peak_km_week": 18,
+    "longest_run_km": 5,
+    "style": "run_walk_progression",
+    "goal": "Complete a continuous 5k run",
+    "target_finish_time": "30:00–38:00",
+    "description": "The gold-standard beginner plan. Nine weeks of structured run-walk intervals that progressively reduce walking and increase running until you can cover 5km without stopping. No previous running experience required. Three sessions per week, each under 40 minutes.",
+    "coach_notes": "The most important rule: go slower than you think you need to. If you cannot hold a conversation during the running segments, slow down — you are going too fast and will not benefit as much. Walking is not failure; it is built into the programme deliberately. If you miss a session, simply repeat that week rather than skipping ahead. There is no deadline here except the one you set yourself, and every run — however small — is building something real.",
+    "calendar_flex": {
+      "min_weeks": 9,
+      "max_weeks": 14,
+      "flex_phase": "base",
+      "flex_method": "repeat_week",
+      "flex_weeks": [
+        3,
+        5,
+        7
+      ]
+    },
+    "tags": [
+      "beginner",
+      "run-walk",
+      "no-gym",
+      "3-days-per-week",
+      "first-race"
+    ]
+  },
+  "weeks": [
+    {
+      "n": 1,
+      "ph": "p1",
+      "title": "First steps — run-walk 1",
+      "b": "d",
+      "kl": [
+        6,
+        9
+      ],
+      "note": "Your first week. Every session is 60 seconds of jogging followed by 90 seconds of walking, repeated 8 times. The jog pace should feel embarrassingly easy — if you cannot hold a full conversation, you are going too fast. This week is about starting — that is the hardest part, and you have already done it.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water before anything else. Keep a glass by your bed.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Meals",
+              "l": "Eat well today",
+              "d": "No training today — focus on three balanced meals. Plenty of vegetables, good protein source, whole grains.",
+              "cat": "info"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total",
+              "km": 2.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200–300ml water 20 minutes before heading out. Small banana if hungry.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery shake",
+              "d": "20g protein within 30 minutes. Chocolate milk is a perfect beginner option — protein + carbs in one.",
+              "cat": "food"
+            },
+            {
+              "t": "Meals",
+              "l": "Daily targets",
+              "d": "Aim for 1.4–1.6g protein per kg bodyweight. Prioritise sleep tonight — this is when your body adapts.",
+              "cat": "info"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Active recovery today — a 20 minute walk is ideal if your legs feel fine.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total",
+              "km": 2.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200–300ml water 20 minutes before heading out.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein within 30 minutes. Stretch hamstrings and calves for 5 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day — let this week's adaptation settle.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "09:00",
+              "l": "Weekend run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total",
+              "km": 2.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Breakfast first",
+              "d": "Eat a proper breakfast 60–90 minutes before your run. Porridge, toast with eggs, or yoghurt with granola all work well.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Make your post-run meal count — eggs on toast, chicken salad, or a protein smoothie. Rehydrate with 500ml water.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Complete rest today — your body is adapting more than you realise.",
+              "cat": "hydration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "ph": "p1",
+      "title": "Building — run-walk 2",
+      "b": "d",
+      "kl": [
+        8,
+        11
+      ],
+      "note": "Running intervals extend to 90 seconds this week. You may notice your breathing becomes easier during the jog segments — that is your aerobic system already adapting to you. If any session feels too hard, go back and repeat Week 1. There is no shame in repeating; there is significant benefit.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 6x(90s jog / 2min walk) &middot; 5min walk cool-down &middot; Total ~27min &middot; 3km total",
+              "km": 3
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. Small snack if hungry — half a banana is perfect.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein within 30 minutes. Your legs may feel more tired this week as the adaptation continues — this is normal.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Light walk or gentle mobility work if feeling stiff.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 6x(90s jog / 2min walk) &middot; 5min walk cool-down &middot; Total ~27min &middot; 3km total",
+              "km": 3
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. Gentle hamstring and calf stretch — hold each 30 seconds.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest — big week coming.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "09:00",
+              "l": "Weekend run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 6x(90s jog / 2min walk) &middot; 5min walk cool-down &middot; Total ~27min &middot; 3km total",
+              "km": 3
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Breakfast",
+              "d": "Eat 60–90 minutes before running. Porridge with banana is ideal pre-run fuel.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Proper meal within 60 minutes. Prioritise protein and carbohydrates.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Complete rest.",
+              "cat": "hydration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "ph": "p1",
+      "title": "First longer runs",
+      "b": "k",
+      "kl": [
+        9,
+        13
+      ],
+      "note": "This week introduces your first 3-minute continuous run. The structure alternates shorter and longer intervals. Day 3 (Saturday) has the same structure as Day 1 — if you completed that, you can complete this. Your body has been adapting all week even on rest days.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 2x(90s jog, 90s walk, 3min jog, 3min walk) &middot; 5min walk cool-down &middot; Total ~28min &middot; 3.5km total",
+              "km": 3.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. 3-minute jog segments may feel long — trust the process.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. Note how you felt during the 3-minute runs — this matters more than pace.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Gentle walk if feeling good.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 2x(90s jog, 90s walk, 3min jog, 3min walk) &middot; 5min walk cool-down &middot; Total ~28min &middot; 3.5km total",
+              "km": 3.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. You are halfway through the programme — that deserves acknowledgement.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "09:00",
+              "l": "Weekend run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 2x(90s jog, 90s walk, 3min jog, 3min walk) &middot; 5min walk cool-down &middot; Total ~28min &middot; 3.5km total",
+              "km": 3.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Breakfast",
+              "d": "Eat 60–90 minutes before. Keep it light and familiar.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Proper meal with protein and carbohydrates.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest.",
+              "cat": "hydration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "ph": "p1",
+      "title": "Five-minute runs",
+      "b": "k",
+      "kl": [
+        10,
+        14
+      ],
+      "note": "A significant step up this week. Your first 5-minute continuous run appears on Tuesday — many beginners find this the hardest mental hurdle of the whole programme. The key is pace. Going slower than feels natural is not weakness — it is exactly how aerobic fitness is built. Slow down by 15–20 seconds per km and the 5-minute runs will feel manageable. The Saturday session is the same structure again, and you will find it easier than Tuesday.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 3min jog / 90s walk / 5min jog / 2.5min walk / 3min jog / 90s walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. This week introduces 5-minute runs — go 20 sec/km slower than feels right.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein within 30 minutes. Completing this session is a genuine milestone — you should feel proud of it.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Gentle 15-minute walk if legs are feeling good — helps recovery.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 3min jog / 90s walk / 5min jog / 2.5min walk / 3min jog / 90s walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. Notice how Tuesday felt — this session should feel slightly more manageable.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. Stretch calves and IT band — these are the common tight spots in week 4.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest. Good sleep tonight will make Saturday easier.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "09:00",
+              "l": "Weekend run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 3min jog / 90s walk / 5min jog / 2.5min walk / 3min jog / 90s walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Breakfast",
+              "d": "Eat 60–90 minutes before. Porridge or toast with eggs. Avoid anything new before a run.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "You made it through Week 4 — one of the most demanding weeks in the programme. Protein and carbs, and take a moment to acknowledge the progress you have made.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest.",
+              "cat": "hydration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "ph": "p1",
+      "title": "The breakthrough week",
+      "b": "k",
+      "kl": [
+        11,
+        15
+      ],
+      "note": "Week 5 is the turning point of the entire programme. Session 1 introduces 5-minute runs with walking recovery. Session 2 pushes to 8-minute runs. Session 3 — Saturday — is your first 20-minute continuous run with no walking. This is the session most graduates describe as the moment running changed for them. Go very slowly, and keep going — you have this.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day. Big week ahead.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 5min jog / 3min walk / 5min jog / 3min walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. Three separate 5-minute runs today — focus on keeping pace conversational throughout.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. Saturday is 20 minutes non-stop — start mentally preparing now.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest. Thursday has an 8-minute run — easier than it sounds.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 8min jog / 5min walk / 8min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4.5km total",
+              "km": 4.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. Two 8-minute runs today. Treat each one as a separate target — do not think about the second one during the first.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. Your biggest session ever on Saturday. Rest well tonight and tomorrow.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": "Aim for 8 hours tonight. Saturday is a landmark session.",
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Good sleep tonight is the best preparation for tomorrow.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "09:00",
+              "l": "The 20-minute run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "First continuous run — 20 minutes",
+              "det": "5min walk warm-up &middot; 20min continuous jog (NO walking) &middot; 5min walk cool-down &middot; Go 30 sec/km slower than feels right &middot; Keep going — you have this",
+              "km": 3
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Breakfast",
+              "d": "Eat 60–90 minutes before. Something familiar and not too heavy. This is your first non-stop run — treat it with respect.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery — celebrate",
+              "d": "You just ran for 20 minutes without stopping. That is a genuinely big deal — take a moment to recognise it. Protein and carbs within 30 minutes, and remember how this feels. Most people who reach Week 5 Saturday go on to complete the full programme.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Complete rest. You have earned it.",
+              "cat": "hydration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "ph": "p1",
+      "title": "Building on the breakthrough",
+      "b": "k",
+      "kl": [
+        13,
+        17
+      ],
+      "note": "You can run continuously. Now the sessions extend that capability. Sessions 1 and 2 return briefly to run-walk (5-minute and 10-minute intervals) to give you slightly easier sessions after the breakthrough of Week 5 Saturday. Session 3 — Saturday — extends the continuous run to 22 minutes. You did 20 last week. Two more minutes is nothing.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 5min jog / 3min walk / 8min jog / 3min walk / 5min jog &middot; 5min walk cool-down &middot; Total ~34min &middot; 4.5km total",
+              "km": 4.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. A slightly easier session after last week — mixed intervals.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. Saturday is 22 minutes continuous — you already know you can do it.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Run-walk",
+              "det": "5min walk warm-up &middot; 10min jog / 3min walk / 10min jog &middot; 5min walk cool-down &middot; Total ~33min &middot; 5km total",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. Two 10-minute runs — notice how manageable they feel compared to week 4.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. You are in the final third of the programme — the hardest part is behind you.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "09:00",
+              "l": "Weekend run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Continuous run — 22 minutes",
+              "det": "5min walk warm-up &middot; 22min continuous jog &middot; 5min walk cool-down &middot; Keep it conversational — if you cannot speak in sentences, slow down &middot; 3.5km total",
+              "km": 3.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Breakfast",
+              "d": "Eat 60–90 minutes before. Familiar, light, high carbohydrate.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Protein and carbohydrates. Three more weeks and you will run your first 5k. You are on track.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest.",
+              "cat": "hydration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "ph": "p1",
+      "title": "25 minutes",
+      "b": "k",
+      "kl": [
+        14,
+        18
+      ],
+      "note": "All three sessions this week are continuous runs. No walking intervals at all. Tuesday and Thursday are 25 minutes. Saturday extends slightly. You have crossed the threshold. You are a runner now — the sessions this week are proof of that. The question is no longer whether you can do this. It is how far you want to take it.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Continuous run — 25 minutes",
+              "det": "5min walk warm-up &middot; 25min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Fully conversational",
+              "km": 3.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. All continuous runs from here — no more walking intervals.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein within 30 minutes. Note how your pace felt. You will look back at this week and be surprised how far you have come.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Active rest — a short walk is fine.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Continuous run — 25 minutes",
+              "det": "5min walk warm-up &middot; 25min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Same pace as Tuesday",
+              "km": 3.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. One more week and you will run your 5k. You are almost there.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Good rest tonight.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "09:00",
+              "l": "Weekend run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Continuous run — 25 minutes",
+              "det": "5min walk warm-up &middot; 25min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Comfortable and relaxed",
+              "km": 3.5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Breakfast",
+              "d": "Eat 60–90 minutes before. You know your pre-run routine now — trust it.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Two more weeks. If you have not already, now is a great time to look up your local parkrun — it makes the perfect graduation run.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest.",
+              "cat": "hydration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "ph": "p1",
+      "title": "28 minutes — almost there",
+      "b": "k",
+      "kl": [
+        15,
+        19
+      ],
+      "note": "Second-to-last week. Sessions are 28 minutes continuous — you are covering approximately 4km per session now. The pace improvement you will notice compared to week 5 is entirely real: your cardiovascular system, muscles and tendons have all adapted. Keep the effort easy and controlled. Everything you need for Saturday week is already built into your body — this week just maintains it.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day. Final push this week.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Continuous run — 28 minutes",
+              "det": "5min walk warm-up &middot; 28min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Easy and controlled",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. Final full week before your graduation run.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. You are covering 4km comfortably — Saturday week you will add just one more kilometre. You can absolutely do this.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Morning run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Continuous run — 28 minutes",
+              "det": "5min walk warm-up &middot; 28min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. Two more sessions after today. Keep the effort light.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": "Good sleep tonight — Saturday is your last preparation run before graduation week.",
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "09:00",
+              "l": "Weekend run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Continuous run — 28 minutes",
+              "det": "5min walk warm-up &middot; 28min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Your last prep run",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Breakfast",
+              "d": "Your pre-run routine. You know what works for you by now.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Protein and carbs. Next Saturday is your graduation 5k — consider signing up to a parkrun now if you haven't already.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest. Final week begins tomorrow.",
+              "cat": "hydration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "ph": "p1",
+      "title": "Graduation — your first 5k",
+      "b": "r",
+      "kl": [
+        13,
+        17
+      ],
+      "note": "Graduation week. Tuesday and Thursday are easy runs — treat them as a gentle reminder to your body that it knows how to do this, not as training sessions. Keep the effort very easy and arrive at Saturday fresh. Your 5k is on Saturday. The distance does not matter. The time does not matter. Nine weeks ago you could not run for a minute. On Saturday you will run 5 kilometres. Trust what you have built — you are ready.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Final week. You have done the hard work — this week is just about arriving at Saturday fresh and ready.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Meals",
+              "l": "Race week nutrition",
+              "d": "Eat slightly more carbohydrates this week — pasta, rice, bread. Nothing new or unusual. Keep it familiar.",
+              "cat": "info"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Final prep run 1"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run — 30 minutes",
+              "det": "5min walk warm-up &middot; 30min easy jog &middot; 5min walk cool-down &middot; 7:00&ndash;7:30/km &middot; Gentle — legs fresh for Saturday",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. Gentle session — legs should feel fresh.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20g protein. Two more sleeps until your 5k — you are ready for this.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest. Good carbohydrate meal today.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Meals",
+              "l": "Pre-race carb loading",
+              "d": "Pasta, rice or potato-based dinner tonight. Not excessive — just a solid high-carbohydrate meal.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Final prep run 2"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run — 20 minutes",
+              "det": "5min walk warm-up &middot; 20min very easy jog &middot; 5min walk cool-down &middot; 7:00&ndash;7:30/km &middot; Shakeout run — keep it very easy",
+              "km": 3
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "200ml water. Short easy run just to keep the legs moving — do not work hard.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "Light protein. Save your energy for Saturday. Everything you need is already there.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": "8 hours tonight. Race day is tomorrow. Lay your kit out, know your route or parkrun location, set your alarm.",
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Complete rest. No running.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Evening",
+              "l": "Pre-race dinner",
+              "d": "Pasta or rice-based meal. Something you have eaten before. Early dinner — aim to eat by 19:00. No alcohol.",
+              "cat": "food"
+            },
+            {
+              "t": "Night before",
+              "l": "Race day prep",
+              "d": "Kit laid out. Route planned. Alarm set. You have done the work — trust it.",
+              "cat": "info"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:30",
+              "l": "Race day"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-race",
+              "n": "Graduation 5k — first race",
+              "det": "10min walk warm-up &middot; 5km continuous run &middot; Start slower than you think you need to &middot; Trust your training — your body knows how to do this &middot; This is what 9 weeks was for",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "Race morning — 90min before",
+              "l": "Breakfast",
+              "d": "Porridge with banana and a drizzle of honey, or two slices of toast with peanut butter. 400–500ml water with your meal. Nothing new — only foods you have eaten before a run before.",
+              "cat": "food"
+            },
+            {
+              "t": "Race morning — 30min before",
+              "l": "Final hydration",
+              "d": "150–200ml water. Sip, do not gulp. If the weather is warm, add a pinch of salt to your water. No caffeine unless you regularly use it before runs — race day is not the day to experiment.",
+              "cat": "hydration"
+            },
+            {
+              "t": "During the race",
+              "l": "Hydration on course",
+              "d": "If water stations are available, take small sips at each one. For a 5k you will not need a gel or any fuel — water is sufficient. Keep going — trust your training to drink; sip while walking for a few steps if needed.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Immediately post-race",
+              "l": "Rehydrate first",
+              "d": "Finish line water before anything else. 300–400ml in the first 10 minutes. Your body has been working hard even though the distance felt manageable.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-race — within 30min",
+              "l": "Recovery snack",
+              "d": "Banana, cereal bar or protein shake if available at the finish. The goal is to start replenishing glycogen and protein quickly. If nothing is available, prioritise getting to your post-race meal within an hour.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-race meal",
+              "l": "Celebrate and recover",
+              "d": "A proper meal within 1–2 hours. Chicken and rice, pasta with protein, or a substantial salad with eggs. 1.5–2g protein per kg bodyweight today. Drink consistently throughout the afternoon — pale yellow urine is the target. You have earned a treat — just make sure it comes after the recovery nutrition, not instead of it.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Recovery day",
+              "d": "500ml water. Gentle walk if you want to. You are a runner now. The next plan starts whenever you are ready.",
+              "cat": "hydration"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

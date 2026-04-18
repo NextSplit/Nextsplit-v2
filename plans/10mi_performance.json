@@ -1,0 +1,4497 @@
+{
+  "meta": {
+    "id": "10mi_performance",
+    "name": "10 Mile Performance",
+    "subtitle": "Break 75 minutes — sub-4:40/km for 16km",
+    "distance": "10mi",
+    "level": "advanced",
+    "weeks": 20,
+    "runs_per_week": 6,
+    "long_run_day": "Sun",
+    "training_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Sat",
+      "Sun"
+    ],
+    "gym_sessions": 2,
+    "peak_km_week": 85,
+    "longest_run_km": 26,
+    "style": "high_volume_threshold",
+    "goal": "Sub-75:00 10-mile",
+    "target_finish_time": "72:00–77:00",
+    "description": "An elite-targeted 20-week programme for competitive runners chasing sub-75 minutes for 10 miles. Six running days, high weekly volume, two gym sessions.",
+    "coach_notes": "Sub-75 for 10 miles requires 4:40/km. The volume in this plan is high — 80+ km at peak. Every easy day must be genuinely easy.",
+    "calendar_flex": {
+      "min_weeks": 18,
+      "max_weeks": 24,
+      "flex_phase": "base",
+      "flex_method": "repeat_week",
+      "flex_weeks": [
+        5,
+        10,
+        15
+      ]
+    },
+    "tags": [
+      "advanced",
+      "sub-75",
+      "10-miles",
+      "6-days",
+      "high-volume",
+      "competitive"
+    ]
+  },
+  "weeks": [
+    {
+      "n": 1,
+      "ph": "p1",
+      "title": "Base establishment",
+      "b": "d",
+      "kl": [
+        58,
+        66
+      ],
+      "note": "Opening week. Establish structure.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "10km easy &middot; 5:45–6:10/km",
+              "km": 10
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 8x800m @ 10mi pace (90sec rec) &middot; 2km CD &middot; 12km",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 25min @ threshold (4:30–4:40/km) &middot; 2km CD",
+              "km": 10
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "12km easy &middot; 8x100m strides",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "18km easy &middot; 5:55–6:15/km",
+              "km": 18
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "ph": "p1",
+      "title": "VO2max introduction",
+      "b": "k",
+      "kl": [
+        63,
+        71
+      ],
+      "note": "First VO2max session builds the aerobic ceiling.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "11km easy &middot; 5:45–6:10/km",
+              "km": 11
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 6x1km @ 3:55–4:05/km (3min rec) &middot; 2km CD",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 2x14min @ threshold (90sec rec) &middot; 2km CD",
+              "km": 11
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "13km easy &middot; 8x100m strides",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "20km easy",
+              "km": 20
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "ph": "p1",
+      "title": "Volume build",
+      "b": "k",
+      "kl": [
+        67,
+        75
+      ],
+      "note": "Long run reaches 22km.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "12km easy &middot; 5:45–6:10/km",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 7x1km @ 3:55–4:05/km (3min rec) &middot; 2km CD",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "13km easy",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 30min continuous @ threshold &middot; 2km CD",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "14km easy &middot; 8x100m strides",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "22km easy",
+              "km": 22
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "ph": "p1",
+      "title": "Deload week",
+      "b": "d",
+      "kl": [
+        33,
+        41
+      ],
+      "note": "Deliberate recovery week. VO2max adaptations consolidate now.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Easy long run",
+              "det": "14km easy",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "ph": "p1",
+      "title": "Race pace development",
+      "b": "k",
+      "kl": [
+        65,
+        73
+      ],
+      "note": "Race-pace intervals. 4:40/km should feel controlled.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "11km easy &middot; 5:45–6:10/km",
+              "km": 11
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 5x2km @ 4:40/km (3min rec) &middot; 2km CD",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 35min @ threshold (4:28–4:38/km) &middot; 2km CD",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "13km easy &middot; 8x100m strides",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "20km easy &middot; last 4km at race pace",
+              "km": 20
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "ph": "p1",
+      "title": "Long race-pace run",
+      "b": "k",
+      "kl": [
+        68,
+        76
+      ],
+      "note": "24km long run with race-pace finish.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "11km easy &middot; 5:45–6:10/km",
+              "km": 11
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 4x2.5km @ 4:40/km (3.5min rec) &middot; 2km CD",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 2x18min @ threshold (2min rec) &middot; 2km CD",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "14km easy &middot; 8x100m strides",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "19km easy &middot; final 5km at race pace",
+              "km": 24
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "ph": "p1",
+      "title": "Volume peak",
+      "b": "k",
+      "kl": [
+        70,
+        78
+      ],
+      "note": "Highest volume week. Long run reaches 26km.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "12km easy &middot; 5:45–6:10/km",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 8x1km @ 3:58–4:08/km (2.5min rec) &middot; 2km CD",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "13km easy",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 40min @ threshold &middot; 2km CD",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "14km easy &middot; 8x100m strides",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "26km easy",
+              "km": 26
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "ph": "p2",
+      "title": "Deload week",
+      "b": "d",
+      "kl": [
+        35,
+        43
+      ],
+      "note": "Deliberate recovery week. Halfway point. Serious base built.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Easy long run",
+              "det": "16km easy",
+              "km": 16
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "ph": "p2",
+      "title": "Speed sharpening",
+      "b": "k",
+      "kl": [
+        65,
+        73
+      ],
+      "note": "Short fast reps sharpen neuromuscular recruitment.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "11km easy &middot; 5:45–6:10/km",
+              "km": 11
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 14x300m @ 3:30–3:40/km (90sec rec) &middot; 2km CD",
+              "km": 10
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 35min @ threshold &middot; 2km CD",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "13km easy &middot; 8x100m strides",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "22km easy",
+              "km": 22
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "ph": "p2",
+      "title": "Race simulation",
+      "b": "p",
+      "kl": [
+        67,
+        75
+      ],
+      "note": "10km time trial at race pace.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "11km easy &middot; 5:45–6:10/km",
+              "km": 11
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 10km @ 4:40/km (race pace) &middot; 2km CD",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 2x20min @ threshold (2min rec) &middot; 2km CD",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "13km easy &middot; 8x100m strides",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "20km easy &middot; last 5km race pace",
+              "km": 20
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 11,
+      "ph": "p2",
+      "title": "Peak block 1",
+      "b": "p",
+      "kl": [
+        68,
+        76
+      ],
+      "note": "4x3km at race pace — hardest interval session.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "11km easy &middot; 5:45–6:10/km",
+              "km": 11
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 4x3km @ 4:40/km (4min rec) &middot; 2km CD",
+              "km": 16
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 40min @ threshold (4:25–4:35/km) &middot; 2km CD",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "13km easy &middot; 8x100m strides",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "24km easy",
+              "km": 24
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "ph": "p2",
+      "title": "Peak block 2",
+      "b": "p",
+      "kl": [
+        67,
+        75
+      ],
+      "note": "Long race-pace run — most specific session.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "11km easy &middot; 5:45–6:10/km",
+              "km": 11
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 6x2km @ 4:40/km (3min rec) &middot; 2km CD",
+              "km": 16
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 35min @ threshold &middot; 2km CD",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "13km easy &middot; 8x100m strides",
+              "km": 13
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "8km easy &middot; 16km at race pace",
+              "km": 24
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "ph": "p2",
+      "title": "Peak block 3",
+      "b": "p",
+      "kl": [
+        65,
+        73
+      ],
+      "note": "Race-pace confidence builds.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy recovery run",
+              "det": "10km easy &middot; 5:45–6:10/km",
+              "km": 10
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Quality session",
+              "det": "2km WU &middot; 8x1km @ 4:40/km (2min rec) &middot; 2km CD",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "11km easy",
+              "km": 11
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold run",
+              "det": "2km WU &middot; 38min @ threshold &middot; 2km CD",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run with strides",
+              "det": "12km easy &middot; 8x100m strides",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "22km easy",
+              "km": 22
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 14,
+      "ph": "p2",
+      "title": "Deload week",
+      "b": "d",
+      "kl": [
+        33,
+        41
+      ],
+      "note": "Deliberate recovery week. Final deload before taper.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Easy long run",
+              "det": "14km easy",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 15,
+      "ph": "p2",
+      "title": "Taper prep",
+      "b": "k",
+      "kl": [
+        55,
+        63
+      ],
+      "note": "Volume reducing, quality maintained.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "9km easy",
+              "km": 9
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Sharpening session",
+              "det": "2km WU &middot; 6x1km @ race pace (2min rec) &middot; 2km CD",
+              "km": 12
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "9km easy",
+              "km": 9
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold — 25min",
+              "det": "2km WU &middot; 25min @ threshold &middot; 2km CD",
+              "km": 10
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "10km easy with strides",
+              "km": 10
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Easy long run",
+              "det": "18km easy",
+              "km": 18
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 16,
+      "ph": "p2",
+      "title": "Taper 1",
+      "b": "d",
+      "kl": [
+        44,
+        52
+      ],
+      "note": "First taper week. Volume drops.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "8km easy",
+              "km": 8
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Sharpening",
+              "det": "2km WU &middot; 5x800m @ race pace (2min rec) &middot; 2km CD",
+              "km": 9
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "7km easy",
+              "km": 7
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Threshold — 18min",
+              "det": "2km WU &middot; 18min threshold &middot; 2km CD",
+              "km": 8
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "8km easy",
+              "km": 8
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Easy long run",
+              "det": "14km easy",
+              "km": 14
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 17,
+      "ph": "p2",
+      "title": "Taper 2",
+      "b": "d",
+      "kl": [
+        32,
+        38
+      ],
+      "note": "Volume drops further.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Race sharpener",
+              "det": "1.5km WU &middot; 4x800m @ race pace &middot; 1.5km CD",
+              "km": 7
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "6km easy with strides",
+              "km": 6
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Easy run",
+              "det": "10km easy",
+              "km": 10
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 18,
+      "ph": "p2",
+      "title": "Final prep",
+      "b": "d",
+      "kl": [
+        20,
+        26
+      ],
+      "note": "Week before race week. Very light.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Track session"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-int",
+              "n": "Final sharpener",
+              "det": "1.5km WU &middot; 4x400m @ race pace &middot; 1.5km CD",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "4km easy",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "4km easy",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "5km easy",
+              "km": 5
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 19,
+      "ph": "p2",
+      "title": "Race week prep",
+      "b": "d",
+      "kl": [
+        14,
+        18
+      ],
+      "note": "Stay calm. Rest well.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Shakeout",
+              "det": "3km easy &middot; 4x100m strides",
+              "km": 3
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Shakeout",
+              "det": "3km easy",
+              "km": 3
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy jog",
+              "det": "2km easy",
+              "km": 2
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "4km easy",
+              "km": 4
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Long run breakfast",
+              "d": "Porridge with banana. 90–120 minutes before.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery meal",
+              "d": "Full recovery meal within 60 minutes.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 20,
+      "ph": "p2",
+      "title": "Race week",
+      "b": "r",
+      "kl": [
+        10,
+        14
+      ],
+      "note": "Race week. The fitness is built.",
+      "days": [
+        {
+          "d": "Mon",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Shakeout",
+              "det": "3km easy &middot; Strides",
+              "km": 3
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "07:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Final shakeout",
+              "det": "3km easy",
+              "km": 3
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "dt": "",
+          "sleep": null,
+          "times": [],
+          "sessions": [],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Hydration",
+              "d": "500ml water. Rest day.",
+              "cat": "hydration"
+            }
+          ]
+        },
+        {
+          "d": "Sat",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Training run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy jog",
+              "det": "2km easy",
+              "km": 2
+            }
+          ],
+          "nut": [
+            {
+              "t": "On wake",
+              "l": "Pre-run hydration",
+              "d": "300–400ml water 30 minutes before.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-run",
+              "l": "Recovery",
+              "d": "20–25g protein within 30 minutes.",
+              "cat": "food"
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "dt": "",
+          "sleep": null,
+          "times": [
+            {
+              "t": "08:00",
+              "l": "Long run"
+            }
+          ],
+          "sessions": [
+            {
+              "c": "run-race",
+              "n": "10-mile race — sub-75 attempt",
+              "det": "2km WU &middot; Strides &middot; Race: through 5 miles at 4:40/km, build last 2 miles &middot; Trust the training",
+              "km": 16
+            }
+          ],
+          "nut": [
+            {
+              "t": "Race morning — 90min before",
+              "l": "Breakfast",
+              "d": "Porridge with banana or toast with peanut butter. 500ml water.",
+              "cat": "food"
+            },
+            {
+              "t": "45min before",
+              "l": "Final hydration",
+              "d": "200ml water. Warm up well with strides.",
+              "cat": "hydration"
+            },
+            {
+              "t": "During race",
+              "l": "Fuel and hydration",
+              "d": "Water at every station. Gel at miles 6 and 10.",
+              "cat": "hydration"
+            },
+            {
+              "t": "Post-race",
+              "l": "Recovery",
+              "d": "Water immediately. Banana or protein snack. Full meal within 90 minutes.",
+              "cat": "food"
+            },
+            {
+              "t": "Post-race meal",
+              "l": "Celebrate",
+              "d": "Proper meal — protein, carbohydrates, whatever you want. Well earned.",
+              "cat": "food"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,295 @@
+{
+  "meta": {
+    "id": "5k_improve",
+    "name": "Improve Your 5k",
+    "subtitle": "Build speed and consistency over 12 weeks",
+    "distance": "5k",
+    "level": "intermediate",
+    "weeks": 12,
+    "runs_per_week": 4,
+    "long_run_day": "Sun",
+    "training_days": ["Tue","Thu","Sat","Sun"],
+    "gym_sessions": 1,
+    "peak_km_week": 40,
+    "longest_run_km": 12,
+    "style": "speed_development",
+    "goal": "Improve 5k time, target sub-25:00",
+    "target_finish_time": "22:00–26:00",
+    "description": "For runners who can already cover 5km and want to get meaningfully faster. Built around one track/interval session per week, one tempo run, one easy day and a Sunday longer run. Twelve weeks of progressive overload with two deload weeks built in.",
+    "coach_notes": "The interval sessions are the engine of this plan. Nail those and the rest follows. The easy runs must stay genuinely easy — if your legs feel fresh enough to push on an easy day, save that energy for Thursday.",
+    "calendar_flex": {
+      "min_weeks": 10,
+      "max_weeks": 16,
+      "flex_phase": "base",
+      "flex_method": "repeat_week",
+      "flex_weeks": [3, 6]
+    },
+    "tags": ["intermediate","speed","track","4-days-per-week","sub-25"]
+  },
+  "weeks": [
+    {
+      "n": 1, "ph": "p1", "title": "Base assessment week", "b": "d", "kl": [25, 30],
+      "note": "Start conservatively. The goal this week is to establish your baseline and get a feel for the paces. The Tuesday session includes a 1km time trial — run this honestly but not all-out. It tells us where you actually are, not where you think you are.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest day — the plan starts tomorrow.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Track session"}],
+         "sessions":[{"c":"run-int","n":"Assessment — 1km time trial","det":"2km easy warm-up &middot; 1km time trial (honest effort, not sprint) &middot; 3x800m @ current 5k pace + 10sec (90sec rec) &middot; 2km cool-down &middot; 9km total","km":9}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water 30min before. Light banana if hungry — the time trial works better on a settled stomach.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"20–25g protein within 30 minutes. Note your time trial result — this becomes your reference point for the whole plan.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Active recovery — gentle 20min walk is ideal today.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Tempo run"}],
+         "sessions":[{"c":"run-tempo","n":"Tempo run — 20min","det":"2km easy warm-up &middot; 20min at comfortably hard effort (can say 2–3 words, not sentences) &middot; 1km cool-down &middot; ~8km total","km":8}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water. Tempo runs work best on a light stomach — eat 90min before if you need food.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"20g protein. Your legs should feel pleasantly tired, not wrecked. If they feel wrecked, the tempo was too fast.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest day. Your Saturday easy run should feel comfortable.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"8km easy &middot; 6:00–6:30/km &middot; Fully conversational &middot; This should feel almost too easy","km":8}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"Eat 60–90 minutes before. Porridge, toast or yoghurt. 8km at easy pace doesn't need race-day preparation.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein snack or meal. Hydrate well — long run tomorrow.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Long run"}],
+         "sessions":[{"c":"run-long","n":"Long run","det":"10km easy &middot; 6:10–6:40/km &middot; Conversational throughout &middot; Negative split if feeling good in final 3km","km":10}],
+         "nut":[{"t":"On wake","l":"Long run breakfast","d":"Eat 90 minutes before. Porridge with banana. 500ml water with breakfast.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Proper recovery meal within 60 minutes. Protein and carbohydrates. This is your most important meal of the week — don't skip it.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 2, "ph": "p1", "title": "First intervals", "b": "k", "kl": [28, 33],
+      "note": "Your first proper interval session this week. The 400m reps should be run at a pace you could sustain for 1–2km in a race — fast but controlled. If you went out too hard on rep 1, reps 4–6 will tell you. That is useful information.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Track session"}],
+         "sessions":[{"c":"run-int","n":"Track — 6x400m","det":"2km WU &middot; 6x400m @ 5k goal pace (90sec walk rec) &middot; 2km CD &middot; 8km total &middot; Target: even splits on all 6 reps","km":8}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water. 400m reps are short enough that you don't need much fuel — just be well hydrated.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"20–25g protein. Good session — six controlled 400s is a solid foundation for what comes later in the plan.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Your legs may feel the 400s today — that is normal adaptation.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Tempo run"}],
+         "sessions":[{"c":"run-tempo","n":"Tempo run — 22min","det":"2km WU &middot; 22min tempo (comfortably hard) &middot; 1km CD &middot; ~8.5km total","km":9}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"20g protein. Two minutes longer than last week — you should barely notice the difference.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"8km easy &middot; 6:00–6:30/km &middot; Conversational","km":8}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"60–90 minutes before. Light and familiar.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein. Hydrate for Sunday's long run.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Long run"}],
+         "sessions":[{"c":"run-long","n":"Long run","det":"11km easy &middot; 6:10–6:40/km &middot; Conversational &middot; Keep effort light even if pace creeps up","km":11}],
+         "nut":[{"t":"On wake","l":"Long run breakfast","d":"Porridge with banana, 90 minutes before. 500ml water.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Full protein and carbohydrate meal within 60 minutes.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 3, "ph": "p1", "title": "Building volume", "b": "k", "kl": [30, 36],
+      "note": "Volume ticks up slightly this week. The 800m reps on Tuesday are longer and more demanding than 400s — pace judgement in the first rep is the key skill. Start 5 seconds per km slower than you think you should. You can always run the last 2 reps harder if you have something left.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Track session"}],
+         "sessions":[{"c":"run-int","n":"Track — 5x800m","det":"2km WU &middot; 5x800m @ 5k goal pace (2min jog rec) &middot; 2km CD &middot; 10km total &middot; Aim for consistent splits — no positive splits","km":10}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water. 5x800m is a significant step up — be patient in rep 1.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"25g protein within 30 minutes. The 800s take more out of you than 400s — prioritise recovery today.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. You may feel the 800s more than the 400s — expected and fine.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Tempo run"}],
+         "sessions":[{"c":"run-tempo","n":"Tempo run — 25min","det":"2km WU &middot; 25min tempo &middot; 1km CD &middot; ~9.5km total &middot; 5:00–5:15/km effort","km":10}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"20g protein. 25 minutes is starting to feel like proper threshold work — well done for staying controlled.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest. Next week is a deload — push well this week.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"9km easy &middot; 6:00–6:30/km &middot; Conversational","km":9}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"60–90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein. Well done this week — deload coming.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Long run"}],
+         "sessions":[{"c":"run-long","n":"Long run","det":"12km easy &middot; 6:10–6:40/km &middot; Your longest run so far — keep it genuinely easy and enjoy the distance","km":12}],
+         "nut":[{"t":"On wake","l":"Long run breakfast","d":"Porridge with banana, 90 minutes before. This is your longest run of the plan — treat the nutrition accordingly.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Full recovery meal. Protein + carbs + vegetables. You have earned this one.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 4, "ph": "p1", "title": "Deload week", "b": "d", "kl": [18, 22],
+      "note": "Deliberate rest week. Volume drops by 35%. This is not a break from training — it is when training actually happens. The adaptations from weeks 1–3 consolidate during this week. Do not be tempted to run more. Come back to week 5 feeling fresh and ready to push harder.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Deload week begins. Your body is rebuilding — trust the process.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Easy intervals"}],
+         "sessions":[{"c":"run-int","n":"Light fartlek — 30min","det":"10min easy warm-up &middot; 8x(30sec faster / 90sec easy) within a 10min block &middot; 10min easy cool-down &middot; 6km total &middot; Nothing hard — just keep the legs moving","km":6}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"200ml water. Easy session today — no pre-run pressure.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"Light protein snack. Deload week means lighter recovery needs too.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run — 30min","det":"30min easy &middot; 6:15–6:45/km &middot; No structure, no targets — just run and enjoy it &middot; ~5km","km":5}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"200ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"Light snack. You should feel good after this — that is the point of a deload.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"6km easy &middot; No targets &middot; Enjoy feeling fresh","km":6}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"Normal pre-run routine. Nothing special needed for an easy 6km.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein. Week 5 builds again — come back feeling ready.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy long run"}],
+         "sessions":[{"c":"run-long","n":"Easy long run","det":"8km easy &middot; 6:15–6:45/km &middot; Deload long run — comfortable and relaxed","km":8}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"Normal breakfast, 90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Normal recovery meal. You have made it through your first month. Week 5 brings new intensity — enjoy the rest today.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 5, "ph": "p1", "title": "Speed phase begins", "b": "k", "kl": [30, 36],
+      "note": "The second block of the plan introduces faster, shorter intervals. The 200m reps on Tuesday are run at close to 1-mile effort — significantly faster than 5k pace. This trains your legs to turn over quickly and makes 5k pace feel easier by comparison. Keep the recovery generous.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Back to training after deload — you should feel noticeably fresher.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Track session"}],
+         "sessions":[{"c":"run-int","n":"Track — 10x200m","det":"2km WU &middot; 10x200m @ mile effort (90sec walk rec) &middot; 2km CD &middot; 8km total &middot; Each 200 should feel hard but not desperate","km":8}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water. 200m reps need to be fast — give yourself permission to push.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"20–25g protein. The short reps are more neurologically demanding than long ones — rest well today.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Tempo run"}],
+         "sessions":[{"c":"run-tempo","n":"Tempo run — 28min","det":"2km WU &middot; 28min tempo &middot; 1km CD &middot; ~10.5km total &middot; Sustained discomfort — you should want it to end but be able to continue","km":11}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water. 28 minutes is serious threshold work — fuel properly today.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"25g protein. You are halfway through the plan and the sessions are getting genuinely demanding — the improvements are coming.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"9km easy &middot; 6:00–6:30/km &middot; Conversational throughout","km":9}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"60–90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein. Good week.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Long run"}],
+         "sessions":[{"c":"run-long","n":"Long run","det":"11km easy &middot; 6:10–6:40/km &middot; Controlled and comfortable","km":11}],
+         "nut":[{"t":"On wake","l":"Long run breakfast","d":"Porridge with banana, 90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Full recovery meal. Protein and carbohydrates.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 6, "ph": "p1", "title": "Mixed intervals", "b": "k", "kl": [32, 38],
+      "note": "Mixed interval session this week — a combination of short and longer reps in the same session. This trains your body to handle changes of pace, which is exactly what racing a 5k requires. Run the 400s at 5k pace and the 200s slightly faster.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Track session"}],
+         "sessions":[{"c":"run-int","n":"Mixed intervals — 3x(400+200)","det":"2km WU &middot; 3x(400m @ 5k pace, 90sec rec, 200m @ mile pace, 2min rec) &middot; 2km CD &middot; 9km total","km":9}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water. Mixed pace sessions are demanding — arrive rested.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"25g protein. Good work — changing pace within a session is a real skill and you are building it.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Tempo run"}],
+         "sessions":[{"c":"run-tempo","n":"Tempo run — 30min","det":"2km WU &middot; 30min tempo &middot; 1km CD &middot; ~11km total &middot; Your longest tempo yet — stay smooth","km":11}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"25g protein. 30 minutes of sustained tempo is proper race preparation — next week is a deload, so push well today.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest. Deload next week — make this weekend count.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"9km easy &middot; 6:00–6:30/km &middot; Conversational","km":9}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"60–90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein. Long run tomorrow.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Long run"}],
+         "sessions":[{"c":"run-long","n":"Long run","det":"12km easy &middot; 6:10–6:40/km &middot; Easy pace throughout &middot; Fuelling: consider a gel or banana at 7km if feeling depleted","km":12}],
+         "nut":[{"t":"On wake","l":"Long run breakfast","d":"Porridge with banana and honey. 500ml water. 90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Full meal within 60 minutes. You have completed the first 6 weeks — the plan is working.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 7, "ph": "p2", "title": "Second deload", "b": "d", "kl": [18, 22],
+      "note": "Second deload. Same principle as week 4 — volume drops sharply while you absorb the last three weeks of work. You are now in phase 2 of the plan, which shifts toward race-specific preparation. Rest well this week.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Light session"}],
+         "sessions":[{"c":"run-easy","n":"Easy run with strides","det":"20min easy &middot; 6x100m strides at 5k pace within the run &middot; 5km total &middot; Just keeping the legs sharp","km":5}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"200ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"Light snack. Deload means lighter everything.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"5km easy &middot; No targets &middot; Enjoy feeling fresh","km":5}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"200ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"Light snack.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"6km easy &middot; Relaxed","km":6}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"Normal pre-run routine.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein. Phase 2 begins next week.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy long run"}],
+         "sessions":[{"c":"run-long","n":"Easy long run","det":"8km easy &middot; Relaxed and comfortable","km":8}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"Normal breakfast. 90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Normal recovery meal. Two thirds of the plan complete — you are well on your way.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 8, "ph": "p2", "title": "Race-pace work begins", "b": "k", "kl": [32, 38],
+      "note": "Phase 2 introduces race-pace intervals — running at the exact pace you want to race at. This is where the plan gets specific. The 1km reps on Tuesday should feel hard but achievable. If they feel easy, you have set your goal too conservatively. If they feel impossible, reassess.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Back to full intensity.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Track session"}],
+         "sessions":[{"c":"run-int","n":"Track — 4x1km at race pace","det":"2km WU &middot; 4x1km @ goal 5k pace (2.5min rec) &middot; 2km CD &middot; 10km total &middot; This is your race pace — own it","km":10}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water. This is the most demanding session of the plan so far — give it the respect it deserves.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"25g protein immediately. 4x1km at race pace is real race preparation. Your body knows what to do with this — let it recover.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Your legs earned a rest day after yesterday.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Tempo run"}],
+         "sessions":[{"c":"run-tempo","n":"Tempo run — 25min","det":"2km WU &middot; 25min tempo (slightly below race pace) &middot; 1km CD &middot; ~9.5km total","km":10}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"20g protein.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"9km easy &middot; 6:00–6:30/km &middot; Conversational","km":9}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"60–90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Long run"}],
+         "sessions":[{"c":"run-long","n":"Long run","det":"11km easy &middot; 6:10–6:40/km &middot; Easy effort throughout","km":11}],
+         "nut":[{"t":"On wake","l":"Long run breakfast","d":"Porridge with banana. 90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Full recovery meal. Four more weeks.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 9, "ph": "p2", "title": "Peak interval week", "b": "p", "kl": [34, 40],
+      "note": "The hardest interval session of the plan. 5x1km at race pace is the closest thing to a practice 5k you will do before the real thing. The goal is not to run as fast as possible — it is to run at exactly race pace, confidently and in control. If you can do that, you are ready.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Peak week. Make it count.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Peak track session"}],
+         "sessions":[{"c":"run-int","n":"Track — 5x1km at race pace","det":"2km WU &middot; 5x1km @ goal 5k pace (2.5min rec) &middot; 2km CD &middot; 11km total &middot; Run rep 1 conservatively — finish stronger than you started","km":11}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water. This is your peak interval session — arrive well rested, well hydrated, and ready to perform.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"25–30g protein immediately. You just completed the hardest session of the plan. That deserves proper recognition and proper recovery.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest day — you earned it.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Tempo run"}],
+         "sessions":[{"c":"run-tempo","n":"Tempo run — 28min","det":"2km WU &middot; 28min tempo &middot; 1km CD &middot; ~10.5km total","km":11}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"25g protein.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"9km easy &middot; Conversational &middot; Comfortable","km":9}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"60–90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Long run"}],
+         "sessions":[{"c":"run-long","n":"Long run","det":"12km easy &middot; 6:10–6:40/km &middot; Comfortable throughout","km":12}],
+         "nut":[{"t":"On wake","l":"Long run breakfast","d":"Porridge with banana. 90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Full recovery meal. Three weeks to race day. You are in excellent shape.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 10, "ph": "p2", "title": "Sharpening", "b": "k", "kl": [28, 34],
+      "note": "Volume starts to come down as race day approaches. The intensity stays high but the volume reduces — this is the beginning of the taper. The 600m reps are faster than 5k pace and sharpen your speed without accumulating fatigue.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Track session"}],
+         "sessions":[{"c":"run-int","n":"Track — 6x600m","det":"2km WU &middot; 6x600m @ slightly faster than 5k pace (2min rec) &middot; 2km CD &middot; 9km total","km":9}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water. Sharpening sessions feel different to volume sessions — they should feel fast and powerful.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"20g protein. Good week — two more weeks after this and you race.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Tempo run"}],
+         "sessions":[{"c":"run-tempo","n":"Tempo run — 20min","det":"2km WU &middot; 20min tempo &middot; 1km CD &middot; 8km total &middot; Shorter than recent weeks — use the reduction to run it well","km":8}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"300ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"20g protein.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"8km easy &middot; Conversational","km":8}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"60–90 minutes before.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Long run"}],
+         "sessions":[{"c":"run-long","n":"Long run","det":"10km easy &middot; 6:10–6:40/km &middot; Comfortable","km":10}],
+         "nut":[{"t":"On wake","l":"Long run breakfast","d":"Normal long run breakfast.","cat":"food"},{"t":"Post-run","l":"Recovery meal","d":"Full recovery meal. The work is done — two weeks of taper now.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 11, "ph": "p2", "title": "Race week minus one — taper", "b": "d", "kl": [18, 22],
+      "note": "Taper week. The hard work is behind you — the fitness you have built over 10 weeks does not disappear in two weeks of reduced training. Your legs should start to feel surprisingly good by Thursday. That is the taper working exactly as it should.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Taper begins. The work is done.","cat":"hydration"}]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Light track session"}],
+         "sessions":[{"c":"run-int","n":"Light intervals — 4x400m","det":"1.5km WU &middot; 4x400m @ race pace (2min rec) &middot; 1.5km CD &middot; 6km total &middot; Just staying sharp — nothing hard","km":6}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"200ml water. Light session — arrive fresh and leave fresh.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"Light protein snack.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest. Your legs may feel unusually good — that is the taper.","cat":"hydration"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"5km easy &middot; Relaxed &middot; If your legs feel great, resist the urge to go faster — save it","km":5}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"200ml water.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"Light snack. Race week is next — let the legs fully freshen.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Rest.","cat":"hydration"}]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-easy","n":"Easy run","det":"5km easy &middot; Comfortable and relaxed","km":5}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"Normal routine. Nothing new.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Light protein. Race week next — start thinking about your plan.","cat":"food"}]},
+        {"d":"Sun","dt":"","sleep":null,"times":[{"t":"08:00","l":"Easy run"}],
+         "sessions":[{"c":"run-long","n":"Easy run","det":"6km easy &middot; Very comfortable &middot; Arrive at race week feeling completely fresh","km":6}],
+         "nut":[{"t":"On wake","l":"Breakfast","d":"Normal breakfast.","cat":"food"},{"t":"Post-run","l":"Recovery","d":"Normal recovery meal. One week until race day.","cat":"food"}]}
+      ]
+    },
+    {
+      "n": 12, "ph": "p2", "title": "Race week", "b": "r", "kl": [12, 16],
+      "note": "Race week. Everything this week serves one purpose — arriving at the start line fresh, sharp and confident. Eat well, sleep well, stay relaxed. The fitness is there. Your only job is not to leave it in training.",
+      "days": [
+        {"d":"Mon","dt":"","sleep":null,"times":[],"sessions":[],"nut":[
+          {"t":"On wake","l":"Hydration","d":"500ml water. Race week. Eat normally and sleep well.","cat":"hydration"},
+          {"t":"Meals","l":"Carbohydrate focus","d":"Slightly increase carbohydrate intake this week — pasta, rice, bread. Not excessive, just prioritise carbs over fat at each meal.","cat":"info"}
+        ]},
+        {"d":"Tue","dt":"","sleep":null,"times":[{"t":"07:00","l":"Shakeout with strides"}],
+         "sessions":[{"c":"run-easy","n":"Shakeout run with strides","det":"15min easy &middot; 4x100m strides at race pace (full walk rec) &middot; 5min easy &middot; 4km total &middot; Wake the legs up, nothing more","km":4}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"200ml water. Light shakeout — keep it easy.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"Light protein snack. Good carbohydrate meal later today.","cat":"food"}]},
+        {"d":"Wed","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Hydration","d":"500ml water. Complete rest. Stay off your feet if you can.","cat":"hydration"},{"t":"Meals","l":"Pre-race carb loading","d":"High carbohydrate meals today. Pasta or rice at lunch and dinner. Avoid anything that might cause stomach issues.","cat":"food"}]},
+        {"d":"Thu","dt":"","sleep":null,"times":[{"t":"07:00","l":"Final shakeout"}],
+         "sessions":[{"c":"run-easy","n":"Final shakeout","det":"15min easy &middot; 3km total &middot; Just keeping the legs fresh and moving — nothing more","km":3}],
+         "nut":[{"t":"On wake","l":"Pre-run hydration","d":"200ml water. Final run before race day — keep it very easy.","cat":"hydration"},{"t":"Post-run","l":"Recovery","d":"Light protein. Good carbohydrate meal this evening.","cat":"food"},{"t":"Evening","l":"Pre-race dinner","d":"Pasta or rice-based meal. Something familiar. Eat by 19:00. Avoid alcohol and anything unusual.","cat":"food"}]},
+        {"d":"Fri","dt":"","sleep":null,"times":[],"sessions":[],"nut":[
+          {"t":"On wake","l":"Hydration","d":"500ml water. Complete rest. Lay out your kit today.","cat":"hydration"},
+          {"t":"Meals","l":"Today's nutrition","d":"Normal meals. Nothing heavy. Avoid excessive fibre. Drink consistently throughout the day — 2–2.5 litres total.","cat":"food"}
+        ]},
+        {"d":"Sat","dt":"","sleep":null,"times":[{"t":"Race time","l":"Race day"}],
+         "sessions":[{"c":"run-race","n":"5k race","det":"Warm up 1.5–2km easy &middot; 4x100m strides &middot; Start at goal pace &middot; Hold through 3km &middot; Push final kilometre if you have it &middot; Trust your training","km":5}],
+         "nut":[
+           {"t":"Race morning — 90min before","l":"Breakfast","d":"Porridge with banana, or toast with peanut butter. 400–500ml water. Only foods you have eaten before a run before — no experiments today.","cat":"food"},
+           {"t":"Race morning — 45min before","l":"Final prep","d":"150–200ml water. Small banana optional. Pin your number, prepare your chip. Go through your race plan mentally.","cat":"hydration"},
+           {"t":"30min before","l":"Warm-up","d":"1.5–2km easy jog followed by 4 strides at race pace. Your legs should feel ready and sharp by the time you reach the start line.","cat":"info"},
+           {"t":"During the race","l":"Pacing strategy","d":"First kilometre: goal pace, possibly 2–3 seconds slower. Hold that feeling through 3km. At 3km, assess — if you feel good, start building. Final 500m: everything you have left.","cat":"info"},
+           {"t":"Immediately post-race","l":"Rehydrate","d":"Water immediately at the finish line. 300–400ml in the first 10 minutes. Keep moving — walk for 5–10 minutes to cool down.","cat":"hydration"},
+           {"t":"Post-race — within 30min","l":"Recovery snack","d":"Banana or protein bar if available. Start the recovery process quickly.","cat":"food"},
+           {"t":"Post-race meal","l":"Celebrate and recover","d":"Proper meal within 1–2 hours. Whatever you want — you have earned it. Include protein and carbohydrates alongside the celebration. Drink consistently through the afternoon.","cat":"food"}
+         ]},
+        {"d":"Sun","dt":"","sleep":null,"times":[],"sessions":[],"nut":[{"t":"On wake","l":"Recovery day","d":"500ml water. Gentle walk if you want to. You ran your best 5k. What is next?","cat":"hydration"}]}
+      ]
+    }
+  ]
+}
