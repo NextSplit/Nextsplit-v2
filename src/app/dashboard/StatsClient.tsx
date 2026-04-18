@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
+import CoachingCard from '@/components/CoachingCard'
 import type { PlanWeek, TrainingLog } from '@/types/database'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -454,6 +455,9 @@ export default function StatsClient() {
         {plan.race_date && (
           <RaceCountdown raceDate={plan.race_date} planName={plan.name} />
         )}
+
+        {/* AI Coaching */}
+        <CoachingCard />
 
         {/* Summary stats */}
         <SessionSummary logs={logs} weeks={weeks} />
