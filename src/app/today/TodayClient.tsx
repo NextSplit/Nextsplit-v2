@@ -396,6 +396,25 @@ export default function TodayClient() {
             {/* Wellness check-in — today only */}
             {isToday && <WellnessCheckIn />}
 
+            {/* Sunday coach banner — next week preview */}
+            {isToday && viewDate.getDay() === 0 && plan && (() => {
+              const nextWeek = plan.weeks_data && Array.isArray((plan as any).weeks_data)
+                ? null : null // weeks come from useActivePlan hook
+              const nextWeekData = currentWeek ? { n: weekN + 1 } : null
+              if (!nextWeekData) return null
+              return (
+                <div className="bg-gradient-to-r from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 px-4 py-3 flex items-start gap-2.5">
+                  <span className="text-base mt-0.5">🗓️</span>
+                  <div>
+                    <p className="text-[11px] font-bold text-violet-800 mb-0.5">Week {weekN} complete!</p>
+                    <p className="text-xs text-violet-700 leading-relaxed">
+                      Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what&apos;s ahead.
+                    </p>
+                  </div>
+                </div>
+              )
+            })()}
+
             {/* Week note — shown at top on today only */}
             {isToday && currentWeek?.note && (
               <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
@@ -524,6 +543,19 @@ export default function TodayClient() {
               <div className="bg-indigo-50 rounded-2xl border border-indigo-100 px-4 py-3 flex items-start gap-2.5">
                 <span className="text-base mt-0.5">🌙</span>
                 <p className="text-xs text-indigo-700 leading-relaxed">{planDay.sleep}</p>
+              </div>
+            )}
+
+            {/* Missed session suggestion — past days with incomplete sessions */}
+            {!isToday && dateOffset < 0 && todaySessions.length > 0 && doneTodayCount < todaySessions.length && (
+              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
+                <span className="text-base mt-0.5">💡</span>
+                <div>
+                  <p className="text-[11px] font-bold text-amber-800 mb-0.5">Missed {todaySessions.length - doneTodayCount} session{todaySessions.length - doneTodayCount > 1 ? 's' : ''}</p>
+                  <p className="text-xs text-amber-700 leading-relaxed">
+                    You can still log these — tap the ✓ to mark them done. Or skip and keep moving.
+                  </p>
+                </div>
               </div>
             )}
 

@@ -295,15 +295,34 @@ function TrainingSummary({ logs }: { logs: Record<string, TrainingLog> }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function ProfileClient({ email, displayName, isStravaConnected }: { email: string; displayName: string; isStravaConnected: boolean }) {
+export default function ProfileClient({ email, displayName: initialDisplayName, isStravaConnected }: { email: string; displayName: string; isStravaConnected: boolean }) {
   const supabase = useSupabase()
   const { plan, weeks } = useActivePlan()
   const { logs } = useTrainingLog(plan?.id ?? null)
   const [stravaClientId, setStravaClientId] = useState<string | null>(null)
+  const [displayName, setDisplayName] = useState(initialDisplayName)
+  const [editingName, setEditingName] = useState(false)
+  const [nameInput, setNameInput] = useState(initialDisplayName)
+  const [savingName, setSavingName] = useState(false)
 
   useEffect(() => {
     setStravaClientId(localStorage.getItem('strava_client_id'))
   }, [])
+
+  async function saveDisplayName() {
+    if (!nameInput.trim()) return
+    setSavingName(true)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        await (supabase as any).from('profiles').upsert({ id: user.id, display_name: nameInput.trim() })
+        setDisplayName(nameInput.trim())
+      }
+    } finally {
+      setSavingName(false)
+      setEditingName(false)
+    }
+  }
 
   const xp = useMemo(() => computeXP(logs, weeks), [logs, weeks])
   const badgeStats = useMemo(() => computeBadgeStats(logs, weeks, xp), [logs, weeks, xp])
@@ -319,7 +338,27 @@ export default function ProfileClient({ email, displayName, isStravaConnected }:
             {displayName[0].toUpperCase()}
           </div>
           <div className="flex-1">
-            <div className="text-base font-bold text-gray-900">{displayName}</div>
+            {editingName ? (
+              <div className="flex items-center gap-2 mb-1">
+                <input value={nameInput} onChange={e => setNameInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') saveDisplayName(); if (e.key === 'Escape') setEditingName(false) }}
+                  autoFocus
+                  className="flex-1 border border-gray-200 rounded-lg px-2 py-1 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+                <button onClick={saveDisplayName} disabled={savingName}
+                  className="text-xs font-semibold text-[#0D9488] disabled:opacity-50">
+                  {savingName ? '…' : 'Save'}
+                </button>
+                <button onClick={() => setEditingName(false)} className="text-xs text-gray-400">✕</button>
+              </div>
+            ) : (
+              <button onClick={() => { setNameInput(displayName); setEditingName(true) }}
+                className="flex items-center gap-1.5 group mb-0.5">
+                <span className="text-base font-bold text-gray-900">{displayName}</span>
+                <svg className="w-3 h-3 text-gray-300 group-hover:text-[#0D9488] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+            )}
             <div className="text-xs text-gray-400">{email}</div>
             <div className="flex items-center gap-1.5 mt-1">
               <span className="text-xs font-semibold text-[#0D9488]">Lv {level.level}</span>
