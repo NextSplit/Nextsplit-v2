@@ -99,11 +99,12 @@ function DayRow({ day, dayIndex, weekN, logs, isToday, mealEntries }: {
   )
 }
 
-function WeekRow({ week, isCurrent, logs, todayDayIndex, weekRef, mealsByDate }: {
+function WeekRow({ week, isCurrent, logs, todayDayIndex, weekRef, mealsByDate, weekDates }: {
   week: PlanWeek; isCurrent: boolean
   logs: Record<string, import('@/types/database').TrainingLog>; todayDayIndex: number
   weekRef?: React.RefObject<HTMLDivElement | null>
   mealsByDate: Record<string, MealPlanEntryWithRecipe[]>
+  weekDates: string[]   // Mon–Sun ISO date strings for this week
 }) {
   const [open, setOpen] = useState(isCurrent)
   const phase = PHASE_LABELS[week.ph] ?? { label: week.ph, colour: 'bg-gray-100 text-gray-700' }
@@ -171,16 +172,8 @@ function WeekRow({ week, isCurrent, logs, todayDayIndex, weekRef, mealsByDate }:
       {open && (
         <div className="border-t border-gray-50">
           {week.days.map((day, dayI) => {
-            // Build the calendar date for this plan day
-            // week.n weeks since plan start_date, Mon=0..Sun=6
-            const weekStartDate = Object.keys(mealsByDate).length > 0
-              ? Object.keys(mealsByDate)[0] // approximate — meals are keyed by date
-              : null
-            // Use meals keyed by date: find any date where the day-of-week matches dayI
-            const matchingDate = Object.keys(mealsByDate).find(d => {
-              const dow = new Date(d + 'T00:00:00').getDay()
-              return (dow === 0 ? 6 : dow - 1) === dayI
-            }) ?? null
+            // weekDates[dayI] is the exact ISO date for Mon(0)..Sun(6)
+            const dateForDay = weekDates[dayI] ?? null
             return (
               <DayRow
                 key={dayI}
@@ -189,7 +182,7 @@ function WeekRow({ week, isCurrent, logs, todayDayIndex, weekRef, mealsByDate }:
                 weekN={week.n}
                 logs={logs}
                 isToday={isCurrent && dayI === todayDayIndex}
-                mealEntries={matchingDate ? (mealsByDate[matchingDate] ?? []) : []}
+                mealEntries={dateForDay ? (mealsByDate[dateForDay] ?? []) : []}
               />
             )
           })}
@@ -206,12 +199,22 @@ export default function PlanClient() {
   const currentWeekRef = useRef<HTMLDivElement>(null)
 
   // Compute current week date range for meal plan
-  const { start, end } = useMemo(() => {
-    if (!plan) { const t = new Date().toISOString().slice(0,10); return { start: t, end: t } }
+  const { start, end, weekDates } = useMemo(() => {
+    if (!plan) {
+      const t = new Date().toISOString().slice(0,10)
+      return { start: t, end: t, weekDates: [t] }
+    }
+    // Week starts on Monday: plan.start_date + (current_week-1)*7 days
     const s = new Date(plan.start_date + 'T00:00:00')
     s.setDate(s.getDate() + (plan.current_week - 1) * 7)
+    const dates: string[] = []
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(s)
+      d.setDate(d.getDate() + i)
+      dates.push(d.toISOString().slice(0, 10))
+    }
     const e = new Date(s); e.setDate(e.getDate() + 6)
-    return { start: s.toISOString().slice(0,10), end: e.toISOString().slice(0,10) }
+    return { start: s.toISOString().slice(0,10), end: e.toISOString().slice(0,10), weekDates: dates }
   }, [plan])
 
   const { byDate: mealsByDate } = useMealPlan(start, end)
@@ -322,6 +325,7 @@ export default function PlanClient() {
             todayDayIndex={todayDayIndex}
             weekRef={week.n === plan.current_week ? currentWeekRef : undefined}
             mealsByDate={week.n === plan.current_week ? mealsByDate : {}}
+            weekDates={week.n === plan.current_week ? weekDates : []}
           />
         ))}
       </div>
