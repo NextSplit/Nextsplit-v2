@@ -152,6 +152,36 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['strava_connections']['Row'], 'id'>
         Update: Partial<Database['public']['Tables']['strava_connections']['Insert']>
       }
+      recipes: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          servings: number
+          kcal_total: number | null
+          protein_total: number | null
+          carbs_total: number | null
+          fat_total: number | null
+          ingredients: RecipeIngredient[]
+          notes: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['recipes']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['recipes']['Insert']>
+      }
+      meal_plan_entries: {
+        Row: {
+          id: string
+          user_id: string
+          plan_date: string
+          meal_slot: string
+          recipe_id: string
+          portions: number
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['meal_plan_entries']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['meal_plan_entries']['Insert']>
+      }
     }
   }
 }
@@ -165,6 +195,29 @@ export type TrainingLog = Database['public']['Tables']['training_logs']['Row']
 export type WellnessLog = Database['public']['Tables']['wellness_logs']['Row']
 export type GymLog = Database['public']['Tables']['gym_logs']['Row']
 export type Race = Database['public']['Tables']['races']['Row']
+export type Recipe = Database['public']['Tables']['recipes']['Row']
+export type MealPlanEntry = Database['public']['Tables']['meal_plan_entries']['Row']
+
+export interface MealPlanEntryWithRecipe extends MealPlanEntry {
+  recipe: Recipe
+}
+
+export interface RecipeIngredient {
+  name: string
+  quantity: number
+  unit: string   // 'g' | 'ml' | 'cup' | 'tbsp' | 'tsp' | 'piece' | 'slice'
+}
+
+export const MEAL_SLOTS = [
+  { id: 'breakfast', label: 'Breakfast', emoji: '🌅' },
+  { id: 'pre_run',   label: 'Pre-run',   emoji: '⚡' },
+  { id: 'lunch',     label: 'Lunch',     emoji: '☀️' },
+  { id: 'snack',     label: 'Snack',     emoji: '🍌' },
+  { id: 'post_run',  label: 'Post-run',  emoji: '💪' },
+  { id: 'dinner',    label: 'Dinner',    emoji: '🌙' },
+] as const
+
+export type MealSlotId = typeof MEAL_SLOTS[number]['id']
 
 // ── Plan data types (for weeks_data JSONB) ────────────────────────────────────
 

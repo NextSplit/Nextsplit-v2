@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import React from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
+import { useMealPlan } from '@/hooks/useMealPlan'
 import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
-import type { PlanWeek, PlanDay, PlanSession } from '@/types/database'
+import { MEAL_SLOTS } from '@/types/database'
+import type { PlanWeek, PlanDay, PlanSession, MealPlanEntryWithRecipe } from '@/types/database'
 
 const PHASE_LABELS: Record<string, { label: string; colour: string }> = {
   p1: { label: 'Phase 1', colour: 'bg-teal-100 text-teal-800' },
@@ -32,9 +34,10 @@ function SessionPill({ session }: { session: PlanSession }) {
   )
 }
 
-function DayRow({ day, dayIndex, weekN, logs, isToday }: {
+function DayRow({ day, dayIndex, weekN, logs, isToday, mealEntries }: {
   day: PlanDay; dayIndex: number; weekN: number
   logs: Record<string, import('@/types/database').TrainingLog>; isToday: boolean
+  mealEntries: MealPlanEntryWithRecipe[]
 }) {
   const allDone = day.sessions.length > 0 && day.sessions.every((_, i) => logs[`${weekN}_${dayIndex}_${i}`]?.done)
 
@@ -45,7 +48,8 @@ function DayRow({ day, dayIndex, weekN, logs, isToday }: {
           <div className={`text-xs font-bold ${isToday ? 'text-[#0D9488]' : 'text-gray-400'}`}>{day.d}</div>
           {isToday && <div className="text-[9px] text-[#0D9488]">Today</div>}
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 space-y-1.5">
+          {/* Training sessions */}
           {day.sessions.length === 0 ? (
             <span className="text-xs text-gray-400 italic">Rest</span>
           ) : (
@@ -53,9 +57,28 @@ function DayRow({ day, dayIndex, weekN, logs, isToday }: {
               {day.sessions.map((s, i) => <SessionPill key={i} session={s} />)}
             </div>
           )}
-          {/* Nutrition hint — show first entry if exists */}
-          {day.nut && day.nut.length > 0 && (
-            <div className="flex items-center gap-1 mt-1.5">
+          {/* Meal plan entries — shown inline between sessions */}
+          {mealEntries.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {mealEntries.slice(0, 3).map(e => {
+                const slot = MEAL_SLOTS.find(s => s.id === e.meal_slot)
+                return (
+                  <div key={e.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-medium">
+                    <span>{slot?.emoji ?? '🍽️'}</span>
+                    <span className="truncate max-w-[80px]">{e.recipe.name}</span>
+                  </div>
+                )
+              })}
+              {mealEntries.length > 3 && (
+                <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-50 text-amber-500 text-[10px] font-medium">
+                  +{mealEntries.length - 3} more
+                </div>
+              )}
+            </div>
+          )}
+          {/* Nutrition hint from plan data */}
+          {mealEntries.length === 0 && day.nut && day.nut.length > 0 && (
+            <div className="flex items-center gap-1 mt-0.5">
               <span className="text-[10px]">🍽️</span>
               <span className="text-[10px] text-gray-400 truncate">{day.nut[0].l}</span>
               {day.nut.length > 1 && (
@@ -76,10 +99,11 @@ function DayRow({ day, dayIndex, weekN, logs, isToday }: {
   )
 }
 
-function WeekRow({ week, isCurrent, logs, todayDayIndex, weekRef }: {
+function WeekRow({ week, isCurrent, logs, todayDayIndex, weekRef, mealsByDate }: {
   week: PlanWeek; isCurrent: boolean
   logs: Record<string, import('@/types/database').TrainingLog>; todayDayIndex: number
   weekRef?: React.RefObject<HTMLDivElement | null>
+  mealsByDate: Record<string, MealPlanEntryWithRecipe[]>
 }) {
   const [open, setOpen] = useState(isCurrent)
   const phase = PHASE_LABELS[week.ph] ?? { label: week.ph, colour: 'bg-gray-100 text-gray-700' }
@@ -146,16 +170,29 @@ function WeekRow({ week, isCurrent, logs, todayDayIndex, weekRef }: {
       {/* Day rows */}
       {open && (
         <div className="border-t border-gray-50">
-          {week.days.map((day, dayI) => (
-            <DayRow
-              key={dayI}
-              day={day}
-              dayIndex={dayI}
-              weekN={week.n}
-              logs={logs}
-              isToday={isCurrent && dayI === todayDayIndex}
-            />
-          ))}
+          {week.days.map((day, dayI) => {
+            // Build the calendar date for this plan day
+            // week.n weeks since plan start_date, Mon=0..Sun=6
+            const weekStartDate = Object.keys(mealsByDate).length > 0
+              ? Object.keys(mealsByDate)[0] // approximate — meals are keyed by date
+              : null
+            // Use meals keyed by date: find any date where the day-of-week matches dayI
+            const matchingDate = Object.keys(mealsByDate).find(d => {
+              const dow = new Date(d + 'T00:00:00').getDay()
+              return (dow === 0 ? 6 : dow - 1) === dayI
+            }) ?? null
+            return (
+              <DayRow
+                key={dayI}
+                day={day}
+                dayIndex={dayI}
+                weekN={week.n}
+                logs={logs}
+                isToday={isCurrent && dayI === todayDayIndex}
+                mealEntries={matchingDate ? (mealsByDate[matchingDate] ?? []) : []}
+              />
+            )
+          })}
         </div>
       )}
     </div>
@@ -167,6 +204,17 @@ export default function PlanClient() {
   const { logs, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
   const [advancing, setAdvancing] = useState(false)
   const currentWeekRef = useRef<HTMLDivElement>(null)
+
+  // Compute current week date range for meal plan
+  const { start, end } = useMemo(() => {
+    if (!plan) { const t = new Date().toISOString().slice(0,10); return { start: t, end: t } }
+    const s = new Date(plan.start_date + 'T00:00:00')
+    s.setDate(s.getDate() + (plan.current_week - 1) * 7)
+    const e = new Date(s); e.setDate(e.getDate() + 6)
+    return { start: s.toISOString().slice(0,10), end: e.toISOString().slice(0,10) }
+  }, [plan])
+
+  const { byDate: mealsByDate } = useMealPlan(start, end)
 
   // Scroll to current week on load
   useEffect(() => {
@@ -273,6 +321,7 @@ export default function PlanClient() {
             logs={logs}
             todayDayIndex={todayDayIndex}
             weekRef={week.n === plan.current_week ? currentWeekRef : undefined}
+            mealsByDate={week.n === plan.current_week ? mealsByDate : {}}
           />
         ))}
       </div>
