@@ -89,7 +89,7 @@ export default async function OnboardingPage() {
         </div>
 
         <Link
-          href="/dashboard"
+          href="/today"
           className="block text-center text-xs text-[#444] hover:text-[#666] py-2"
         >
           Skip for now — set up later

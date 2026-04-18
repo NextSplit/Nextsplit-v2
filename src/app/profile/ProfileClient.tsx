@@ -335,7 +335,7 @@ export default function ProfileClient({ email, displayName }: { email: string; d
             <div className="flex items-center justify-between mb-1">
               <div className="text-sm font-bold text-gray-900">Active Plan</div>
               <a
-                href="/onboarding/predetermined"
+                href="/onboarding"
                 className="text-xs font-semibold text-[#0D9488] bg-teal-50 px-3 py-1.5 rounded-full"
               >
                 Change plan
@@ -360,7 +360,7 @@ export default function ProfileClient({ email, displayName }: { email: string; d
 
         {!plan && (
           <a
-            href="/onboarding/predetermined"
+            href="/onboarding"
             className="block bg-white rounded-2xl border border-dashed border-gray-200 p-5 text-center"
           >
             <div className="text-2xl mb-1">📋</div>
