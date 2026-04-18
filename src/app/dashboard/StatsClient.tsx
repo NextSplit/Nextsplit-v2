@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useRaces } from '@/hooks/useRaces'
+import { useWellness } from '@/hooks/useWellness'
 import CoachingCard from '@/components/CoachingCard'
 import type { PlanWeek, TrainingLog, Race } from '@/types/database'
 
@@ -749,6 +750,75 @@ function PaceCalculator() {
   )
 }
 
+// ─── Wellness Trend ───────────────────────────────────────────────────────────
+
+function WellnessTrend() {
+  const { recent, loading } = useWellness()
+
+  if (loading || recent.length === 0) return null
+
+  // Last 7 daily logs
+  const last7 = recent.filter(l => l.log_type === 'daily').slice(0, 7).reverse()
+  if (last7.length < 2) return null
+
+  const scores = last7.map(l => {
+    const sleep = l.sleep ?? 3
+    const soreness = l.soreness ?? 2
+    const mood = l.mood ?? 4
+    return Math.round((sleep * 0.4 + mood * 0.35 + (6 - soreness) * 0.25) * 2)
+  })
+
+  const max = 10
+  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+  const trend = scores[scores.length - 1] - scores[0]
+
+  const dayLabels = last7.map(l => {
+    const d = new Date(l.log_date)
+    return d.toLocaleDateString('en-GB', { weekday: 'short' }).slice(0, 1)
+  })
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <div className="text-sm font-bold text-gray-900">Readiness trend</div>
+          <div className="text-xs text-gray-400 mt-0.5">Last {last7.length} days · avg {avg}/10</div>
+        </div>
+        <div className={`text-xs font-semibold px-2 py-1 rounded-full ${
+          trend > 0 ? 'bg-emerald-50 text-emerald-600' :
+          trend < 0 ? 'bg-red-50 text-red-500' :
+          'bg-gray-100 text-gray-500'
+        }`}>
+          {trend > 0 ? `↑ +${trend}` : trend < 0 ? `↓ ${trend}` : '→ Stable'}
+        </div>
+      </div>
+
+      {/* Sparkline bars */}
+      <div className="flex items-end gap-1.5 h-14">
+        {scores.map((score, i) => {
+          const pct = (score / max) * 100
+          const isLatest = i === scores.length - 1
+          return (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <div className="w-full flex items-end" style={{ height: '44px' }}>
+                <div
+                  className={`w-full rounded-t-sm transition-all ${
+                    isLatest ? 'bg-[#0D9488]' :
+                    score >= 7 ? 'bg-emerald-200' :
+                    score >= 5 ? 'bg-amber-200' : 'bg-red-200'
+                  }`}
+                  style={{ height: `${Math.max(pct, 8)}%` }}
+                />
+              </div>
+              <span className="text-[9px] text-gray-400">{dayLabels[i]}</span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function StatsClient() {
@@ -808,6 +878,7 @@ export default function StatsClient() {
                 <CoachingCard />
                 <SessionSummary logs={logs} weeks={weeks} />
                 <WeeklyVolumeChart logs={logs} weeks={weeks} />
+                <WellnessTrend />
                 <ACWRChart logs={logs} weeks={weeks} />
                 <PaceTrend logs={logs} />
               </>

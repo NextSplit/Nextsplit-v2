@@ -328,7 +328,31 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
     onDone()
   }, [plan, saved, logged, saveGymLog, logSession, weekN, dayIndex, sessionIndex, onDone])
 
-  if (!currentEx) return null
+  if (!currentEx) return (
+    <div className="fixed inset-0 z-[100] bg-[#f8f8f6] flex flex-col items-center justify-center px-6 text-center">
+      <div className="text-5xl mb-4">🏋️</div>
+      <h2 className="text-lg font-bold text-gray-900 mb-2">No exercises found</h2>
+      <p className="text-sm text-gray-500 mb-6 max-w-xs">
+        Couldn&apos;t parse exercises from this session. You can still log it as complete.
+      </p>
+      <button
+        onClick={async () => {
+          if (plan) {
+            await logSession({
+              plan_id: plan.id, week_n: weekN, day_i: dayIndex,
+              session_i: sessionIndex, done: true,
+              duration_secs: Math.round((Date.now() - startTime.current) / 1000),
+            })
+          }
+          onDone()
+        }}
+        className="w-full max-w-xs py-3 bg-[#0D9488] text-white rounded-xl text-sm font-semibold"
+      >
+        Mark as done
+      </button>
+      <button onClick={onDone} className="mt-3 text-sm text-gray-400">Go back</button>
+    </div>
+  )
 
   const xp = getSessionXP(session.c)
 
