@@ -399,7 +399,7 @@ function AthleteProfileSection() {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function ProfileClient({ email, displayName: initialDisplayName, isStravaConnected }: { email: string; displayName: string; isStravaConnected: boolean }) {
+export default function ProfileClient({ email, displayName: initialDisplayName, isStravaConnected, stravaStatus }: { email: string; displayName: string; isStravaConnected: boolean; stravaStatus?: string }) {
   const router = useRouter()
   const supabase = useSupabase()
   const { plan, weeks } = useActivePlan()
@@ -476,6 +476,31 @@ export default function ProfileClient({ email, displayName: initialDisplayName, 
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-5 space-y-4">
+
+        {/* Strava connection status banner */}
+        {stravaStatus === 'connected' && (
+          <div className="bg-orange-50 rounded-2xl border border-orange-100 px-4 py-3 flex items-center gap-2.5">
+            <svg viewBox="0 0 24 24" fill="#f97316" className="w-5 h-5 flex-shrink-0">
+              <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+            </svg>
+            <p className="text-sm font-semibold text-orange-700">Strava connected! Sync your runs from the Today tab.</p>
+          </div>
+        )}
+        {stravaStatus === 'denied' && (
+          <div className="bg-red-50 rounded-2xl border border-red-100 px-4 py-3">
+            <p className="text-sm font-semibold text-red-700">Strava connection cancelled.</p>
+          </div>
+        )}
+        {(stravaStatus === 'error' || stravaStatus === 'token_error') && (
+          <div className="bg-red-50 rounded-2xl border border-red-100 px-4 py-3">
+            <p className="text-sm font-semibold text-red-700">Strava connection failed — please try again.</p>
+          </div>
+        )}
+        {stravaStatus === 'no_secret' && (
+          <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3">
+            <p className="text-sm font-semibold text-amber-800">Add STRAVA_CLIENT_SECRET to Vercel env vars to complete setup.</p>
+          </div>
+        )}
 
         {/* XP bar */}
         <XPBar xp={xp} />

@@ -712,8 +712,8 @@ function TrainingZones({ logs }: { logs: Record<string, TrainingLog> }) {
     { zone: 1, name: 'Easy / Recovery', paceMin: threshPace + 90, paceMax: threshPace + 150, colour: 'bg-blue-100 text-blue-700', effort: '60–70%' },
     { zone: 2, name: 'Aerobic base', paceMin: threshPace + 45, paceMax: threshPace + 90, colour: 'bg-green-100 text-green-700', effort: '70–80%' },
     { zone: 3, name: 'Tempo / LT1', paceMin: threshPace + 15, paceMax: threshPace + 45, colour: 'bg-yellow-100 text-yellow-700', effort: '80–87%' },
-    { zone: 4, name: 'Threshold / LT2', paceMin: threshPace - 15, paceMax: threshPace + 15, colour: 'bg-orange-100 text-orange-700', effort: '87–92%' },
-    { zone: 5, name: 'VO2 max / Intervals', paceMin: threshPace - 60, paceMax: threshPace - 15, colour: 'bg-red-100 text-red-700', effort: '92–100%' },
+    { zone: 4, name: 'Threshold / LT2', paceMin: Math.max(60, threshPace - 15), paceMax: threshPace + 15, colour: 'bg-orange-100 text-orange-700', effort: '87–92%' },
+    { zone: 5, name: 'VO2 max / Intervals', paceMin: Math.max(30, threshPace - 60), paceMax: Math.max(60, threshPace - 15), colour: 'bg-red-100 text-red-700', effort: '92–100%' },
   ]
 
   return (

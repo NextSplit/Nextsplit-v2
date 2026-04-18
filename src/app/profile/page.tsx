@@ -3,7 +3,11 @@ import { redirect } from 'next/navigation'
 import ProfileClient from './ProfileClient'
 import type { Profile } from '@/types/database'
 
-export default async function ProfilePage() {
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ strava?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
@@ -19,11 +23,14 @@ export default async function ProfilePage() {
     .eq('user_id', user.id)
     .maybeSingle()
 
+  const { strava } = await searchParams
+
   return (
     <ProfileClient
       email={user.email ?? ''}
       displayName={displayName}
       isStravaConnected={!!stravaConn}
+      stravaStatus={strava}
     />
   )
 }
