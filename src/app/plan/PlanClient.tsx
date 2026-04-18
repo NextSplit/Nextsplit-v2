@@ -62,6 +62,16 @@ function DayRow({ day, dayIndex, weekN, logs, isToday }: {
               {day.sessions.map((s, i) => <SessionPill key={i} session={s} />)}
             </div>
           )}
+          {/* Nutrition hint — show first entry if exists */}
+          {day.nut && day.nut.length > 0 && (
+            <div className="flex items-center gap-1 mt-1.5">
+              <span className="text-[10px]">🍽️</span>
+              <span className="text-[10px] text-gray-400 truncate">{day.nut[0].l}</span>
+              {day.nut.length > 1 && (
+                <span className="text-[10px] text-gray-400">+{day.nut.length - 1}</span>
+              )}
+            </div>
+          )}
         </div>
         {allDone && (
           <div className="w-5 h-5 rounded-full bg-emerald-400 flex items-center justify-center flex-shrink-0">

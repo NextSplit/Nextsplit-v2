@@ -38,7 +38,7 @@ interface LogModalProps {
   onClose: () => void
   onSave: (params: {
     week_n: number; day_i: number; session_i: number; done: boolean
-    effort?: number; km?: number; notes?: string
+    effort?: number; km?: number; notes?: string; duration_secs?: number
   }) => Promise<void>
 }
 
@@ -47,6 +47,9 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
   const [effort, setEffort] = useState(existingLog?.effort ?? 7)
   const [km, setKm] = useState(existingLog?.km ?? session.km ?? 0)
   const [notes, setNotes] = useState(existingLog?.notes ?? '')
+  const [durationMins, setDurationMins] = useState(
+    existingLog?.duration_secs ? Math.round(existingLog.duration_secs / 60) : 0
+  )
   const [saving, setSaving] = useState(false)
 
   async function handleSave() {
@@ -60,6 +63,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
         effort,
         km: km > 0 ? km : undefined,
         notes: notes.trim() || undefined,
+        duration_secs: durationMins > 0 ? durationMins * 60 : undefined,
       })
       onClose()
     } finally {
@@ -126,6 +130,26 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
             )}
           </div>
         )}
+
+        {/* Notes */}
+        {/* Duration input */}
+        <div className="mb-5">
+          <label className="text-sm font-semibold text-gray-700 block mb-2">Duration (optional)</label>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setDurationMins(prev => Math.max(0, prev - 5))}
+              className="w-10 h-10 rounded-full bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center"
+            >−</button>
+            <div className="flex-1 text-center">
+              <span className="text-3xl font-bold text-gray-900">{durationMins}</span>
+              <span className="text-sm text-gray-400 ml-1">min</span>
+            </div>
+            <button
+              onClick={() => setDurationMins(prev => prev + 5)}
+              className="w-10 h-10 rounded-full bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center"
+            >+</button>
+          </div>
+        </div>
 
         {/* Notes */}
         <div className="mb-6">
@@ -212,6 +236,7 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
                 ✓ Done{log?.effort ? ` · Effort ${log.effort}/10` : ''}
               </span>
               {log?.km && <span className="text-[10px] text-gray-400">{log.km}km</span>}
+              {log?.duration_secs && <span className="text-[10px] text-gray-400">{Math.round(log.duration_secs / 60)}min</span>}
               {log?.notes && <span className="text-[10px] text-gray-400 italic truncate max-w-[120px]">{log.notes}</span>}
             </div>
           )}
@@ -287,7 +312,7 @@ export default function TodayClient() {
 
   const handleLogSession = useCallback(async (params: {
     week_n: number; day_i: number; session_i: number; done: boolean
-    effort?: number; km?: number; notes?: string
+    effort?: number; km?: number; notes?: string; duration_secs?: number
   }) => {
     if (!plan) return
     const log = await logSession({ plan_id: plan.id, ...params })

@@ -8,15 +8,22 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'NextSplit',
+    startupImage: '/icon-512.png',
+  },
+  icons: {
+    apple: '/icon-192.png',
+    icon: '/icon-192.png',
   },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1a1a1a',
+  themeColor: '#0D9488',
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({

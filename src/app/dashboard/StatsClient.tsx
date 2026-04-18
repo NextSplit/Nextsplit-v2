@@ -359,6 +359,7 @@ function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; we
   const done = all.filter(l => l.done)
   const totalKm = done.reduce((a, l) => a + (l.km ?? 0), 0)
   const totalSessions = done.length
+  const totalHours = done.reduce((a, l) => a + (l.duration_secs ?? 0), 0) / 3600
 
   // Total planned sessions
   const plannedTotal = weeks.reduce((a, w) =>
@@ -371,20 +372,26 @@ function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; we
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5">
       <div className="text-sm font-bold text-gray-900 mb-4">Plan Summary</div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-4 gap-2">
         <div className="text-center">
-          <div className="text-2xl font-black text-[#0D9488]">{Math.round(totalKm)}</div>
-          <div className="text-[10px] text-gray-400 mt-0.5">km logged</div>
+          <div className="text-xl font-black text-[#0D9488]">{Math.round(totalKm)}</div>
+          <div className="text-[10px] text-gray-400 mt-0.5">km</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-black text-gray-900">{totalSessions}</div>
-          <div className="text-[10px] text-gray-400 mt-0.5">sessions done</div>
+          <div className="text-xl font-black text-gray-900">{totalSessions}</div>
+          <div className="text-[10px] text-gray-400 mt-0.5">sessions</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-black text-gray-900">
+          <div className="text-xl font-black text-gray-900">
+            {totalHours > 0 ? totalHours.toFixed(1) : '—'}
+          </div>
+          <div className="text-[10px] text-gray-400 mt-0.5">hours</div>
+        </div>
+        <div className="text-center">
+          <div className="text-xl font-black text-gray-900">
             {avgEffort > 0 ? avgEffort.toFixed(1) : '—'}
           </div>
-          <div className="text-[10px] text-gray-400 mt-0.5">avg effort</div>
+          <div className="text-[10px] text-gray-400 mt-0.5">avg RPE</div>
         </div>
       </div>
       {plannedTotal > 0 && (
