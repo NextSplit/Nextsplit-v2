@@ -199,7 +199,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "18km on trail · Easy effort · Practice carrying nutrition",
-              "km": "18km"
+              "km": 18
             }
           ],
           "nut": [
@@ -232,7 +232,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "12km on trail · Easy · No targets · Time on feet",
-              "km": "12km"
+              "km": 12
             }
           ],
           "nut": [
@@ -407,7 +407,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "20km trail · Easy · Gel every 45min",
-              "km": "20km"
+              "km": 20
             }
           ],
           "nut": [
@@ -440,7 +440,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "14km trail · Easy",
-              "km": "14km"
+              "km": 14
             }
           ],
           "nut": [
@@ -615,7 +615,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "22km trail · Elevation focus if available",
-              "km": "22km"
+              "km": 22
             }
           ],
           "nut": [
@@ -648,7 +648,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "16km trail · Easy · Nutrition practice",
-              "km": "16km"
+              "km": 16
             }
           ],
           "nut": [
@@ -1031,7 +1031,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "24km trail · Elevation if available",
-              "km": "24km"
+              "km": 24
             }
           ],
           "nut": [
@@ -1064,7 +1064,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "16km trail · Easy",
-              "km": "16km"
+              "km": 16
             }
           ],
           "nut": [
@@ -1239,7 +1239,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "26km trail · Kit practice — race vest, poles, headtorch",
-              "km": "26km"
+              "km": 26
             }
           ],
           "nut": [
@@ -1272,7 +1272,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "18km trail · Easy",
-              "km": "18km"
+              "km": 18
             }
           ],
           "nut": [
@@ -1447,7 +1447,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "28km trail",
-              "km": "28km"
+              "km": 28
             }
           ],
           "nut": [
@@ -1480,7 +1480,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "18km trail · Note how legs feel on Sunday after Saturday",
-              "km": "18km"
+              "km": 18
             }
           ],
           "nut": [
@@ -1863,7 +1863,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "30km trail · Include 1000m+ elevation if available",
-              "km": "30km"
+              "km": 30
             }
           ],
           "nut": [
@@ -1896,7 +1896,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "18km trail · Easy",
-              "km": "18km"
+              "km": 18
             }
           ],
           "nut": [
@@ -2071,7 +2071,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "32km trail · Full kit test · Two gels + real food",
-              "km": "32km"
+              "km": 32
             }
           ],
           "nut": [
@@ -2104,7 +2104,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "20km trail · Easy",
-              "km": "20km"
+              "km": 20
             }
           ],
           "nut": [
@@ -2279,7 +2279,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "34km trail",
-              "km": "34km"
+              "km": 34
             }
           ],
           "nut": [
@@ -2312,7 +2312,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "20km trail",
-              "km": "20km"
+              "km": 20
             }
           ],
           "nut": [
@@ -2695,7 +2695,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "36km trail · Full race nutrition — gel every 45min · Kit check",
-              "km": "36km"
+              "km": 36
             }
           ],
           "nut": [
@@ -2728,7 +2728,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "22km trail",
-              "km": "22km"
+              "km": 22
             }
           ],
           "nut": [
@@ -2903,7 +2903,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "38km trail · Practice pacing for long distance — walk uphills",
-              "km": "38km"
+              "km": 38
             }
           ],
           "nut": [
@@ -2936,7 +2936,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "22km trail · Easy",
-              "km": "22km"
+              "km": 22
             }
           ],
           "nut": [
@@ -3111,7 +3111,7 @@
               "c": "run-long",
               "n": "Saturday long run",
               "det": "36km trail",
-              "km": "36km"
+              "km": 36
             }
           ],
           "nut": [
@@ -3144,7 +3144,7 @@
               "c": "run-long",
               "n": "Sunday long run (back-to-back)",
               "det": "22km trail · This back-to-back prepares you for race day fatigue",
-              "km": "22km"
+              "km": 22
             }
           ],
           "nut": [

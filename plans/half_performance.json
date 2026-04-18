@@ -106,7 +106,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 8x800m @ HM pace (90sec rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -172,7 +172,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 25min @ threshold (4:28–4:38/km) &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -332,7 +332,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 6x1km @ 4:00–4:08/km (3min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -398,7 +398,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 2x14min @ threshold (4:25–4:35/km, 90sec rec) &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -558,7 +558,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 7x1km @ 4:00–4:08/km (3min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -624,7 +624,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 30min @ threshold &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -1010,7 +1010,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 5x2km @ 4:16/km (3min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -1076,7 +1076,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 35min @ threshold (4:23–4:33/km) &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -1236,7 +1236,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 4x2.5km @ 4:16/km (3.5min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -1302,7 +1302,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 2x18min @ threshold (2min rec) &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -1462,7 +1462,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 8x1km @ 4:02–4:10/km (2.5min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -1528,7 +1528,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 40min @ threshold &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -1914,7 +1914,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 14x300m @ 3:30–3:40/km (90sec rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -1980,7 +1980,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 35min @ threshold &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -2140,7 +2140,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 5x2km @ 4:16/km (3min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -2206,7 +2206,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 38min @ threshold (4:20–4:30/km) &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -2366,7 +2366,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 5x1600m @ 4:16/km (4min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -2432,7 +2432,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 2x20min @ threshold (4:20–4:30/km, 2min rec) &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -2592,7 +2592,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 4x2.5km @ 4:16/km (3.5min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -2658,7 +2658,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 40min @ threshold &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -2818,7 +2818,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 8x1km @ 4:14–4:18/km (2min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -2884,7 +2884,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 35min @ threshold &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -3496,7 +3496,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 6x1km @ HM pace (2.5min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -3562,7 +3562,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 28min @ threshold &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
@@ -3722,7 +3722,7 @@
               "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 5x1600m @ 4:14–4:18/km (4min rec) &middot; 2km CD",
-              "km": "run-int"
+              "km": 2
             }
           ],
           "nut": [
@@ -3788,7 +3788,7 @@
               "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 2x18min @ threshold (2min rec) &middot; 2km CD",
-              "km": "run-tempo"
+              "km": 2
             }
           ],
           "nut": [
