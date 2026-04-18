@@ -6,6 +6,8 @@ import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { getSessionType, fmtKm, formatDate, offsetDate } from '@/lib/sessionUtils'
 import type { PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
+import { getSessionXP } from '@/lib/xp'
+
 /** Decode HTML entities like &middot; &ndash; &amp; */
 function decodeHtml(str: string): string {
   return str
@@ -238,6 +240,7 @@ export default function TodayClient() {
   const [modalSession, setModalSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
   const [undoInfo, setUndoInfo] = useState<{ logId: string; timer: ReturnType<typeof setTimeout> } | null>(null)
   const [undoLabel, setUndoLabel] = useState('')
+  const [undoXP, setUndoXP] = useState(0)
   const [undoSecsLeft, setUndoSecsLeft] = useState(8)
 
   const viewDate = offsetDate(dateOffset)
@@ -281,6 +284,7 @@ export default function TodayClient() {
     if (undoInfo) clearTimeout(undoInfo.timer)
     const session = planDay?.sessions[params.session_i]
     setUndoLabel(session?.n ?? 'session')
+    setUndoXP(session ? getSessionXP(session.c) : 10)
     const timer = setTimeout(() => setUndoInfo(null), 8000)
     setUndoInfo({ logId: log.id, timer })
   }, [plan, logSession, undoInfo, planDay])
@@ -450,8 +454,13 @@ export default function TodayClient() {
       {undoInfo && (
         <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50">
           <div className="bg-gray-900 text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-xl">
-            <div>
-              <span className="text-sm">Logged: <span className="font-medium">{undoLabel}</span></span>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm">✓ <span className="font-medium">{undoLabel}</span></span>
+                <span className="text-xs font-bold text-[#34D399] bg-[#34D399]/10 px-2 py-0.5 rounded-full">
+                  +{undoXP} XP
+                </span>
+              </div>
               <div className="h-0.5 bg-white/20 rounded-full mt-2 overflow-hidden">
                 <div
                   className="h-full bg-emerald-400 rounded-full transition-all duration-1000"
