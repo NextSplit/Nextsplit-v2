@@ -3,7 +3,15 @@ import { createClient } from '@supabase/supabase-js'
 import { readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 
-export async function POST() {
+export async function POST(req: Request) {
+  // Require a secret header to prevent accidental/unauthorised seeding
+  const secret = process.env.SEED_SECRET
+  if (secret) {
+    const provided = req.headers.get('x-seed-secret')
+    if (provided !== secret) {
+      return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+    }
+  }
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
