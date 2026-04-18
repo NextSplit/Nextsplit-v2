@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 const GOALS = [
   { id: '5k',      label: '5K',             emoji: '🏃', desc: 'Run your first or faster 5K' },
   { id: '10k',     label: '10K',            emoji: '🏃', desc: 'Build up to 10 kilometres' },
+  { id: '10mi',    label: '10 Miles',       emoji: '🏃', desc: '16km — a great stepping stone' },
   { id: 'half',    label: 'Half Marathon',  emoji: '🏅', desc: '21.1km — a serious challenge' },
   { id: 'marathon',label: 'Marathon',       emoji: '🏆', desc: '42.2km — the classic distance' },
   { id: 'ultra',   label: 'Ultra',          emoji: '🌄', desc: '50K, 50 miles, or beyond' },
@@ -21,6 +22,7 @@ const LEVELS = [
 const SLUG_MAP: Record<string, string> = {
   '5k_beginner': '5k_couch_to_5k', '5k_intermediate': '5k_improve', '5k_advanced': '5k_performance',
   '10k_beginner': '10k_beginner', '10k_intermediate': '10k_intermediate', '10k_advanced': '10k_performance',
+  '10mi_beginner': '10mi_beginner', '10mi_intermediate': '10mi_intermediate', '10mi_advanced': '10mi_performance',
   'half_beginner': 'half_novice', 'half_intermediate': 'half_intermediate', 'half_advanced': 'half_performance',
   'marathon_beginner': 'marathon_novice', 'marathon_intermediate': 'marathon_intermediate', 'marathon_advanced': 'marathon_performance',
   'ultra_beginner': 'ultra_50mi', 'ultra_intermediate': 'ultra_50mi', 'ultra_advanced': 'ultra_100mi',
@@ -30,6 +32,7 @@ const SLUG_MAP: Record<string, string> = {
 const SLUG_LABELS: Record<string, string> = {
   '5k_couch_to_5k': 'Couch to 5K', '5k_improve': '5K Improver', '5k_performance': '5K Performance',
   '10k_beginner': '10K Beginner', '10k_intermediate': '10K Intermediate', '10k_performance': '10K Performance',
+  '10mi_beginner': '10 Mile Beginner', '10mi_intermediate': '10 Mile Intermediate', '10mi_performance': '10 Mile Performance',
   'half_novice': 'Half Marathon Novice', 'half_intermediate': 'Half Marathon Intermediate', 'half_performance': 'Half Marathon Performance',
   'marathon_novice': 'Marathon Novice', 'marathon_intermediate': 'Marathon Intermediate', 'marathon_performance': 'Marathon Performance',
   'ultra_50mi': '50-Mile Ultra', 'ultra_100mi': '100-Mile Ultra',

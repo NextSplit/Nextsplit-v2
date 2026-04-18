@@ -23,6 +23,7 @@ interface LogModalProps {
   weekN: number
   planId: string
   existingLog: TrainingLog | null
+  prefillDurationSecs?: number
   onClose: () => void
   onSave: (params: {
     week_n: number; day_i: number; session_i: number; done: boolean
@@ -30,13 +31,17 @@ interface LogModalProps {
   }) => Promise<void>
 }
 
-function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose, onSave }: LogModalProps) {
+function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefillDurationSecs, onClose, onSave }: LogModalProps) {
   const cfg = getSessionType(session.c)
   const [effort, setEffort] = useState(existingLog?.effort ?? 7)
   const [km, setKm] = useState(existingLog?.km ?? session.km ?? 0)
   const [notes, setNotes] = useState(existingLog?.notes ?? '')
   const [durationMins, setDurationMins] = useState(
-    existingLog?.duration_secs ? Math.round(existingLog.duration_secs / 60) : 0
+    existingLog?.duration_secs
+      ? Math.round(existingLog.duration_secs / 60)
+      : prefillDurationSecs
+        ? Math.round(prefillDurationSecs / 60)
+        : 0
   )
   const [paceInput, setPaceInput] = useState(existingLog?.pace ?? '')
   const [saving, setSaving] = useState(false)
@@ -297,7 +302,7 @@ export default function TodayClient() {
 
   const [dateOffset, setDateOffset] = useState(0)
   const [readinessScore, setReadinessScore] = useState<number | null>(null)
-  const [modalSession, setModalSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
+  const [modalSession, setModalSession] = useState<{ session: PlanSession; dayI: number; sessI: number; prefillDurationSecs?: number } | null>(null)
   const [focusSession, setFocusSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
   const [undoInfo, setUndoInfo] = useState<{ logId: string; timer: ReturnType<typeof setTimeout> } | null>(null)
   const [undoLabel, setUndoLabel] = useState('')
@@ -743,9 +748,9 @@ export default function TodayClient() {
           session={focusSession.session}
           isLogged={!!logs[`${weekN}_${focusSession.dayI}_${focusSession.sessI}`]?.done}
           onClose={() => setFocusSession(null)}
-          onLog={() => {
+          onLog={(elapsedSecs) => {
             setFocusSession(null)
-            setModalSession(focusSession)
+            setModalSession({ ...focusSession, prefillDurationSecs: elapsedSecs })
           }}
         />
       )}
@@ -759,6 +764,7 @@ export default function TodayClient() {
           weekN={weekN}
           planId={plan.id}
           existingLog={logs[`${weekN}_${modalSession.dayI}_${modalSession.sessI}`] ?? null}
+          prefillDurationSecs={modalSession.prefillDurationSecs}
           onClose={() => setModalSession(null)}
           onSave={handleLogSession}
         />

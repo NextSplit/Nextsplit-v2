@@ -639,7 +639,10 @@ function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: ()
           {race.notes && <p className="text-xs text-gray-500 mb-3 leading-relaxed">{race.notes}</p>}
           <div className="flex gap-2">
             {!race.actual_time_secs && <button onClick={onLogResult} className="flex-1 py-2 rounded-xl bg-[#0D9488] text-white text-xs font-semibold">Log result</button>}
-            <button onClick={onDelete} className="py-2 px-4 rounded-xl border border-red-200 text-red-500 text-xs font-semibold">Delete</button>
+            <button
+              onClick={() => { if (window.confirm(`Delete "${race.name}"?`)) onDelete() }}
+              className="py-2 px-4 rounded-xl border border-red-200 text-red-500 text-xs font-semibold"
+            >Delete</button>
           </div>
         </div>
       )}
