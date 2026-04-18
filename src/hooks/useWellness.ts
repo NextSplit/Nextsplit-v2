@@ -76,7 +76,10 @@ export function useWellness(): UseWellnessReturn {
     return () => { cancelled = true }
   }, [supabase, tick])
 
-  const todayStr = new Date().toISOString().split('T')[0]
+  const todayStr = (() => {
+    const d = new Date()
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')
+  })()
   const today = recent.find(l => l.log_date === todayStr && l.log_type === 'daily') ?? null
 
   const logWellness = useCallback(async (params: LogWellnessParams): Promise<WellnessLog> => {

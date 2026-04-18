@@ -41,7 +41,8 @@ function weeklyKm(logs: TrainingLog[]): Record<number, number> {
   return out
 }
 
-/** ACWR: current week (acute) vs 4-week rolling average (chronic). */
+/** ACWR: current week (acute) vs prior 4-week rolling average (chronic).
+ *  Chronic intentionally excludes the current week to avoid self-referential suppression of load spikes. */
 function calcACWR(logs: TrainingLog[], weeks: PlanWeek[]): { week: number; acwr: number; acute: number; chronic: number }[] {
   const km = weeklyKm(logs)
   const result = []
@@ -49,16 +50,15 @@ function calcACWR(logs: TrainingLog[], weeks: PlanWeek[]): { week: number; acwr:
 
   for (let i = 0; i < weekNums.length; i++) {
     const w = weekNums[i]
-    // Acute = current week's km
     const acute = km[w] ?? 0
-    // Chronic = rolling 4-week average (including current week)
-    const chronicWeeks = weekNums.slice(Math.max(0, i - 3), i + 1)
+    // Chronic = prior 4 weeks EXCLUDING current week
+    const chronicWeeks = weekNums.slice(Math.max(0, i - 4), i)
     const chronic = chronicWeeks.length > 0
-      ? chronicWeeks.reduce((a, n) => a + (km[n] ?? 0), 0) / Math.max(chronicWeeks.length, 1)
-      : 0
+      ? chronicWeeks.reduce((a, n) => a + (km[n] ?? 0), 0) / chronicWeeks.length
+      : acute // no prior data: ratio defaults to 1.0 (neutral)
 
     if (acute > 0 || chronic > 0) {
-      result.push({ week: w, acwr: chronic > 0 ? acute / chronic : 0, acute, chronic })
+      result.push({ week: w, acwr: chronic > 0 ? acute / chronic : 1, acute, chronic })
     }
   }
 

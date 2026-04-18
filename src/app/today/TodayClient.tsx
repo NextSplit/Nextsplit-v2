@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml } from '@/lib/sessionUtils'
@@ -402,8 +402,26 @@ export default function TodayClient() {
   const dayOfWeek = viewDate.getDay()
   const planDayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1
 
-  const planDay: PlanDay | null = currentWeek?.days[planDayIndex] ?? null
-  const weekN = plan?.current_week ?? 1
+  // Determine which plan week the viewDate falls in
+  const viewWeekN = useMemo(() => {
+    if (!plan || dateOffset === 0) return plan?.current_week ?? 1
+    // Work out how many weeks ago viewDate is relative to the start of current week
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const todayDow = today.getDay()
+    // Monday of current week
+    const currentWeekMonday = new Date(today)
+    currentWeekMonday.setDate(today.getDate() - (todayDow === 0 ? 6 : todayDow - 1))
+    const vd = new Date(viewDate)
+    vd.setHours(0, 0, 0, 0)
+    const diffMs = vd.getTime() - currentWeekMonday.getTime()
+    const diffWeeks = Math.floor(diffMs / (7 * 86400000))
+    return Math.max(1, Math.min(plan.total_weeks, (plan.current_week ?? 1) + diffWeeks))
+  }, [plan, dateOffset, viewDate])
+
+  const viewWeek = weeks.find(w => w.n === viewWeekN) ?? currentWeek
+  const planDay: PlanDay | null = viewWeek?.days[planDayIndex] ?? null
+  const weekN = isToday ? (plan?.current_week ?? 1) : viewWeekN
 
   // Clear undo on date change
   useEffect(() => {
