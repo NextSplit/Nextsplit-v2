@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 const DISTANCES = [
-  { slug: 'plan_c25k', label: 'C25K / 5K', weeks: '9 weeks', desc: 'Couch to 5K base', emoji: '🏃' },
+  { slug: '5k_couch_to_5k', label: 'C25K / 5K', weeks: '9 weeks', desc: 'Couch to 5K base', emoji: '🏃' },
   { slug: '10k_intermediate', label: '10K', weeks: '16 weeks', desc: 'Solid 10K framework', emoji: '🏃' },
   { slug: 'half_intermediate', label: 'Half Marathon', weeks: '20 weeks', desc: 'Half marathon structure', emoji: '🏅' },
   { slug: 'marathon_intermediate', label: 'Marathon', weeks: '24 weeks', desc: 'Full marathon build', emoji: '🏆' },

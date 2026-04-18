@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 const FREQUENCIES = [
-  { id: '3', label: '3 days/week', desc: 'Great for beginners or busy schedules', slug: 'plan_c25k' },
+  { id: '3', label: '3 days/week', desc: 'Great for beginners or busy schedules', slug: '5k_couch_to_5k' },
   { id: '4', label: '4 days/week', desc: 'Solid consistency with recovery days', slug: '5k_improve' },
   { id: '5', label: '5 days/week', desc: 'High volume for committed runners', slug: '10k_intermediate' },
 ]
@@ -31,7 +31,7 @@ export default function LifestyleOnboardingClient() {
     setStep('saving')
     setError('')
     try {
-      const slug = selectedFreq?.slug ?? 'plan_c25k'
+      const slug = selectedFreq?.slug ?? '5k_couch_to_5k'
       const res = await fetch('/api/plans/activate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -19,16 +19,16 @@ const LEVELS = [
 ]
 
 const SLUG_MAP: Record<string, string> = {
-  '5k_beginner': 'plan_c25k', '5k_intermediate': '5k_improve', '5k_advanced': '5k_performance',
+  '5k_beginner': '5k_couch_to_5k', '5k_intermediate': '5k_improve', '5k_advanced': '5k_performance',
   '10k_beginner': '10k_beginner', '10k_intermediate': '10k_intermediate', '10k_advanced': '10k_performance',
   'half_beginner': 'half_novice', 'half_intermediate': 'half_intermediate', 'half_advanced': 'half_performance',
   'marathon_beginner': 'marathon_novice', 'marathon_intermediate': 'marathon_intermediate', 'marathon_advanced': 'marathon_performance',
   'ultra_beginner': 'ultra_50mi', 'ultra_intermediate': 'ultra_50mi', 'ultra_advanced': 'ultra_100mi',
-  'fitness_beginner': 'plan_c25k', 'fitness_intermediate': '10k_beginner', 'fitness_advanced': '10k_intermediate',
+  'fitness_beginner': '5k_couch_to_5k', 'fitness_intermediate': '10k_beginner', 'fitness_advanced': '10k_intermediate',
 }
 
 const SLUG_LABELS: Record<string, string> = {
-  'plan_c25k': 'Couch to 5K', '5k_improve': '5K Improver', '5k_performance': '5K Performance',
+  '5k_couch_to_5k': 'Couch to 5K', '5k_improve': '5K Improver', '5k_performance': '5K Performance',
   '10k_beginner': '10K Beginner', '10k_intermediate': '10K Intermediate', '10k_performance': '10K Performance',
   'half_novice': 'Half Marathon Novice', 'half_intermediate': 'Half Marathon Intermediate', 'half_performance': 'Half Marathon Performance',
   'marathon_novice': 'Marathon Novice', 'marathon_intermediate': 'Marathon Intermediate', 'marathon_performance': 'Marathon Performance',

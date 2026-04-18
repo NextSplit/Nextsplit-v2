@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 
 const SLUG_LABELS: Record<string, string> = {
-  'plan_c25k': 'Couch to 5K',
+  '5k_couch_to_5k': 'Couch to 5K',
   '5k_improve': '5K Improver',
   '5k_performance': '5K Performance',
   '10k_beginner': '10K Beginner',
