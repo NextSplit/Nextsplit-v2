@@ -176,27 +176,30 @@ function BadgeGrid({ earned }: { earned: Set<string> }) {
 
 // ─── Strava section ───────────────────────────────────────────────────────────
 
-function StravaConnect({ clientId }: { clientId: string | null }) {
+function StravaSection({ clientId, isConnected }: { clientId: string | null; isConnected: boolean }) {
   const [saving, setSaving] = useState(false)
   const [inputId, setInputId] = useState(clientId ?? '')
   const [saved, setSaved] = useState(false)
+  const [disconnecting, setDisconnecting] = useState(false)
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nextsplit-v2.vercel.app'
   const redirectUri = `${siteUrl}/auth/strava/callback`
 
   function handleConnect() {
     if (!inputId) return
+    localStorage.setItem('strava_client_id', inputId)
     const url = `https://www.strava.com/oauth/authorize?client_id=${inputId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=activity:read_all`
     window.location.href = url
   }
 
-  async function handleSaveId() {
-    setSaving(true)
-    // Save client ID to localStorage for now (no secret needed for OAuth init)
-    localStorage.setItem('strava_client_id', inputId)
-    setSaved(true)
-    setSaving(false)
-    setTimeout(() => setSaved(false), 2000)
+  async function handleDisconnect() {
+    setDisconnecting(true)
+    try {
+      await fetch('/api/strava/disconnect', { method: 'POST' })
+      window.location.reload()
+    } finally {
+      setDisconnecting(false)
+    }
   }
 
   return (
@@ -207,49 +210,58 @@ function StravaConnect({ clientId }: { clientId: string | null }) {
             <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
           </svg>
         </div>
-        <div>
+        <div className="flex-1">
           <div className="text-sm font-bold text-gray-900">Strava</div>
-          <div className="text-xs text-gray-400">Connect to auto-import activities</div>
+          <div className="text-xs text-gray-400">
+            {isConnected ? '✅ Connected — sync runs after each session' : 'Connect to auto-import activities'}
+          </div>
         </div>
       </div>
 
-      <div className="mb-3">
-        <label className="text-xs font-semibold text-gray-600 block mb-1.5">Your Strava Client ID</label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={inputId}
-            onChange={e => setInputId(e.target.value)}
-            placeholder="e.g. 226724"
-            className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
-          />
+      {isConnected ? (
+        <button
+          onClick={handleDisconnect}
+          disabled={disconnecting}
+          className="w-full py-2.5 rounded-xl border border-red-200 text-red-500 text-xs font-semibold disabled:opacity-40"
+        >
+          {disconnecting ? 'Disconnecting…' : 'Disconnect Strava'}
+        </button>
+      ) : (
+        <>
+          <div className="mb-3">
+            <label className="text-xs font-semibold text-gray-600 block mb-1.5">Your Strava Client ID</label>
+            <div className="flex gap-2">
+              <input
+                type="text" value={inputId}
+                onChange={e => setInputId(e.target.value)}
+                placeholder="e.g. 226724"
+                className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+              />
+              <button
+                onClick={() => { localStorage.setItem('strava_client_id', inputId); setSaved(true); setTimeout(() => setSaved(false), 2000) }}
+                disabled={saving || !inputId}
+                className="px-3 py-2 rounded-xl bg-gray-100 text-xs font-semibold text-gray-600 disabled:opacity-40"
+              >
+                {saved ? '✓' : 'Save'}
+              </button>
+            </div>
+            <p className="text-[10px] text-gray-400 mt-1.5">Found at strava.com/settings/api</p>
+          </div>
           <button
-            onClick={handleSaveId}
-            disabled={saving || !inputId}
-            className="px-3 py-2 rounded-xl bg-gray-100 text-xs font-semibold text-gray-600 disabled:opacity-40"
+            onClick={handleConnect}
+            disabled={!inputId}
+            className="w-full py-3 rounded-xl bg-orange-500 text-white text-sm font-semibold disabled:opacity-40 flex items-center justify-center gap-2"
           >
-            {saved ? '✓' : 'Save'}
+            <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4">
+              <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+            </svg>
+            Connect with Strava
           </button>
-        </div>
-        <p className="text-[10px] text-gray-400 mt-1.5">
-          Found at strava.com/settings/api after creating an API app
-        </p>
-      </div>
-
-      <button
-        onClick={handleConnect}
-        disabled={!inputId}
-        className="w-full py-3 rounded-xl bg-orange-500 text-white text-sm font-semibold disabled:opacity-40 flex items-center justify-center gap-2"
-      >
-        <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4">
-          <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
-        </svg>
-        Connect with Strava
-      </button>
-
-      <p className="text-[10px] text-gray-400 text-center mt-2">
-        You&apos;ll also need to set STRAVA_CLIENT_SECRET in Vercel env vars
-      </p>
+          <p className="text-[10px] text-gray-400 text-center mt-2">
+            Requires STRAVA_CLIENT_SECRET in Vercel env vars
+          </p>
+        </>
+      )}
     </div>
   )
 }
@@ -283,7 +295,7 @@ function TrainingSummary({ logs }: { logs: Record<string, TrainingLog> }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function ProfileClient({ email, displayName }: { email: string; displayName: string }) {
+export default function ProfileClient({ email, displayName, isStravaConnected }: { email: string; displayName: string; isStravaConnected: boolean }) {
   const supabase = useSupabase()
   const { plan, weeks } = useActivePlan()
   const { logs } = useTrainingLog(plan?.id ?? null)
@@ -370,7 +382,7 @@ export default function ProfileClient({ email, displayName }: { email: string; d
         )}
 
         {/* Strava */}
-        <StravaConnect clientId={stravaClientId} />
+        <StravaSection clientId={stravaClientId} isConnected={isStravaConnected} />
 
         {/* Sign out */}
         <form action={signout}>

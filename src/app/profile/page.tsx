@@ -12,5 +12,18 @@ export default async function ProfilePage() {
   const profileData = profile as Profile | null
   const displayName = profileData?.display_name || user.email?.split('@')[0] || 'Runner'
 
-  return <ProfileClient email={user.email ?? ''} displayName={displayName} />
+  // Check Strava connection
+  const { data: stravaConn } = await supabase
+    .from('strava_connections')
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  return (
+    <ProfileClient
+      email={user.email ?? ''}
+      displayName={displayName}
+      isStravaConnected={!!stravaConn}
+    />
+  )
 }

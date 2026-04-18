@@ -10,6 +10,7 @@ import { getSessionXP } from '@/lib/xp'
 import WeatherWidget from '@/components/WeatherWidget'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
 import FocusMode from '@/components/FocusMode'
+import StravaSyncButton from '@/components/StravaSyncButton'
 import { useRouter } from 'next/navigation'
 
 /** Decode HTML entities like &middot; &ndash; &amp; */
@@ -434,25 +435,50 @@ export default function TodayClient() {
               const key = `${weekN}_${planDayIndex}_${sessI}`
               const log = logs[key] ?? null
               const isGym = session.c.startsWith('gym')
+              const isRun = session.c.startsWith('run')
               return (
-                <SessionCard
-                  key={sessI}
-                  session={session}
-                  sessionIndex={sessI}
-                  dayIndex={planDayIndex}
-                  weekN={weekN}
-                  planId={plan.id}
-                  log={log}
-                  onTap={() => {
-                    if (isGym) {
-                      router.push(`/gym/live/${weekN}/${planDayIndex}/${sessI}`)
-                    } else {
-                      setModalSession({ session, dayI: planDayIndex, sessI })
-                    }
-                  }}
-                  onQuickDone={() => handleQuickDone(planDayIndex, sessI, session)}
-                  onFocus={() => setFocusSession({ session, dayI: planDayIndex, sessI })}
-                />
+                <div key={sessI}>
+                  <SessionCard
+                    session={session}
+                    sessionIndex={sessI}
+                    dayIndex={planDayIndex}
+                    weekN={weekN}
+                    planId={plan.id}
+                    log={log}
+                    onTap={() => {
+                      if (isGym) {
+                        router.push(`/gym/live/${weekN}/${planDayIndex}/${sessI}`)
+                      } else {
+                        setModalSession({ session, dayI: planDayIndex, sessI })
+                      }
+                    }}
+                    onQuickDone={() => handleQuickDone(planDayIndex, sessI, session)}
+                    onFocus={() => setFocusSession({ session, dayI: planDayIndex, sessI })}
+                  />
+                  {/* Strava sync button — running sessions only, not yet logged */}
+                  {isRun && !log?.done && isToday && (
+                    <div className="flex justify-end mt-1.5 pr-1">
+                      <StravaSyncButton
+                        session={session}
+                        weekN={weekN}
+                        dayIndex={planDayIndex}
+                        sessionIndex={sessI}
+                        planId={plan.id}
+                        onImported={async (effort, km, pace) => {
+                          await handleLogSession({
+                            week_n: weekN,
+                            day_i: planDayIndex,
+                            session_i: sessI,
+                            done: true,
+                            effort,
+                            km,
+                            notes: `Imported from Strava`,
+                          })
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
               )
             })}
 
