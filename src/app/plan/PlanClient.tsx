@@ -6,6 +6,16 @@ import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { getSessionType, fmtKm } from '@/lib/sessionUtils'
 import type { PlanWeek, PlanDay, PlanSession } from '@/types/database'
 
+function decodeHtml(str: string): string {
+  return str
+    .replace(/&middot;/g, '·')
+    .replace(/&ndash;/g, '–')
+    .replace(/&mdash;/g, '—')
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+}
+
 const PHASE_LABELS: Record<string, { label: string; colour: string }> = {
   p1: { label: 'Phase 1', colour: 'bg-teal-100 text-teal-800' },
   p2: { label: 'Phase 2', colour: 'bg-violet-100 text-violet-800' },
@@ -21,10 +31,11 @@ const WEEK_TYPE: Record<string, { label: string; colour: string }> = {
 
 function SessionPill({ session }: { session: PlanSession }) {
   const cfg = getSessionType(session.c)
+  const name = decodeHtml(session.n)
   return (
     <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${cfg.colour} ${cfg.textColour} text-[10px] font-medium`}>
       <span className={`w-1 h-1 rounded-full ${cfg.dot}`} />
-      {session.n.length > 22 ? session.n.slice(0, 22) + '…' : session.n}
+      {name.length > 22 ? name.slice(0, 22) + '…' : name}
       {session.km > 0 && <span className="opacity-70 ml-0.5">{fmtKm(session.km)}</span>}
     </div>
   )
@@ -103,7 +114,7 @@ function WeekRow({ week, isCurrent, logs, todayDayIndex }: {
           </div>
           <div className="text-sm font-semibold text-gray-900 truncate">{week.title}</div>
           <div className="text-[11px] text-gray-400 mt-0.5">
-            {week.s}–{week.e} · {week.kl[0]}–{week.kl[1]}km
+            {week.kl[0]}–{week.kl[1]}km planned
             {totalSessions > 0 && ` · ${doneSessions}/${totalSessions} done`}
           </div>
         </div>

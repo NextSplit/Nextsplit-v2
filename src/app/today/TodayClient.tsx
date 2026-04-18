@@ -6,6 +6,19 @@ import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { getSessionType, fmtKm, formatDate, offsetDate } from '@/lib/sessionUtils'
 import type { PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
+/** Decode HTML entities like &middot; &ndash; &amp; */
+function decodeHtml(str: string): string {
+  return str
+    .replace(/&middot;/g, '·')
+    .replace(/&ndash;/g, '–')
+    .replace(/&mdash;/g, '—')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+}
+
 // ─── Session Log Modal ────────────────────────────────────────────────────────
 
 interface LogModalProps {
@@ -64,7 +77,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
 
         <h2 className="text-lg font-bold text-gray-900 mb-1">{session.n}</h2>
         {session.det && (
-          <p className="text-sm text-gray-500 mb-5 leading-relaxed">{session.det}</p>
+          <p className="text-sm text-gray-500 mb-5 leading-relaxed">{decodeHtml(session.det)}</p>
         )}
 
         {/* Effort slider */}
@@ -178,19 +191,22 @@ function SessionCard({ session, log, onTap, onQuickDone }: SessionCardProps) {
           </div>
           <p className="text-sm font-semibold text-gray-900 leading-tight">{session.n}</p>
           {session.det && (
-            <p className="text-xs text-gray-500 mt-0.5 leading-relaxed line-clamp-2">{session.det}</p>
+            <p className="text-xs text-gray-500 mt-0.5 leading-relaxed line-clamp-2">
+              {decodeHtml(session.det)}
+            </p>
           )}
-          {done && log?.effort && (
+          {done && (
             <div className="flex items-center gap-2 mt-1.5">
               <span className="text-[10px] text-emerald-600 font-semibold">
-                ✓ Done · Effort {log.effort}/10
+                ✓ Done{log?.effort ? ` · Effort ${log.effort}/10` : ''}
               </span>
-              {log.km && <span className="text-[10px] text-gray-400">{log.km}km</span>}
+              {log?.km && <span className="text-[10px] text-gray-400">{log.km}km</span>}
+              {log?.notes && <span className="text-[10px] text-gray-400 italic truncate max-w-[120px]">{log.notes}</span>}
             </div>
           )}
         </div>
 
-        {/* Quick-done button */}
+        {/* Quick-done / edit button */}
         <button
           onClick={e => { e.stopPropagation(); onQuickDone() }}
           className={`w-9 h-9 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
@@ -199,10 +215,12 @@ function SessionCard({ session, log, onTap, onQuickDone }: SessionCardProps) {
               : 'border-gray-200 bg-white'
           }`}
         >
-          {done && (
+          {done ? (
             <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
+          ) : (
+            <div className="w-3 h-3 rounded-full border-2 border-gray-300" />
           )}
         </button>
       </div>
@@ -220,13 +238,13 @@ export default function TodayClient() {
   const [modalSession, setModalSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
   const [undoInfo, setUndoInfo] = useState<{ logId: string; timer: ReturnType<typeof setTimeout> } | null>(null)
   const [undoLabel, setUndoLabel] = useState('')
+  const [undoSecsLeft, setUndoSecsLeft] = useState(8)
 
   const viewDate = offsetDate(dateOffset)
   const isToday = dateOffset === 0
 
-  // Work out which day from plan matches the viewed date
-  const dayOfWeek = viewDate.getDay() // 0=Sun
-  const planDayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1 // Mon=0
+  const dayOfWeek = viewDate.getDay()
+  const planDayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1
 
   const planDay: PlanDay | null = currentWeek?.days[planDayIndex] ?? null
   const weekN = plan?.current_week ?? 1
@@ -240,6 +258,19 @@ export default function TodayClient() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateOffset])
 
+  // Undo countdown ticker
+  useEffect(() => {
+    if (!undoInfo) return
+    setUndoSecsLeft(8)
+    const interval = setInterval(() => {
+      setUndoSecsLeft(s => {
+        if (s <= 1) { clearInterval(interval); return 0 }
+        return s - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [undoInfo])
+
   const handleLogSession = useCallback(async (params: {
     week_n: number; day_i: number; session_i: number; done: boolean
     effort?: number; km?: number; notes?: string
@@ -247,7 +278,6 @@ export default function TodayClient() {
     if (!plan) return
     const log = await logSession({ plan_id: plan.id, ...params })
 
-    // Start undo window
     if (undoInfo) clearTimeout(undoInfo.timer)
     const session = planDay?.sessions[params.session_i]
     setUndoLabel(session?.n ?? 'session')
@@ -258,8 +288,11 @@ export default function TodayClient() {
   const handleQuickDone = useCallback(async (dayI: number, sessI: number, session: PlanSession) => {
     const key = `${weekN}_${dayI}_${sessI}`
     const existing = logs[key]
-    if (existing?.done) return // already done
-
+    // If already done, open edit modal instead
+    if (existing?.done) {
+      setModalSession({ session, dayI, sessI })
+      return
+    }
     await handleLogSession({ week_n: weekN, day_i: dayI, session_i: sessI, done: true, km: session.km || undefined })
   }, [weekN, logs, handleLogSession])
 
@@ -272,6 +305,10 @@ export default function TodayClient() {
 
   const loading = planLoading || logsLoading
 
+  // Count done sessions today
+  const todaySessions = planDay?.sessions ?? []
+  const doneTodayCount = todaySessions.filter((_, i) => logs[`${weekN}_${planDayIndex}_${i}`]?.done).length
+
   return (
     <div className="min-h-screen bg-[#f8f8f6] pb-24">
       {/* Header */}
@@ -279,7 +316,12 @@ export default function TodayClient() {
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
             <span className="text-lg font-bold text-gray-900">NextSplit</span>
-            {plan && (
+            {plan && todaySessions.length > 0 && isToday && (
+              <span className={`text-xs font-semibold ${doneTodayCount === todaySessions.length ? 'text-emerald-500' : 'text-gray-400'}`}>
+                {doneTodayCount}/{todaySessions.length} done
+              </span>
+            )}
+            {plan && (!todaySessions.length || !isToday) && (
               <span className="text-xs text-gray-400">Week {weekN} of {plan.total_weeks}</span>
             )}
           </div>
@@ -288,10 +330,8 @@ export default function TodayClient() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setDateOffset(o => o - 1)}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600"
-            >
-              ‹
-            </button>
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 text-lg font-light"
+            >‹</button>
             <div className="flex-1 text-center">
               <div className="text-sm font-semibold text-gray-900">
                 {isToday ? 'Today' : dateOffset === -1 ? 'Yesterday' : dateOffset === 1 ? 'Tomorrow' : formatDate(viewDate)}
@@ -301,15 +341,13 @@ export default function TodayClient() {
             <button
               onClick={() => setDateOffset(o => o + 1)}
               disabled={dateOffset >= 0}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 disabled:opacity-30"
-            >
-              ›
-            </button>
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 text-lg font-light disabled:opacity-30"
+            >›</button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-5 space-y-4">
+      <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
 
         {/* No plan state */}
         {!loading && !plan && (
@@ -323,7 +361,7 @@ export default function TodayClient() {
           </div>
         )}
 
-        {/* Loading */}
+        {/* Loading skeletons */}
         {loading && (
           <div className="space-y-3">
             {[1, 2].map(i => (
@@ -335,8 +373,21 @@ export default function TodayClient() {
         {/* Sessions */}
         {!loading && plan && (
           <>
+            {/* Week note — shown at top on today only */}
+            {isToday && currentWeek?.note && (
+              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
+                <span className="text-base mt-0.5">📋</span>
+                <div>
+                  <p className="text-[11px] font-bold text-amber-800 mb-0.5 uppercase tracking-wide">
+                    Week {weekN} · {currentWeek.title}
+                  </p>
+                  <p className="text-xs text-amber-700 leading-relaxed">{currentWeek.note}</p>
+                </div>
+              </div>
+            )}
+
             {/* Rest day or no sessions */}
-            {(!planDay || planDay.sessions.length === 0) && (
+            {todaySessions.length === 0 && (
               <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
                 <div className="text-4xl mb-3">😴</div>
                 <p className="text-sm font-semibold text-gray-700">Rest day</p>
@@ -344,8 +395,20 @@ export default function TodayClient() {
               </div>
             )}
 
+            {/* Session timing row */}
+            {planDay && planDay.times && planDay.times.length > 0 && (
+              <div className="flex items-center gap-2 px-1">
+                <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Scheduled</span>
+                {planDay.times.map((t, i) => (
+                  <span key={i} className="text-[11px] bg-white border border-gray-100 rounded-full px-2.5 py-0.5 text-gray-600 font-medium">
+                    {t.t} {t.l}
+                  </span>
+                ))}
+              </div>
+            )}
+
             {/* Session cards */}
-            {planDay?.sessions.map((session, sessI) => {
+            {todaySessions.map((session, sessI) => {
               const key = `${weekN}_${planDayIndex}_${sessI}`
               const log = logs[key] ?? null
               return (
@@ -366,33 +429,39 @@ export default function TodayClient() {
             {/* Sleep note */}
             {planDay?.sleep && (
               <div className="bg-indigo-50 rounded-2xl border border-indigo-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-lg mt-0.5">🌙</span>
+                <span className="text-base mt-0.5">🌙</span>
                 <p className="text-xs text-indigo-700 leading-relaxed">{planDay.sleep}</p>
               </div>
             )}
 
-            {/* Week note (today only) */}
-            {isToday && currentWeek?.note && (
-              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-lg mt-0.5">📋</span>
-                <div>
-                  <p className="text-xs font-semibold text-amber-800 mb-0.5">Week {weekN}: {currentWeek.title}</p>
-                  <p className="text-xs text-amber-700 leading-relaxed">{currentWeek.note}</p>
-                </div>
+            {/* All done celebration */}
+            {isToday && todaySessions.length > 0 && doneTodayCount === todaySessions.length && (
+              <div className="bg-emerald-50 rounded-2xl border border-emerald-100 px-4 py-4 text-center">
+                <div className="text-2xl mb-1">🎉</div>
+                <p className="text-sm font-bold text-emerald-700">All done for today!</p>
+                <p className="text-xs text-emerald-600 mt-0.5">Great work. Rest and recover well.</p>
               </div>
             )}
           </>
         )}
       </div>
 
-      {/* Undo toast */}
+      {/* Undo toast with countdown */}
       {undoInfo && (
         <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50">
           <div className="bg-gray-900 text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-xl">
-            <span className="text-sm">Logged: {undoLabel}</span>
+            <div>
+              <span className="text-sm">Logged: <span className="font-medium">{undoLabel}</span></span>
+              <div className="h-0.5 bg-white/20 rounded-full mt-2 overflow-hidden">
+                <div
+                  className="h-full bg-emerald-400 rounded-full transition-all duration-1000"
+                  style={{ width: `${(undoSecsLeft / 8) * 100}%` }}
+                />
+              </div>
+            </div>
             <button
               onClick={handleUndo}
-              className="text-sm font-semibold text-[#34D399] ml-4"
+              className="text-sm font-bold text-[#34D399] ml-5 shrink-0"
             >
               Undo
             </button>
