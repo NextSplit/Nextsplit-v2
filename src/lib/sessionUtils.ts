@@ -40,8 +40,14 @@ const DEFAULT_TYPE: SessionTypeConfig = {
   label: 'Session', colour: 'bg-gray-50', textColour: 'text-gray-700', dot: 'bg-gray-400', emoji: '🏃'
 }
 
-export function getSessionType(code: string): SessionTypeConfig {
-  return SESSION_TYPES[code] ?? DEFAULT_TYPE
+export function getSessionType(code: string | number): SessionTypeConfig {
+  // Handle legacy numeric codes from plan data (9-14 = threshold/quality runs)
+  if (typeof code === 'number' || /^\d+$/.test(String(code))) {
+    const n = Number(code)
+    if (n <= 10) return SESSION_TYPES['run-tempo'] ?? DEFAULT_TYPE
+    return SESSION_TYPES['run-int'] ?? DEFAULT_TYPE
+  }
+  return SESSION_TYPES[code as string] ?? DEFAULT_TYPE
 }
 
 /** Format a km value nicely */

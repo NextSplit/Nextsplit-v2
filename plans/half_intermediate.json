@@ -100,7 +100,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 5x1km @ current HM pace (2min rec) &middot; 2km CD &middot; 11km",
               "km": "run-int"
@@ -148,7 +148,7 @@
           ],
           "sessions": [
             {
-              "c": 9,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 22min @ threshold (4:50–5:00/km) &middot; 2km CD",
               "km": "run-tempo"
@@ -308,7 +308,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 7x800m @ HM pace (90sec rec) &middot; 2km CD &middot; 11km",
               "km": "run-int"
@@ -356,7 +356,7 @@
           ],
           "sessions": [
             {
-              "c": 10,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 25min @ threshold &middot; 2km CD",
               "km": "run-tempo"
@@ -516,7 +516,7 @@
           ],
           "sessions": [
             {
-              "c": 12,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 5x1.5km @ HM pace (2.5min rec) &middot; 2km CD &middot; 12km",
               "km": "run-int"
@@ -564,7 +564,7 @@
           ],
           "sessions": [
             {
-              "c": 10,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 28min @ threshold &middot; 2km CD",
               "km": "run-tempo"
@@ -932,7 +932,7 @@
           ],
           "sessions": [
             {
-              "c": 12,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 5x1.5km @ 5:00/km (2.5min rec) &middot; 2km CD &middot; 12km",
               "km": "run-int"
@@ -980,7 +980,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 2x14min @ threshold (4:50–5:00/km, 90sec rec) &middot; 2km CD",
               "km": "run-tempo"
@@ -1140,7 +1140,7 @@
           ],
           "sessions": [
             {
-              "c": 12,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 6x1km @ 5:00/km (2min rec) &middot; 2km CD &middot; 12km",
               "km": "run-int"
@@ -1188,7 +1188,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 35min @ threshold (4:50–5:00/km) &middot; 2km CD",
               "km": "run-tempo"
@@ -1348,7 +1348,7 @@
           ],
           "sessions": [
             {
-              "c": 14,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 5x2km @ 5:00/km (3min rec) &middot; 2km CD &middot; 14km",
               "km": "run-int"
@@ -1396,7 +1396,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 2x16min @ threshold (2min rec) &middot; 2km CD",
               "km": "run-tempo"
@@ -1764,7 +1764,7 @@
           ],
           "sessions": [
             {
-              "c": 10,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 10x400m @ faster than HM pace (90sec rec) &middot; 2km CD &middot; 10km",
               "km": "run-int"
@@ -1812,7 +1812,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 30min @ threshold &middot; 2km CD",
               "km": "run-tempo"
@@ -1972,7 +1972,7 @@
           ],
           "sessions": [
             {
-              "c": 14,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 10km @ 5:00/km &middot; 2km CD &middot; 14km",
               "km": "run-tempo"
@@ -2020,7 +2020,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 2x16min @ threshold (90sec rec) &middot; 2km CD",
               "km": "run-tempo"
@@ -2180,7 +2180,7 @@
           ],
           "sessions": [
             {
-              "c": 14,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 4x2km @ 5:00/km (3min rec) &middot; 2km CD &middot; 14km",
               "km": "run-int"
@@ -2228,7 +2228,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 35min @ threshold (4:48–4:58/km) &middot; 2km CD",
               "km": "run-tempo"
@@ -2388,7 +2388,7 @@
           ],
           "sessions": [
             {
-              "c": 14,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 5x2km @ 5:00/km (3min rec) &middot; 2km CD &middot; 14km",
               "km": "run-int"
@@ -2436,7 +2436,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 38min @ threshold &middot; 2km CD",
               "km": "run-tempo"
@@ -2596,7 +2596,7 @@
           ],
           "sessions": [
             {
-              "c": 14,
+              "c": "run-int",
               "n": "Quality session",
               "det": "2km WU &middot; 8x1km @ 5:00/km (2min rec) &middot; 2km CD &middot; 14km",
               "km": "run-int"
@@ -2644,7 +2644,7 @@
           ],
           "sessions": [
             {
-              "c": 11,
+              "c": "run-tempo",
               "n": "Threshold run",
               "det": "2km WU &middot; 30min @ threshold &middot; 2km CD",
               "km": "run-tempo"
