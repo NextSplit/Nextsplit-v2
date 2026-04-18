@@ -64,7 +64,7 @@ function inferEffort(activity: StravaActivity, session: PlanSession): number {
 interface ImportModalProps {
   activity: StravaActivity
   session: PlanSession | null
-  onConfirm: (effort: number, km: number, pace: string | null) => Promise<void>
+  onConfirm: (effort: number, km: number, pace: string | null, duration_secs: number) => Promise<void>
   onCancel: () => void
 }
 
@@ -79,7 +79,7 @@ function ImportModal({ activity, session, onConfirm, onCancel }: ImportModalProp
   async function handleConfirm() {
     setSaving(true)
     try {
-      await onConfirm(effort, activity.distance_km, pace)
+      await onConfirm(effort, activity.distance_km, pace, activity.moving_time_secs)
     } finally {
       setSaving(false)
     }
@@ -238,7 +238,7 @@ interface Props {
   dayIndex: number
   sessionIndex: number
   planId: string
-  onImported: (effort: number, km: number, pace: string | null) => Promise<void>
+  onImported: (effort: number, km: number, pace: string | null, duration_secs: number) => Promise<void>
 }
 
 export default function StravaSyncButton({ session, onImported }: Props) {
@@ -280,8 +280,8 @@ export default function StravaSyncButton({ session, onImported }: Props) {
     setState('confirming')
   }
 
-  async function handleConfirm(effort: number, km: number, pace: string | null) {
-    await onImported(effort, km, pace)
+  async function handleConfirm(effort: number, km: number, pace: string | null, duration_secs: number) {
+    await onImported(effort, km, pace, duration_secs)
     setState('idle')
     setSelected(null)
   }

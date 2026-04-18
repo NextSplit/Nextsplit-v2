@@ -545,7 +545,7 @@ export default function TodayClient() {
                         dayIndex={planDayIndex}
                         sessionIndex={sessI}
                         planId={plan.id}
-                        onImported={async (effort, km, pace) => {
+                        onImported={async (effort, km, pace, duration_secs) => {
                           await handleLogSession({
                             week_n: weekN,
                             day_i: planDayIndex,
@@ -553,6 +553,7 @@ export default function TodayClient() {
                             done: true,
                             effort,
                             km,
+                            duration_secs,
                             notes: `Imported from Strava`,
                           })
                         }}
