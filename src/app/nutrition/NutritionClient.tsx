@@ -224,7 +224,7 @@ function DaySummary({ entries }: { entries: NutritionEvent[] }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function NutritionClient() {
-  const { plan, currentWeek, loading } = useActivePlan()
+  const { plan, weeks, currentWeek, loading } = useActivePlan()
   const [dateOffset, setDateOffset] = useState(0)
   const [activeFilter, setActiveFilter] = useState('all')
 
@@ -232,10 +232,17 @@ export default function NutritionClient() {
   const isToday = dateOffset === 0
   const dateKey = viewDate.toISOString().split('T')[0]
 
-  // Map viewed date to plan day
+  // Map viewed date to plan day — accounting for which week we're viewing
   const dayOfWeek = viewDate.getDay()
   const planDayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-  const planDay: PlanDay | null = currentWeek?.days[planDayIndex] ?? null
+
+  // Calculate which week the viewed date falls in
+  // Each week starts on Monday; offset by dateOffset determines the week
+  const weekOffset = Math.floor(dateOffset / 7) + (dateOffset < 0 && planDayIndex < (new Date().getDay() === 0 ? 6 : new Date().getDay() - 1) ? -1 : 0)
+  const viewWeekN = (plan?.current_week ?? 1) + weekOffset
+  const viewWeek = weeks.find(w => w.n === viewWeekN) ?? currentWeek
+
+  const planDay: PlanDay | null = viewWeek?.days[planDayIndex] ?? null
   const entries: NutritionEvent[] = planDay?.nut ?? []
 
   // Available categories for filter
