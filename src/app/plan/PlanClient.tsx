@@ -550,6 +550,43 @@ function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDa
         </div>
       )}
 
+      {/* Gym session summary — current week only */}
+      {open && isCurrent && (() => {
+        const gymSessionsThisWeek = week.days.flatMap((d, dayI) =>
+          d.sessions
+            .map((s, sessI) => ({ s, dayI, sessI }))
+            .filter(({ s }) => s.c.startsWith('gym'))
+        )
+        if (gymSessionsThisWeek.length === 0) return null
+        const gymDone = gymSessionsThisWeek.filter(({ dayI, sessI }) =>
+          !!gymLogs[`${week.n}_${dayI}_${sessI}`]
+        ).length
+        return (
+          <div className="mx-4 mb-3 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2.5">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm">🏋️</span>
+              <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wide">Strength this week</span>
+              <span className="ml-auto text-[11px] font-bold text-amber-700">{gymDone}/{gymSessionsThisWeek.length} done</span>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {gymSessionsThisWeek.map(({ s, dayI, sessI }) => {
+                const isDone = !!gymLogs[`${week.n}_${dayI}_${sessI}`]
+                const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                return (
+                  <div key={`${dayI}_${sessI}`}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold ${
+                      isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-white border border-amber-200 text-amber-700'
+                    }`}>
+                    {isDone && <span>✓</span>}
+                    <span>{dayNames[dayI]} — {s.n}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })()}
+
       {/* Day rows */}
       {open && (
         <div className="border-t border-gray-50">

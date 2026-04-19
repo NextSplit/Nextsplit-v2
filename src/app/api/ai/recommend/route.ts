@@ -23,17 +23,21 @@ const SLUG_LABELS: Record<string, string> = {
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}))
-  const { goal, level, raceDate, slug } = body
+  const { goal, level, raceDate, slug, includeGym = true } = body
 
   const planLabel = SLUG_LABELS[slug] ?? slug
   const daysToRace = raceDate
     ? Math.ceil((new Date(raceDate).getTime() - Date.now()) / 86_400_000)
     : null
 
+  const gymLine = includeGym
+    ? ' The plan includes strength sessions on rest days to build injury resilience and running economy.'
+    : ''
+
   // If no API key, return a good static fallback
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({
-      recommendation: `Based on your **${level}** experience and **${goal.replace('_', ' ')}** goal, the **${planLabel}** plan is the right fit. It's structured to build your fitness progressively, with the right balance of easy runs, quality sessions, and recovery.${daysToRace ? ` With ${daysToRace} days to your race, the timing works well.` : ''}`,
+      recommendation: `Based on your **${level}** experience and **${goal.replace('_', ' ')}** goal, the **${planLabel}** plan is the right fit. It's structured to build your fitness progressively, with the right balance of easy runs, quality sessions, and recovery.${gymLine}${daysToRace ? ` With ${daysToRace} days to your race, the timing works well.` : ''}`,
       suggestedName: `${goal.charAt(0).toUpperCase() + goal.slice(1)} ${new Date().getFullYear()}`,
     })
   }
@@ -47,8 +51,9 @@ Athlete profile:
 - Experience: ${level}
 - Race date: ${raceDate ? `${new Date(raceDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} (${daysToRace} days away)` : 'not set'}
 - Recommended plan: ${planLabel}
+- Strength training: ${includeGym ? 'Yes — gym sessions included on rest days' : 'No — running only'}
 
-Write a short, warm, personalised coach message (3-4 sentences) explaining why this plan suits them. Reference their specific goal and experience level. Be encouraging but specific — mention one key thing they should focus on in this training block. Do not use generic platitudes. Use **bold** for key terms.
+Write a short, warm, personalised coach message (3-4 sentences) explaining why this plan suits them. Reference their specific goal and experience level. Be encouraging but specific — mention one key thing they should focus on in this training block.${includeGym ? ' Briefly mention that the strength sessions on rest days will build their injury resilience and running economy — this is a key differentiator.' : ''} Do not use generic platitudes. Use **bold** for key terms.
 
 Also suggest a good name for their plan (just the name, no explanation, keep it short and personal).
 

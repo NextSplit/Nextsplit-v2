@@ -19,6 +19,7 @@ export default function ManualOnboardingClient() {
   const [baseSlug, setBaseSlug] = useState('')
   const [planName, setPlanName] = useState('')
   const [raceDate, setRaceDate] = useState('')
+  const [includeGym, setIncludeGym] = useState(true)
   const [error, setError] = useState('')
 
   const today = new Date().toISOString().split('T')[0]
@@ -37,7 +38,7 @@ export default function ManualOnboardingClient() {
       const res = await fetch('/api/plans/activate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: baseSlug, name: planName.trim(), race_date: raceDate || undefined, plan_type: 'manual' }),
+        body: JSON.stringify({ slug: baseSlug, name: planName.trim(), race_date: raceDate || undefined, plan_type: 'manual', include_gym: includeGym }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed')
@@ -82,8 +83,8 @@ export default function ManualOnboardingClient() {
           <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
             <span className="text-xs font-bold text-teal-400">{selected?.label} · {selected?.weeks} ✓</span>
           </div>
-          <h1 className="text-2xl font-black text-white mb-1">Name your plan</h1>
-          <p className="text-zinc-400 text-sm mb-6">Optionally add a race date too.</p>
+          <h1 className="text-2xl font-black text-white mb-1">Set up your plan</h1>
+          <p className="text-zinc-400 text-sm mb-6">Name it, set a race date, and choose whether to include strength sessions.</p>
           <div className="space-y-3 mb-6">
             <input value={planName} onChange={e => setPlanName(e.target.value)}
               placeholder={`${selected?.label} ${new Date().getFullYear()}`}
@@ -95,6 +96,24 @@ export default function ManualOnboardingClient() {
                 className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
                 style={{ background: 'rgba(255,255,255,0.07)' }} />
             </div>
+
+            {/* Gym toggle */}
+            <button onClick={() => setIncludeGym(g => !g)}
+              className="w-full flex items-center gap-3 rounded-2xl border border-white/15 px-4 py-3.5 text-left transition-all active:scale-[0.98]"
+              style={{ background: includeGym ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.04)' }}>
+              <span className="text-xl">{includeGym ? '🏋️' : '🏃'}</span>
+              <div className="flex-1">
+                <p className={`text-sm font-bold ${includeGym ? 'text-amber-400' : 'text-zinc-300'}`}>
+                  {includeGym ? 'Strength sessions included' : 'Running only'}
+                </p>
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  {includeGym ? 'Gym sessions on rest days — tap to remove' : 'Tap to add gym sessions'}
+                </p>
+              </div>
+              <div className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${includeGym ? 'bg-amber-500' : 'bg-zinc-700'}`}>
+                <div className={`w-4 h-4 bg-white rounded-full mt-1 transition-all ${includeGym ? 'ml-5' : 'ml-1'}`} />
+              </div>
+            </button>
           </div>
           {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
           <button onClick={save} disabled={!planName.trim()}

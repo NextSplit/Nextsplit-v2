@@ -199,7 +199,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x5 · DB row 3x10 · Push-ups 3x10 · Face pulls 3x15 · Core circuit 2x30s — Your first upper body session. Focus on form, not load. Upper body and core strength directly improves your running posture and arm drive efficiency.",
+              "det": "Pull-ups 2x12 · DB row 2x12 · Push-ups 2x12 · Face pulls 2x12 · Core circuit 2x12s — Your first upper body session. Focus on form, not load. Upper body and core strength directly improves your running posture and arm drive efficiency.",
               "km": 0
             }
           ],
@@ -432,7 +432,7 @@
             {
               "c": "gym-a",
               "n": "Strength A — Lower body",
-              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "det": "Back squat 3x12 · Romanian deadlift 3x12 · Bulgarian split squat 3x12 · Calf raise 3x15 · Core circuit 3x12s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
               "km": 0
             }
           ],
@@ -665,7 +665,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "det": "Pull-ups 3x12 · DB row 3x12 · Overhead press 3x12 · Face pulls 3x12 · Core circuit 3x12s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
               "km": 0
             }
           ],
@@ -898,7 +898,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
@@ -1131,7 +1131,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "det": "Pull-ups 3x12 · DB row 3x12 · Overhead press 3x12 · Face pulls 3x12 · Core circuit 3x12s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
               "km": 0
             }
           ],
@@ -1364,7 +1364,7 @@
             {
               "c": "gym-a",
               "n": "Strength A — Lower body",
-              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "det": "Back squat 4x8 · Romanian deadlift 4x8 · Bulgarian split squat 4x8 · Calf raise 3x15 · Core circuit 4x8s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
               "km": 0
             }
           ],
@@ -1597,7 +1597,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "det": "Pull-ups 4x8 · DB row 4x8 · Overhead press 4x8 · Face pulls 4x8 · Core circuit 4x8s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
               "km": 0
             }
           ],
@@ -1830,7 +1830,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
@@ -2063,7 +2063,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "det": "Pull-ups 3x12 · DB row 3x12 · Overhead press 3x12 · Face pulls 3x12 · Core circuit 3x12s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
               "km": 0
             }
           ],
@@ -2296,7 +2296,7 @@
             {
               "c": "gym-a",
               "n": "Strength A — Lower body",
-              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "det": "Back squat 3x12 · Romanian deadlift 3x12 · Bulgarian split squat 3x12 · Calf raise 3x15 · Core circuit 3x12s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
               "km": 0
             }
           ],
@@ -2529,7 +2529,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 3x15 · Core circuit 2x45s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
+              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 4x5 · Core circuit 4x5s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
               "km": 0
             }
           ],
@@ -2762,7 +2762,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
@@ -2995,7 +2995,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "det": "Pull-ups 3x12 · DB row 3x12 · Overhead press 3x12 · Face pulls 3x12 · Core circuit 3x12s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
               "km": 0
             }
           ],
@@ -3228,7 +3228,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 3x15 · Core circuit 2x45s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
+              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 4x5 · Core circuit 4x5s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
               "km": 0
             }
           ],
@@ -3461,7 +3461,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "det": "Pull-ups 4x8 · DB row 4x8 · Overhead press 4x8 · Face pulls 4x8 · Core circuit 4x8s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
               "km": 0
             }
           ],
@@ -3694,7 +3694,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
@@ -3927,7 +3927,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 3x15 · Core circuit 2x45s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
+              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 4x5 · Core circuit 4x5s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
               "km": 0
             }
           ],
@@ -4160,7 +4160,7 @@
             {
               "c": "gym-a",
               "n": "Strength A — Lower body",
-              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "det": "Back squat 4x8 · Romanian deadlift 4x8 · Bulgarian split squat 4x8 · Calf raise 3x15 · Core circuit 4x8s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
               "km": 0
             }
           ],
@@ -4393,7 +4393,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 3x15 · Core circuit 2x45s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
+              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 4x5 · Core circuit 4x5s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
               "km": 0
             }
           ],
@@ -4626,7 +4626,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 3x15 · Core circuit 2x45s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
+              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 4x5 · Core circuit 4x5s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
               "km": 0
             }
           ],
@@ -4859,7 +4859,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
@@ -5092,7 +5092,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 3x15 · Core circuit 2x45s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
+              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 4x5 · Core circuit 4x5s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
               "km": 0
             }
           ],
@@ -5325,7 +5325,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 3x15 · Core circuit 2x45s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
+              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 4x5 · Core circuit 4x5s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
               "km": 0
             }
           ],
@@ -5558,7 +5558,7 @@
             {
               "c": "gym-a",
               "n": "Strength A — Lower body",
-              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "det": "Back squat 4x8 · Romanian deadlift 4x8 · Bulgarian split squat 4x8 · Calf raise 3x15 · Core circuit 4x8s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
               "km": 0
             }
           ],
@@ -5791,7 +5791,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
@@ -6024,7 +6024,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
@@ -6257,7 +6257,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
@@ -6472,7 +6472,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
@@ -6669,7 +6669,7 @@
             {
               "c": "gym-c",
               "n": "Posterior chain & mobility",
-              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "det": "Hip thrust 2x12 · Nordic curl 2x12 · Lateral band walk 2x12 · Calf raise 3x15 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
               "km": 0
             }
           ],
