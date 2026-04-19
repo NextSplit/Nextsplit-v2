@@ -82,6 +82,8 @@ export const SESSION_XP: Record<string, number> = {
   'gym-b':     20,
   'gym-c':     20,
   'gym-bw':    12,
+  'cross':     15,   // cross-training (cycling, swimming etc.)
+  'walk':      8,    // walking / hiking
   'pilates':   8,
   'sauna':     5,
   'rest':      2,
@@ -135,22 +137,30 @@ export function computeRPGStats(
 ): RPGStats {
   const done = logs.filter(l => l.done)
   const totalKm = done.reduce((a, l) => a + (l.km ?? 0), 0)
-  const totalRuns = done.filter(l => {
-    const w = weeks.find(wk => wk.n === l.week_n)
-    const s = w?.days[l.day_i]?.sessions[l.session_i]
-    return s?.c?.startsWith('run')
-  }).length
+
+  // Build a session-type lookup from weeks data
+  const sessionTypeMap = new Map<string, string>()
+  for (const w of weeks) {
+    for (let di = 0; di < w.days.length; di++) {
+      for (let si = 0; si < w.days[di].sessions.length; si++) {
+        sessionTypeMap.set(`${w.n}_${di}_${si}`, w.days[di].sessions[si].c)
+      }
+    }
+  }
+
+  function getSessionCode(l: LogEntry): string | null {
+    // Ad-hoc sessions (session_i=99) logged via the ad-hoc modal
+    if (l.session_i === 99) return null // counted separately below
+    return sessionTypeMap.get(`${l.week_n}_${l.day_i}_${l.session_i}`) ?? null
+  }
+
+  const totalRuns = done.filter(l => getSessionCode(l)?.startsWith('run')).length
   const totalGym = done.filter(l => {
-    const w = weeks.find(wk => wk.n === l.week_n)
-    const s = w?.days[l.day_i]?.sessions[l.session_i]
-    return s?.c?.startsWith('gym')
+    const code = getSessionCode(l)
+    return code?.startsWith('gym')
   }).length
   const longestRun = Math.max(0, ...done.map(l => l.km ?? 0))
-  const racesComplete = done.filter(l => {
-    const w = weeks.find(wk => wk.n === l.week_n)
-    const s = w?.days[l.day_i]?.sessions[l.session_i]
-    return s?.c === 'run-race'
-  }).length
+  const racesComplete = done.filter(l => getSessionCode(l) === 'run-race').length
 
   // Streak
   const doneDays = new Set(done.map(l => l.logged_at.slice(0, 10)))
@@ -166,12 +176,12 @@ export function computeRPGStats(
     check.setDate(check.getDate() - 1)
   }
 
-  // Perfect weeks
+  // Perfect weeks — all planned sessions done (run + gym)
   let perfectWeeks = 0
   for (const week of weeks) {
-    const planned = week.days.reduce((a, d) => a + d.sessions.length, 0)
+    const planned = week.days.reduce((a, d) => a + d.sessions.filter(s => s.c !== 'rest').length, 0)
     if (planned === 0) continue
-    const doneCount = done.filter(l => l.week_n === week.n).length
+    const doneCount = done.filter(l => l.week_n === week.n && l.session_i !== 99).length
     if (doneCount >= planned) perfectWeeks++
   }
 

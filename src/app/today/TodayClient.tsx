@@ -422,15 +422,17 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
       } overflow-hidden`}
     >
       <div className="flex items-start gap-3 p-5" onClick={onTap}>
-        {/* Type indicator — tap for focus mode */}
+        {/* Type indicator — tap for focus mode (gym: tap routes to live tracker) */}
         <button
-          onClick={e => { e.stopPropagation(); onFocus() }}
+          onClick={e => { e.stopPropagation(); session.c.startsWith('gym') ? onTap() : onFocus() }}
           className={`flex flex-col items-center gap-0.5 flex-shrink-0`}
         >
           <div className={`w-11 h-11 rounded-xl ${cfg.colour} flex items-center justify-center text-xl active:scale-95 transition-transform`}>
             {cfg.emoji}
           </div>
-          <span className="text-[8px] text-gray-400 font-medium">Focus</span>
+          <span className="text-[8px] text-gray-400 font-medium">
+            {session.c.startsWith('gym') ? 'Track' : 'Focus'}
+          </span>
         </button>
 
         <div className="flex-1 min-w-0">

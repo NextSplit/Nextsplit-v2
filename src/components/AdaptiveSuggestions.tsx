@@ -14,6 +14,7 @@ interface Suggestion {
 interface Props {
   weeks: PlanWeek[]
   logs: Record<string, TrainingLog>
+  gymLogs?: Record<string, unknown>
   currentWeek: number
   planId: string
 }
@@ -38,7 +39,7 @@ function typeStyle(type: Suggestion['type']) {
   }
 }
 
-export default function AdaptiveSuggestions({ weeks, logs, currentWeek, planId }: Props) {
+export default function AdaptiveSuggestions({ weeks, logs, gymLogs = {}, currentWeek, planId }: Props) {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [dismissed, setDismissed] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(false)
@@ -132,6 +133,11 @@ export default function AdaptiveSuggestions({ weeks, logs, currentWeek, planId }
           ? `${Math.floor(avgPaceSecs / 60)}:${String(Math.round(avgPaceSecs % 60)).padStart(2, '0')}` : null,
         acwr: acwr ? Math.round(acwr * 100) / 100 : null,
         total_sessions_logged: logArr.length,
+        gym_sessions_this_week: Object.keys(gymLogs).filter(k => k.startsWith(`${currentWeek - 1}_`)).length,
+        gym_sessions_last_4_weeks: Object.keys(gymLogs).filter(k => {
+          const weekN = parseInt(k.split('_')[0])
+          return weekN >= currentWeek - 4 && weekN < currentWeek
+        }).length,
       }
 
       const res = await fetch('/api/ai/suggestions', {

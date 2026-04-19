@@ -810,6 +810,7 @@ export default function PlanClient() {
         <AdaptiveSuggestions
           weeks={weeks}
           logs={logs}
+          gymLogs={gymLogs}
           currentWeek={plan.current_week}
           planId={plan.id}
         />
