@@ -500,8 +500,15 @@ export default function SettingsClient({ email, initialProfile }: Props) {
             try {
               const res = await fetch('/api/admin/seed-plans', { method: 'POST' })
               const data = await res.json()
-              if (res.ok) success(`✓ ${data.seeded} plans seeded`)
-              else toastError(data.error ?? 'Seed failed')
+              if (res.ok) {
+                const results = data.results ?? []
+                const ok = results.filter((r: { status: string }) => r.status === 'ok').length
+                const fail = results.filter((r: { status: string }) => r.status === 'fail').length
+                if (fail > 0) toastError(`${ok} seeded, ${fail} failed`)
+                else success(`✓ ${ok} plans seeded`)
+              } else {
+                toastError(data.error ?? 'Seed failed')
+              }
             } catch {
               toastError('Seed failed — check connection')
             } finally {
