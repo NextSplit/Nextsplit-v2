@@ -772,6 +772,257 @@ function RecipeCard({
   )
 }
 
+// ─── TDEE Setup Card ──────────────────────────────────────────────────────────
+
+function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 'female') => void }) {
+  const [open, setOpen] = useState(false)
+  const [height, setHeight] = useState('')
+  const [age, setAge] = useState('')
+  const [sex, setSex] = useState<'male' | 'female'>('male')
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    const h = localStorage.getItem('nextsplit_tdee_height')
+    const a = localStorage.getItem('nextsplit_tdee_age')
+    const s = localStorage.getItem('nextsplit_tdee_sex') as 'male' | 'female' | null
+    if (h) setHeight(h)
+    if (a) setAge(a)
+    if (s) setSex(s)
+    if (h && a && s) {
+      setSaved(true)
+      onSave(Number(h), Number(a), s)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleSave() {
+    const h = Number(height)
+    const a = Number(age)
+    if (!h || !a || h < 100 || h > 250 || a < 10 || a > 100) return
+    localStorage.setItem('nextsplit_tdee_height', String(h))
+    localStorage.setItem('nextsplit_tdee_age', String(a))
+    localStorage.setItem('nextsplit_tdee_sex', sex)
+    onSave(h, a, sex)
+    setSaved(true)
+    setOpen(false)
+  }
+
+  if (saved && !open) {
+    const h = localStorage.getItem('nextsplit_tdee_height')
+    const a = localStorage.getItem('nextsplit_tdee_age')
+    const s = localStorage.getItem('nextsplit_tdee_sex')
+    return (
+      <button onClick={() => setOpen(true)}
+        className="w-full flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3 text-left">
+        <div className="flex items-center gap-2">
+          <span className="text-base">⚖️</span>
+          <div>
+            <p className="text-xs font-semibold text-gray-700">TDEE profile</p>
+            <p className="text-[10px] text-gray-400">{s === 'female' ? 'Female' : 'Male'} · {h}cm · {a}yo</p>
+          </div>
+        </div>
+        <span className="text-[10px] text-teal-600 font-semibold">Edit ✎</span>
+      </button>
+    )
+  }
+
+  return (
+    <div className="bg-white rounded-2xl border border-teal-100 p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-base">⚖️</span>
+          <div>
+            <p className="text-sm font-bold text-gray-900">Calorie profile</p>
+            <p className="text-[10px] text-gray-400">For accurate TDEE calculation</p>
+          </div>
+        </div>
+        {saved && <button onClick={() => setOpen(false)} className="text-gray-300 text-lg">×</button>}
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wide block mb-1">Height (cm)</label>
+          <input
+            type="number" inputMode="numeric" value={height}
+            onChange={e => setHeight(e.target.value)}
+            placeholder="175"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+          />
+        </div>
+        <div>
+          <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wide block mb-1">Age</label>
+          <input
+            type="number" inputMode="numeric" value={age}
+            onChange={e => setAge(e.target.value)}
+            placeholder="30"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+          />
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wide block mb-1">Sex</label>
+        <div className="flex gap-2">
+          {(['male', 'female'] as const).map(s => (
+            <button key={s} onClick={() => setSex(s)}
+              className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${sex === s ? 'bg-teal-500 text-white' : 'bg-gray-100 text-gray-500'}`}>
+              {s === 'male' ? '♂ Male' : '♀ Female'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <button onClick={handleSave}
+        className="w-full py-2.5 rounded-xl bg-teal-500 text-white text-sm font-bold">
+        Save profile
+      </button>
+    </div>
+  )
+}
+
+// ─── AI Fuel Coach Card ───────────────────────────────────────────────────────
+
+function AIFuelCoach({
+  dayType, targets, totals, planName
+}: {
+  dayType: string
+  targets: { kcal: number; protein: number; carbs: number; fat: number }
+  totals: { kcal: number; protein: number; carbs: number; fat: number }
+  planName: string
+}) {
+  const [tip, setTip] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
+
+  // Cache key so we don't re-call on every render
+  const cacheKey = `nextsplit_fuel_tip_${new Date().toISOString().slice(0, 10)}_${dayType}`
+
+  useEffect(() => {
+    const cached = sessionStorage.getItem(cacheKey)
+    if (cached) { setTip(cached); return }
+  }, [cacheKey])
+
+  async function fetchTip() {
+    setLoading(true)
+    setError(false)
+    try {
+      const kcalGap = targets.kcal > 0 ? targets.kcal - Math.round(totals.kcal) : null
+      const prompt = `You are a sports nutrition coach for a runner. Give ONE specific, practical nutrition tip for today.
+
+Context:
+- Training day type: ${dayType}
+- Plan: ${planName || 'Running plan'}
+- Calorie target: ${targets.kcal > 0 ? targets.kcal + ' kcal' : 'not set'}
+- Protein target: ${targets.protein > 0 ? targets.protein + 'g' : 'not set'}
+- Carbs target: ${targets.carbs > 0 ? targets.carbs + 'g' : 'not set'}
+${kcalGap !== null && kcalGap > 0 ? `- Still ${kcalGap} kcal to eat today` : ''}
+${kcalGap !== null && kcalGap < 0 ? `- Already ${Math.abs(kcalGap)} kcal over target` : ''}
+
+Rules:
+- One tip only, 1-2 sentences max
+- Be specific (mention actual foods or timings)
+- Tailor to the day type (rest day vs long run vs intervals etc)
+- No preamble, no "Great question!", just the tip
+- Start with an action verb`
+
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 120,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      })
+      const data = await res.json()
+      const text = data.content?.[0]?.text?.trim()
+      if (text) {
+        setTip(text)
+        sessionStorage.setItem(cacheKey, text)
+      } else {
+        setError(true)
+      }
+    } catch {
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (!tip && !loading) {
+    return (
+      <button onClick={fetchTip}
+        className="w-full flex items-center gap-3 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-4 text-left">
+        <span className="text-2xl flex-shrink-0">🧠</span>
+        <div className="flex-1">
+          <p className="text-white text-xs font-bold">AI Nutrition Coach</p>
+          <p className="text-teal-100 text-[10px] mt-0.5">Tap for today&apos;s personalised fuel tip</p>
+        </div>
+        <span className="text-white text-lg">›</span>
+      </button>
+    )
+  }
+
+  return (
+    <div className="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-4">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-lg">🧠</span>
+        <span className="text-white text-xs font-bold">AI Nutrition Coach</span>
+        <span className="text-teal-200 text-[9px] ml-auto">Today · {dayType}</span>
+      </div>
+      {loading ? (
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-white/40 animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-3 h-3 rounded-full bg-white/40 animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-3 h-3 rounded-full bg-white/40 animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-between">
+          <p className="text-teal-100 text-xs">Couldn&apos;t load tip right now.</p>
+          <button onClick={fetchTip} className="text-white text-xs font-bold underline">Retry</button>
+        </div>
+      ) : (
+        <div>
+          <p className="text-white text-sm leading-relaxed">{tip}</p>
+          <button onClick={() => { setTip(null); sessionStorage.removeItem(cacheKey) }}
+            className="text-teal-200 text-[10px] mt-2 font-medium">
+            ↻ New tip
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Calorie Ring ─────────────────────────────────────────────────────────────
+
+function CalorieRing({ actual, target }: { actual: number; target: number }) {
+  const pct = target > 0 ? Math.min(actual / target, 1) : 0
+  const r = 34
+  const circ = 2 * Math.PI * r
+  const dash = pct * circ
+  const colour = pct > 1.05 ? '#EF4444' : pct >= 0.9 ? '#10B981' : '#0D9488'
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative w-20 h-20">
+        <svg width="80" height="80" className="-rotate-90">
+          <circle cx="40" cy="40" r={r} fill="none" stroke="#f3f4f6" strokeWidth="7" />
+          <circle cx="40" cy="40" r={r} fill="none" stroke={colour} strokeWidth="7"
+            strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
+            style={{ transition: 'stroke-dasharray 0.8s ease' }} />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-sm font-black text-gray-900">{target > 0 ? Math.round(actual) : '—'}</span>
+          <span className="text-[8px] text-gray-400">kcal</span>
+        </div>
+      </div>
+      {target > 0 && (
+        <span className="text-[9px] text-gray-400 mt-0.5">of {target}</span>
+      )}
+    </div>
+  )
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function NutritionClient() {
@@ -789,6 +1040,7 @@ export default function NutritionClient() {
   const [showRecipeForm, setShowRecipeForm] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
   const [assigningSlot, setAssigningSlot] = useState<{ date: string; slot: MealSlotId } | null>(null)
+  const [tdee, setTdee] = useState<{ height: number; age: number; sex: 'male' | 'female' } | null>(null)
 
   function getMacroTargets(date: string) {
     if (!profile?.weight_kg) return { kcal: 0, protein: 0, carbs: 0, fat: 0 }
@@ -799,7 +1051,13 @@ export default function NutritionClient() {
     const sessions = week?.days?.[dayI]?.sessions ?? []
     const dayType = getDayType(sessions)
     const cfg = DAY_TYPE_CONFIG[dayType]
-    const kcal = calcCalories(profile.weight_kg, dayType)
+    const kcal = calcCalories(
+      profile.weight_kg,
+      dayType,
+      tdee?.height,
+      tdee?.age,
+      tdee?.sex
+    )
     return {
       kcal,
       protein: Math.round(kcal * cfg.protein / 100 / 4),
@@ -814,6 +1072,13 @@ export default function NutritionClient() {
     const pp = perPortion(e.recipe, e.portions)
     return { kcal: acc.kcal + pp.kcal, protein: acc.protein + pp.protein, carbs: acc.carbs + pp.carbs, fat: acc.fat + pp.fat }
   }, { kcal: 0, protein: 0, carbs: 0, fat: 0 })
+
+  // Day type for AI coach
+  const todayDayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1
+  const todayWeek = weeks.find(w => w.n === (plan?.current_week ?? 1))
+  const todaySessions = todayWeek?.days?.[todayDayIndex]?.sessions ?? []
+  const todayDayType = getDayType(todaySessions)
+  const todayDayTypeLabel = DAY_TYPE_CONFIG[todayDayType].label
 
   const allWeekEntries = Object.values(byDate).flat()
 
@@ -844,27 +1109,58 @@ export default function NutritionClient() {
         {/* TODAY TAB */}
         {activeTab === 'today' && (
           <>
-            {/* Supplement tracker */}
-            <SupplementTracker />
+            {/* AI Fuel Coach */}
+            <AIFuelCoach
+              dayType={todayDayTypeLabel}
+              targets={todayTargets}
+              totals={todayTotals}
+              planName={plan?.name ?? ''}
+            />
 
-            {/* Macro summary */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-2">
-              <div className="flex items-center justify-between mb-1">
+            {/* Macro summary — ring + bars */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-4">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-bold text-gray-900">Today&apos;s macros</span>
-                {todayTargets.kcal > 0 && (
-                  <span className="text-[10px] text-gray-400">{Math.round(todayTotals.kcal)}/{todayTargets.kcal} kcal</span>
-                )}
+                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${DAY_TYPE_CONFIG[todayDayType].colour} ${DAY_TYPE_CONFIG[todayDayType].text}`}>
+                  {DAY_TYPE_CONFIG[todayDayType].emoji} {todayDayTypeLabel}
+                </span>
               </div>
-              <MacroBar label="kcal" actual={todayTotals.kcal} target={todayTargets.kcal} colour="bg-amber-400" />
-              <div className="grid grid-cols-3 gap-2">
-                <MacroBar label="protein" actual={todayTotals.protein} target={todayTargets.protein} colour="bg-blue-400" />
-                <MacroBar label="carbs" actual={todayTotals.carbs} target={todayTargets.carbs} colour="bg-green-400" />
-                <MacroBar label="fat" actual={todayTotals.fat} target={todayTargets.fat} colour="bg-red-400" />
+
+              {/* Calorie ring + macro grid */}
+              <div className="flex items-center gap-4 mb-3">
+                <CalorieRing actual={todayTotals.kcal} target={todayTargets.kcal} />
+                <div className="flex-1 space-y-2">
+                  {[
+                    { label: 'Protein', actual: Math.round(todayTotals.protein), target: todayTargets.protein, colour: 'bg-blue-400', unit: 'g' },
+                    { label: 'Carbs',   actual: Math.round(todayTotals.carbs),   target: todayTargets.carbs,   colour: 'bg-green-400', unit: 'g' },
+                    { label: 'Fat',     actual: Math.round(todayTotals.fat),     target: todayTargets.fat,     colour: 'bg-amber-400', unit: 'g' },
+                  ].map(m => (
+                    <div key={m.label}>
+                      <div className="flex justify-between text-[9px] text-gray-500 mb-0.5">
+                        <span className="font-semibold">{m.label}</span>
+                        <span>{m.actual}/{m.target}{m.unit}</span>
+                      </div>
+                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className={`h-full ${m.colour} rounded-full transition-all`}
+                          style={{ width: `${m.target > 0 ? Math.min((m.actual / m.target) * 100, 100) : 0}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              {!profile?.weight_kg && (
-                <p className="text-[10px] text-gray-400 mt-1">Add your weight in Profile to see calorie targets.</p>
+
+              {!profile?.weight_kg ? (
+                <p className="text-[10px] text-gray-400">Add your weight in Settings to see calorie targets.</p>
+              ) : (
+                <p className="text-[10px] text-gray-400">{DAY_TYPE_CONFIG[todayDayType].note}</p>
               )}
             </div>
+
+            {/* TDEE profile card */}
+            <TDEESetupCard onSave={(h, a, s) => setTdee({ height: h, age: a, sex: s })} />
+
+            {/* Supplement tracker */}
+            <SupplementTracker />
 
             {/* Today's meal slots */}
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
