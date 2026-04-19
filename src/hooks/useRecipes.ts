@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { Recipe, RecipeIngredient } from '@/types/database'
+import { STARTER_RECIPES } from '@/lib/starterRecipes'
 
 export interface CreateRecipeParams {
   name: string
@@ -38,9 +39,31 @@ export function useRecipes() {
         .order('name', { ascending: true })
 
       if (!cancelled) {
-        if (fetchErr) setError(fetchErr.message)
-        else setRecipes((data ?? []) as Recipe[])
-        setLoading(false)
+        if (fetchErr) {
+          setError(fetchErr.message)
+          setLoading(false)
+          return
+        }
+
+        const existing = (data ?? []) as Recipe[]
+
+        // Auto-seed starter recipes for new users (empty repo)
+        if (existing.length === 0) {
+          const seeded: Recipe[] = []
+          for (const r of STARTER_RECIPES) {
+            const { data: inserted } = await (supabase as any)
+              .from('recipes')
+              .insert({ user_id: user.id, ...r })
+              .select()
+              .single()
+            if (inserted) seeded.push(inserted as Recipe)
+          }
+          if (!cancelled) setRecipes(seeded.sort((a, b) => a.name.localeCompare(b.name)))
+        } else {
+          if (!cancelled) setRecipes(existing)
+        }
+
+        if (!cancelled) setLoading(false)
       }
     }
 
@@ -83,5 +106,27 @@ export function useRecipes() {
     refresh()
   }, [supabase, refresh])
 
-  return { recipes, loading, error, createRecipe, updateRecipe, deleteRecipe, refresh }
+  const duplicateRecipe = useCallback(async (recipe: Recipe): Promise<void> => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const { error: err } = await (supabase as any)
+      .from('recipes')
+      .insert({
+        user_id: user.id,
+        name: `${recipe.name} (copy)`,
+        servings: recipe.servings,
+        kcal_total: recipe.kcal_total,
+        protein_total: recipe.protein_total,
+        carbs_total: recipe.carbs_total,
+        fat_total: recipe.fat_total,
+        ingredients: recipe.ingredients,
+        notes: recipe.notes,
+      })
+
+    if (err) throw new Error(err.message)
+    refresh()
+  }, [supabase, refresh])
+
+  return { recipes, loading, error, createRecipe, updateRecipe, deleteRecipe, duplicateRecipe, refresh }
 }

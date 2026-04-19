@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useSupabase } from '@/hooks/useSupabase'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
+import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
 import { useProfile } from '@/hooks/useProfile'
 import { useWellness } from '@/hooks/useWellness'
 import { useMealPlan } from '@/hooks/useMealPlan'
@@ -773,7 +774,8 @@ export default function ProfileClient({
   const router = useRouter()
   const supabase = useSupabase()
   const { plan, weeks } = useActivePlan()
-  const { logs } = useTrainingLog(plan?.id ?? null)
+  const { logs } = useTrainingLog(plan?.id ?? null)          // plan-scoped: for PBs, streak, training summary
+  const { logs: allPlanLogs } = useAllTrainingLogs()         // cross-plan: for RPG XP (persists across plan switches)
   const { profile } = useProfile()
   const { recent: wellnessLogs } = useWellness()
 
@@ -837,7 +839,10 @@ export default function ProfileClient({
   }
 
   // Compute RPG stats from Supabase logs
+  // allLogs = current plan only (for PBs, streak, training summary)
   const allLogs = useMemo(() => Object.values(logs), [logs])
+  // allPlanLogsArr = all plans ever (for cross-plan RPG XP)
+  const allPlanLogsArr = useMemo(() => allPlanLogs, [allPlanLogs])
 
   const rpgStats: RPGStats = useMemo(() => {
     // Real wellness count from Supabase (last 90 days)
@@ -850,7 +855,7 @@ export default function ProfileClient({
     const suppStreak = parseInt(localStorage.getItem('nextsplit_supp_streak') || '0')
 
     return computeRPGStats(
-      allLogs.map(l => ({
+      allPlanLogsArr.map(l => ({
         done: l.done,
         km: l.km ?? null,
         week_n: l.week_n,
@@ -869,7 +874,7 @@ export default function ProfileClient({
       mealDays,
       suppStreak,
     )
-  }, [allLogs, weeks, wellnessLogs, mealsByDate])
+  }, [allPlanLogsArr, weeks, wellnessLogs, mealsByDate])
 
   // Level-up detection — fires when level increases
   useEffect(() => {

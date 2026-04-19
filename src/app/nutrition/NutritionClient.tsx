@@ -681,11 +681,12 @@ function inferCategory(name: string): string {
 // ─── Recipe Card ──────────────────────────────────────────────────────────
 
 function RecipeCard({
-  recipe, onEdit, onDelete
+  recipe, onEdit, onDelete, onDuplicate
 }: {
   recipe: Recipe
   onEdit: () => void
   onDelete: () => void
+  onDuplicate: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
   const pp = perPortion(recipe, 1)
@@ -755,6 +756,10 @@ function RecipeCard({
               className="flex-1 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600">
               Edit
             </button>
+            <button onClick={onDuplicate}
+              className="flex-1 py-2 rounded-xl border border-blue-100 text-xs font-semibold text-blue-600">
+              Duplicate
+            </button>
             <button onClick={() => { if (window.confirm(`Delete "${recipe.name}"?`)) onDelete() }}
               className="flex-1 py-2 rounded-xl border border-red-200 text-xs font-semibold text-red-500">
               Delete
@@ -771,7 +776,7 @@ function RecipeCard({
 export default function NutritionClient() {
   const { plan, weeks } = useActivePlan()
   const { profile } = useProfile()
-  const { recipes, createRecipe, updateRecipe, deleteRecipe } = useRecipes()
+  const { recipes, createRecipe, updateRecipe, deleteRecipe, duplicateRecipe } = useRecipes()
 
   const { start, end } = useMemo(() => weekStartEnd(plan as any), [plan])
   const dates = useMemo(() => weekDates(start), [start])
@@ -940,7 +945,8 @@ export default function NutritionClient() {
                 {recipes.map(r => (
                   <RecipeCard key={r.id} recipe={r}
                     onEdit={() => { setEditingRecipe(r); setShowRecipeForm(true) }}
-                    onDelete={() => deleteRecipe(r.id)} />
+                    onDelete={() => deleteRecipe(r.id)}
+                    onDuplicate={() => duplicateRecipe(r)} />
                 ))}
               </div>
             )}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml } from '@/lib/sessionUtils'
@@ -47,18 +47,43 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
   )
   const [paceInput, setPaceInput] = useState(existingLog?.pace ?? '')
   const [saving, setSaving] = useState(false)
-  const [expanded, setExpanded] = useState(!!existingLog) // expand if editing
+  const [expanded, setExpanded] = useState(!!existingLog)
+  const [bottomInset, setBottomInset] = useState(0)
 
-  // Auto-calculate pace from km + duration when both are set and pace is empty
+  // Keyboard avoidance — lift modal when virtual keyboard appears
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    function onResize() {
+      const keyboardH = window.innerHeight - vv!.height - vv!.offsetTop
+      setBottomInset(Math.max(0, keyboardH))
+    }
+    vv.addEventListener('resize', onResize)
+    vv.addEventListener('scroll', onResize)
+    return () => {
+      vv.removeEventListener('resize', onResize)
+      vv.removeEventListener('scroll', onResize)
+    }
+  }, [])
+
+  // Auto-calculate pace from km + duration when both set and pace is empty
   const autoPace = km > 0 && durationMins > 0 && !paceInput.trim()
     ? (() => {
-        const totalSecs = durationMins * 60
-        const paceSecs = totalSecs / km
+        const paceSecs = (durationMins * 60) / km
         const m = Math.floor(paceSecs / 60)
         const s = Math.round(paceSecs % 60)
         return `${m}:${String(s).padStart(2, '0')}`
       })()
     : null
+
+  // Auto-fill duration when pace is entered and duration is empty
+  function handlePaceBlur() {
+    if (!paceInput.trim() || durationMins > 0 || km <= 0) return
+    const parts = paceInput.split(':')
+    if (parts.length !== 2) return
+    const totalSecs = (parseInt(parts[0]) * 60 + parseInt(parts[1])) * km
+    if (!isNaN(totalSecs) && totalSecs > 0) setDurationMins(Math.round(totalSecs / 60))
+  }
 
   async function handleSave() {
     setSaving(true)
@@ -84,6 +109,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
     <div className="fixed inset-0 z-50 flex items-end" onClick={onClose}>
       <div
         className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl max-h-[92vh] flex flex-col"
+        style={{ marginBottom: bottomInset }}
         onClick={e => e.stopPropagation()}
       >
         {/* Scrollable content */}
@@ -180,17 +206,24 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
         {/* Pace — running sessions only */}
         {session.km > 0 && (
           <div className="mb-5">
-            <label className="text-sm font-semibold text-gray-700 block mb-2">Pace (optional)</label>
+            <label className="text-sm font-semibold text-gray-700 block mb-2">
+              Pace <span className="text-[10px] text-gray-400 font-normal">format: m:ss</span>
+            </label>
             <div className="relative">
               <input
                 type="text"
+                inputMode="decimal"
                 value={paceInput}
                 onChange={e => setPaceInput(e.target.value)}
-                placeholder={autoPace ? `Auto: ${autoPace}` : 'e.g. 5:30'}
+                onBlur={handlePaceBlur}
+                placeholder={autoPace ? `Auto: ${autoPace}` : '5:30'}
                 className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0D9488] pr-14"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">/km</span>
             </div>
+            {autoPace && !paceInput && (
+              <p className="text-[10px] text-teal-600 mt-1">Auto-calculated from distance + duration: {autoPace}/km</p>
+            )}
           </div>
         )}
 
@@ -509,8 +542,38 @@ export default function TodayClient() {
     ? computeWeeklyReport(allLogsArray, weeks, weekN)
     : null
 
+  // Swipe to navigate dates
+  const touchStartX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null || touchStartY.current === null) return
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    const dy = e.changedTouches[0].clientY - touchStartY.current
+    // Only trigger if horizontal swipe (dx > 40px and more horizontal than vertical)
+    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.5) return
+    if (dx < 0) {
+      // Swipe left → go forward (only to today)
+      setDateOffset(o => Math.min(o + 1, 0))
+    } else {
+      // Swipe right → go back in time
+      setDateOffset(o => o - 1)
+    }
+    touchStartX.current = null
+    touchStartY.current = null
+  }
+
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div
+      className="min-h-screen bg-[#f8f8f6] pb-24"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
