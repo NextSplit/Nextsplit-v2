@@ -1,5 +1,5 @@
 # NextSplit v2 — Dev Session Handoff
-_Last updated: end of session 5 (Phase 7 complete)_
+_Last updated: end of session 6 (Phase 7 AI live, Phase 8 next)_
 
 ## ⚠️ START OF SESSION CHECKLIST
 1. Ask the user: **"Please share your GitHub token so I can clone the repo"**
@@ -115,7 +115,7 @@ END;
 $$;
 ```
 
-### To activate AI features
+### AI features status — LIVE ✅
 1. Add `ANTHROPIC_API_KEY` to Vercel env vars (console.anthropic.com → API Keys)
 2. Set spend limit of $20/month in Anthropic Console → Settings → Limits
 3. Add `NEXT_PUBLIC_PREMIUM_ENFORCED=false` to Vercel env (already false by default, but make it explicit)
@@ -132,8 +132,8 @@ $$;
 | VAPID_PRIVATE_KEY | ✅ | |
 | VAPID_EMAIL | ✅ | |
 | CRON_SECRET | ✅ | |
-| ANTHROPIC_API_KEY | ❌ | Add to unlock AI features |
-| NEXT_PUBLIC_PREMIUM_ENFORCED | ❌ | Add as `false` explicitly |
+| ANTHROPIC_API_KEY | ✅ | Confirmed working |
+| NEXT_PUBLIC_PREMIUM_ENFORCED | ✅ | Set to false |
 | STRAVA_CLIENT_ID | ❌ | Phase 8 |
 | STRAVA_CLIENT_SECRET | ❌ | Phase 8 |
 | SUPABASE_SERVICE_ROLE_KEY | ❌ | Needed for server-side rate limiter (uses anon key as fallback) |
