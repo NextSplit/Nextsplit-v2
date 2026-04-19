@@ -128,8 +128,15 @@ export async function POST(req: Request) {
     gymDoneByWeek[w.n] = gymLogs.filter(g => g.week_n === w.n).length
   }
 
-  const recentNotes = logs.filter(l => l.notes && l.done).slice(0, 5)
+  const recentNotes = logs.filter(l => l.notes && l.done && l.session_i !== 99).slice(0, 5)
     .map(l => `Week ${l.week_n}: "${l.notes}"`)
+
+  // Ad-hoc sessions this week (session_i === 99)
+  const adHocThisWeek = logs.filter(l => l.done && l.session_i === 99 && l.week_n === currentWeekN)
+  const adHocNotes = adHocThisWeek
+    .filter(l => l.notes)
+    .map(l => l.notes!)
+    .join(', ')
 
   const raceDate = planData.race_date
   const daysToRace = raceDate
@@ -148,6 +155,7 @@ ATHLETE PROFILE:
 - Week focus: ${currentWeek?.title ?? 'unknown'} (${currentWeek?.b === 'd' ? 'deload' : currentWeek?.b === 'r' ? 'race week' : 'build'})
 - ACWR: ${acwr ?? 'insufficient data'}${acwr ? (acwr > 1.3 ? ' ⚠️ HIGH' : acwr < 0.8 ? ' ⚠️ LOW' : ' ✅ GOOD') : ''}
 ${gymPlannedThisWeek > 0 ? `- Strength sessions this week: ${gymDoneThisWeek}/${gymPlannedThisWeek} completed` : ''}
+${adHocThisWeek.length > 0 ? `- Extra sessions this week: ${adHocThisWeek.length} (${adHocNotes || 'unplanned work'})` : ''}
 ${todayWellness ? `- Today's readiness: sleep ${todayWellness.sleep}/5, soreness ${todayWellness.soreness}/5, mood ${todayWellness.mood}/5` : ''}
 
 LAST 4 WEEKS:

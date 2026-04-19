@@ -68,6 +68,11 @@ function ReadOnlyWeekRow({ week, logs }: { week: PlanWeek; logs: Record<string, 
   const total = realSessions.length
   const pct = total > 0 ? Math.round((done / total) * 100) : 0
 
+  // Ad-hoc sessions for this week (session_i === 99)
+  const adHocThisWeek = Object.values(logs).filter(
+    l => l.week_n === week.n && l.session_i === 99 && l.done
+  )
+
   return (
     <div className="rounded-xl border border-gray-100 overflow-hidden bg-white">
       <button onClick={() => setOpen(o => !o)} className="w-full flex items-center gap-3 p-3 text-left">
@@ -78,7 +83,10 @@ function ReadOnlyWeekRow({ week, logs }: { week: PlanWeek; logs: Record<string, 
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-xs font-semibold text-gray-600 truncate">{decodeHtml(week.title)}</div>
-          <div className="text-[10px] text-gray-400">{done}/{total} sessions · {pct}%</div>
+          <div className="text-[10px] text-gray-400">
+            {done}/{total} sessions · {pct}%
+            {adHocThisWeek.length > 0 && ` · +${adHocThisWeek.length} extra`}
+          </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <div className="w-12 h-1 bg-gray-100 rounded-full overflow-hidden">
@@ -95,6 +103,22 @@ function ReadOnlyWeekRow({ week, logs }: { week: PlanWeek; logs: Record<string, 
           {week.days.map((day, di) => (
             <ReadOnlyDayRow key={di} day={day} dayIndex={di} weekN={week.n} logs={logs} />
           ))}
+          {adHocThisWeek.length > 0 && (
+            <div className="px-4 py-2.5 border-t border-dashed border-gray-100">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Extra sessions</p>
+              <div className="space-y-1">
+                {adHocThisWeek.map((l, i) => (
+                  <div key={i} className="flex items-center gap-2 text-[10px] text-gray-500">
+                    <span className="w-4 h-4 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold flex-shrink-0">+</span>
+                    <span className="flex-1 truncate">{l.notes ?? 'Ad-hoc session'}</span>
+                    {l.duration_secs && (
+                      <span className="text-gray-400 flex-shrink-0">{Math.round(l.duration_secs / 60)}min</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

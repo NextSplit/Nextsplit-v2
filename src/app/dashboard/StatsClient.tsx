@@ -381,16 +381,21 @@ function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; we
   const units = useUnits()
   const all = logsArray(logs)
   const done = all.filter(l => l.done)
-  const totalKm = done.reduce((a, l) => a + (l.km ?? 0), 0)
-  const totalSessions = done.length
+
+  // Split planned vs ad-hoc (session_i === 99)
+  const plannedDone = done.filter(l => l.session_i !== 99)
+  const adHocDone = done.filter(l => l.session_i === 99)
+
+  const totalKm = plannedDone.reduce((a, l) => a + (l.km ?? 0), 0)
+  const totalSessions = plannedDone.length
   const totalHours = done.reduce((a, l) => a + (l.duration_secs ?? 0), 0) / 3600
 
-  // Total planned sessions
+  // Total planned sessions (excluding rest)
   const plannedTotal = weeks.reduce((a, w) =>
-    a + w.days.reduce((b, d) => b + d.sessions.length, 0), 0)
+    a + w.days.reduce((b, d) => b + d.sessions.filter(s => s.c !== 'rest').length, 0), 0)
 
-  const avgEffort = done.filter(l => l.effort).length > 0
-    ? done.filter(l => l.effort).reduce((a, l) => a + l.effort!, 0) / done.filter(l => l.effort).length
+  const avgEffort = plannedDone.filter(l => l.effort).length > 0
+    ? plannedDone.filter(l => l.effort).reduce((a, l) => a + l.effort!, 0) / plannedDone.filter(l => l.effort).length
     : 0
 
   return (
@@ -429,6 +434,21 @@ function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; we
               className="h-full bg-[#0D9488] rounded-full"
               style={{ width: `${Math.min((totalSessions / plannedTotal) * 100, 100)}%` }}
             />
+          </div>
+        </div>
+      )}
+      {adHocDone.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-gray-50 flex items-center gap-2">
+          <span className="text-base">➕</span>
+          <div className="flex-1">
+            <p className="text-[11px] font-semibold text-gray-600">
+              {adHocDone.length} extra session{adHocDone.length !== 1 ? 's' : ''} logged outside your plan
+            </p>
+            {adHocDone.some(l => l.notes) && (
+              <p className="text-[10px] text-gray-400 mt-0.5 truncate">
+                {adHocDone.filter(l => l.notes).slice(-1)[0]?.notes}
+              </p>
+            )}
           </div>
         </div>
       )}
