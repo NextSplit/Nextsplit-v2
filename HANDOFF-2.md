@@ -202,6 +202,12 @@ ALTER TABLE plan_purchases ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Athlete sees own purchases" ON plan_purchases FOR SELECT USING (auth.uid() = athlete_id);
 CREATE POLICY "Coach sees their purchases" ON plan_purchases FOR SELECT USING (auth.uid() = coach_id);
 
+-- Add coach mode fields to profiles
+ALTER TABLE profiles
+  ADD COLUMN IF NOT EXISTS is_coach boolean DEFAULT false,
+  ADD COLUMN IF NOT EXISTS coach_verified boolean DEFAULT false,
+  ADD COLUMN IF NOT EXISTS coach_applied_at timestamptz;
+
 -- Add coach fields to plan_templates
 ALTER TABLE plan_templates
   ADD COLUMN IF NOT EXISTS author_type text DEFAULT 'nextsplit'
@@ -635,17 +641,43 @@ Running + strength (gym sessions) as primary focus. Coach sees all activity the 
 All design decisions are confirmed. This section is the source of truth for building the coach platform.
 
 ### Account Model
-Everyone starts as a standard athlete account. To become a coach:
-1. Athlete applies via Settings → "Become a coach"
-2. Fills in profile: name, bio, credentials, specialities, photo
-3. Submits for review (NextSplit manual review)
-4. Two tiers issued:
-   - **Unverified coach** — anyone can apply, gets a coach profile and dashboard, marked as "Not yet verified". Can manage athletes and sell plans.
-   - **Verified coach** ✅ — NextSplit has reviewed their credentials. Gets a verification badge, higher marketplace visibility, increased athlete limits.
-5. Once approved, a **Coach tab** appears in the bottom nav (alongside Today/Plan/Fuel/Coach/Character)
-6. Coach still has a full athlete profile — they can train themselves AND coach others in the same app
 
-**DB implication:** Add `is_coach boolean DEFAULT false` and `coach_verified boolean DEFAULT false` to profiles table.
+**Everyone starts as an athlete.** There is one signup flow. No choice of "athlete or coach" at registration — this keeps onboarding simple and ensures every coach understands the athlete experience from the inside.
+
+**To become a coach — two paths:**
+
+**Path A — Athlete who wants to coach:**
+1. Uses the app as an athlete (any amount of time — no minimum sessions required)
+2. Goes to Settings → "Become a coach"
+3. Fills in coach profile: name, bio, credentials, specialities, photo, location
+4. Submits for NextSplit review
+5. Approved → Squad tab appears, coach profile goes live
+
+**Path B — Professional coach joining from outside:**
+1. Signs up as an athlete (same signup flow)
+2. Can apply to become a coach **immediately after signup** — no waiting period, no sessions required
+3. Goes to Settings → "Become a coach" → fills in profile
+4. Application reviewed — professional credentials fast-track verification
+5. Approved → Squad tab appears
+
+In both cases the athlete profile remains intact. A coach is still a runner — they can train themselves and coach others from the same app. Their XP, badges, plan, and character all stay exactly as they are.
+
+**Two coach tiers on approval:**
+- **Unverified coach** — profile live, can manage up to 5 athletes free, can sell plans, marked with no badge. Anyone can reach this tier immediately.
+- **Verified coach** ✅ — NextSplit has reviewed credentials (qualification or demonstrable experience). Gets a green verification badge, higher marketplace prominence, increased athlete limits, and trust signal to athletes browsing the marketplace.
+
+**Verification review checks:**
+- Recognised coaching qualification (UESCA, UK Athletics Level 2+, etc.), OR
+- Demonstrable coaching experience (years coaching, competitive background, professional social presence)
+- Professional coaches applying on day 1 get priority review — target 48hr turnaround
+
+**DB implication:** Add to profiles table:
+```sql
+ALTER TABLE profiles
+  ADD COLUMN IF NOT EXISTS is_coach boolean DEFAULT false,
+  ADD COLUMN IF NOT EXISTS coach_verified boolean DEFAULT false,
+  ADD COLUMN IF NOT EXISTS coach_applied_at timestamptz;
+```
 
 ### Coach Dashboard Location
 Lives **inside the main app** as an extra tab in the bottom nav:

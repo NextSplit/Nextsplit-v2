@@ -20,6 +20,9 @@ export interface Database {
           text_size: 'default' | 'large' | 'xl'
           notifications_enabled: boolean
           notification_time: string | null
+          is_coach: boolean
+          coach_verified: boolean
+          coach_applied_at: string | null
           created_at: string
           updated_at: string
         }
