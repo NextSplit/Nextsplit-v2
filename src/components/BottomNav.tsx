@@ -55,7 +55,7 @@ export default function BottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#e8e8e8] safe-area-pb">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#e8e8e8] safe-area-pb" role="navigation" aria-label="Main navigation">
       <div className="flex items-center max-w-lg mx-auto">
         {tabs.map(tab => {
           const active = pathname === tab.href || pathname.startsWith(tab.href + '/')
@@ -63,7 +63,9 @@ export default function BottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
-              className={`flex-1 flex flex-col items-center gap-0.5 py-2 transition-colors ${
+              aria-label={tab.label}
+              aria-current={active ? 'page' : undefined}
+              className={`flex-1 flex flex-col items-center gap-0.5 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 rounded-lg ${
                 active ? 'text-[#0D9488]' : 'text-[#aaa]'
               }`}
             >
