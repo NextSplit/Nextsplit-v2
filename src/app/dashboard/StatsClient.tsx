@@ -825,70 +825,253 @@ function PaceCalculator() {
 
 // ─── Wellness Trend ───────────────────────────────────────────────────────────
 
+// ─── Wellness Dashboard ────────────────────────────────────────────────────────
+
+function dayLabel(logDate: string): string {
+  const [y, mo, d] = logDate.split('-').map(Number)
+  return new Date(y, mo - 1, d).toLocaleDateString('en-GB', { weekday: 'short' }).slice(0, 1)
+}
+
+function readinessScore(sleep: number, soreness: number, mood: number): number {
+  return Math.round((sleep * 0.4 + mood * 0.35 + (6 - soreness) * 0.25) * 2)
+}
+
+function trendBadge(delta: number) {
+  if (delta > 0) return <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">↑ +{delta}</span>
+  if (delta < 0) return <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-500">↓ {delta}</span>
+  return <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">→ Stable</span>
+}
+
+function MiniSparkline({ values, max, colour }: { values: number[]; max: number; colour: string }) {
+  return (
+    <div className="flex items-end gap-0.5 h-8 flex-1">
+      {values.map((v, i) => (
+        <div key={i} className="flex-1 flex items-end" style={{ height: '100%' }}>
+          <div
+            className={`w-full rounded-t-sm ${colour} ${i === values.length - 1 ? 'opacity-100' : 'opacity-50'}`}
+            style={{ height: `${Math.max((v / max) * 100, 10)}%` }}
+          />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function WellnessTrend() {
   const { recent, loading } = useWellness()
+  const [activeMetric, setActiveMetric] = useState<'readiness' | 'sleep' | 'soreness' | 'mood'>('readiness')
 
-  if (loading || recent.length === 0) return null
+  const daily = recent.filter(l => l.log_type === 'daily')
+  const last14 = [...daily].reverse().slice(-14)
 
-  // Last 7 daily logs
-  const last7 = recent.filter(l => l.log_type === 'daily').slice(0, 7).reverse()
-  if (last7.length < 2) return null
+  if (loading || last14.length < 2) return null
 
-  const scores = last7.map(l => {
-    const sleep = l.sleep ?? 3
-    const soreness = l.soreness ?? 2
-    const mood = l.mood ?? 4
-    return Math.round((sleep * 0.4 + mood * 0.35 + (6 - soreness) * 0.25) * 2)
-  })
+  const scores      = last14.map(l => readinessScore(l.sleep ?? 3, l.soreness ?? 2, l.mood ?? 4))
+  const sleepVals   = last14.map(l => l.sleep ?? 3)
+  const sorenessVals = last14.map(l => 6 - (l.soreness ?? 2)) // invert: low soreness = good
+  const moodVals    = last14.map(l => l.mood ?? 4)
+  const labels      = last14.map(l => dayLabel(l.log_date))
 
-  const max = 10
-  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
-  const trend = scores[scores.length - 1] - scores[0]
+  const metrics = {
+    readiness: { values: scores,       max: 10, label: 'Readiness', colour: 'bg-[#0D9488]', unit: '/10' },
+    sleep:     { values: sleepVals,    max: 5,  label: 'Sleep',     colour: 'bg-indigo-400', unit: '/5' },
+    soreness:  { values: sorenessVals, max: 5,  label: 'Freshness', colour: 'bg-amber-400',  unit: '/5' },
+    mood:      { values: moodVals,     max: 5,  label: 'Mood',      colour: 'bg-violet-400', unit: '/5' },
+  }
 
-  const dayLabels = last7.map(l => {
-    // Parse YYYY-MM-DD safely without timezone shift
-    const [y, mo, d] = l.log_date.split('-').map(Number)
-    const date = new Date(y, mo - 1, d)
-    return date.toLocaleDateString('en-GB', { weekday: 'short' }).slice(0, 1)
-  })
+  const m = metrics[activeMetric]
+  const avg = Math.round(m.values.reduce((a, b) => a + b, 0) / m.values.length * 10) / 10
+  const delta = Math.round(m.values[m.values.length - 1] - m.values[0])
+
+  // Weekly averages (last 4 weeks)
+  const weeklyAvgs = Array.from({ length: 4 }, (_, wi) => {
+    const weekLogs = daily.filter(l => {
+      const daysAgo = Math.floor((Date.now() - new Date(l.log_date).getTime()) / 86400000)
+      return daysAgo >= wi * 7 && daysAgo < (wi + 1) * 7
+    })
+    if (weekLogs.length === 0) return null
+    const vals = weekLogs.map(l => readinessScore(l.sleep ?? 3, l.soreness ?? 2, l.mood ?? 4))
+    return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10
+  }).reverse()
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      {/* Header */}
+      <div className="px-5 pt-5 pb-3 flex items-center justify-between">
+        <div>
+          <div className="text-sm font-bold text-gray-900">Wellness</div>
+          <div className="text-xs text-gray-400 mt-0.5">Last {last14.length} days</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-black text-gray-900">{avg}<span className="text-xs text-gray-400 font-normal">{m.unit}</span></span>
+          {trendBadge(delta)}
+        </div>
+      </div>
+
+      {/* Metric tabs */}
+      <div className="flex px-5 gap-1 mb-3">
+        {(Object.keys(metrics) as Array<keyof typeof metrics>).map(key => (
+          <button
+            key={key}
+            onClick={() => setActiveMetric(key)}
+            className={`flex-1 py-1 rounded-lg text-[10px] font-semibold transition-all ${
+              activeMetric === key ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500'
+            }`}
+          >
+            {metrics[key].label}
+          </button>
+        ))}
+      </div>
+
+      {/* Main sparkline */}
+      <div className="px-5 pb-1">
+        <div className="flex items-end gap-1 h-16">
+          {m.values.map((v, i) => {
+            const pct = (v / m.max) * 100
+            const isLatest = i === m.values.length - 1
+            return (
+              <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                <div className="w-full flex items-end" style={{ height: '48px' }}>
+                  <div
+                    className={`w-full rounded-t-sm transition-all ${
+                      isLatest ? m.colour :
+                      pct >= 70 ? 'bg-emerald-200' :
+                      pct >= 50 ? 'bg-amber-200' : 'bg-red-200'
+                    }`}
+                    style={{ height: `${Math.max(pct, 6)}%` }}
+                  />
+                </div>
+                <span className="text-[8px] text-gray-300">{labels[i]}</span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Weekly summary row */}
+      <div className="border-t border-gray-50 px-5 py-3 grid grid-cols-4 gap-2">
+        {weeklyAvgs.map((avg, i) => (
+          <div key={i} className="text-center">
+            <div className={`text-sm font-bold ${avg === null ? 'text-gray-200' : avg >= 7 ? 'text-emerald-600' : avg >= 5 ? 'text-amber-500' : 'text-red-400'}`}>
+              {avg ?? '—'}
+            </div>
+            <div className="text-[9px] text-gray-400">{i === 3 ? 'This wk' : i === 2 ? 'Last wk' : `${(3 - i) * 7}d ago`}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Mini breakdown when viewing readiness */}
+      {activeMetric === 'readiness' && last14.length > 0 && (() => {
+        const latest = last14[last14.length - 1]
+        return (
+          <div className="border-t border-gray-50 px-5 py-3 grid grid-cols-3 gap-3">
+            {[
+              { label: 'Sleep', val: latest.sleep ?? 3, max: 5, colour: 'bg-indigo-300' },
+              { label: 'Freshness', val: 6 - (latest.soreness ?? 2), max: 5, colour: 'bg-amber-300' },
+              { label: 'Mood', val: latest.mood ?? 4, max: 5, colour: 'bg-violet-300' },
+            ].map(({ label, val, max, colour }) => (
+              <div key={label}>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-[9px] text-gray-400">{label}</span>
+                  <span className="text-[9px] font-bold text-gray-600">{val}/{max}</span>
+                </div>
+                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className={`h-full ${colour} rounded-full`} style={{ width: `${(val / max) * 100}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      })()}
+    </div>
+  )
+}
+
+// ─── Weight Trend ──────────────────────────────────────────────────────────────
+
+function WeightTrend() {
+  const { recent, loading } = useWellness()
+
+  const weightLogs = recent
+    .filter(l => l.weight_kg != null && l.weight_kg > 0)
+    .map(l => ({ date: l.log_date, kg: l.weight_kg! }))
+    .reverse()
+
+  if (loading || weightLogs.length < 2) return null
+
+  const weights = weightLogs.map(l => l.kg)
+  const min = Math.min(...weights)
+  const max = Math.max(...weights)
+  const range = max - min || 1
+  const latest = weights[weights.length - 1]
+  const first = weights[0]
+  const delta = Math.round((latest - first) * 10) / 10
+  const labels = weightLogs.map(l => dayLabel(l.date))
+
+  // Simple linear trend line
+  const n = weights.length
+  const xMean = (n - 1) / 2
+  const yMean = weights.reduce((a, b) => a + b, 0) / n
+  const slope = weights.reduce((acc, y, i) => acc + (i - xMean) * (y - yMean), 0) /
+    weights.reduce((acc, _, i) => acc + Math.pow(i - xMean, 2), 0)
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <div className="text-sm font-bold text-gray-900">Readiness trend</div>
-          <div className="text-xs text-gray-400 mt-0.5">Last {last7.length} days · avg {avg}/10</div>
+          <div className="text-sm font-bold text-gray-900">Body weight</div>
+          <div className="text-xs text-gray-400 mt-0.5">
+            {latest}kg · {weightLogs.length} entries
+          </div>
         </div>
-        <div className={`text-xs font-semibold px-2 py-1 rounded-full ${
-          trend > 0 ? 'bg-emerald-50 text-emerald-600' :
-          trend < 0 ? 'bg-red-50 text-red-500' :
-          'bg-gray-100 text-gray-500'
-        }`}>
-          {trend > 0 ? `↑ +${trend}` : trend < 0 ? `↓ ${trend}` : '→ Stable'}
+        <div className="text-right">
+          <div className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+            Math.abs(delta) < 0.3 ? 'bg-gray-100 text-gray-500' :
+            delta < 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+          }`}>
+            {delta > 0 ? `↑ +${delta}kg` : delta < 0 ? `↓ ${delta}kg` : '→ Stable'}
+          </div>
+          <div className="text-[9px] text-gray-400 mt-0.5">vs {weightLogs.length} days ago</div>
         </div>
       </div>
 
-      {/* Sparkline bars */}
-      <div className="flex items-end gap-1.5 h-14">
-        {scores.map((score, i) => {
-          const pct = (score / max) * 100
-          const isLatest = i === scores.length - 1
-          return (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <div className="w-full flex items-end" style={{ height: '44px' }}>
-                <div
-                  className={`w-full rounded-t-sm transition-all ${
-                    isLatest ? 'bg-[#0D9488]' :
-                    score >= 7 ? 'bg-emerald-200' :
-                    score >= 5 ? 'bg-amber-200' : 'bg-red-200'
-                  }`}
-                  style={{ height: `${Math.max(pct, 8)}%` }}
-                />
-              </div>
-              <span className="text-[9px] text-gray-400">{dayLabels[i]}</span>
-            </div>
-          )
-        })}
+      {/* Weight chart */}
+      <div className="relative h-20">
+        <svg viewBox={`0 0 ${n * 20} 60`} className="w-full h-full" preserveAspectRatio="none">
+          {/* Grid lines */}
+          {[0, 0.5, 1].map(pct => (
+            <line key={pct} x1="0" y1={60 - pct * 52} x2={n * 20} y2={60 - pct * 52}
+              stroke="#f3f4f6" strokeWidth="1" />
+          ))}
+          {/* Trend line */}
+          <line
+            x1="0"
+            y1={60 - ((weights[0] + slope * 0 - min) / range) * 52}
+            x2={n * 20}
+            y2={60 - ((weights[0] + slope * (n - 1) - min) / range) * 52}
+            stroke="#e5e7eb" strokeWidth="1.5" strokeDasharray="4,3"
+          />
+          {/* Weight line */}
+          <polyline
+            points={weights.map((w, i) => `${i * 20 + 10},${60 - ((w - min) / range) * 52}`).join(' ')}
+            fill="none" stroke="#0D9488" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"
+          />
+          {/* Dots */}
+          {weights.map((w, i) => (
+            <circle key={i} cx={i * 20 + 10} cy={60 - ((w - min) / range) * 52}
+              r={i === weights.length - 1 ? 3.5 : 2}
+              fill={i === weights.length - 1 ? '#0D9488' : '#CCFBF1'}
+              stroke="#0D9488" strokeWidth="1.5"
+            />
+          ))}
+        </svg>
+      </div>
+
+      {/* Min/max labels */}
+      <div className="flex justify-between text-[9px] text-gray-400 mt-1">
+        <span>{labels[0]}</span>
+        <span>{min}–{max}kg range</span>
+        <span>{labels[labels.length - 1]}</span>
       </div>
     </div>
   )
@@ -1021,39 +1204,72 @@ export default function StatsClient() {
                   return null
                 })()}
                 {plan.race_date && <RaceCountdown raceDate={plan.race_date} planName={plan.name} />}
-                {/* Predicted race time — shown when race date set and enough logs exist */}
-                {plan.race_date && (() => {
+                {/* Multi-distance race predictor */}
+                {(() => {
                   const allLogs = logsArray(logs)
-                  const targetKm = plan.goal?.toLowerCase().includes('marathon') ? 42.195
+                  const DISTANCES = [
+                    { label: '5K', km: 5 },
+                    { label: '10K', km: 10 },
+                    { label: 'Half', km: 21.0975 },
+                    { label: 'Marathon', km: 42.195 },
+                  ]
+                  const predictions = DISTANCES.map(d => ({
+                    ...d,
+                    prediction: predictRaceTime(d.km, allLogs, plan.current_week)
+                  })).filter(d => d.prediction !== null)
+                  if (predictions.length === 0) return null
+
+                  // Highlight the plan's target distance if detectable
+                  const planKm = plan.goal?.toLowerCase().includes('marathon') && !plan.goal?.toLowerCase().includes('half') ? 42.195
                     : plan.goal?.toLowerCase().includes('half') ? 21.0975
                     : plan.goal?.toLowerCase().includes('10k') ? 10
                     : plan.goal?.toLowerCase().includes('5k') ? 5
-                    : plan.name?.toLowerCase().includes('marathon') ? 42.195
+                    : plan.name?.toLowerCase().includes('marathon') && !plan.name?.toLowerCase().includes('half') ? 42.195
                     : plan.name?.toLowerCase().includes('half') ? 21.0975
                     : plan.name?.toLowerCase().includes('10k') ? 10
                     : plan.name?.toLowerCase().includes('5k') ? 5
                     : null
-                  if (!targetKm) return null
-                  const prediction = predictRaceTime(targetKm, allLogs, plan.current_week)
-                  if (!prediction) return null
-                  const confidenceColour = prediction.confidence === 'high' ? 'text-emerald-600' : prediction.confidence === 'medium' ? 'text-amber-600' : 'text-gray-400'
-                  const daysToRace = daysUntil(plan.race_date)
+
                   return (
-                    <div className="bg-white rounded-2xl border border-gray-100 px-4 py-4">
-                      <div className="flex items-start justify-between">
+                    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                      <div className="px-4 pt-4 pb-2 flex items-center justify-between">
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Predicted finish time</p>
-                          <div className="text-3xl font-black text-gray-900">{prediction.predictedTimeStr}</div>
-                          <div className="text-xs text-gray-400 mt-0.5">{prediction.predictedPaceStr}/km · {prediction.basisLabel}</div>
+                          <p className="text-sm font-bold text-gray-900">Race predictions</p>
+                          <p className="text-[10px] text-gray-400 mt-0.5">Based on your logged runs · Riegel formula</p>
                         </div>
-                        <div className="text-right">
-                          <span className={`text-[10px] font-bold uppercase ${confidenceColour}`}>
-                            {prediction.confidence} confidence
-                          </span>
-                          {daysToRace > 0 && (
-                            <p className="text-[10px] text-gray-400 mt-1">{daysToRace} days to improve</p>
-                          )}
-                        </div>
+                        {plan.race_date && daysUntil(plan.race_date) > 0 && (
+                          <span className="text-[10px] text-gray-400">{daysUntil(plan.race_date)}d to go</span>
+                        )}
+                      </div>
+                      <div className="divide-y divide-gray-50">
+                        {predictions.map(({ label, km, prediction }) => {
+                          if (!prediction) return null
+                          const isTarget = planKm !== null && Math.abs(km - planKm) < 1
+                          const confColour = prediction.confidence === 'high' ? 'text-emerald-500'
+                            : prediction.confidence === 'medium' ? 'text-amber-500' : 'text-gray-300'
+                          return (
+                            <div key={label} className={`px-4 py-3 flex items-center justify-between ${isTarget ? 'bg-teal-50/50' : ''}`}>
+                              <div className="flex items-center gap-2.5">
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold ${isTarget ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                  {label}
+                                </div>
+                                <div>
+                                  <div className="text-sm font-black text-gray-900">{prediction.predictedTimeStr}</div>
+                                  <div className="text-[10px] text-gray-400">{prediction.predictedPaceStr} · {prediction.basisLabel}</div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <span className={`text-[9px] font-bold uppercase ${confColour}`}>
+                                  {prediction.confidence}
+                                </span>
+                                {isTarget && <div className="text-[9px] text-teal-600 font-semibold">your goal</div>}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <div className="px-4 py-2 border-t border-gray-50">
+                        <p className="text-[9px] text-gray-300">Log more runs with pace data to improve accuracy</p>
                       </div>
                     </div>
                   )
@@ -1077,6 +1293,7 @@ export default function StatsClient() {
                 <PBCard logs={logs} />
                 <WeeklyVolumeChart logs={logs} weeks={weeks} />
                 <WellnessTrend />
+                <WeightTrend />
                 <ACWRChart logs={logs} weeks={weeks} />
                 <PaceTrend logs={logs} />
               </>

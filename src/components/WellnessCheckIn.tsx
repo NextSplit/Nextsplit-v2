@@ -57,6 +57,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
   const [sleep, setSleep] = useState(3)
   const [soreness, setSoreness] = useState(2)
   const [motivation, setMotivation] = useState(4)
+  const [weightKg, setWeightKg] = useState<string>('')
   const [localData, setLocalData] = useState<LocalWellness | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -96,7 +97,10 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
     setLocalData(d)
     onReadiness?.(readinessScore(sleep, soreness, motivation))
     try {
-      await logWellness({ log_date: todayKey(), log_type: 'daily', sleep, soreness, mood: motivation })
+      await logWellness({
+        log_date: todayKey(), log_type: 'daily', sleep, soreness, mood: motivation,
+        weight_kg: weightKg && !isNaN(parseFloat(weightKg)) ? parseFloat(weightKg) : undefined,
+      })
     } catch { /* non-fatal */ }
     setSaving(false)
     setOpen(false)
@@ -169,6 +173,24 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
         <SliderRow label="Sleep quality" emoji="😴" value={sleep} onChange={setSleep} lowLabel="Terrible" highLabel="Great" />
         <SliderRow label="Muscle soreness" emoji="💪" value={soreness} onChange={setSoreness} lowLabel="Fresh" highLabel="Very sore" />
         <SliderRow label="Motivation" emoji="🔥" value={motivation} onChange={setMotivation} lowLabel="Low" highLabel="High" />
+        {/* Optional weight */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-base">⚖️</span>
+            <span className="text-sm font-medium text-gray-700">Weight <span className="text-[10px] text-gray-400 font-normal">optional</span></span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <input
+              type="number"
+              inputMode="decimal"
+              value={weightKg}
+              onChange={e => setWeightKg(e.target.value)}
+              placeholder="kg"
+              className="w-16 text-right border border-gray-200 rounded-lg px-2 py-1 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+            />
+            <span className="text-xs text-gray-400">kg</span>
+          </div>
+        </div>
       </div>
       <div className="flex items-center justify-between mb-4">
         <div className="text-xs text-gray-500">Readiness score</div>
