@@ -139,6 +139,7 @@ CREATE TABLE coach_athletes (
   share_nutrition boolean DEFAULT false,
   share_body_weight boolean DEFAULT false,
   subscription_id text,
+  coach_managed_plan_id text,         -- which of athlete's plans the coach manages
   coach_notes     text,
   athlete_goal    text,
   created_at      timestamptz DEFAULT now() NOT NULL,
@@ -229,6 +230,12 @@ CREATE POLICY "Coach reads athlete plans when active"
       WHERE coach_id = auth.uid() AND athlete_id = user_plans.user_id
         AND status = 'active')
   );
+CREATE POLICY "Coach reads athlete activity logs when active"
+  ON activity_logs FOR SELECT USING (
+    EXISTS (SELECT 1 FROM coach_athletes
+      WHERE coach_id = auth.uid() AND athlete_id = activity_logs.user_id
+        AND status = 'active' AND share_logs = true)
+  );
 ```
 
 ### Tables to add (Phase 3 — community)
@@ -238,9 +245,11 @@ CREATE TABLE clubs (
   name        text NOT NULL,
   code        text UNIQUE NOT NULL,
   admin_id    uuid REFERENCES auth.users(id) NOT NULL,
-  coach_id    uuid REFERENCES coach_profiles(user_id), -- optional: coach-led club
+  coach_id    uuid REFERENCES coach_profiles(user_id),
   description text,
-  is_public   boolean DEFAULT true,
+  visibility  text DEFAULT 'public' CHECK (visibility IN ('public','squad','private')),
+  sport_focus text[] DEFAULT ARRAY['running'], -- ['running','cycling','swimming','triathlon']
+  auto_created boolean DEFAULT false,          -- true for auto-created squad communities
   created_at  timestamptz DEFAULT now() NOT NULL
 );
 
@@ -445,10 +454,12 @@ _Months 2–3_
 - Athlete can revoke any permission at any time
 
 **Plan control when under a coach:**
-- Athlete has full freedom — can activate plans independently
-- Coach can see and annotate whatever the athlete is doing
-- Coach can suggest plan changes, athlete accepts or declines
-- No hard lock — coach-athlete relationship is collaborative not restrictive
+- Coach manages the athlete's primary training plan directly (can modify sessions, load, paces)
+- Athlete can also run additional plans alongside (e.g. coach manages marathon build, athlete also follows a gym-only plan)
+- Coach sees ALL active plans the athlete has — primary and secondary
+- Coach modifications to the primary plan are applied immediately with a notification to the athlete
+- Athlete can still log ad-hoc sessions freely — coach sees those too
+- **DB implication:** Need a `coach_managed_plan_id` field on `coach_athletes` to track which plan is the coach-managed primary
 
 ---
 
@@ -480,8 +491,9 @@ _Months 3–5 — launch community when 300+ active users_
 | 70/30 split (coach/NextSplit) on plan sales | 🔲 |
 | Freemium coach tier: free to 5 athletes, paid beyond | 🔲 |
 | **Scope** | |
-| Running + strength (gym sessions) — full coach visibility | 🔲 |
-| Activity logs (swim/cycle) — coach sees cross-training too | 🔲 |
+| Any endurance sport — coach sees run/gym/swim/cycle/hike all in one view | 🔲 |
+| Triathlon coach support — multi-discipline session types and planning | 🔲 |
+| Coach RLS extended to `activity_logs` table | 🔲 |
 
 #### Community & gamification
 | Task | Status |
@@ -497,11 +509,18 @@ _Months 3–5 — launch community when 300+ active users_
 | Virtual races | 🔲 |
 | Playwright e2e tests | 🔲 |
 
-**Community ↔ Coach integration (key design decision):**
-Coaches can have TWO layers simultaneously:
-1. **Private squad** — their paying athletes, full data access, annotations, messaging
-2. **Public club** — anyone can join, leaderboard, challenges, community feed
-These are linked but separate. A coach's athletes can see each other in the squad leaderboard. The public club is how coaches grow their audience and find new clients.
+**Community ↔ Coach integration (confirmed: all of the above):**
+Coaches operate across THREE layers simultaneously:
+1. **Private athlete squad** — paying clients, full data access, annotations, plan management, messaging. Closed.
+2. **Public club** — open to anyone. Leaderboard, challenges, community feed. Coach is the admin. This is their audience-building and client acquisition channel.
+3. **Squad community** — the private athletes also form a mini-community with each other. They see each other's progress on a squad leaderboard, can give kudos on sessions, and feel part of something. This is what makes coaching on NextSplit sticky — the athlete isn't just connected to the coach, they're connected to a group.
+
+These three layers use the same club infrastructure but with different visibility settings:
+- Public club: anyone can join (coach grows audience)
+- Squad community: auto-created when coach has 2+ active athletes (private, athletes only)
+- An athlete can be in both — they're in the private squad AND the public club if they choose
+
+**DB implication:** Add `visibility` field to clubs table: `public | squad | private`. Squad clubs are auto-created per coach, linked via `coach_athletes`.
 
 ---
 
@@ -619,9 +638,12 @@ Running + strength (gym sessions) as primary focus. Coach sees all activity the 
 | Garmin Connect | Wearable data | Terrible UX, no AI | We're the intelligence layer |
 | Nike Run Club | Brand, guided runs | No personalisation, no coach | We know their data |
 | Runna | Clean plans | No community, no coach, no gym | We do everything |
-| TrainerRoad | Structured training | Cycling-first, expensive | We're running-first |
+| TrainerRoad | Structured training | Cycling-first, no community | We do multi-sport + community |
+| Triathlete.com / TrainingPeaks | Multi-sport support | Athlete-hostile UX, no AI | We make multi-sport accessible |
 
-**The pitch:** NextSplit is the only platform where AI coaching, human coach expertise, gym strength training, and community all live together — built for the serious amateur who wants to improve, coached by people who know how.
+**The pitch:** NextSplit is the only platform where AI coaching, human coach expertise, multi-sport strength and endurance training, and community all live together — built for the serious amateur who wants to improve, coached by people who know how.
+
+**Expanded market:** Supporting triathlon coaches, cyclists who run, and multi-sport athletes significantly expands the addressable market without losing the running-first identity. The app remains running-focused in its branding and defaults — but the coach platform supports any endurance discipline.
 
 ---
 
