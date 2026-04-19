@@ -356,6 +356,19 @@ interface SessionCardProps {
 function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardProps) {
   const cfg = getSessionType(session.c)
   const done = !!log?.done
+  const [justDone, setJustDone] = useState(false)
+  const [showXP, setShowXP] = useState(false)
+  const xp = getSessionXP(session.c)
+
+  function handleQuickDoneWithAnim() {
+    if (!done) {
+      setJustDone(true)
+      setShowXP(true)
+      setTimeout(() => setJustDone(false), 500)
+      setTimeout(() => setShowXP(false), 950)
+    }
+    onQuickDone()
+  }
 
   return (
     <div
@@ -411,23 +424,35 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
           )}
         </div>
 
-        {/* Quick-done / edit button */}
-        <button
-          onClick={e => { e.stopPropagation(); onQuickDone() }}
-          className={`w-10 h-10 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-            done
-              ? 'border-emerald-400 bg-emerald-400'
-              : 'border-gray-200 bg-white'
-          }`}
-        >
-          {done ? (
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-          ) : (
-            <div className="w-3 h-3 rounded-full border-2 border-gray-300" />
+        {/* Quick-done / edit button — with XP float */}
+        <div className="relative flex-shrink-0">
+          {showXP && (
+            <div className="absolute -top-1 left-1/2 -translate-x-1/2 pointer-events-none z-10 animate-xp-float">
+              <span className="text-[11px] font-black text-teal-600 bg-white rounded-full px-1.5 py-0.5 shadow-md whitespace-nowrap">
+                +{xp} XP
+              </span>
+            </div>
           )}
-        </button>
+          <button
+            onClick={e => { e.stopPropagation(); handleQuickDoneWithAnim() }}
+            className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${
+              done
+                ? 'border-emerald-400 bg-emerald-400'
+                : 'border-gray-200 bg-white'
+            }`}
+          >
+            {done ? (
+              <svg
+                className={`w-5 h-5 text-white ${justDone ? 'animate-check-pop' : ''}`}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <div className="w-3 h-3 rounded-full border-2 border-gray-300" />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -1125,7 +1150,7 @@ export default function TodayClient() {
 
       {/* Undo toast with countdown */}
       {undoInfo && (
-        <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50" role="status" aria-live="polite" aria-atomic="true">
+        <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 animate-slide-up" role="status" aria-live="polite" aria-atomic="true">
           <div className="bg-gray-900 text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-xl">
             <div className="flex-1">
               <div className="flex items-center gap-2">
@@ -1162,12 +1187,23 @@ export default function TodayClient() {
       {/* PB Toast */}
       {newPB && (
         <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 pointer-events-none">
-          <div className="bg-gradient-to-r from-yellow-400 to-amber-400 text-white rounded-2xl px-4 py-3 shadow-xl animate-bounce-once">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🏆</span>
-              <div>
-                <div className="text-sm font-black">New Personal Best!</div>
-                <div className="text-xs font-semibold opacity-90">{newPB.distance} · {newPB.timeStr}</div>
+          <div className="relative animate-slide-up">
+            {/* Confetti particles */}
+            <span className="absolute top-0 left-1/2 w-2 h-2 rounded-sm bg-yellow-400 opacity-0" style={{ animation: 'confetti-fall-1 0.8s 0.1s ease-out forwards' }} />
+            <span className="absolute top-0 left-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 opacity-0" style={{ animation: 'confetti-fall-2 0.8s 0.15s ease-out forwards' }} />
+            <span className="absolute top-0 left-1/2 w-2 h-1 rounded-sm bg-teal-400 opacity-0" style={{ animation: 'confetti-fall-3 0.9s 0.05s ease-out forwards' }} />
+            <span className="absolute top-0 left-1/2 w-1.5 h-1.5 rounded-full bg-amber-300 opacity-0" style={{ animation: 'confetti-fall-4 0.85s 0.2s ease-out forwards' }} />
+            <span className="absolute top-0 left-1/2 w-1 h-2 rounded-sm bg-red-400 opacity-0" style={{ animation: 'confetti-fall-5 0.75s 0.1s ease-out forwards' }} />
+            <span className="absolute top-0 left-1/2 w-2 h-1 rounded-full bg-orange-400 opacity-0" style={{ animation: 'confetti-fall-6 0.9s 0.0s ease-out forwards' }} />
+
+            <div className="bg-gradient-to-r from-yellow-400 to-amber-400 text-white rounded-2xl px-4 py-3 shadow-2xl">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl animate-bounce">🏆</span>
+                <div>
+                  <div className="text-sm font-black tracking-wide">New Personal Best!</div>
+                  <div className="text-xs font-semibold opacity-90">{newPB.distance} · {newPB.timeStr}</div>
+                </div>
+                <div className="ml-auto text-xs font-bold bg-white/20 rounded-full px-2 py-0.5">PB ✓</div>
               </div>
             </div>
           </div>
