@@ -1,8 +1,8 @@
 # NextSplit v2 — Dev Session Handoff
-_Last updated: end of session 12 (UI-3 + UI-4 complete)_
+_Last updated: end of session 13 (UI-5 complete)_
 
-## ⚠️ START OF SESSION CHECKLIST
-1. Reuse GitHub token from conversation (ghp_TOKEN_REDACTED)
+## START OF SESSION CHECKLIST
+1. Reuse GitHub token from conversation history
 2. `cd /home/claude/nextsplit-v2 && git pull origin main && npm install`
 3. `node_modules/.bin/next build` — confirm clean before touching anything
 4. Read EXACT NEXT STEPS below before writing any code
@@ -16,6 +16,7 @@ _Last updated: end of session 12 (UI-3 + UI-4 complete)_
 
 ## Git log (latest first)
 ```
+a41b248  Phase UI-5: PB toast confetti, XP float, check-pop, LevelUp star burst, undo slide-up
 5d7a7ce  Phase UI-4: TDEE calculator, AI fuel coach, calorie ring, macro bars
 d135c16  Phase UI-3: kit colour, character states, medal overlays
 69e3787  docs: update HANDOFF-2 after Phase UI-2 complete
@@ -28,51 +29,42 @@ d135c16  Phase UI-3: kit colour, character states, medal overlays
 - Phase UI-2 ✅ Session card redesign, progress bar, colour tightening
 - Phase UI-3 ✅ Character: kit colour, states, medals
 - Phase UI-4 ✅ Fuel: TDEE, AI coach, calorie ring
+- Phase UI-5 ✅ Motion & delight: confetti, XP float, check-pop, star burst, slide-ups
 
 ---
 
 ## EXACT NEXT STEPS
 
-### Phase UI-5 — Motion & delight (NEXT)
+### Phase 10 — Social + sharing (NEXT)
 
-#### TASK 1 — PB toast animation
-File: `src/app/today/TodayClient.tsx` around line 1162
-Currently uses `animate-bounce-once` (custom class). Upgrade:
-- Replace with a slide-up + fade-in entrance
-- Add confetti burst (use CSS only — 6–8 coloured spans with keyframe animations, no external lib)
-- Add a subtle pulse on the trophy emoji
+#### TASK 1 — Upgrade ShareSessionCard to proper image
+File: `src/components/ShareSessionCard.tsx`
+Currently renders a basic card. Upgrade to:
+- Use html2canvas or a CSS-only card that looks great as a screenshot
+- Show: session name, distance/time/pace, effort, XP earned, NextSplit branding
+- Teal gradient background, white text, character emoji
 
-#### TASK 2 — Session card tap feedback
-File: `src/app/today/TodayClient.tsx` → `SessionCard` component
-When quick-done button is tapped:
-- Scale the checkmark with `scale-125` for 200ms then back
-- Flash the card border briefly to the accent colour (already have `cfg.accent`)
+#### TASK 2 — Weekly summary share card
+New component: `src/components/WeeklyShareCard.tsx`
+Triggered from the "All done" celebration or Monday weekly report card.
+Shows: week number, sessions done/planned, km logged, streak, XP earned
 
-#### TASK 3 — Level-up screen upgrade
-File: `src/app/profile/ProfileClient.tsx` → `LevelUpScreen`
-Currently uses `animate-bounce` on the ⚡ emoji. Add:
-- Stars/particles radiating outward (pure CSS keyframes)
-- Slide-up entrance on the card content
-- Number counter animating from old level to new level
+#### TASK 3 — Public profile page
+New route: `src/app/u/[username]/page.tsx`
+- Read-only public view of a user's Character tab
+- Shows: character avatar, level, badges unlocked, recent PBs, streak
+- URL: nextsplit.app/u/[username]
+- Username stored in profiles table (needs migration + settings UI)
 
-#### TASK 4 — XP gain micro-animation on Today tab
-When a session is logged, show a small "+XP" bubble that floats up from the quick-done button and fades out. Lives in TodayClient. Pure CSS, no library.
-
----
-
-### Phase 10 — Social + sharing (after UI-5)
-- Share session card (already has basic ShareSessionCard) — upgrade to proper image generation
-- Weekly summary share card
-- Deep link: nextsplit.app/u/[username] public profile page
-
-### Phase 11 — Stripe + Pro tier
-- ProGate is already wired (src/components/ProGate.tsx)
-- NEXT_PUBLIC_PREMIUM_ENFORCED=false currently (all open)
-- Add Stripe checkout, webhook, update profiles.is_pro in Supabase
-- Gate: AI coaching (5→unlimited calls), advanced analytics, character cosmetics
+### Phase 11 — Stripe + Pro tier (after Phase 10)
+- ProGate already wired (src/components/ProGate.tsx)
+- NEXT_PUBLIC_PREMIUM_ENFORCED=false (all open currently)
+- Add: Stripe checkout route, webhook handler, update profiles.is_pro in Supabase
+- Gate behind Pro: AI coaching unlimited, advanced analytics, character cosmetics
+- Pricing: ~£7.99/mo or £59/yr
 
 ### Phase 12 — Coach tier
-- Coach dashboard (admin view of multiple athletes)
+- Admin dashboard to view multiple athletes
 - Athlete invite links
 - Coach-written plan templates
 
@@ -84,18 +76,20 @@ When a session is logged, show a small "+XP" bubble that floats up from the quic
 - Character tab:  src/app/profile/ProfileClient.tsx
 - Fuel tab:       src/app/nutrition/NutritionClient.tsx
 - RPG lib:        src/lib/rpg.ts (renderCharSVG takes optional kitColourOverride)
-- Nutrition lib:  src/lib/nutrition.ts (calcCalories now takes height/age/sex)
-- Session utils:  src/lib/sessionUtils.ts (accent colours for cards)
-- Feature flags:  src/lib/features.ts
+- Nutrition lib:  src/lib/nutrition.ts (calcCalories: weight, dayType, height?, age?, sex?)
+- Session utils:  src/lib/sessionUtils.ts (accent colours)
+- Global CSS:     src/app/globals.css (UI-5 keyframes: slide-up, xp-float, check-pop, confetti, star-orbit, level-in, card-up)
+- Share card:     src/components/ShareSessionCard.tsx (upgrade target)
 - ProGate:        src/components/ProGate.tsx
 
 ## Architecture
 - Next.js 16, Supabase, all tabs client components
-- Colour system: teal=brand, amber=warnings, emerald=success, red=danger
-- AI: Anthropic API called client-side in artifacts/components
+- Colour system: teal=brand, amber=warnings, emerald=success, red=danger only
+- AI: Anthropic API called client-side (fuel coach, stats coaching card)
 - Kit colour: localStorage nextsplit_kit_colour
 - TDEE: localStorage nextsplit_tdee_height/age/sex
 - Premium: NEXT_PUBLIC_PREMIUM_ENFORCED=false (all features open)
+- Animations: pure CSS keyframes in globals.css, no animation libraries
 
 ## Build + deploy
 ```bash
