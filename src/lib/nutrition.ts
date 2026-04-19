@@ -1,7 +1,7 @@
 // ─── Shared Nutrition Logic ────────────────────────────────────────────────────
 // Used by both the Fuel tab (NutritionClient) and Plan tab (PlanClient)
 
-export type DayType = 'rest' | 'easy' | 'quality' | 'long' | 'race'
+export type DayType = 'rest' | 'easy' | 'quality' | 'long' | 'race' | 'strength'
 
 export function getDayType(sessions: Array<{ c: string; km?: number }>): DayType {
   if (!sessions || sessions.length === 0) return 'rest'
@@ -11,8 +11,8 @@ export function getDayType(sessions: Array<{ c: string; km?: number }>): DayType
   if (codes.some(c => c === 'run-long') || totalKm >= 16) return 'long'
   if (codes.some(c => c === 'run-tempo' || c === 'run-int' || c === 'run-mp')) return 'quality'
   if (codes.some(c => c.startsWith('run-'))) return 'easy'
-  // Gym-only day: treat as easy (moderate calorie/carb needs for recovery and performance)
-  if (codes.some(c => c.startsWith('gym'))) return 'easy'
+  // Gym/strength-only day
+  if (codes.some(c => c.startsWith('gym'))) return 'strength'
   return 'rest'
 }
 
@@ -21,11 +21,12 @@ export const DAY_TYPE_CONFIG: Record<DayType, {
   cals: number; carbs: number; protein: number; fat: number
   note: string
 }> = {
-  rest:    { label: 'Rest Day',     emoji: '😴', colour: 'bg-gray-50',    text: 'text-gray-600',   cals: 1.0, carbs: 45, protein: 25, fat: 30, note: 'Focus on protein and vegetables.' },
-  easy:    { label: 'Easy Run',     emoji: '🟢', colour: 'bg-emerald-50', text: 'text-emerald-700', cals: 1.3, carbs: 50, protein: 20, fat: 30, note: 'Moderate carbs. Hydrate well.' },
-  quality: { label: 'Quality Day',  emoji: '🟠', colour: 'bg-orange-50',  text: 'text-orange-700', cals: 1.5, carbs: 60, protein: 20, fat: 20, note: 'Carb-up. Quality fuel = quality performance.' },
-  long:    { label: 'Long Run',     emoji: '🔵', colour: 'bg-blue-50',    text: 'text-blue-700',   cals: 1.7, carbs: 65, protein: 20, fat: 15, note: 'High carbs. Big recovery meal after.' },
-  race:    { label: 'Race Day! 🏁', emoji: '🏆', colour: 'bg-yellow-50',  text: 'text-yellow-700', cals: 1.6, carbs: 65, protein: 20, fat: 15, note: 'Familiar foods only. Nothing new on race day.' },
+  rest:     { label: 'Rest Day',      emoji: '😴', colour: 'bg-gray-50',    text: 'text-gray-600',   cals: 1.0, carbs: 45, protein: 25, fat: 30, note: 'Focus on protein and vegetables. Keep it light.' },
+  easy:     { label: 'Easy Run',      emoji: '🟢', colour: 'bg-emerald-50', text: 'text-emerald-700', cals: 1.3, carbs: 50, protein: 20, fat: 30, note: 'Moderate carbs. Hydrate well.' },
+  strength: { label: 'Strength Day',  emoji: '🏋️', colour: 'bg-amber-50',   text: 'text-amber-700',  cals: 1.3, carbs: 45, protein: 30, fat: 25, note: 'Protein is the priority today. Aim for your protein target first, then carbs to fuel the session.' },
+  quality:  { label: 'Quality Day',   emoji: '🟠', colour: 'bg-orange-50',  text: 'text-orange-700', cals: 1.5, carbs: 60, protein: 20, fat: 20, note: 'Carb-up. Quality fuel = quality performance.' },
+  long:     { label: 'Long Run',      emoji: '🔵', colour: 'bg-blue-50',    text: 'text-blue-700',   cals: 1.7, carbs: 65, protein: 20, fat: 15, note: 'High carbs. Big recovery meal after.' },
+  race:     { label: 'Race Day! 🏁',  emoji: '🏆', colour: 'bg-yellow-50',  text: 'text-yellow-700', cals: 1.6, carbs: 65, protein: 20, fat: 15, note: 'Familiar foods only. Nothing new on race day.' },
 }
 
 /** Full Mifflin-St Jeor BMR × activity factor → daily calorie target.
