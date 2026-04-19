@@ -81,7 +81,7 @@ export default function NutritionClient() {
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
   const [assigningSlot, setAssigningSlot] = useState<{ date: string; slot: MealSlotId } | null>(null)
   const [tdee, setTdee] = useState<{ height: number; age: number; sex: 'male' | 'female' } | null>(null)
-  const { extraCaloriesToday } = useActivityLog()
+  const { logs: activityLogs, extraCaloriesToday } = useActivityLog()
 
   function getMacroTargets(date: string) {
     if (!profile?.weight_kg) return { kcal: 0, protein: 0, carbs: 0, fat: 0 }
@@ -283,7 +283,36 @@ export default function NutritionClient() {
         {activeTab === 'week' && (
           <>
             <ShoppingList entries={allWeekEntries} />
+
+            {/* Cross-training today — shows if activity logged, adjusts calorie target */}
+            {(() => {
+              const todayStr = new Date().toISOString().slice(0, 10)
+              const todayActivities = activityLogs.filter((l: { logged_at: string }) => l.logged_at === todayStr)
+              if (todayActivities.length === 0) return null
+              const extraKcal = extraCaloriesToday(profile?.weight_kg ?? 70)
+              return (
+                <div className="bg-teal-50 rounded-2xl border border-teal-100 p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm">🏅</span>
+                    <span className="text-[11px] font-bold text-teal-800 uppercase tracking-wide">Cross-training today</span>
+                    {extraKcal > 0 && <span className="ml-auto text-[11px] font-bold text-teal-600">+{extraKcal} kcal</span>}
+                  </div>
+                  <div className="space-y-1">
+                    {todayActivities.map((a: { id: string; activity_type: string; duration_secs?: number | null; notes?: string | null }) => (
+                      <div key={a.id} className="flex items-center gap-2 text-xs text-teal-700">
+                        <span>{a.activity_type === 'cycle' ? '🚴' : a.activity_type === 'swim' ? '🏊' : a.activity_type === 'walk' ? '🚶' : a.activity_type === 'hike' ? '🥾' : '🏅'}</span>
+                        <span className="capitalize font-medium">{a.activity_type}</span>
+                        {a.duration_secs && <span className="text-teal-500">{Math.round(a.duration_secs / 60)}min</span>}
+                        {a.notes && <span className="text-teal-400 truncate max-w-[120px]">{a.notes}</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
+
             {dates.map(date => (
+
               <DayMealCard
                 key={date}
                 date={date}
