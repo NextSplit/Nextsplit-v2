@@ -9,6 +9,7 @@ import type { PlanDay, PlanSession, PlanWeek, TrainingLog } from '@/types/databa
 import { getSessionXP } from '@/lib/rpg'
 import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/streak'
+import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import WeatherWidget from '@/components/WeatherWidget'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
 import FocusMode from '@/components/FocusMode'
@@ -484,6 +485,7 @@ export default function TodayClient() {
   }) => {
     if (!plan) return
     const log = await logSession({ plan_id: plan.id, ...params })
+    hapticLight()
 
     // Check for new personal best
     if (params.km && params.pace && params.done) {
@@ -494,6 +496,7 @@ export default function TodayClient() {
         existingPBs
       )
       if (pb) {
+        hapticSuccess()
         setNewPB({ distance: pb.distance, timeStr: pb.timeStr })
         setTimeout(() => setNewPB(null), 6000)
       }
