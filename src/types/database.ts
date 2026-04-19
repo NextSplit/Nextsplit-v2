@@ -295,4 +295,97 @@ export interface ProfileWithStripe extends Profile {
   stripe_customer_id: string | null
 }
 
+// ── Coach Platform Types (Phase 2-3) ─────────────────────────────────────────
+
+export interface CoachProfile {
+  user_id: string
+  display_name: string
+  slug: string
+  bio: string | null
+  credentials: string | null
+  specialities: string[]
+  photo_url: string | null
+  location: string | null
+  website_url: string | null
+  instagram_handle: string | null
+  strava_profile: string | null
+  rate_monthly_gbp: number | null
+  rate_plan_gbp: number | null
+  verified: boolean
+  accepting_athletes: boolean
+  max_athletes: number
+  stripe_account_id: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface CoachAthlete {
+  id: string
+  coach_id: string
+  athlete_id: string
+  status: 'pending' | 'active' | 'paused' | 'ended'
+  invite_token: string | null
+  invited_at: string | null
+  accepted_at: string | null
+  share_logs: boolean
+  share_wellness: boolean
+  share_nutrition: boolean
+  subscription_id: string | null
+  coach_notes: string | null
+  athlete_goal: string | null
+  created_at: string
+}
+
+export interface SessionAnnotation {
+  id: string
+  coach_id: string
+  athlete_id: string
+  plan_id: string
+  week_n: number
+  day_i: number
+  session_i: number
+  note: string
+  reaction: 'great' | 'good' | 'concern' | 'flag' | null
+  acknowledged_at: string | null
+  created_at: string
+}
+
+export interface CoachMessage {
+  id: string
+  coach_id: string
+  athlete_id: string
+  sender_id: string
+  body: string
+  read_at: string | null
+  created_at: string
+}
+
+export interface PlanPurchase {
+  id: string
+  athlete_id: string
+  template_id: string
+  coach_id: string | null
+  amount_gbp: number
+  stripe_payment_id: string | null
+  coach_payout_gbp: number | null
+  platform_fee_gbp: number | null
+  purchased_at: string
+}
+
+/** Athlete's summary as seen from the coach squad view */
+export interface AthleteSummary {
+  athlete_id: string
+  display_name: string | null
+  plan_name: string | null
+  plan_week: number | null
+  total_weeks: number | null
+  sessions_done_this_week: number
+  sessions_planned_this_week: number
+  acwr: number | null
+  avg_sleep_last7: number | null
+  avg_soreness_last7: number | null
+  last_active_at: string | null
+  status: 'on_track' | 'attention' | 'flag'
+  relationship: CoachAthlete
+}
 
