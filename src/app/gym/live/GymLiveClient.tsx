@@ -349,11 +349,16 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
       <button
         onClick={async () => {
           if (plan) {
-            await logSession({
-              plan_id: plan.id, week_n: weekN, day_i: dayIndex,
-              session_i: sessionIndex, done: true,
-              duration_secs: Math.round((Date.now() - startTime.current) / 1000),
-            })
+            try {
+              await logSession({
+                plan_id: plan.id, week_n: weekN, day_i: dayIndex,
+                session_i: sessionIndex, done: true,
+                duration_secs: Math.round((Date.now() - startTime.current) / 1000),
+              })
+              hapticSuccess()
+            } catch {
+              toastError('Could not save session — check your connection')
+            }
           }
           onDone()
         }}

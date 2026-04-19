@@ -111,12 +111,20 @@ export function canAccess(userTier: Tier, feature: FeatureKey): boolean {
 /**
  * AI rate limit config.
  * Max AI calls per user per day — enforced server-side in API routes.
- * Adjust per tier when monetisation is live.
+ *
+ * Current state: PREMIUM_ENFORCED=false so AI_RATE_LIMIT_DEV (5) is used for all users.
+ * When PREMIUM_ENFORCED=true is set in Vercel:
+ *   - free:  3 calls/day  (coach card + fuel tip + pre-race brief)
+ *   - pro:   25 calls/day (unlimited practical use)
+ *   - coach: 50 calls/day
+ *
+ * The free limit is intentionally not 0 — free users should experience AI
+ * features so they understand the value before upgrading.
  */
 export const AI_RATE_LIMITS: Record<Tier, number> = {
-  free:  0,    // no AI on free tier (when enforced)
-  pro:   10,   // 10 AI calls/day on pro
-  coach: 25,   // 25 AI calls/day on coach
+  free:  3,   // enough to experience all 3 AI features once per day
+  pro:   25,  // unlimited practical use
+  coach: 50,
 }
 
 /**
