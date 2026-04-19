@@ -41,7 +41,8 @@ const DEFAULT_TYPE: SessionTypeConfig = {
   label: 'Session', colour: 'bg-gray-50', textColour: 'text-gray-700', dot: 'bg-gray-400', emoji: '🏃', accent: 'border-l-gray-300'
 }
 
-export function getSessionType(code: string | number): SessionTypeConfig {
+export function getSessionType(code: string | number | null | undefined): SessionTypeConfig {
+  if (code == null) return DEFAULT_TYPE
   // Handle legacy numeric codes from plan data (9-14 = threshold/quality runs)
   if (typeof code === 'number' || /^\d+$/.test(String(code))) {
     const n = Number(code)

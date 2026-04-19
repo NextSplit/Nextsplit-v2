@@ -232,7 +232,7 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
 
   const nutItems = (day.nut || []).filter(n => n.cat !== 'macro')
   const macroEntry = (day.nut || []).find(n => n.cat === 'macro')
-  const isRest = day.sessions.length === 0 || day.sessions.every(s => s.c === 'rest')
+  const isRest = day.sessions.length === 0 || day.sessions.every(s => !s.c || s.c === 'rest')
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end bg-black/20 backdrop-blur-[2px]" onClick={onClose}>

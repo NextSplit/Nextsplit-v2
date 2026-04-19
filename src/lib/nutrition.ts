@@ -3,15 +3,15 @@
 
 export type DayType = 'rest' | 'easy' | 'quality' | 'long' | 'race' | 'strength'
 
-export function getDayType(sessions: Array<{ c: string; km?: number }>): DayType {
+export function getDayType(sessions: Array<{ c?: string | null; km?: number }>): DayType {
   if (!sessions || sessions.length === 0) return 'rest'
-  const codes = sessions.map(s => s.c)
+  // Filter out null/undefined codes defensively
+  const codes = sessions.map(s => s.c).filter((c): c is string => typeof c === 'string' && c.length > 0)
   if (codes.some(c => c === 'run-race')) return 'race'
   const totalKm = sessions.reduce((a, s) => a + (s.km || 0), 0)
   if (codes.some(c => c === 'run-long') || totalKm >= 16) return 'long'
   if (codes.some(c => c === 'run-tempo' || c === 'run-int' || c === 'run-mp')) return 'quality'
   if (codes.some(c => c.startsWith('run-'))) return 'easy'
-  // Gym/strength-only day
   if (codes.some(c => c.startsWith('gym'))) return 'strength'
   return 'rest'
 }
