@@ -3,6 +3,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
+import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
+import { derivePaceZones } from '@/lib/paceZones'
+import type { PaceZones } from '@/lib/paceZones'
 import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml, parseDet } from '@/lib/sessionUtils'
 import type { PlanDay, PlanSession, PlanWeek, TrainingLog } from '@/types/database'
 import { getSessionXP } from '@/lib/rpg'
@@ -28,6 +31,7 @@ import AdHocSessionModal from '@/components/AdHocSessionModal'
 export default function TodayClient() {
   const { plan, weeks, currentWeek, loading: planLoading, advanceWeek } = useActivePlan()
   const { logs, logSession, undoSession, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
+  const { logs: allPlanLogs } = useAllTrainingLogs()
 
   const [dateOffset, setDateOffset] = useState(0)
   const [readinessScore, setReadinessScore] = useState<number | null>(null)
@@ -188,6 +192,7 @@ export default function TodayClient() {
 
   // Streak + consistency
   const allLogsArray = Object.values(logs)
+  const paceZones = useMemo(() => derivePaceZones(Object.values(allPlanLogs)), [allPlanLogs])
   const streak = computeStreak(allLogsArray)
   const consistency = plan ? computeConsistency(allLogsArray, weeks, weekN) : { thisWeekPct: 0, last4WeekPct: 0 }
 
@@ -408,6 +413,7 @@ export default function TodayClient() {
                     weekN={weekN}
                     planId={plan.id}
                     log={log}
+                    personalisedPaces={paceZones}
                     onTap={() => {
                       if (isGym) {
                         router.push(`/gym/live/${weekN}/${planDayIndex}/${sessI}`)

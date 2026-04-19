@@ -146,6 +146,23 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['races']['Row'], 'id' | 'created_at'>
         Update: Partial<Database['public']['Tables']['races']['Insert']>
       }
+      activity_logs: {
+        Row: {
+          id: string
+          user_id: string
+          activity_type: 'swim' | 'cycle' | 'walk' | 'hike' | 'yoga' | 'other'
+          logged_at: string
+          duration_secs: number | null
+          distance_km: number | null
+          calories: number | null
+          effort: number | null
+          notes: string | null
+          strava_id: number | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['activity_logs']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['activity_logs']['Insert']>
+      }
       strava_connections: {
         Row: {
           id: string
@@ -202,6 +219,7 @@ export type TrainingLog = Database['public']['Tables']['training_logs']['Row']
 export type WellnessLog = Database['public']['Tables']['wellness_logs']['Row']
 export type GymLog = Database['public']['Tables']['gym_logs']['Row']
 export type Race = Database['public']['Tables']['races']['Row']
+export type ActivityLog = Database['public']['Tables']['activity_logs']['Row']
 export type Recipe = Database['public']['Tables']['recipes']['Row']
 export type MealPlanEntry = Database['public']['Tables']['meal_plan_entries']['Row']
 
@@ -277,15 +295,4 @@ export interface ProfileWithStripe extends Profile {
   stripe_customer_id: string | null
 }
 
-/** Activity log for other sports (swimming, cycling, walking) — future feature */
-export interface ActivityLog {
-  id: string
-  user_id: string
-  plan_id: string | null
-  activity_type: 'swim' | 'cycle' | 'walk' | 'hike' | 'other'
-  duration_secs: number
-  distance_km: number | null
-  calories: number | null
-  notes: string | null
-  logged_at: string
-}
+

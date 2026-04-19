@@ -3,10 +3,13 @@
 import { useState } from 'react'
 import { getSessionType, fmtKm, parseDet } from '@/lib/sessionUtils'
 import { getSessionXP } from '@/lib/rpg'
+import type { PaceZones } from '@/lib/paceZones'
+import { getPersonalisedPace } from '@/lib/paceZones'
 import SplitsDisplay from '@/components/SplitsDisplay'
 import type { PlanSession, TrainingLog } from '@/types/database'
 
 interface SessionCardProps {
+  personalisedPaces?: PaceZones | null
   session: PlanSession
   sessionIndex: number
   dayIndex: number
@@ -18,12 +21,13 @@ interface SessionCardProps {
   onFocus: () => void
 }
 
-function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardProps) {
+function SessionCard({ session, log, onTap, onQuickDone, onFocus, personalisedPaces = null }: SessionCardProps) {
   const cfg = getSessionType(session.c)
   const done = !!log?.done
   const [justDone, setJustDone] = useState(false)
   const [showXP, setShowXP] = useState(false)
   const xp = getSessionXP(session.c)
+  const myPace = !done ? getPersonalisedPace(session.c, personalisedPaces) : null
 
   function handleQuickDoneWithAnim() {
     if (!done) {
@@ -71,6 +75,12 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
             <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-2">
               {parseDet(session.det).technical}
             </p>
+          )}
+          {myPace && (
+            <div className="flex items-center gap-1 mt-1">
+              <span className="text-[10px] text-teal-600 font-semibold">You: {myPace}</span>
+              <span className="text-[9px] text-gray-300">personalised</span>
+            </div>
           )}
           {done && (
             <div className="flex items-center gap-2 mt-2 flex-wrap">

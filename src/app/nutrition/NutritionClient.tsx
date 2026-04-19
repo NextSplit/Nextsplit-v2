@@ -9,6 +9,7 @@ import { getDayType, DAY_TYPE_CONFIG, calcCalories } from '@/lib/nutrition'
 import { MEAL_SLOTS, type MealSlotId } from '@/types/database'
 import type { Recipe, MealPlanEntryWithRecipe } from '@/types/database'
 import DarkModeToggle from '@/components/DarkModeToggle'
+import { useActivityLog } from '@/hooks/useActivityLog'
 import { useToast } from '@/components/Toast'
 import SupplementTracker from '@/components/nutrition/SupplementTracker'
 import MacroBar from '@/components/nutrition/MacroBar'
@@ -80,6 +81,7 @@ export default function NutritionClient() {
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
   const [assigningSlot, setAssigningSlot] = useState<{ date: string; slot: MealSlotId } | null>(null)
   const [tdee, setTdee] = useState<{ height: number; age: number; sex: 'male' | 'female' } | null>(null)
+  const { extraCaloriesToday } = useActivityLog()
 
   function getMacroTargets(date: string) {
     if (!profile?.weight_kg) return { kcal: 0, protein: 0, carbs: 0, fat: 0 }
@@ -97,11 +99,15 @@ export default function NutritionClient() {
       tdee?.age,
       tdee?.sex
     )
+    const extraKcal = date === new Date().toISOString().slice(0, 10)
+      ? extraCaloriesToday(profile.weight_kg)
+      : 0
+    const totalKcal = kcal + extraKcal
     return {
-      kcal,
-      protein: Math.round(kcal * cfg.protein / 100 / 4),
-      carbs:   Math.round(kcal * cfg.carbs   / 100 / 4),
-      fat:     Math.round(kcal * cfg.fat     / 100 / 9),
+      kcal: totalKcal,
+      protein: Math.round(totalKcal * cfg.protein / 100 / 4),
+      carbs:   Math.round(totalKcal * cfg.carbs   / 100 / 4),
+      fat:     Math.round(totalKcal * cfg.fat     / 100 / 9),
     }
   }
 
