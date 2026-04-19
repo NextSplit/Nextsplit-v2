@@ -15,6 +15,7 @@ function readinessLabel(score: number): { label: string; colour: string; emoji: 
 }
 
 const LS_KEY = 'nextsplit_wellness'
+const LS_DISMISS_KEY = 'nextsplit_wellness_dismissed'
 
 function todayKey(): string {
   const d = new Date()
@@ -127,18 +128,34 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
   }
 
   if (!open) {
+    // Check if dismissed today
+    try {
+      const dismissedDate = localStorage.getItem(LS_DISMISS_KEY)
+      if (dismissedDate === todayKey()) return null
+    } catch {}
+
     return (
-      <button onClick={() => setOpen(true)}
-        className="w-full flex items-center gap-3 bg-white rounded-2xl border border-dashed border-gray-200 px-4 py-3">
-        <span className="text-xl">🌅</span>
-        <div className="text-left">
-          <div className="text-xs font-semibold text-gray-700">Morning check-in</div>
-          <div className="text-xs text-gray-400">Tap to log readiness</div>
-        </div>
-        <div className="ml-auto">
-          <span className="text-[11px] font-semibold text-[#0D9488] bg-teal-50 px-2.5 py-1 rounded-full">Log</span>
-        </div>
-      </button>
+      <div className="w-full flex items-center gap-3 bg-white rounded-2xl border border-dashed border-gray-200 px-4 py-3">
+        <button onClick={() => setOpen(true)} className="flex items-center gap-3 flex-1 text-left">
+          <span className="text-xl">🌅</span>
+          <div>
+            <div className="text-xs font-semibold text-gray-700">Morning check-in</div>
+            <div className="text-xs text-gray-400">Tap to log readiness</div>
+          </div>
+          <div className="ml-auto">
+            <span className="text-[11px] font-semibold text-[#0D9488] bg-teal-50 px-2.5 py-1 rounded-full">Log</span>
+          </div>
+        </button>
+        <button
+          onClick={() => {
+            try { localStorage.setItem(LS_DISMISS_KEY, todayKey()) } catch {}
+            // Force re-render by setting a dismissed flag — use a small hack: trigger state
+            setSaving(s => { void s; return false })
+          }}
+          className="text-gray-300 text-lg leading-none pl-2 flex-shrink-0"
+          aria-label="Dismiss for today"
+        >×</button>
+      </div>
     )
   }
 

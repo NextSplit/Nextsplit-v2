@@ -10,6 +10,7 @@ import { computePersonalBests } from '@/lib/personalBests'
 import CoachingCard from '@/components/CoachingCard'
 import PreRaceBrief from '@/components/PreRaceBrief'
 import DarkModeToggle from '@/components/DarkModeToggle'
+import { useUnits, fmtDistance, secsPerKmToDisplay } from '@/lib/units'
 import type { PlanWeek, TrainingLog, Race } from '@/types/database'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -26,6 +27,18 @@ function formatRaceDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric'
   })
+}
+
+/** Convert a "m:ss/km" string to display units */
+function fmtPaceForUnits(pacePerKm: string, units: 'km' | 'miles'): string {
+  if (!pacePerKm) return ''
+  if (units === 'km') return `${pacePerKm}/km`
+  const [m, s] = pacePerKm.split(':').map(Number)
+  if (isNaN(m) || isNaN(s)) return pacePerKm
+  const secsPerMi = (m * 60 + s) * 1.60934
+  const mm = Math.floor(secsPerMi / 60)
+  const ss = Math.round(secsPerMi % 60)
+  return `${mm}:${String(ss).padStart(2, '0')}/mi`
 }
 
 /** Get all logs as array */
@@ -290,6 +303,7 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
 }
 
 function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
+  const units = useUnits()
   const paceData = useMemo(() => {
     return logsArray(logs)
       .filter(l => l.done && l.pace && l.km && l.km >= 3)
@@ -350,19 +364,20 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
       </svg>
 
       <div className="flex justify-between text-[10px] text-gray-400 mt-1">
-        <span>Slow ({secsToMMSS(maxPace)}/km)</span>
-        <span>Fast ({secsToMMSS(minPace)}/km)</span>
+        <span>Slow ({secsPerKmToDisplay(maxPace, units)})</span>
+        <span>Fast ({secsPerKmToDisplay(minPace, units)})</span>
       </div>
 
       <div className="mt-2 text-xs text-gray-500">
-        Latest: <span className="font-semibold text-gray-900">{secsToMMSS(latest.pace)}/km</span>
-        <span className="text-gray-400"> · {latest.km}km</span>
+        Latest: <span className="font-semibold text-gray-900">{secsPerKmToDisplay(latest.pace, units)}</span>
+        <span className="text-gray-400"> · {fmtDistance(latest.km, units)}</span>
       </div>
     </div>
   )
 }
 
 function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: PlanWeek[] }) {
+  const units = useUnits()
   const all = logsArray(logs)
   const done = all.filter(l => l.done)
   const totalKm = done.reduce((a, l) => a + (l.km ?? 0), 0)
@@ -382,8 +397,8 @@ function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; we
       <div className="text-sm font-bold text-gray-900 mb-4">Plan Summary</div>
       <div className="grid grid-cols-4 gap-2">
         <div className="text-center">
-          <div className="text-xl font-black text-[#0D9488]">{Math.round(totalKm)}</div>
-          <div className="text-[10px] text-gray-400 mt-0.5">km</div>
+          <div className="text-xl font-black text-[#0D9488]">{Math.round(units === 'miles' ? totalKm * 0.621371 : totalKm)}</div>
+          <div className="text-[10px] text-gray-400 mt-0.5">{units === 'miles' ? 'mi' : 'km'}</div>
         </div>
         <div className="text-center">
           <div className="text-xl font-black text-gray-900">{totalSessions}</div>
@@ -884,6 +899,7 @@ function WellnessTrend() {
 // ─── Personal Bests Card ──────────────────────────────────────────────────────
 function PBCard({ logs }: { logs: Record<string, TrainingLog> }) {
   const pbs = useMemo(() => computePersonalBests(Object.values(logs)), [logs])
+  const units = useUnits()
   const PB_SLOTS = ['5K', '10K', 'Half', 'Marathon']
 
   return (
@@ -901,7 +917,7 @@ function PBCard({ logs }: { logs: Record<string, TrainingLog> }) {
               {pb ? (
                 <>
                   <div className="text-lg font-black text-gray-900 leading-tight">{pb.timeStr}</div>
-                  <div className="text-[10px] text-teal-600 font-medium">{pb.pacePerKm}/km</div>
+                  <div className="text-[10px] text-teal-600 font-medium">{fmtPaceForUnits(pb.pacePerKm, units)}</div>
                   <div className="text-[9px] text-gray-400 mt-0.5">Week {pb.weekN}</div>
                 </>
               ) : (
@@ -923,6 +939,7 @@ export default function StatsClient() {
   const { logs, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
   const { upcoming: upcomingRaces } = useRaces()
   const [activeTab, setActiveTab] = useState<'stats'|'races'|'pace'>('stats')
+  const units = useUnits()
 
   const loading = planLoading || logsLoading
 

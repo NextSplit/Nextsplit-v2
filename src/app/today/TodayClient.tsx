@@ -960,33 +960,7 @@ export default function TodayClient() {
               )
             })}
 
-            {/* Inline nutrition strip — today only, if plan has nutrition data */}
-            {isToday && planDay?.nut && planDay.nut.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-gray-50 flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-gray-700">🍽️ Today&apos;s nutrition</span>
-                  <a href="/nutrition" className="text-[10px] text-[#0D9488] font-semibold">View all →</a>
-                </div>
-                <div className="divide-y divide-gray-50">
-                  {planDay.nut.slice(0, 3).map((entry, i) => (
-                    <div key={i} className="px-4 py-2 flex items-start gap-2.5">
-                      <span className="text-xs mt-0.5 flex-shrink-0">
-                        {entry.cat === 'hydration' ? '💧' : entry.cat === 'fuel' ? '⚡' : entry.cat === 'macro' ? '📊' : '🍽️'}
-                      </span>
-                      <div className="min-w-0">
-                        <div className="text-xs font-semibold text-gray-800 leading-tight">{entry.l}</div>
-                        {entry.t && <div className="text-[10px] text-gray-400 mt-0.5">{entry.t}</div>}
-                      </div>
-                    </div>
-                  ))}
-                  {planDay.nut.length > 3 && (
-                    <div className="px-4 py-2">
-                      <a href="/nutrition" className="text-[10px] text-[#0D9488]">+{planDay.nut.length - 3} more on Fuel tab</a>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            {/* Nutrition: shown via the contextual fuel card above sessions — no duplicate strip needed */}
 
             {/* Sleep note */}
             {planDay?.sleep && (

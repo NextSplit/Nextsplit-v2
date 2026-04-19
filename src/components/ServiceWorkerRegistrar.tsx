@@ -14,7 +14,6 @@ export default function ServiceWorkerRegistrar() {
     navigator.serviceWorker
       .register('/sw.js', { scope: '/' })
       .then((reg) => {
-        console.debug('[SW] Registered, scope:', reg.scope)
         // Check for updates in the background
         reg.update().catch(() => {/* network may be offline */})
       })

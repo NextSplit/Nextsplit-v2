@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useProfile } from '@/hooks/useProfile'
 import { useActivePlan } from '@/hooks/useActivePlan'
@@ -172,6 +172,16 @@ export default function SettingsClient({ email, initialProfile }: Props) {
 
   // Use live profile if loaded, fall back to server-rendered initial
   const p = profile ?? initialProfile
+
+  // Sync Supabase preferences → localStorage on first profile load (new device / fresh install)
+  useEffect(() => {
+    if (!profile) return
+    setThemePreference('dark_mode', profile.dark_mode)
+    setThemePreference('text_size', profile.text_size)
+    if (profile.units) {
+      try { localStorage.setItem('nextsplit_units', profile.units) } catch {}
+    }
+  }, [profile])
 
   const [confirmArchive, setConfirmArchive] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)

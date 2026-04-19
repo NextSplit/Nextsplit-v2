@@ -246,6 +246,17 @@ export default function StravaSyncButton({ session, onImported }: Props) {
   const [activities, setActivities] = useState<StravaActivity[]>([])
   const [selected, setSelected] = useState<StravaActivity | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
+  const [connected, setConnected] = useState(false)
+
+  // Check Strava connection on mount — stored in localStorage after OAuth
+  useState(() => {
+    try {
+      setConnected(localStorage.getItem('nextsplit_strava_connected') === 'true')
+    } catch {}
+  })
+
+  // Don't render at all if not connected
+  if (!connected) return null
 
   async function handleSync() {
     setState('loading')

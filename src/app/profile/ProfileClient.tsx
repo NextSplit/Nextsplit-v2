@@ -782,6 +782,11 @@ function StravaSection({ isConnected, clientId }: { clientId: string | null; isC
   const redirectUri = typeof window !== 'undefined' ? window.location.origin + '/auth/strava/callback' : ''
   const [disconnecting, setDisconnecting] = useState(false)
 
+  // Keep localStorage flag in sync so StravaSyncButton knows connection state
+  useEffect(() => {
+    try { localStorage.setItem('nextsplit_strava_connected', isConnected ? 'true' : 'false') } catch {}
+  }, [isConnected])
+
   function connectStrava() {
     if (!STRAVA_CLIENT_ID) return
     const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=activity:read_all`
