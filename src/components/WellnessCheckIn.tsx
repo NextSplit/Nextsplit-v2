@@ -60,6 +60,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
   const [weightKg, setWeightKg] = useState<string>('')
   const [localData, setLocalData] = useState<LocalWellness | null>(null)
   const [saving, setSaving] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
 
   // Hydrate from localStorage first (instant)
   useEffect(() => {
@@ -132,6 +133,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
   }
 
   if (!open) {
+    if (dismissed) return null
     // Check if dismissed today
     try {
       const dismissedDate = localStorage.getItem(LS_DISMISS_KEY)
@@ -153,8 +155,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
         <button
           onClick={() => {
             try { localStorage.setItem(LS_DISMISS_KEY, todayKey()) } catch {}
-            // Force re-render by setting a dismissed flag — use a small hack: trigger state
-            setSaving(s => { void s; return false })
+            setDismissed(true)
           }}
           className="text-gray-300 text-lg leading-none pl-2 flex-shrink-0"
           aria-label="Dismiss for today"

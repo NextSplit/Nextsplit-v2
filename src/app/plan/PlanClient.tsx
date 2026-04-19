@@ -9,6 +9,7 @@ import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
 import AdaptiveSuggestions from '@/components/AdaptiveSuggestions'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import { useToast } from '@/components/Toast'
+import { hapticLight } from '@/lib/haptics'
 import { useGymLog } from '@/hooks/useGymLog'
 import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
@@ -617,6 +618,7 @@ export default function PlanClient() {
     if (!plan) return
     try {
       await logSession({ plan_id: plan.id, ...params })
+      hapticLight()
       toastSuccess('Session logged ✓')
     } catch {
       toastError('Failed to save — check your connection')

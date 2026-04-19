@@ -137,8 +137,17 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
             {elapsed > 0 ? `Log session (${formatElapsed(elapsed)})` : 'Log this session'}
           </button>
         ) : (
-          <div className="w-full py-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
-            <span className="text-emerald-600 font-bold text-base">✓ Logged</span>
+          <div className="space-y-3">
+            <div className="w-full py-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
+              <span className="text-emerald-600 font-bold text-base">✓ Session logged</span>
+              <p className="text-emerald-500 text-xs mt-0.5">Great work — it&apos;s on the board</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-full py-3.5 bg-gray-900 text-white rounded-2xl text-sm font-bold"
+            >
+              Done — back to Today
+            </button>
           </div>
         )}
         <button

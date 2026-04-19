@@ -19,18 +19,26 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f4f0] flex flex-col items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-bold text-[#1a1a1a]">NextSplit</Link>
-          <p className="text-[#888] text-sm mt-1">Create your free account</p>
+    <main className="min-h-screen bg-[#f8f8f6] flex flex-col">
+      {/* Brand header */}
+      <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-16 pb-10 text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-teal-500/20 border border-teal-500/30 mb-4">
+          <span className="text-2xl">🏃</span>
         </div>
+        <h1 className="text-2xl font-black text-white tracking-tight">NextSplit</h1>
+        <p className="text-teal-300 text-sm mt-1">AI coaching · Gamified progress · Real plans</p>
+      </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#e0e0e0] space-y-4">
+      {/* Form */}
+      <div className="flex-1 px-6 py-8 max-w-sm mx-auto w-full">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+          <h2 className="text-base font-bold text-gray-900 text-center">Create your free account</h2>
+
+          {/* Google */}
           <button
             onClick={async () => { setLoading(true); await signInWithGoogle() }}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 border border-[#e0e0e0] rounded-xl py-3 text-sm font-medium text-[#333] hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -43,67 +51,49 @@ export default function SignupPage() {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#f0f0f0]" />
+              <div className="w-full border-t border-gray-100" />
             </div>
-            <div className="relative flex justify-center text-xs text-[#aaa] bg-white px-2">or</div>
+            <div className="relative flex justify-center text-xs text-gray-400 bg-white px-3">or</div>
           </div>
 
-          <form action={handleSubmit} className="space-y-3">
+          <form onSubmit={e => { e.preventDefault(); handleSubmit(new FormData(e.currentTarget)) }} className="space-y-3">
             <div>
-              <label className="text-xs font-medium text-[#555] block mb-1.5">Your name</label>
-              <input
-                name="name"
-                type="text"
-                required
-                className="w-full px-3 py-2.5 rounded-lg border border-[#e0e0e0] text-sm outline-none focus:border-[#1a1a1a] transition-colors"
-                placeholder="Alex"
-              />
+              <label className="text-xs font-semibold text-gray-500 block mb-1.5">Your name</label>
+              <input name="name" type="text" required
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100 transition-colors"
+                placeholder="Alex" />
             </div>
             <div>
-              <label className="text-xs font-medium text-[#555] block mb-1.5">Email</label>
-              <input
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                className="w-full px-3 py-2.5 rounded-lg border border-[#e0e0e0] text-sm outline-none focus:border-[#1a1a1a] transition-colors"
-                placeholder="you@example.com"
-              />
+              <label className="text-xs font-semibold text-gray-500 block mb-1.5">Email</label>
+              <input name="email" type="email" required autoComplete="email"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100 transition-colors"
+                placeholder="you@example.com" />
             </div>
             <div>
-              <label className="text-xs font-medium text-[#555] block mb-1.5">Password</label>
-              <input
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                autoComplete="new-password"
-                className="w-full px-3 py-2.5 rounded-lg border border-[#e0e0e0] text-sm outline-none focus:border-[#1a1a1a] transition-colors"
-                placeholder="Minimum 8 characters"
-              />
+              <label className="text-xs font-semibold text-gray-500 block mb-1.5">Password</label>
+              <input name="password" type="password" required minLength={8} autoComplete="new-password"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100 transition-colors"
+                placeholder="Minimum 8 characters" />
             </div>
 
             {error && (
-              <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+              <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-xl border border-red-100">{error}</p>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#1a1a1a] text-white py-3 rounded-xl text-sm font-semibold hover:bg-[#333] transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Creating account…' : 'Create account'}
+            <button type="submit" disabled={loading}
+              className="w-full bg-[#0D9488] text-white py-3 rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50">
+              {loading ? 'Creating account…' : 'Create free account →'}
             </button>
           </form>
 
-          <p className="text-xs text-[#aaa] text-center">
+          <p className="text-xs text-gray-400 text-center">
             By signing up you agree to our terms and privacy policy.
           </p>
         </div>
 
-        <p className="text-center text-sm text-[#888] mt-6">
+        <p className="text-center text-sm text-gray-400 mt-6">
           Already have an account?{' '}
-          <Link href="/auth/login" className="text-[#1a1a1a] font-medium hover:underline">
+          <Link href="/auth/login" className="text-[#0D9488] font-semibold hover:underline">
             Sign in
           </Link>
         </p>

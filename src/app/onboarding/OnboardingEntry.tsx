@@ -19,8 +19,8 @@ const PATHS = [
     title: 'AI bespoke plan',
     desc: 'Fully personalised around your goal and schedule',
     tag: 'Recommended',
-    tagColor: 'bg-violet-500',
-    accent: 'border-violet-500/30 hover:border-violet-500/60',
+    tagColor: 'bg-teal-500',
+    accent: 'border-teal-500/30 hover:border-teal-500/60',
   },
   {
     href: '/onboarding/manual',

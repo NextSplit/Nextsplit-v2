@@ -766,12 +766,12 @@ function PWAProfileCard() {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 p-4">
         <div className="flex items-center gap-3">
-          <span style={{ fontSize: 22 }}>📱</span>
+          <span className="text-[22px]">📱</span>
           <div>
             <p className="text-sm font-semibold text-gray-900">App installed</p>
             <p className="text-xs text-gray-400 mt-0.5">Running in standalone mode</p>
           </div>
-          <span style={{ marginLeft: 'auto', color: '#0D9488', fontSize: 18 }}>✓</span>
+          <span className="ml-auto text-[#0D9488] text-lg">✓</span>
         </div>
       </div>
     )
@@ -780,15 +780,15 @@ function PWAProfileCard() {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-4">
       <div className="flex items-center gap-3">
-        <span style={{ fontSize: 22 }}>📲</span>
-        <div style={{ flex: 1 }}>
+        <span className="text-[22px]">📲</span>
+        <div className="flex-1">
           <p className="text-sm font-semibold text-gray-900">Install app</p>
           <p className="text-xs text-gray-400 mt-0.5">Add to your home screen</p>
         </div>
         {isIOS ? (
           <button
             onClick={() => setShowIOSSteps(s => !s)}
-            style={{ background: '#0D9488', color: 'white', border: 'none', borderRadius: 10, padding: '6px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+            className="bg-[#0D9488] text-white text-xs font-semibold px-3 py-1.5 rounded-lg"
           >
             How to
           </button>
@@ -796,31 +796,21 @@ function PWAProfileCard() {
           <button
             onClick={handleInstall}
             disabled={installing || !_installPrompt}
-            style={{
-              background: _installPrompt ? '#0D9488' : '#9ca3af',
-              color: 'white',
-              border: 'none',
-              borderRadius: 10,
-              padding: '6px 12px',
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: _installPrompt ? 'pointer' : 'default',
-              opacity: installing ? 0.7 : 1,
-            }}
+            className={`text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-opacity disabled:opacity-50 ${_installPrompt ? 'bg-[#0D9488]' : 'bg-gray-400'}`}
           >
             {installing ? 'Installing…' : _installPrompt ? 'Install' : 'Open in Chrome'}
           </button>
         )}
       </div>
       {!isIOS && !_installPrompt && (
-        <p style={{ marginTop: 8, fontSize: 12, color: '#9ca3af', lineHeight: 1.5 }}>
-          Use Chrome's menu (⋮) → "Add to Home screen" to install.
+        <p className="mt-2 text-xs text-gray-400 leading-relaxed">
+          Use Chrome&apos;s menu (⋮) → &quot;Add to Home screen&quot; to install.
         </p>
       )}
       {showIOSSteps && (
-        <div style={{ marginTop: 12, padding: '10px 12px', background: '#f0fdfa', borderRadius: 10, fontSize: 13, color: '#0F766E', lineHeight: 1.6 }}>
+        <div className="mt-3 px-3 py-2.5 bg-teal-50 rounded-xl border border-teal-100 text-xs text-teal-700 leading-relaxed">
           1. Tap the <strong>Share ↑</strong> button in Safari<br />
-          2. Scroll and tap <strong>"Add to Home Screen"</strong><br />
+          2. Scroll and tap <strong>&quot;Add to Home Screen&quot;</strong><br />
           3. Tap <strong>Add</strong> to confirm
         </div>
       )}
