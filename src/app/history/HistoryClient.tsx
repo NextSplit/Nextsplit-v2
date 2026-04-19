@@ -20,7 +20,7 @@ function ReadOnlyDayRow({ day, dayIndex, weekN, logs }: {
   day: PlanDay; dayIndex: number; weekN: number
   logs: Record<string, TrainingLog>
 }) {
-  const realSessions = day.sessions.filter(s => s.c !== 'rest')
+  const realSessions = day.sessions.filter(s => s.c != null && s.c !== 'rest')
   if (realSessions.length === 0) return null
 
   return (
@@ -62,7 +62,7 @@ function ReadOnlyDayRow({ day, dayIndex, weekN, logs }: {
 function ReadOnlyWeekRow({ week, logs }: { week: PlanWeek; logs: Record<string, TrainingLog> }) {
   const [open, setOpen] = useState(false)
   const realSessions = week.days.flatMap((d, di) =>
-    d.sessions.filter(s => s.c !== 'rest').map((_, si) => `${week.n}_${di}_${si}`)
+    d.sessions.filter(s => s.c != null && s.c !== 'rest').map((_, si) => `${week.n}_${di}_${si}`)
   )
   const done = realSessions.filter(k => logs[k]?.done).length
   const total = realSessions.length

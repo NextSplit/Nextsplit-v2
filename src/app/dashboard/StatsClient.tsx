@@ -392,7 +392,7 @@ function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; we
 
   // Total planned sessions (excluding rest)
   const plannedTotal = weeks.reduce((a, w) =>
-    a + w.days.reduce((b, d) => b + d.sessions.filter(s => s.c !== 'rest').length, 0), 0)
+    a + w.days.reduce((b, d) => b + d.sessions.filter(s => s.c != null && s.c !== 'rest').length, 0), 0)
 
   const avgEffort = plannedDone.filter(l => l.effort).length > 0
     ? plannedDone.filter(l => l.effort).reduce((a, l) => a + l.effort!, 0) / plannedDone.filter(l => l.effort).length

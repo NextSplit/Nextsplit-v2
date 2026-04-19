@@ -56,7 +56,7 @@ export function usePlanHistory() {
         const totalKm = plannedLogs.reduce((sum, l) => sum + (l.km ?? 0), 0)
         const loggedSessions = plannedLogs.length
         const totalSessions = weeks.reduce((sum, w) =>
-          sum + w.days.reduce((ds, d) => ds + d.sessions.filter(sess => sess.c !== 'rest').length, 0), 0)
+          sum + w.days.reduce((ds, d) => ds + d.sessions.filter(sess => sess.c != null && sess.c !== 'rest').length, 0), 0)
 
         summaries.push({
           plan,

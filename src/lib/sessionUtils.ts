@@ -74,3 +74,30 @@ export function offsetDate(offset: number): Date {
   d.setDate(d.getDate() + offset)
   return d
 }
+
+/** Split coached session det into technical instructions and coaching rationale.
+ *  Format in plan JSON: "technical detail — coaching rationale"
+ */
+export function parseDet(det: string | null | undefined): { technical: string; rationale: string | null } {
+  if (!det) return { technical: '', rationale: null }
+  const decoded = decodeHtml(det)
+  const idx = decoded.indexOf(' — ')
+  if (idx === -1) return { technical: decoded, rationale: null }
+  return { technical: decoded.slice(0, idx), rationale: decoded.slice(idx + 3) }
+}
+
+/** Formats seconds to MM:SS or H:MM:SS */
+export function secsToHMS(secs: number): string {
+  const h = Math.floor(secs / 3600)
+  const m = Math.floor((secs % 3600) / 60)
+  const s = secs % 60
+  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
+/** Formats seconds to M:SS pace string */
+export function secsToMMSS(secs: number): string {
+  const m = Math.floor(secs / 60)
+  const s = Math.round(secs % 60)
+  return `${m}:${s.toString().padStart(2, '0')}`
+}

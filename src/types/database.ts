@@ -262,3 +262,30 @@ export interface PlanWeek {
   note: string
   days: PlanDay[]
 }
+
+// ── Extended types added post-initial-schema ──────────────────────────────────
+
+/** Safer PlanSession with nullable c for legacy/malformed data */
+export interface SafePlanSession extends Omit<PlanSession, 'c'> {
+  c: string | null | undefined
+}
+
+/** Phase 11: Stripe fields (columns to be added to profiles table) */
+export interface ProfileWithStripe extends Profile {
+  is_pro: boolean
+  pro_expires_at: string | null
+  stripe_customer_id: string | null
+}
+
+/** Activity log for other sports (swimming, cycling, walking) — future feature */
+export interface ActivityLog {
+  id: string
+  user_id: string
+  plan_id: string | null
+  activity_type: 'swim' | 'cycle' | 'walk' | 'hike' | 'other'
+  duration_secs: number
+  distance_km: number | null
+  calories: number | null
+  notes: string | null
+  logged_at: string
+}

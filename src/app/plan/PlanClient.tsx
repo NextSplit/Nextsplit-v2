@@ -6,14 +6,9 @@ import { useRouter } from 'next/navigation'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useMealPlan } from '@/hooks/useMealPlan'
-import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
+import { getSessionType, fmtKm, decodeHtml, parseDet } from '@/lib/sessionUtils'
 
-function parseDet(det: string): { technical: string; rationale: string | null } {
-  const decoded = decodeHtml(det)
-  const idx = decoded.indexOf(' — ')
-  if (idx === -1) return { technical: decoded, rationale: null }
-  return { technical: decoded.slice(0, idx), rationale: decoded.slice(idx + 3) }
-}
+
 import AdaptiveSuggestions from '@/components/AdaptiveSuggestions'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import { useToast } from '@/components/Toast'
@@ -401,7 +396,7 @@ function DayRow({ day, dayIndex, weekN, logs, gymLogs, isToday, isPast, onOpen }
   logs: Record<string, TrainingLog>; gymLogs: Record<string, unknown>; isToday: boolean; isPast: boolean
   onOpen: () => void
 }) {
-  const realSessions = day.sessions.filter(s => s.c !== 'rest')
+  const realSessions = day.sessions.filter(s => s.c != null && s.c !== 'rest')
   const done = realSessions.filter((_, i) => {
     const key = `${weekN}_${dayIndex}_${i}`
     return logs[key]?.done || !!gymLogs[key]
@@ -479,7 +474,7 @@ function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDa
 
   const phase = PHASE_LABELS[week.ph] ?? { label: week.ph, bg: 'bg-gray-100', text: 'text-gray-600' }
   const wtype = WEEK_TYPE[week.b] ?? null
-  const realSessions = week.days.flatMap((d, dayI) => d.sessions.filter(s => s.c !== 'rest').map((_, sessI) => `${week.n}_${dayI}_${sessI}`))
+  const realSessions = week.days.flatMap((d, dayI) => d.sessions.filter(s => s.c != null && s.c !== 'rest').map((_, sessI) => `${week.n}_${dayI}_${sessI}`))
   const totalSessions = realSessions.length
   const doneSessions = realSessions.filter(k => logs[k]?.done || !!gymLogs[k]).length
   const progress = totalSessions > 0 ? doneSessions / totalSessions : 0
@@ -662,7 +657,7 @@ export default function PlanClient() {
   const filterWeek = useCallback((w: PlanWeek) => phaseFilter === 'all' || w.ph === phaseFilter, [phaseFilter])
 
   const weekComplete = currentWeekObj ? currentWeekObj.days.every((day, dayI) => {
-    const real = day.sessions.filter(s => s.c !== 'rest')
+    const real = day.sessions.filter(s => s.c != null && s.c !== 'rest')
     return real.length === 0 || real.every((_, sessI) => {
       const key = `${currentWeekObj.n}_${dayI}_${sessI}`
       return logs[key]?.done || !!gymLogs[key]

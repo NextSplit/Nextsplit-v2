@@ -179,7 +179,7 @@ export function computeRPGStats(
   // Perfect weeks — all planned sessions done (run + gym)
   let perfectWeeks = 0
   for (const week of weeks) {
-    const planned = week.days.reduce((a, d) => a + d.sessions.filter(s => s.c !== 'rest').length, 0)
+    const planned = week.days.reduce((a, d) => a + d.sessions.filter(s => s.c != null && s.c !== 'rest').length, 0)
     if (planned === 0) continue
     const doneCount = done.filter(l => l.week_n === week.n && l.session_i !== 99).length
     if (doneCount >= planned) perfectWeeks++

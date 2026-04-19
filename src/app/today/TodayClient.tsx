@@ -3,15 +3,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
-import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml } from '@/lib/sessionUtils'
+import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml, parseDet } from '@/lib/sessionUtils'
 
-// Split coached det into technical + rationale parts
-function parseDet(det: string): { technical: string; rationale: string | null } {
-  const decoded = decodeHtml(det)
-  const idx = decoded.indexOf(' — ')
-  if (idx === -1) return { technical: decoded, rationale: null }
-  return { technical: decoded.slice(0, idx), rationale: decoded.slice(idx + 3) }
-}
+
 import type { PlanDay, PlanSession, PlanWeek, TrainingLog } from '@/types/database'
 
 import { getSessionXP } from '@/lib/rpg'
@@ -836,7 +830,7 @@ export default function TodayClient() {
             {/* Rest day or no sessions */}
             {todaySessions.length === 0 && (() => {
               // Check if there are gym sessions on this day in the plan
-              const gymSessions = planDay?.sessions?.filter((s: PlanSession) => s.c.startsWith('gym')) ?? []
+              const gymSessions = planDay?.sessions?.filter((s: PlanSession) => s?.c?.startsWith('gym')) ?? []
               if (gymSessions.length > 0) {
                 return (
                   <div className="bg-white rounded-2xl border border-gray-100 p-5">
