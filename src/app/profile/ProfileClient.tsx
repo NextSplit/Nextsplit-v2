@@ -1020,7 +1020,7 @@ export default function ProfileClient({
   const supabase = useSupabase()
   const { plan, weeks } = useActivePlan()
   const { logs } = useTrainingLog(plan?.id ?? null)          // plan-scoped: for PBs, streak, training summary
-  const { logs: allPlanLogs } = useAllTrainingLogs()         // cross-plan: for RPG XP (persists across plan switches)
+  const { logs: allPlanLogs, loading: allLogsLoading } = useAllTrainingLogs()         // cross-plan: for RPG XP (persists across plan switches)
   const { profile } = useProfile()
   const { recent: wellnessLogs } = useWellness()
 
@@ -1273,17 +1273,38 @@ export default function ProfileClient({
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
 
-        {/* Hero RPG Card */}
-        <HeroCard
-          charId={charId}
-          stats={rpgStats}
-          displayName={heroDisplayName}
-          kitColour={kitColour}
-          charState={charState}
-          medal={medal}
-          onEditChar={() => setShowCharSelect(true)}
-          onCustomise={() => setShowCustomiser(s => !s)}
-        />
+        {/* Hero RPG Card — skeleton while XP data loads */}
+        {allLogsLoading ? (
+          <div className="rounded-3xl overflow-hidden animate-pulse" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f3460 100%)' }}>
+            <div className="p-5">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-[88px] h-[108px] rounded-2xl bg-white/10 flex-shrink-0" />
+                <div className="flex-1 pt-1 space-y-2">
+                  <div className="h-5 w-32 bg-white/10 rounded-lg" />
+                  <div className="h-3 w-24 bg-white/10 rounded-lg" />
+                  <div className="h-2.5 w-full bg-white/10 rounded-full mt-4" />
+                </div>
+              </div>
+              <div className="space-y-2 mb-4">
+                {[1,2,3,4].map(i => <div key={i} className="h-2 bg-white/10 rounded-full" />)}
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {[1,2,3,4].map(i => <div key={i} className="h-14 bg-white/10 rounded-xl" />)}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <HeroCard
+            charId={charId}
+            stats={rpgStats}
+            displayName={heroDisplayName}
+            kitColour={kitColour}
+            charState={charState}
+            medal={medal}
+            onEditChar={() => setShowCharSelect(true)}
+            onCustomise={() => setShowCustomiser(s => !s)}
+          />
+        )}
 
         {/* Kit colour customiser — inline, expandable */}
         {showCustomiser && (

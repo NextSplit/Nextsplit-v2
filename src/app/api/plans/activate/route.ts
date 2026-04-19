@@ -17,6 +17,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'template_id (or slug) and name are required' }, { status: 400 })
   }
 
+  // Validate race date is in the future
+  if (race_date) {
+    const raceTime = new Date(race_date).getTime()
+    if (isNaN(raceTime) || raceTime < Date.now() - 86400000) {
+      return NextResponse.json({ error: 'Race date must be today or in the future' }, { status: 400 })
+    }
+  }
+
   // Archive any existing active plan
   await supabase
     .from('user_plans')

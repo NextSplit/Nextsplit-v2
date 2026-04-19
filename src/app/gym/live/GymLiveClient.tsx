@@ -6,6 +6,8 @@ import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useGymLog, type GymExercise } from '@/hooks/useGymLog'
 import { parseDetToExercises, suggestWeight, getRestTime, type ExerciseDef } from '@/lib/gymUtils'
 import { getSessionXP } from '@/lib/rpg'
+import { useToast } from '@/components/Toast'
+import { hapticSuccess } from '@/lib/haptics'
 import type { PlanSession } from '@/types/database'
 
 // ─── Rest Timer ───────────────────────────────────────────────────────────────
@@ -213,6 +215,7 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
   const { plan, weeks } = useActivePlan()
   const { logSession } = useTrainingLog(plan?.id ?? null)
   const { gymLogs, saveGymLog } = useGymLog(plan?.id ?? null)
+  const { error: toastError } = useToast()
 
   // Parse exercises from plan det string
   const exercises = parseDetToExercises(session.det, session.c)
@@ -226,6 +229,7 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
   const [showFinish, setShowFinish] = useState(false)
   const [editSetIdx, setEditSetIdx] = useState<number | null>(null)
   const [saved, setSaved] = useState(false)
+  const [showCelebration, setShowCelebration] = useState(false)
   const startTime = useRef(Date.now())
 
   const currentEx = exercises[exIdx]
@@ -308,24 +312,31 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
     const duration = Math.round((Date.now() - startTime.current) / 1000)
     const nonEmpty = logged.filter(e => e.sets.length > 0)
 
-    await saveGymLog({
-      plan_id: plan.id,
-      week_n: weekN,
-      day_i: dayIndex,
-      session_i: sessionIndex,
-      exercises: nonEmpty,
-    })
+    try {
+      await saveGymLog({
+        plan_id: plan.id,
+        week_n: weekN,
+        day_i: dayIndex,
+        session_i: sessionIndex,
+        exercises: nonEmpty,
+      })
 
-    await logSession({
-      plan_id: plan.id,
-      week_n: weekN,
-      day_i: dayIndex,
-      session_i: sessionIndex,
-      done: true,
-      duration_secs: duration,
-    })
+      await logSession({
+        plan_id: plan.id,
+        week_n: weekN,
+        day_i: dayIndex,
+        session_i: sessionIndex,
+        done: true,
+        duration_secs: duration,
+      })
 
-    onDone()
+      hapticSuccess()
+      setShowCelebration(true)
+      setTimeout(() => onDone(), 2500)
+    } catch {
+      toastError('Session logged but some data may not have saved — check your connection')
+      onDone()
+    }
   }, [plan, saved, logged, saveGymLog, logSession, weekN, dayIndex, sessionIndex, onDone])
 
   if (!currentEx) return (
@@ -536,6 +547,39 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
           onConfirm={handleFinish}
           onCancel={() => setShowFinish(false)}
         />
+      )}
+
+      {showCelebration && (
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center animate-slide-up"
+          style={{ background: 'linear-gradient(135deg, #0f172a 0%, #0d3d38 100%)' }}>
+          <div className="text-7xl mb-5 animate-bounce">🏋️</div>
+          <h2 className="text-3xl font-black text-white mb-2">Session done!</h2>
+          <p className="text-teal-300 text-base mb-8">{session.n}</p>
+          <div className="flex gap-6 mb-6">
+            <div className="text-center">
+              <div className="text-2xl font-black text-white">
+                {logged.filter(e => e.sets.length > 0).length}
+              </div>
+              <div className="text-teal-400 text-xs mt-0.5">exercises</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-black text-white">
+                {logged.reduce((a, e) => a + e.sets.length, 0)}
+              </div>
+              <div className="text-teal-400 text-xs mt-0.5">sets</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-black text-emerald-400">+{getSessionXP(session.c)}</div>
+              <div className="text-teal-400 text-xs mt-0.5">XP</div>
+            </div>
+          </div>
+          <div className="flex gap-1.5">
+            {[0, 150, 300].map(d => (
+              <div key={d} className="w-2 h-2 rounded-full bg-teal-400 animate-bounce"
+                style={{ animationDelay: `${d}ms` }} />
+            ))}
+          </div>
+        </div>
       )}
     </div>
   )
