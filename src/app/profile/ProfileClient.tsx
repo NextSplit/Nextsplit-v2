@@ -663,6 +663,64 @@ function TrainingSummary({ logs }: { logs: Record<string, TrainingLog> }) {
   )
 }
 
+// ─── PWA Install Card ──────────────────────────────────────────────────────────
+
+function PWAProfileCard() {
+  const [isInstalled, setIsInstalled] = useState(false)
+  const [isIOS, setIsIOS] = useState(false)
+  const [showIOSSteps, setShowIOSSteps] = useState(false)
+
+  useEffect(() => {
+    const standalone = window.matchMedia('(display-mode: standalone)').matches
+    const iosStandalone = (window.navigator as unknown as { standalone?: boolean }).standalone === true
+    setIsInstalled(standalone || iosStandalone)
+    setIsIOS(/iphone|ipad|ipod/i.test(navigator.userAgent))
+  }, [])
+
+  if (isInstalled) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 p-4">
+        <div className="flex items-center gap-3">
+          <span style={{ fontSize: 22 }}>📱</span>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">App installed</p>
+            <p className="text-xs text-gray-400 mt-0.5">Running in standalone mode</p>
+          </div>
+          <span style={{ marginLeft: 'auto', color: '#0D9488', fontSize: 18 }}>✓</span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 p-4">
+      <div className="flex items-center gap-3">
+        <span style={{ fontSize: 22 }}>📲</span>
+        <div style={{ flex: 1 }}>
+          <p className="text-sm font-semibold text-gray-900">Install app</p>
+          <p className="text-xs text-gray-400 mt-0.5">Add NextSplit to your home screen</p>
+        </div>
+        {isIOS ? (
+          <button
+            onClick={() => setShowIOSSteps(s => !s)}
+            className="py-1.5 px-3 rounded-xl text-xs font-semibold"
+            style={{ background: '#0D9488', color: 'white', border: 'none', cursor: 'pointer' }}
+          >
+            How to
+          </button>
+        ) : null}
+      </div>
+      {showIOSSteps && (
+        <div style={{ marginTop: 12, padding: '10px 12px', background: '#f0fdfa', borderRadius: 10, fontSize: 13, color: '#0F766E', lineHeight: 1.6 }}>
+          1. Tap the <strong>Share ↑</strong> button in Safari<br />
+          2. Scroll and tap <strong>"Add to Home Screen"</strong><br />
+          3. Tap <strong>Add</strong> to confirm
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Strava Section ───────────────────────────────────────────────────────────
 
 function StravaSection({ isConnected, clientId }: { clientId: string | null; isConnected: boolean }) {
@@ -1069,6 +1127,9 @@ export default function ProfileClient({
 
         {/* Strava */}
         <StravaSection clientId={stravaClientId} isConnected={isStravaConnected} />
+
+        {/* PWA Install */}
+        <PWAProfileCard />
 
         {/* Athlete profile */}
         <AthleteProfileSection />

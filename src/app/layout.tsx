@@ -3,6 +3,8 @@ import './globals.css'
 import BottomNavWrapper from '@/components/BottomNavWrapper'
 import { ToastProvider } from '@/components/Toast'
 import ThemeWrapper from '@/components/ThemeWrapper'
+import PWAInstallPrompt from '@/components/PWAInstallPrompt'
+import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
 
 export const metadata: Metadata = {
   title: 'NextSplit — Intelligent Running Training',
@@ -15,8 +17,17 @@ export const metadata: Metadata = {
     startupImage: '/icon-512.png',
   },
   icons: {
-    apple: '/icon-192.png',
-    icon: '/icon-192.png',
+    apple: [
+      { url: '/icon-192.png', sizes: '192x192' },
+    ],
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
+    'application-name': 'NextSplit',
   },
 }
 
@@ -40,6 +51,8 @@ export default function RootLayout({
           <ToastProvider>
             {children}
             <BottomNavWrapper />
+            <PWAInstallPrompt />
+            <ServiceWorkerRegistrar />
           </ToastProvider>
         </ThemeWrapper>
       </body>
