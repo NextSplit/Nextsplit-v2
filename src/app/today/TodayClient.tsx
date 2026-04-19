@@ -1410,6 +1410,7 @@ export default function TodayClient() {
         <AdHocSessionModal
           planId={plan.id}
           weekN={weekN}
+          dayIndex={planDayIndex}
           onClose={() => setShowAdHocModal(false)}
           onSaved={() => { setShowAdHocModal(false); toastSuccess('Session added ✓') }}
         />
@@ -1438,9 +1439,10 @@ const AD_HOC_TYPES = [
   { c: 'walk',      label: 'Walk',            emoji: '🚶', desc: 'Walking or hiking' },
 ]
 
-function AdHocSessionModal({ planId, weekN, onClose, onSaved }: {
+function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
   planId: string
   weekN: number
+  dayIndex: number
   onClose: () => void
   onSaved: () => void
 }) {
@@ -1458,7 +1460,7 @@ function AdHocSessionModal({ planId, weekN, onClose, onSaved }: {
       await logSession({
         plan_id: planId,
         week_n: weekN,
-        day_i: new Date().getDay(),
+        day_i: dayIndex,
         session_i: 99,
         done: true,
         notes: notes.trim() || `Ad-hoc: ${AD_HOC_TYPES.find(t => t.c === selected)?.label}`,

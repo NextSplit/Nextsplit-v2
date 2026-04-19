@@ -87,7 +87,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
+              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total — The first session of your plan. Run at a comfortable, conversational pace — slower than you think you need to. Building the habit matters more than the pace right now.",
               "km": 2.5
             }
           ],
@@ -479,7 +479,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x12 · DB row 3x12 · Overhead press 3x12 · Face pulls 3x12 · Core circuit 3x12s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "det": "Inverted row 3x12 · Push-ups 3x12 · Face pulls 3x15 · Plank 3x30s · Core circuit 2x30s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
               "km": 0
             }
           ],
@@ -837,7 +837,7 @@
             {
               "c": "gym-b",
               "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x12 · DB row 3x12 · Overhead press 3x12 · Face pulls 3x12 · Core circuit 3x12s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "det": "Inverted row 3x12 · Push-ups 3x12 · Face pulls 3x15 · Plank 3x30s · Core circuit 2x30s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
               "km": 0
             }
           ],
