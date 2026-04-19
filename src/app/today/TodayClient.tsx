@@ -359,15 +359,19 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
 
   return (
     <div
-      className={`rounded-2xl border transition-all ${done ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-100 bg-white'} overflow-hidden`}
+      className={`rounded-2xl border-l-4 border-t border-r border-b transition-all min-h-[88px] ${
+        done
+          ? `${cfg.accent} border-emerald-200 bg-emerald-50`
+          : `${cfg.accent} border-gray-100 bg-white`
+      } overflow-hidden`}
     >
-      <div className="flex items-start gap-3 p-4" onClick={onTap}>
+      <div className="flex items-start gap-3 p-5" onClick={onTap}>
         {/* Type indicator — tap for focus mode */}
         <button
           onClick={e => { e.stopPropagation(); onFocus() }}
           className={`flex flex-col items-center gap-0.5 flex-shrink-0`}
         >
-          <div className={`w-10 h-10 rounded-xl ${cfg.colour} flex items-center justify-center text-lg active:scale-95 transition-transform`}>
+          <div className={`w-11 h-11 rounded-xl ${cfg.colour} flex items-center justify-center text-xl active:scale-95 transition-transform`}>
             {cfg.emoji}
           </div>
           <span className="text-[8px] text-gray-400 font-medium">Focus</span>
@@ -382,15 +386,15 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
               <span className="text-[10px] text-gray-400">{fmtKm(session.km)}</span>
             )}
           </div>
-          <p className="text-sm font-semibold text-gray-900 leading-tight">{session.n}</p>
+          <p className="text-base font-bold text-gray-900 leading-tight">{session.n}</p>
           {session.det && (
-            <p className="text-xs text-gray-500 mt-0.5 leading-relaxed line-clamp-2">
+            <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-2">
               {decodeHtml(session.det)}
             </p>
           )}
           {done && (
-            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-              <span className="text-[10px] text-emerald-600 font-semibold">
+            <div className="flex items-center gap-2 mt-2 flex-wrap">
+              <span className="text-[11px] text-emerald-600 font-bold">
                 ✓ Done{log?.effort ? ` · RPE ${log.effort}` : ''}
               </span>
               {log?.km && <span className="text-[10px] text-gray-400">{log.km}km</span>}
@@ -410,7 +414,7 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
         {/* Quick-done / edit button */}
         <button
           onClick={e => { e.stopPropagation(); onQuickDone() }}
-          className={`w-9 h-9 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+          className={`w-10 h-10 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
             done
               ? 'border-emerald-400 bg-emerald-400'
               : 'border-gray-200 bg-white'
@@ -627,9 +631,19 @@ export default function TodayClient() {
                 </span>
               )}
               {plan && (
-                <span className="text-[11px] text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full font-medium">
-                  W{weekN}/{plan.total_weeks}
-                </span>
+                <div className="flex flex-col items-end gap-0.5">
+                  <span className="text-[11px] text-gray-500 font-semibold">
+                    W{weekN}/{plan.total_weeks}
+                  </span>
+                  <div className="w-16 h-1 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        (weekN / plan.total_weeks) >= 0.8 ? 'bg-emerald-400' : 'bg-teal-500'
+                      }`}
+                      style={{ width: `${(weekN / plan.total_weeks) * 100}%` }}
+                    />
+                  </div>
+                </div>
               )}
               {plan && todaySessions.length > 0 && isToday && (
                 <span className={`text-xs font-semibold ${doneTodayCount === todaySessions.length ? 'text-emerald-500' : 'text-gray-400'}`}>
@@ -886,9 +900,9 @@ export default function TodayClient() {
 
             {/* Sleep note */}
             {planDay?.sleep && (
-              <div className="bg-indigo-50 rounded-2xl border border-indigo-100 px-4 py-3 flex items-start gap-2.5">
+              <div className="bg-teal-50 rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
                 <span className="text-base mt-0.5">🌙</span>
-                <p className="text-xs text-indigo-700 leading-relaxed">{planDay.sleep}</p>
+                <p className="text-xs text-teal-700 leading-relaxed">{planDay.sleep}</p>
               </div>
             )}
 
@@ -981,42 +995,42 @@ export default function TodayClient() {
               const vsArrow = r.vsLastWeek === 'up' ? '↑' : r.vsLastWeek === 'down' ? '↓' : '→'
               const vsColour = r.vsLastWeek === 'up' ? 'text-emerald-600' : r.vsLastWeek === 'down' ? 'text-red-500' : 'text-gray-500'
               return (
-                <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-violet-100/50">
+                <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl border border-teal-100 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-teal-100/50">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[11px] font-bold text-violet-800 uppercase tracking-wide">Week {r.weekN} · {r.weekTitle}</p>
-                        <p className="text-xs text-violet-600 mt-0.5">Your weekly report</p>
+                        <p className="text-[11px] font-bold text-teal-800 uppercase tracking-wide">Week {r.weekN} · {r.weekTitle}</p>
+                        <p className="text-xs text-teal-600 mt-0.5">Your weekly report</p>
                       </div>
                       <span className="text-2xl">{r.completionPct >= 90 ? '🌟' : r.completionPct >= 60 ? '✅' : '💪'}</span>
                     </div>
                   </div>
-                  <div className="px-4 py-3 grid grid-cols-3 gap-3 border-b border-violet-100/30">
+                  <div className="px-4 py-3 grid grid-cols-3 gap-3 border-b border-teal-100/30">
                     <div className="text-center">
-                      <div className="text-lg font-black text-violet-900">{r.completionPct}%</div>
-                      <div className="text-[10px] text-violet-500">sessions done</div>
-                      <div className="text-[9px] text-violet-400">{r.sessionsDone}/{r.sessionsPlanned}</div>
+                      <div className="text-lg font-black text-teal-900">{r.completionPct}%</div>
+                      <div className="text-[10px] text-teal-500">sessions done</div>
+                      <div className="text-[9px] text-teal-400">{r.sessionsDone}/{r.sessionsPlanned}</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-black text-violet-900">{r.kmLogged}</div>
-                      <div className="text-[10px] text-violet-500">km logged</div>
-                      <div className="text-[9px] text-violet-400">of {r.kmPlanned} planned</div>
+                      <div className="text-lg font-black text-teal-900">{r.kmLogged}</div>
+                      <div className="text-[10px] text-teal-500">km logged</div>
+                      <div className="text-[9px] text-teal-400">of {r.kmPlanned} planned</div>
                     </div>
                     <div className="text-center">
                       <div className={`text-lg font-black ${vsColour}`}>{vsArrow} {r.lastWeekKm > 0 ? Math.abs(Math.round((r.kmLogged - r.lastWeekKm) * 10) / 10) : '—'}</div>
-                      <div className="text-[10px] text-violet-500">vs prev week</div>
-                      {r.avgEffort && <div className="text-[9px] text-violet-400">RPE {r.avgEffort} avg</div>}
+                      <div className="text-[10px] text-teal-500">vs prev week</div>
+                      {r.avgEffort && <div className="text-[9px] text-teal-400">RPE {r.avgEffort} avg</div>}
                     </div>
                   </div>
                   {(r.bestSession || r.lookAheadNote) && (
                     <div className="px-4 py-3 space-y-1.5">
                       {r.bestSession && (
-                        <p className="text-xs text-violet-700">
+                        <p className="text-xs text-teal-700">
                           <span className="font-semibold">Best session:</span> {r.bestSession}
                         </p>
                       )}
                       {r.lookAheadNote && (
-                        <p className="text-xs text-violet-600 leading-relaxed line-clamp-2">
+                        <p className="text-xs text-teal-600 leading-relaxed line-clamp-2">
                           <span className="font-semibold">This week:</span> {r.lookAheadNote}
                         </p>
                       )}
@@ -1028,11 +1042,11 @@ export default function TodayClient() {
 
             {/* Sunday coach banner — below the fold */}
             {isToday && viewDate.getDay() === 0 && plan && plan.current_week < plan.total_weeks && (
-              <div className="bg-gradient-to-r from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 px-4 py-3 flex items-start gap-2.5">
+              <div className="bg-teal-50 rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
                 <span className="text-base mt-0.5">🗓️</span>
                 <div>
-                  <p className="text-[11px] font-bold text-violet-800 mb-0.5">Week {weekN} complete!</p>
-                  <p className="text-xs text-violet-700 leading-relaxed">
+                  <p className="text-[11px] font-bold text-teal-800 mb-0.5">Week {weekN} complete!</p>
+                  <p className="text-xs text-teal-700 leading-relaxed">
                     Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what&apos;s ahead.
                   </p>
                 </div>

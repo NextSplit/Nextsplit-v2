@@ -5,6 +5,7 @@ export interface SessionTypeConfig {
   textColour: string  // text colour class
   dot: string         // solid dot colour class
   emoji: string
+  accent: string      // left border accent colour class (border-l-*)
 }
 
 /** Decode HTML entities from plan data strings */
@@ -21,23 +22,23 @@ export function decodeHtml(str: string): string {
 }
 
 const SESSION_TYPES: Record<string, SessionTypeConfig> = {
-  'run-easy':   { label: 'Easy Run',   colour: 'bg-emerald-50',  textColour: 'text-emerald-700', dot: 'bg-emerald-400', emoji: '🟢' },
-  'run-tempo':  { label: 'Tempo',      colour: 'bg-orange-50',   textColour: 'text-orange-700',  dot: 'bg-orange-400',  emoji: '🟠' },
-  'run-int':    { label: 'Intervals',  colour: 'bg-red-50',      textColour: 'text-red-700',     dot: 'bg-red-400',     emoji: '🔴' },
-  'run-long':   { label: 'Long Run',   colour: 'bg-blue-50',     textColour: 'text-blue-700',    dot: 'bg-blue-400',    emoji: '🔵' },
-  'run-mp':     { label: 'Marathon P', colour: 'bg-violet-50',   textColour: 'text-violet-700',  dot: 'bg-violet-400',  emoji: '🟣' },
-  'run-race':   { label: 'Race',       colour: 'bg-yellow-50',   textColour: 'text-yellow-700',  dot: 'bg-yellow-400',  emoji: '🏁' },
-  'gym-a':      { label: 'Gym A',      colour: 'bg-slate-50',    textColour: 'text-slate-700',   dot: 'bg-slate-400',   emoji: '🏋️' },
-  'gym-b':      { label: 'Gym B',      colour: 'bg-slate-50',    textColour: 'text-slate-700',   dot: 'bg-slate-400',   emoji: '🏋️' },
-  'gym-c':      { label: 'Gym C',      colour: 'bg-slate-50',    textColour: 'text-slate-700',   dot: 'bg-slate-400',   emoji: '🏋️' },
-  'gym-bw':     { label: 'Bodyweight', colour: 'bg-slate-50',    textColour: 'text-slate-700',   dot: 'bg-slate-400',   emoji: '💪' },
-  'pilates':    { label: 'Pilates',    colour: 'bg-pink-50',     textColour: 'text-pink-700',    dot: 'bg-pink-400',    emoji: '🧘' },
-  'sauna':      { label: 'Sauna',      colour: 'bg-amber-50',    textColour: 'text-amber-700',   dot: 'bg-amber-400',   emoji: '🧖' },
-  'rest':       { label: 'Rest',       colour: 'bg-gray-50',     textColour: 'text-gray-500',    dot: 'bg-gray-300',    emoji: '😴' },
+  'run-easy':   { label: 'Easy Run',   colour: 'bg-emerald-50',  textColour: 'text-emerald-700', dot: 'bg-emerald-400', emoji: '🟢', accent: 'border-l-emerald-400'  },
+  'run-tempo':  { label: 'Tempo',      colour: 'bg-orange-50',   textColour: 'text-orange-700',  dot: 'bg-orange-400',  emoji: '🟠', accent: 'border-l-amber-400'    },
+  'run-int':    { label: 'Intervals',  colour: 'bg-red-50',      textColour: 'text-red-700',     dot: 'bg-red-400',     emoji: '🔴', accent: 'border-l-red-400'      },
+  'run-long':   { label: 'Long Run',   colour: 'bg-blue-50',     textColour: 'text-blue-700',    dot: 'bg-blue-400',    emoji: '🔵', accent: 'border-l-teal-500'     },
+  'run-mp':     { label: 'Marathon P', colour: 'bg-violet-50',   textColour: 'text-violet-700',  dot: 'bg-violet-400',  emoji: '🟣', accent: 'border-l-violet-400'   },
+  'run-race':   { label: 'Race',       colour: 'bg-yellow-50',   textColour: 'text-yellow-700',  dot: 'bg-yellow-400',  emoji: '🏁', accent: 'border-l-yellow-400'   },
+  'gym-a':      { label: 'Gym A',      colour: 'bg-slate-50',    textColour: 'text-slate-700',   dot: 'bg-slate-400',   emoji: '🏋️', accent: 'border-l-slate-400'    },
+  'gym-b':      { label: 'Gym B',      colour: 'bg-slate-50',    textColour: 'text-slate-700',   dot: 'bg-slate-400',   emoji: '🏋️', accent: 'border-l-slate-400'    },
+  'gym-c':      { label: 'Gym C',      colour: 'bg-slate-50',    textColour: 'text-slate-700',   dot: 'bg-slate-400',   emoji: '🏋️', accent: 'border-l-slate-400'    },
+  'gym-bw':     { label: 'Bodyweight', colour: 'bg-slate-50',    textColour: 'text-slate-700',   dot: 'bg-slate-400',   emoji: '💪', accent: 'border-l-slate-400'    },
+  'pilates':    { label: 'Pilates',    colour: 'bg-pink-50',     textColour: 'text-pink-700',    dot: 'bg-pink-400',    emoji: '🧘', accent: 'border-l-pink-400'     },
+  'sauna':      { label: 'Sauna',      colour: 'bg-amber-50',    textColour: 'text-amber-700',   dot: 'bg-amber-400',   emoji: '🧖', accent: 'border-l-amber-300'    },
+  'rest':       { label: 'Rest',       colour: 'bg-gray-50',     textColour: 'text-gray-500',    dot: 'bg-gray-300',    emoji: '😴', accent: 'border-l-gray-200'     },
 }
 
 const DEFAULT_TYPE: SessionTypeConfig = {
-  label: 'Session', colour: 'bg-gray-50', textColour: 'text-gray-700', dot: 'bg-gray-400', emoji: '🏃'
+  label: 'Session', colour: 'bg-gray-50', textColour: 'text-gray-700', dot: 'bg-gray-400', emoji: '🏃', accent: 'border-l-gray-300'
 }
 
 export function getSessionType(code: string | number): SessionTypeConfig {
