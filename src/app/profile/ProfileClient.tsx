@@ -666,7 +666,8 @@ function TrainingSummary({ logs }: { logs: Record<string, TrainingLog> }) {
 
 function StravaSection({ isConnected, clientId }: { clientId: string | null; isConnected: boolean }) {
   const STRAVA_CLIENT_ID = clientId ?? process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID
-  const redirectUri = typeof window !== 'undefined' ? window.location.origin + '/api/strava/callback' : ''
+  const redirectUri = typeof window !== 'undefined' ? window.location.origin + '/auth/strava/callback' : ''
+  const [disconnecting, setDisconnecting] = useState(false)
 
   function connectStrava() {
     if (!STRAVA_CLIENT_ID) return
@@ -674,24 +675,46 @@ function StravaSection({ isConnected, clientId }: { clientId: string | null; isC
     window.location.href = url
   }
 
+  async function disconnectStrava() {
+    setDisconnecting(true)
+    try {
+      await fetch('/api/strava/disconnect', { method: 'POST' })
+      window.location.reload()
+    } finally {
+      setDisconnecting(false)
+    }
+  }
+
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-4">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg viewBox="0 0 24 24" fill="white" className="w-3.5 h-3.5">
+              <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+            </svg>
+          </div>
           <p className="text-sm font-bold text-gray-900">Strava</p>
-          <p className="text-xs text-gray-400 mt-0.5">
-            {isConnected ? 'Connected — sync from Today tab' : 'Connect to auto-import activities'}
-          </p>
         </div>
         <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${isConnected ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
           {isConnected ? '✓ Connected' : 'Not connected'}
         </span>
       </div>
-      {!isConnected && STRAVA_CLIENT_ID && (
+      <p className="text-xs text-gray-400 mb-3 ml-8">
+        {isConnected ? 'Activities sync automatically from the Today tab' : 'Connect to import activities with one tap'}
+      </p>
+      {isConnected ? (
+        <button onClick={disconnectStrava} disabled={disconnecting}
+          className="w-full py-2 rounded-xl border border-gray-200 text-gray-500 text-xs font-semibold disabled:opacity-50">
+          {disconnecting ? 'Disconnecting…' : 'Disconnect Strava'}
+        </button>
+      ) : STRAVA_CLIENT_ID ? (
         <button onClick={connectStrava}
-          className="mt-3 w-full py-2 rounded-xl border border-orange-200 text-orange-600 text-xs font-bold">
+          className="w-full py-2.5 rounded-xl bg-orange-500 text-white text-xs font-bold active:scale-[0.98] transition-transform">
           Connect Strava →
         </button>
+      ) : (
+        <p className="text-xs text-gray-400 text-center py-1">Strava integration not configured</p>
       )}
     </div>
   )
