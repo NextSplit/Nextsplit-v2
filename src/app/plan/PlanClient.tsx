@@ -6,6 +6,7 @@ import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useMealPlan } from '@/hooks/useMealPlan'
 import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
+import AdaptiveSuggestions from '@/components/AdaptiveSuggestions'
 import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
@@ -523,6 +524,14 @@ export default function PlanClient() {
             </button>
           </div>
         )}
+
+        {/* Adaptive coaching suggestions */}
+        <AdaptiveSuggestions
+          weeks={weeks}
+          logs={logs}
+          currentWeek={plan.current_week}
+          planId={plan.id}
+        />
 
         {/* ── ACTIVE VIEW ── */}
         {viewMode === 'active' && (

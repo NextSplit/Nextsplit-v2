@@ -7,6 +7,7 @@ import { useRaces } from '@/hooks/useRaces'
 import { useWellness } from '@/hooks/useWellness'
 import { computeStreak, computeConsistency, predictRaceTime } from '@/lib/streak'
 import CoachingCard from '@/components/CoachingCard'
+import PreRaceBrief from '@/components/PreRaceBrief'
 import type { PlanWeek, TrainingLog, Race } from '@/types/database'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -881,6 +882,7 @@ function WellnessTrend() {
 export default function StatsClient() {
   const { plan, weeks, loading: planLoading } = useActivePlan()
   const { logs, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
+  const { upcoming: upcomingRaces } = useRaces()
   const [activeTab, setActiveTab] = useState<'stats'|'races'|'pace'>('stats')
 
   const loading = planLoading || logsLoading
@@ -995,6 +997,20 @@ export default function StatsClient() {
                         </div>
                       </div>
                     </div>
+                  )
+                })()}
+                {/* Pre-race brief — shown when next race is within 7 days */}
+                {(() => {
+                  const nextRace = upcomingRaces[0]
+                  if (!nextRace) return null
+                  const days = daysUntil(nextRace.race_date)
+                  if (days > 7 || days < 0) return null
+                  return (
+                    <PreRaceBrief
+                      race={nextRace}
+                      logs={logs}
+                      planName={plan?.name ?? ''}
+                    />
                   )
                 })()}
                 <CoachingCard />

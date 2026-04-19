@@ -815,42 +815,85 @@ export default function TodayClient() {
               </div>
             )}
 
-            {/* Pre-session nutrition hint */}
-            {isToday && todaySessions.some(s => s.c.startsWith('run') || s.c.startsWith('gym')) && (
-              (() => {
-                const hasLong = todaySessions.some(s => s.c === 'run-long')
-                const hasRace = todaySessions.some(s => s.c === 'run-race')
-                const hasIntOrTempo = todaySessions.some(s => s.c === 'run-int' || s.c === 'run-tempo')
-                if (hasRace) return (
-                  <div className="bg-yellow-50 rounded-2xl border border-yellow-100 px-4 py-3 flex items-start gap-2.5">
-                    <span className="text-base mt-0.5">🏁</span>
-                    <div>
-                      <p className="text-[11px] font-bold text-yellow-800 mb-0.5">Race day fuel</p>
-                      <p className="text-xs text-yellow-700 leading-relaxed">Nothing new today. Stick to what you&apos;ve trained with. Caffeine 45–60 min before start.</p>
-                    </div>
-                  </div>
-                )
-                if (hasLong) return (
-                  <div className="bg-blue-50 rounded-2xl border border-blue-100 px-4 py-3 flex items-start gap-2.5">
-                    <span className="text-base mt-0.5">🍌</span>
-                    <div>
-                      <p className="text-[11px] font-bold text-blue-800 mb-0.5">Long run fuel</p>
-                      <p className="text-xs text-blue-700 leading-relaxed">Carbs 2–3 h before. Gel every 35–45 min during. Protein within 30 min after.</p>
-                    </div>
-                  </div>
-                )
-                if (hasIntOrTempo) return (
-                  <div className="bg-orange-50 rounded-2xl border border-orange-100 px-4 py-3 flex items-start gap-2.5">
-                    <span className="text-base mt-0.5">⚡</span>
-                    <div>
-                      <p className="text-[11px] font-bold text-orange-800 mb-0.5">Quality session fuel</p>
-                      <p className="text-xs text-orange-700 leading-relaxed">Light meal 2 h before. Avoid heavy food — you need to run hard.</p>
-                    </div>
-                  </div>
-                )
+            {/* Contextual fuel card — real data from plan day */}
+            {isToday && planDay && planDay.nut && planDay.nut.length > 0 && (() => {
+              const now = new Date()
+              const currentHour = now.getHours() + now.getMinutes() / 60
+
+              // Parse a time string like "05:30", "During run", "On wake" into a float hour
+              function parseHour(t: string): number | null {
+                const m = t.match(/^(\d{1,2}):(\d{2})/)
+                if (m) return parseInt(m[1]) + parseInt(m[2]) / 60
+                if (/wake|morning/i.test(t)) return 6
+                if (/lunch/i.test(t)) return 12
+                if (/dinner|evening/i.test(t)) return 18
+                if (/during/i.test(t)) return currentHour // show during-run entries when running
                 return null
-              })()
-            )}
+              }
+
+              // Priority: upcoming entries in next 3h, plus always show macro target
+              const nutByPriority = planDay.nut
+                .map(n => ({ ...n, hour: parseHour(n.t) }))
+                .filter(n => {
+                  if (n.cat === 'macro') return false // shown separately
+                  if (n.hour === null) return true // non-timed always show
+                  return n.hour >= currentHour - 0.5 && n.hour <= currentHour + 4
+                })
+                .sort((a, b) => (a.hour ?? 99) - (b.hour ?? 99))
+                .slice(0, 4)
+
+              const macroEntry = planDay.nut.find(n => n.cat === 'macro')
+
+              if (nutByPriority.length === 0 && !macroEntry) return null
+
+              const catStyle: Record<string, { bg: string; icon: string; text: string; dot: string }> = {
+                hydration: { bg: 'bg-blue-50',   icon: '💧', text: 'text-blue-800',   dot: 'bg-blue-300'   },
+                food:      { bg: 'bg-green-50',  icon: '🍽️', text: 'text-green-800',  dot: 'bg-green-300'  },
+                fuel:      { bg: 'bg-amber-50',  icon: '⚡',  text: 'text-amber-800',  dot: 'bg-amber-300'  },
+                info:      { bg: 'bg-gray-50',   icon: 'ℹ️', text: 'text-gray-600',   dot: 'bg-gray-300'   },
+                macro:     { bg: 'bg-purple-50', icon: '📊', text: 'text-purple-800', dot: 'bg-purple-300' },
+              }
+
+              return (
+                <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-50">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">🍽️</span>
+                      <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wide">Today&apos;s fuel plan</span>
+                    </div>
+                    <span className="text-[10px] text-gray-400">Next {nutByPriority.length > 0 ? nutByPriority.length : ''} entries</span>
+                  </div>
+                  <div className="divide-y divide-gray-50">
+                    {nutByPriority.map((n, i) => {
+                      const s = catStyle[n.cat] ?? catStyle.food
+                      return (
+                        <div key={i} className={`px-4 py-2.5 flex items-start gap-2.5 ${s.bg}`}>
+                          <span className="text-base flex-shrink-0 mt-0.5">{s.icon}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className={`text-[10px] font-bold ${s.text}`}>{decodeHtml(n.t)}</span>
+                              <span className={`text-[11px] font-semibold ${s.text}`}>{decodeHtml(n.l)}</span>
+                            </div>
+                            <p className={`text-[11px] leading-relaxed ${s.text} opacity-80 mt-0.5`}>{decodeHtml(n.d)}</p>
+                          </div>
+                        </div>
+                      )
+                    })}
+                    {macroEntry && (
+                      <div className="px-4 py-2.5 flex items-center gap-2.5 bg-purple-50">
+                        <span className="text-base flex-shrink-0">📊</span>
+                        <div>
+                          <div className="text-[10px] font-bold text-purple-700 mb-0.5">Daily targets</div>
+                          <p className="text-[11px] text-purple-800 font-medium">{decodeHtml(macroEntry.d)}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })()}
+
+
 
             {/* Session cards */}
             {todaySessions.map((session, sessI) => {
