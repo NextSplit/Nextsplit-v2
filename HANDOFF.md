@@ -25,7 +25,7 @@ _Last updated: end of chat session 1_
 - ErrorBoundary — wraps all 5 tab pages
 - units.ts — km/miles: useUnits(), fmtDistance(), fmtPace(), secsPerKmToDisplay(), parsePaceInput()
 - Fixed any casts: TodayClient (weeks_data, tomorrowSessions), NutritionClient (weekStartEnd), ProfileClient (injury_notes)
-
+ 
 ### Phase 1 ✅ COMPLETE
 - Updated TypeScript types: profiles with units/dark_mode/text_size/notifications_enabled/notification_time
 - Updated TypeScript types: user_plans with archived_at/completed_at
