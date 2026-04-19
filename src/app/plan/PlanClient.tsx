@@ -8,6 +8,7 @@ import { useMealPlan } from '@/hooks/useMealPlan'
 import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
 import AdaptiveSuggestions from '@/components/AdaptiveSuggestions'
 import DarkModeToggle from '@/components/DarkModeToggle'
+import { useToast } from '@/components/Toast'
 import { useGymLog } from '@/hooks/useGymLog'
 import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
@@ -543,6 +544,7 @@ export default function PlanClient() {
   const { plan, weeks, currentWeek, loading, advanceWeek } = useActivePlan()
   const { logs, logSession } = useTrainingLog(plan?.id ?? null)
   const { gymLogs } = useGymLog(plan?.id ?? null)
+  const { success: toastSuccess, error: toastError } = useToast()
   const [advancing, setAdvancing] = useState(false)
   const [viewMode, setViewMode] = useState<'active' | 'full'>('active')
   const [completedExpanded, setCompletedExpanded] = useState(false)
@@ -594,7 +596,14 @@ export default function PlanClient() {
   async function handleAdvance() {
     if (!canAdvance) return
     setAdvancing(true)
-    try { await advanceWeek() } finally { setAdvancing(false) }
+    try {
+      await advanceWeek()
+      toastSuccess(`Week ${plan!.current_week + 1} started!`)
+    } catch {
+      toastError('Failed to advance week — try again')
+    } finally {
+      setAdvancing(false)
+    }
   }
 
   function openDay(week: PlanWeek, day: PlanDay, dayIndex: number) {
@@ -606,7 +615,12 @@ export default function PlanClient() {
     effort?: number; km?: number; notes?: string; duration_secs?: number; pace?: string
   }) {
     if (!plan) return
-    await logSession({ plan_id: plan.id, ...params })
+    try {
+      await logSession({ plan_id: plan.id, ...params })
+      toastSuccess('Session logged ✓')
+    } catch {
+      toastError('Failed to save — check your connection')
+    }
     setLogModal(null)
   }
 

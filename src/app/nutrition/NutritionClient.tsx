@@ -9,6 +9,7 @@ import { getDayType, DAY_TYPE_CONFIG, calcCalories } from '@/lib/nutrition'
 import { MEAL_SLOTS, type MealSlotId } from '@/types/database'
 import type { Recipe, RecipeIngredient, MealPlanEntryWithRecipe } from '@/types/database'
 import DarkModeToggle from '@/components/DarkModeToggle'
+import { useToast } from '@/components/Toast'
 
 // ─── Supplement Tracker ───────────────────────────────────────────────────────
 
@@ -690,6 +691,7 @@ function RecipeCard({
   onDuplicate: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const pp = perPortion(recipe, 1)
 
   return (
@@ -761,10 +763,23 @@ function RecipeCard({
               className="flex-1 py-2 rounded-xl border border-blue-100 text-xs font-semibold text-blue-600">
               Duplicate
             </button>
-            <button onClick={() => { if (window.confirm(`Delete "${recipe.name}"?`)) onDelete() }}
-              className="flex-1 py-2 rounded-xl border border-red-200 text-xs font-semibold text-red-500">
-              Delete
-            </button>
+            {confirmDelete ? (
+              <div className="flex gap-1 flex-1">
+                <button onClick={() => setConfirmDelete(false)}
+                  className="flex-1 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-500">
+                  Cancel
+                </button>
+                <button onClick={() => { setConfirmDelete(false); onDelete() }}
+                  className="flex-1 py-2 rounded-xl bg-red-500 text-white text-xs font-bold">
+                  Delete
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmDelete(true)}
+                className="flex-1 py-2 rounded-xl border border-red-200 text-xs font-semibold text-red-500">
+                Delete
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -1026,9 +1041,10 @@ function CalorieRing({ actual, target }: { actual: number; target: number }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function NutritionClient() {
-  const { plan, weeks } = useActivePlan()
-  const { profile } = useProfile()
+  const { plan, weeks, loading: planLoading } = useActivePlan()
+  const { profile, loading: profileLoading } = useProfile()
   const { recipes, createRecipe, updateRecipe, deleteRecipe, duplicateRecipe } = useRecipes()
+  const { success: toastSuccess, error: toastError } = useToast()
 
   const { start, end } = useMemo(() => weekStartEnd(plan), [plan])
   const dates = useMemo(() => weekDates(start), [start])
@@ -1088,7 +1104,7 @@ export default function NutritionClient() {
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-[15px] font-bold text-[#1a1a1a]">Fuel</h1>
+            <h1 className="text-lg font-bold text-gray-900">Fuel</h1>
             <DarkModeToggle />
           </div>
           <div className="flex border-b border-gray-100">
@@ -1106,7 +1122,33 @@ export default function NutritionClient() {
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
 
-        {/* TODAY TAB */}
+        {/* Loading state */}
+        {(planLoading || profileLoading) && (
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-24 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+            ))}
+          </div>
+        )}
+
+        {/* No plan state — prompt to choose one */}
+        {!planLoading && !plan && activeTab === 'today' && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+            <div className="text-4xl mb-3">🍽️</div>
+            <h2 className="text-base font-bold text-gray-900 mb-2">Fuel your training</h2>
+            <p className="text-sm text-gray-500 mb-5 leading-relaxed">
+              Calorie targets, macro tracking, and AI nutrition tips are tailored to your training plan.
+              Choose a plan first to unlock personalised fuel guidance.
+            </p>
+            <a href="/onboarding"
+              className="inline-block bg-[#0D9488] text-white px-6 py-2.5 rounded-xl text-sm font-semibold">
+              Choose a plan →
+            </a>
+          </div>
+        )}
+
+        {/* Main content — only when not loading */}
+        {!planLoading && !profileLoading && (plan || activeTab === 'recipes') && (<>
         {activeTab === 'today' && (
           <>
             {/* AI Fuel Coach */}
@@ -1231,27 +1273,51 @@ export default function NutritionClient() {
         {activeTab === 'recipes' && (
           <>
             <button onClick={() => { setEditingRecipe(null); setShowRecipeForm(true) }}
-              className="w-full py-3 rounded-2xl bg-[#0D9488] text-white text-sm font-semibold">
+              className="w-full py-3 rounded-2xl bg-[#0D9488] text-white text-sm font-semibold active:scale-95 transition-transform">
               + New recipe
             </button>
             {recipes.length === 0 ? (
               <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
                 <div className="text-4xl mb-3">📖</div>
-                <p className="text-sm font-semibold text-gray-700 mb-1">Your recipe book is empty</p>
-                <p className="text-xs text-gray-400">Add your first recipe to start building your meal plan.</p>
+                <p className="text-sm font-bold text-gray-900 mb-2">Build your recipe book</p>
+                <p className="text-xs text-gray-500 leading-relaxed mb-5">
+                  Add your go-to meals and they&apos;ll appear when planning your weekly nutrition.
+                  Start with your usual breakfast or pre-run snack.
+                </p>
+                <button
+                  onClick={() => { setEditingRecipe(null); setShowRecipeForm(true) }}
+                  className="inline-block bg-[#0D9488] text-white px-5 py-2 rounded-xl text-sm font-semibold">
+                  Add first recipe →
+                </button>
               </div>
             ) : (
               <div className="space-y-2">
                 {recipes.map(r => (
                   <RecipeCard key={r.id} recipe={r}
                     onEdit={() => { setEditingRecipe(r); setShowRecipeForm(true) }}
-                    onDelete={() => deleteRecipe(r.id)}
-                    onDuplicate={() => duplicateRecipe(r)} />
+                    onDelete={async () => {
+                      try {
+                        await deleteRecipe(r.id)
+                        toastSuccess('Recipe deleted')
+                      } catch {
+                        toastError('Failed to delete recipe')
+                      }
+                    }}
+                    onDuplicate={async () => {
+                      try {
+                        await duplicateRecipe(r)
+                        toastSuccess('Recipe duplicated')
+                      } catch {
+                        toastError('Failed to duplicate recipe')
+                      }
+                    }} />
                 ))}
               </div>
             )}
           </>
         )}
+        </>)}{/* end main content fragment */}
+
       </div>
 
       {/* Modals */}
@@ -1259,8 +1325,14 @@ export default function NutritionClient() {
         <RecipeFormModal
           existing={editingRecipe ?? undefined}
           onSave={async data => {
-            if (editingRecipe) await updateRecipe(editingRecipe.id, data)
-            else await createRecipe(data)
+            try {
+              if (editingRecipe) await updateRecipe(editingRecipe.id, data)
+              else await createRecipe(data)
+              toastSuccess(editingRecipe ? 'Recipe updated' : 'Recipe saved')
+            } catch {
+              toastError('Failed to save recipe — check your connection')
+              throw new Error('save failed') // keep modal open
+            }
           }}
           onClose={() => { setShowRecipeForm(false); setEditingRecipe(null) }}
         />
@@ -1271,7 +1343,15 @@ export default function NutritionClient() {
           date={assigningSlot.date}
           slot={assigningSlot.slot}
           recipes={recipes}
-          onAssign={(recipeId, portions) => assignMeal({ plan_date: assigningSlot.date, meal_slot: assigningSlot.slot, recipe_id: recipeId, portions })}
+          onAssign={async (recipeId, portions) => {
+            try {
+              await assignMeal({ plan_date: assigningSlot.date, meal_slot: assigningSlot.slot, recipe_id: recipeId, portions })
+              toastSuccess('Meal added')
+              setAssigningSlot(null)
+            } catch {
+              toastError('Failed to add meal')
+            }
+          }}
           onClose={() => setAssigningSlot(null)}
         />
       )}

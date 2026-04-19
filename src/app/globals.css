@@ -258,3 +258,13 @@ input[type="range"]::-webkit-slider-runnable-track {
   to   { opacity: 1; transform: translateY(0); }
 }
 .animate-card-up { animation: card-slide-up 0.5s cubic-bezier(0.22,1,0.36,1) 0.1s both; }
+
+/* ─── Global tap feedback ─────────────────────────────────────────────────── */
+/* All buttons get subtle scale-down on tap for mobile feel */
+button:active:not(:disabled),
+a[role="button"]:active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease;
+}
+/* Override for elements that already have their own transform */
+button.no-tap-scale:active { transform: none; }

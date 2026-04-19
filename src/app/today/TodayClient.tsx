@@ -18,6 +18,7 @@ import WeeklyShareCard from '@/components/WeeklyShareCard'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import StravaSyncButton from '@/components/StravaSyncButton'
 import DarkModeToggle from '@/components/DarkModeToggle'
+import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation'
 
 /** Decode HTML entities like &middot; &ndash; &amp; */
@@ -53,6 +54,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
   const [paceInput, setPaceInput] = useState(existingLog?.pace ?? '')
   const [saving, setSaving] = useState(false)
   const [expanded, setExpanded] = useState(!!existingLog)
+  const [showDiscardWarning, setShowDiscardWarning] = useState(false)
   const [bottomInset, setBottomInset] = useState(0)
 
   // Dirty check — has the user changed anything from defaults?
@@ -63,7 +65,8 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
 
   function handleBackdropClick() {
     if (isDirty) {
-      if (!window.confirm('Discard changes?')) return
+      setShowDiscardWarning(true)
+      return
     }
     onClose()
   }
@@ -263,6 +266,25 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
 
         {/* Sticky actions */}
         <div className="px-6 pb-6 pt-3 border-t border-gray-50">
+          {showDiscardWarning ? (
+            <div className="mb-3 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+              <p className="text-xs font-semibold text-amber-800 mb-2">Discard your changes?</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowDiscardWarning(false)}
+                  className="flex-1 py-2 rounded-lg border border-amber-200 text-xs font-semibold text-amber-700"
+                >
+                  Keep editing
+                </button>
+                <button
+                  onClick={onClose}
+                  className="flex-1 py-2 rounded-lg bg-amber-500 text-white text-xs font-bold"
+                >
+                  Discard
+                </button>
+              </div>
+            </div>
+          ) : null}
           <div className="flex gap-3">
             <button
               onClick={handleBackdropClick}
@@ -479,6 +501,7 @@ export default function TodayClient() {
   const [ceremonyDismissed, setCeremonyDismissed] = useState(false)
 
   const router = useRouter()
+  const { success: toastSuccess, error: toastError, warning: toastWarning } = useToast()
   const viewDate = offsetDate(dateOffset)
   const isToday = dateOffset === 0
 
@@ -537,7 +560,13 @@ export default function TodayClient() {
     effort?: number; km?: number; notes?: string; duration_secs?: number; hr?: number; pace?: string
   }) => {
     if (!plan) return
-    const log = await logSession({ plan_id: plan.id, ...params })
+    let log: Awaited<ReturnType<typeof logSession>>
+    try {
+      log = await logSession({ plan_id: plan.id, ...params })
+    } catch {
+      toastError('Failed to save — check your connection and try again')
+      return
+    }
     hapticLight()
 
     // Check for new personal best — auto-calculate pace if not explicitly provided
@@ -588,9 +617,13 @@ export default function TodayClient() {
   const handleUndo = useCallback(async () => {
     if (!undoInfo) return
     clearTimeout(undoInfo.timer)
-    await undoSession(undoInfo.logId)
+    try {
+      await undoSession(undoInfo.logId)
+    } catch {
+      toastError('Could not undo — session may already be saved')
+    }
     setUndoInfo(null)
-  }, [undoInfo, undoSession])
+  }, [undoInfo, undoSession, toastError])
 
   const loading = planLoading || logsLoading
 
@@ -1145,7 +1178,14 @@ export default function TodayClient() {
                       <p className="text-xs text-emerald-600 mt-0.5">Ready to move to Week {weekN + 1}?</p>
                     </div>
                     <button
-                      onClick={() => advanceWeek().catch(() => {})}
+                      onClick={async () => {
+                        try {
+                          await advanceWeek()
+                          toastSuccess(`Week ${weekN + 1} started!`)
+                        } catch {
+                          toastError('Failed to advance week — try again')
+                        }
+                      }}
                       className="px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold flex-shrink-0"
                     >
                       Next week →

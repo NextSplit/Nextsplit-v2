@@ -11,6 +11,7 @@ import CoachingCard from '@/components/CoachingCard'
 import PreRaceBrief from '@/components/PreRaceBrief'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import { useUnits, fmtDistance, secsPerKmToDisplay } from '@/lib/units'
+import { useToast } from '@/components/Toast'
 import type { PlanWeek, TrainingLog, Race } from '@/types/database'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -610,6 +611,7 @@ function LogResultModal({ race, onClose, onLog }: { race: Race; onClose: () => v
 
 function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: () => void; onDelete: () => void }) {
   const [expanded, setExpanded] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const cfg = PRIORITY_CFG[race.priority]
   const days = daysUntil(race.race_date)
 
@@ -654,11 +656,29 @@ function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: ()
           )}
           {race.notes && <p className="text-xs text-gray-500 mb-3 leading-relaxed">{race.notes}</p>}
           <div className="flex gap-2">
-            {!race.actual_time_secs && <button onClick={onLogResult} className="flex-1 py-2 rounded-xl bg-[#0D9488] text-white text-xs font-semibold">Log result</button>}
-            <button
-              onClick={() => { if (window.confirm(`Delete "${race.name}"?`)) onDelete() }}
-              className="py-2 px-4 rounded-xl border border-red-200 text-red-500 text-xs font-semibold"
-            >Delete</button>
+            {!race.actual_time_secs && (
+              <button onClick={onLogResult}
+                className="flex-1 py-2 rounded-xl bg-[#0D9488] text-white text-xs font-semibold">
+                Log result
+              </button>
+            )}
+            {confirmDelete ? (
+              <div className="flex gap-2 flex-1">
+                <button onClick={() => setConfirmDelete(false)}
+                  className="flex-1 py-2 rounded-xl border border-gray-200 text-gray-500 text-xs font-semibold">
+                  Cancel
+                </button>
+                <button onClick={() => { setConfirmDelete(false); onDelete() }}
+                  className="flex-1 py-2 rounded-xl bg-red-500 text-white text-xs font-bold">
+                  Delete
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmDelete(true)}
+                className="py-2 px-4 rounded-xl border border-red-200 text-red-500 text-xs font-semibold">
+                Delete
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -668,6 +688,7 @@ function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: ()
 
 function RacesSection() {
   const { upcoming, past, loading, addRace, logResult, deleteRace } = useRaces()
+  const { success: toastSuccess, error: toastError } = useToast()
   const [showAdd, setShowAdd] = useState(false)
   const [logRace, setLogRace] = useState<Race | null>(null)
   const [view, setView] = useState<'upcoming'|'past'>('upcoming')
@@ -700,11 +721,25 @@ function RacesSection() {
       )}
 
       {shown.map(r => (
-        <RaceCard key={r.id} race={r} onLogResult={() => setLogRace(r)} onDelete={() => deleteRace(r.id)} />
+        <RaceCard key={r.id} race={r} onLogResult={() => setLogRace(r)}
+          onDelete={async () => {
+            try { await deleteRace(r.id); toastSuccess('Race removed') }
+            catch { toastError('Failed to delete race') }
+          }} />
       ))}
 
-      {showAdd && <AddRaceModal onClose={() => setShowAdd(false)} onAdd={async p => { await addRace(p) }} />}
-      {logRace && <LogResultModal race={logRace} onClose={() => setLogRace(null)} onLog={async secs => { await logResult(logRace.id, secs) }} />}
+      {showAdd && (
+        <AddRaceModal onClose={() => setShowAdd(false)} onAdd={async p => {
+          try { await addRace(p); toastSuccess('Race added!'); setShowAdd(false) }
+          catch { toastError('Failed to add race — check your connection') }
+        }} />
+      )}
+      {logRace && (
+        <LogResultModal race={logRace} onClose={() => setLogRace(null)} onLog={async secs => {
+          try { await logResult(logRace.id, secs); toastSuccess('Result logged!') }
+          catch { toastError('Failed to save result') }
+        }} />
+      )}
     </>
   )
 }
@@ -1168,9 +1203,9 @@ export default function StatsClient() {
           <>
             {!plan ? (
               <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
-                <div className="text-5xl mb-4">📊</div>
-                <h2 className="text-base font-bold text-gray-900 mb-2">No active plan</h2>
-                <p className="text-sm text-gray-400 mb-5">Choose a plan to start tracking your stats.</p>
+                <div className="text-5xl mb-4">🧠</div>
+                <h2 className="text-base font-bold text-gray-900 mb-2">Your coach is ready</h2>
+                <p className="text-sm text-gray-400 mb-5 leading-relaxed">Start a training plan and your AI coach will analyse your sessions, spot patterns, and give you weekly insights.</p>
                 <a href="/onboarding" className="inline-block bg-[#0D9488] text-white px-6 py-3 rounded-xl text-sm font-semibold">Choose a plan →</a>
               </div>
             ) : (

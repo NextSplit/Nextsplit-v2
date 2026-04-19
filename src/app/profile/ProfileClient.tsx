@@ -11,6 +11,7 @@ import { useWellness } from '@/hooks/useWellness'
 import { useMealPlan } from '@/hooks/useMealPlan'
 import { signout } from '@/app/auth/actions'
 import DarkModeToggle from '@/components/DarkModeToggle'
+import { useToast } from '@/components/Toast'
 import { computePersonalBests } from '@/lib/personalBests'
 import { computeStreak, computeConsistency } from '@/lib/streak'
 import {
@@ -1104,6 +1105,8 @@ export default function ProfileClient({
     localStorage.setItem('nextsplit_kit_colour', colour)
   }
 
+  const { success: toastSuccess, error: toastError } = useToast()
+
   async function saveDisplayName() {
     if (!nameInput.trim()) return
     setSavingName(true)
@@ -1112,8 +1115,11 @@ export default function ProfileClient({
       if (user) {
         await (supabase as any).from('profiles').upsert({ id: user.id, display_name: nameInput.trim() })
         setDisplayName(nameInput.trim())
+        toastSuccess('Name updated')
         router.refresh()
       }
+    } catch {
+      toastError('Failed to save name — try again')
     } finally {
       setSavingName(false)
       setEditingName(false)
@@ -1197,24 +1203,29 @@ export default function ProfileClient({
 
   // Data export
   function handleExport() {
-    const exportData = {
-      exported_at: new Date().toISOString(),
-      plan: plan ? { name: plan.name, current_week: plan.current_week, total_weeks: plan.total_weeks } : null,
-      personal_bests: personalBests,
-      rpg: { level: rpgStats.level.level, xp: rpgStats.xp, character: charId },
-      training_logs: allLogs.map(l => ({
-        week: l.week_n, day: l.day_i, session: l.session_i,
-        done: l.done, effort: l.effort, km: l.km, pace: l.pace,
-        logged_at: l.logged_at,
-      })),
+    try {
+      const exportData = {
+        exported_at: new Date().toISOString(),
+        plan: plan ? { name: plan.name, current_week: plan.current_week, total_weeks: plan.total_weeks } : null,
+        personal_bests: personalBests,
+        rpg: { level: rpgStats.level.level, xp: rpgStats.xp, character: charId },
+        training_logs: allLogs.map(l => ({
+          week: l.week_n, day: l.day_i, session: l.session_i,
+          done: l.done, effort: l.effort, km: l.km, pace: l.pace,
+          logged_at: l.logged_at,
+        })),
+      }
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `nextsplit-export-${new Date().toISOString().slice(0, 10)}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+      toastSuccess('Data exported')
+    } catch {
+      toastError('Export failed — try again')
     }
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `nextsplit-export-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(url)
   }
 
   const heroDisplayName = displayName || (RPG_CHARS.find(c => c.id === charId)?.label ?? 'Runner')
