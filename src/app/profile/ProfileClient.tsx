@@ -665,10 +665,27 @@ function TrainingSummary({ logs }: { logs: Record<string, TrainingLog> }) {
 
 // ─── PWA Install Card ──────────────────────────────────────────────────────────
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
+
+// Store the event globally so it survives component mounts
+let _installPrompt: BeforeInstallPromptEvent | null = null
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault()
+    _installPrompt = e as BeforeInstallPromptEvent
+  })
+}
+
 function PWAProfileCard() {
   const [isInstalled, setIsInstalled] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
   const [showIOSSteps, setShowIOSSteps] = useState(false)
+  const [installing, setInstalling] = useState(false)
+  const [installed, setInstalled] = useState(false)
 
   useEffect(() => {
     const standalone = window.matchMedia('(display-mode: standalone)').matches
@@ -677,7 +694,22 @@ function PWAProfileCard() {
     setIsIOS(/iphone|ipad|ipod/i.test(navigator.userAgent))
   }, [])
 
-  if (isInstalled) {
+  async function handleInstall() {
+    if (!_installPrompt) return
+    setInstalling(true)
+    try {
+      await _installPrompt.prompt()
+      const { outcome } = await _installPrompt.userChoice
+      if (outcome === 'accepted') {
+        setInstalled(true)
+        _installPrompt = null
+      }
+    } finally {
+      setInstalling(false)
+    }
+  }
+
+  if (isInstalled || installed) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 p-4">
         <div className="flex items-center gap-3">
@@ -698,18 +730,40 @@ function PWAProfileCard() {
         <span style={{ fontSize: 22 }}>📲</span>
         <div style={{ flex: 1 }}>
           <p className="text-sm font-semibold text-gray-900">Install app</p>
-          <p className="text-xs text-gray-400 mt-0.5">Add NextSplit to your home screen</p>
+          <p className="text-xs text-gray-400 mt-0.5">Add to your home screen</p>
         </div>
         {isIOS ? (
           <button
             onClick={() => setShowIOSSteps(s => !s)}
-            className="py-1.5 px-3 rounded-xl text-xs font-semibold"
-            style={{ background: '#0D9488', color: 'white', border: 'none', cursor: 'pointer' }}
+            style={{ background: '#0D9488', color: 'white', border: 'none', borderRadius: 10, padding: '6px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
           >
             How to
           </button>
-        ) : null}
+        ) : (
+          <button
+            onClick={handleInstall}
+            disabled={installing || !_installPrompt}
+            style={{
+              background: _installPrompt ? '#0D9488' : '#9ca3af',
+              color: 'white',
+              border: 'none',
+              borderRadius: 10,
+              padding: '6px 12px',
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: _installPrompt ? 'pointer' : 'default',
+              opacity: installing ? 0.7 : 1,
+            }}
+          >
+            {installing ? 'Installing…' : _installPrompt ? 'Install' : 'Open in Chrome'}
+          </button>
+        )}
       </div>
+      {!isIOS && !_installPrompt && (
+        <p style={{ marginTop: 8, fontSize: 12, color: '#9ca3af', lineHeight: 1.5 }}>
+          Use Chrome's menu (⋮) → "Add to Home screen" to install.
+        </p>
+      )}
       {showIOSSteps && (
         <div style={{ marginTop: 12, padding: '10px 12px', background: '#f0fdfa', borderRadius: 10, fontSize: 13, color: '#0F766E', lineHeight: 1.6 }}>
           1. Tap the <strong>Share ↑</strong> button in Safari<br />
