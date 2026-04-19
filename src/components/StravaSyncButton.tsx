@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { PlanSession } from '@/types/database'
 
 interface StravaActivity {
@@ -248,12 +248,11 @@ export default function StravaSyncButton({ session, onImported }: Props) {
   const [errorMsg, setErrorMsg] = useState('')
   const [connected, setConnected] = useState(false)
 
-  // Check Strava connection on mount — stored in localStorage after OAuth
-  useState(() => {
+  useEffect(() => {
     try {
       setConnected(localStorage.getItem('nextsplit_strava_connected') === 'true')
     } catch {}
-  })
+  }, [])
 
   // Don't render at all if not connected
   if (!connected) return null

@@ -1012,7 +1012,7 @@ export default function ProfileClient({
   const [seenBadgeIds, setSeenBadgeIds] = useState<string[]>([])
 
   useEffect(() => {
-    setStravaClientId(localStorage.getItem('strava_client_id'))
+    setStravaClientId(process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID ?? null)
     // Load RPG char selection from localStorage
     const saved = localStorage.getItem('nextsplit_rpg_char')
     if (saved) setCharId(saved)
