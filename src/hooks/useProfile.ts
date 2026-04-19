@@ -12,12 +12,17 @@ interface UseProfileReturn {
   refresh: () => void
 }
 
-/**
- * Reads and mutates the current user's profile row.
- *
- * Usage:
- *   const { profile, loading, updateProfile } = useProfile()
- */
+/** Sync profile theme/unit preferences to localStorage so ThemeWrapper can apply them */
+function syncPrefsToStorage(profile: Profile) {
+  try {
+    localStorage.setItem('nextsplit_dark_mode', String(profile.dark_mode ?? false))
+    localStorage.setItem('nextsplit_text_size', profile.text_size ?? 'default')
+    localStorage.setItem('nextsplit_units', profile.units ?? 'km')
+    window.dispatchEvent(new Event('nextsplit-theme-change'))
+    window.dispatchEvent(new Event('nextsplit-units-change'))
+  } catch {}
+}
+
 export function useProfile(): UseProfileReturn {
   const supabase = useSupabase()
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -45,8 +50,13 @@ export function useProfile(): UseProfileReturn {
         .single()
 
       if (!cancelled) {
-        if (fetchErr) setError(fetchErr.message)
-        else setProfile(data as Profile)
+        if (fetchErr) {
+          setError(fetchErr.message)
+        } else {
+          const p = data as Profile
+          setProfile(p)
+          syncPrefsToStorage(p)
+        }
         setLoading(false)
       }
     }

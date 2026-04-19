@@ -12,6 +12,7 @@ interface UseActivePlanReturn {
   error: string | null
   advanceWeek: () => Promise<void>
   updatePlan: (updates: Partial<Pick<UserPlan, 'name' | 'goal' | 'race_date' | 'status' | 'meta'>>) => Promise<void>
+  archivePlan: () => Promise<void>
   refresh: () => void
 }
 
@@ -92,5 +93,20 @@ export function useActivePlan(): UseActivePlanReturn {
     refresh()
   }, [supabase, plan, refresh])
 
-  return { plan, weeks, currentWeek, loading, error, advanceWeek, updatePlan, refresh }
+  const archivePlan = useCallback(async () => {
+    if (!plan) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: upErr } = await (supabase as any)
+      .from('user_plans')
+      .update({
+        status: 'archived',
+        archived_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', plan.id)
+    if (upErr) throw new Error(upErr.message)
+    refresh()
+  }, [supabase, plan, refresh])
+
+  return { plan, weeks, currentWeek, loading, error, advanceWeek, updatePlan, archivePlan, refresh }
 }

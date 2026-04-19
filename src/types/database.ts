@@ -15,6 +15,11 @@ export interface Database {
           experience: 'beginner' | 'intermediate' | 'advanced' | null
           injury_notes: string | null
           target_weight: number | null
+          units: 'km' | 'miles'
+          dark_mode: boolean
+          text_size: 'default' | 'large' | 'xl'
+          notifications_enabled: boolean
+          notification_time: string | null
           created_at: string
           updated_at: string
         }
@@ -60,6 +65,8 @@ export interface Database {
           created_at: string
           updated_at: string
           deleted_at: string | null
+          archived_at: string | null
+          completed_at: string | null
         }
         Insert: Omit<Database['public']['Tables']['user_plans']['Row'], 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Database['public']['Tables']['user_plans']['Insert']>
