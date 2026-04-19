@@ -1,5 +1,5 @@
 # NextSplit v2 — Dev Session Handoff
-_Last updated: end of session 17 (deep audit + security fixes)_
+_Last updated: end of session 18 — all audit items closed_
 
 ## START OF SESSION CHECKLIST
 1. Reuse GitHub token from conversation history
@@ -16,71 +16,100 @@ _Last updated: end of session 17 (deep audit + security fixes)_
 
 ## Git log (latest first)
 ```
-10ef953  Security: move 3 client-side Anthropic calls to server routes; fix VAPID; race-date warning
+ad5d579  Audit closes: gym no-exercises error handling, AI free tier limit 0→3, gym celebration
+c8da7d9  Audit fixes: gym error handling + celebration, HeroCard XP skeleton, race date validation
+10ef953  Security: 3 client-side Anthropic calls → server routes; VAPID fix; race-date warning
 9d6dcfb  UX audit: auth/onboarding brand alignment, plan browser teal, FocusMode, WellnessCheckIn
 7f30d60  Quality pass: useToast everywhere, CoachingCard teal, inline confirms, Fuel empty states
-deabb41  docs: update HANDOFF-2 after Phase 10 complete
-23248ac  Phase 10: upgraded ShareSessionCard, WeeklyShareCard, public profile, middleware
 ```
 
-## Phases complete
+## Phases + audit status
 - Phase 0–9  ✅ Foundation, AI, Strava, PWA
 - Phase UI-1–5 ✅ Full UI overhaul, animations, motion
 - Phase 10  ✅ Social sharing, public profile /u/[name]
 - Quality   ✅ Toast system, empty states, inline confirms, tap feedback
 - UX Audit  ✅ Brand alignment, onboarding, auth pages, FocusMode, dismiss fixes
-- Security  ✅ API key exposure fixed, VAPID key fix, race-date logic fix
+- Security  ✅ API key exposure fixed, VAPID, race-date logic
+- Audit 2   ✅ Gym error handling, XP skeleton, all audit items CLOSED
 
 ---
 
-## Audit findings fixed in session 17
+## ✅ ALL KNOWN AUDIT ITEMS CLOSED
 
-### 🔴 Critical — fixed
-- **3 client-side Anthropic API calls** → moved to server routes with auth + rate limiting:
-  - `NutritionClient` fuel coach → `/api/ai/fuel`
-  - `AdaptiveSuggestions` → `/api/ai/suggestions`
-  - `PreRaceBrief` → `/api/ai/pre-race-brief`
-- **VAPID key env var mismatch** → server routes now use `NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? VAPID_PUBLIC_KEY` (push notifications should now work)
+### What was fixed across the audit sessions
 
-### 🟡 Logic fixes
-- **Plan activation race date** → when race is sooner than plan length, shows amber warning toast on Today tab instead of silently starting from today with no explanation
-- **PreRaceBrief colour** → "Taper notes" section changed from purple to teal (colour system)
+**Security (critical)**
+- 3 client-side Anthropic API calls → server routes with auth + rate limiting
+  - `/api/ai/fuel` — nutrition tip
+  - `/api/ai/suggestions` — adaptive plan suggestions
+  - `/api/ai/pre-race-brief` — pre-race brief
+- VAPID public key env var mismatch fixed (push notifications now work)
 
-### 🟠 Remaining known issues (lower priority)
-1. **`AI_RATE_LIMITS.free = 0`** in features.ts — when PREMIUM_ENFORCED is turned on, free users get zero AI calls with no upgrade prompt. Needs a ProGate wrapper on AI features before enabling enforcement.
-2. **`useAllTrainingLogs` no loading state** — Character tab HeroCard can briefly show 0 XP on first load. Minor flash, low priority.
-3. **Plan activate doesn't validate race date is in the future** — a user could set a race date in the past. Server-side guard would be clean.
+**Logic bugs**
+- Race date server validation — rejects past dates with clear error
+- raceTooSoon flag handled in all 3 onboarding flows (predetermined, manual, lifestyle)
+- AI free tier limit was 0 → now 3/day (enforcement-safe)
+- Gym session save unguarded → try/catch + toast + hapticSuccess()
+- Gym "no exercises" fallback also unguarded → fixed
+
+**UX fixes**
+- HeroCard XP skeleton while useAllTrainingLogs loads
+- Gym completion: 2.5s celebration screen before returning to Today
+- CoachingCard: violet→teal, smart error messages, three-dot loading
+- FocusMode logged state: prominent "Done — back to Today" button
+- WellnessCheckIn dismiss: proper `dismissed` boolean (no more state hack)
+- All window.confirm/alert replaced with inline confirm patterns
+- PWAProfileCard: inline styles → Tailwind
+- PreRaceBrief taper colour: purple → teal
+
+**Brand alignment**
+- Auth pages (login/signup): dark brand header matching onboarding
+- Plan browser: teal throughout, coach notes promoted, teal CTAs
+- Onboarding AI bespoke: violet→teal tag colour
 
 ---
 
 ## EXACT NEXT STEPS
 
-### Option A — Phase 11 (Stripe)
-Prerequisite SQL (run in Supabase SQL editor first):
+### Phase 11 — Stripe + Pro (backlogged, ready when wanted)
+
+**Prerequisite: run this SQL in Supabase dashboard first:**
 ```sql
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_pro boolean DEFAULT false;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS pro_expires_at timestamptz;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS stripe_customer_id text;
 ```
-Then update `src/types/database.ts` Profile type. Then build checkout + webhook routes.
+Then add those 3 fields to the Profile type in `src/types/database.ts`.
 
-### Option B — Continue quality/feature work
-- Validate race_date is in the future on plan activation
-- Add ProGate wrapper to AI features so rate limit enforcement can be turned on safely
-- HeroCard XP loading state (brief 0 XP flash)
-- Test the full manual onboarding and lifestyle onboarding flows end to end
+**Env vars needed in Vercel:**
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PRICE_MONTHLY` (price ID from Stripe dashboard)
+- `STRIPE_PRICE_ANNUAL`
+- `STRIPE_WEBHOOK_SECRET`
 
+**Files to create:**
+- `src/app/api/stripe/checkout/route.ts` — POST → create Checkout session → return URL
+- `src/app/api/stripe/webhook/route.ts` — handle `checkout.session.completed` + `customer.subscription.deleted`
+
+**Files to update:**
+- `src/components/ProGate.tsx` — check `profiles.is_pro` server-side
+- `src/app/profile/ProfileClient.tsx` — add Pro upgrade card in Account section
+
+**Pricing:** £7.99/mo or £59/yr. Free tier keeps 3 AI calls/day.
+**Gate behind Pro:** unlimited AI (currently 3 free → 25 pro), advanced analytics.
+
+### Phase 12 — Coach tier (after Phase 11)
 ---
 
-## All API routes
+## All API routes (current)
 ```
-POST /api/ai/coach          — Coaching card (auth + rate limited)
-POST /api/ai/fuel           — Fuel tab nutrition tip (auth + rate limited) [NEW]
-POST /api/ai/suggestions    — Adaptive plan suggestions (auth + rate limited) [NEW]
-POST /api/ai/pre-race-brief — Pre-race brief 7 days out (auth + rate limited) [NEW]
-POST /api/ai/recommend      — AI onboarding plan recommendation
-POST /api/plans/activate    — Activate a plan template
-POST /api/plans/reset       — Reset a plan to week 1
+POST /api/ai/coach          — Coaching card (server, auth + rate limited)
+POST /api/ai/fuel           — Fuel tip (server, auth + rate limited)
+POST /api/ai/suggestions    — Adaptive suggestions (server, auth + rate limited)
+POST /api/ai/pre-race-brief — Pre-race brief (server, auth + rate limited)
+POST /api/ai/recommend      — AI onboarding recommendation
+POST /api/plans/activate    — Activate a plan (validates race date, returns raceTooSoon)
+POST /api/plans/reset       — Reset plan to week 1
 POST /api/strava/sync       — Sync Strava activities
 POST /api/strava/disconnect — Remove Strava connection
 POST /api/notifications/subscribe — Register push subscription
@@ -89,22 +118,26 @@ GET  /api/cron/notify       — Daily training reminder cron
 ```
 
 ## Key files
-- AI routes:        src/app/api/ai/* (all server-side, all auth+rate-limited)
+- AI routes:        src/app/api/ai/* (all server-side, auth + rate limited)
+- Rate limits:      src/lib/features.ts (free=3, pro=25, coach=50 per day)
 - Today tab:        src/app/today/TodayClient.tsx
 - Coach tab:        src/app/dashboard/StatsClient.tsx
 - Character tab:    src/app/profile/ProfileClient.tsx
 - Fuel tab:         src/app/nutrition/NutritionClient.tsx
 - Plan tab:         src/app/plan/PlanClient.tsx
-- Features/limits:  src/lib/features.ts
-- Rate limiter:     src/lib/aiRateLimit.ts
-- Toast:            src/components/Toast.tsx
+- Gym live:         src/app/gym/live/GymLiveClient.tsx
+- ProGate:          src/components/ProGate.tsx
+- Toast:            src/components/Toast.tsx (useToast everywhere)
+- Global CSS:       src/app/globals.css (keyframes + tap feedback)
 
 ## Architecture
 - Next.js 16, Supabase, all tabs client components
 - All AI calls: server-side only, auth checked, rate limited via ai_usage table
 - Colour system: teal=brand, amber=warnings, emerald=success, red=danger only
 - No window.confirm/alert — all inline confirmation patterns
-- Premium: NEXT_PUBLIC_PREMIUM_ENFORCED=false (all open until Stripe is wired)
+- Haptics: hapticLight() on log, hapticSuccess() on gym/PB
+- Premium: NEXT_PUBLIC_PREMIUM_ENFORCED=false (all features open until Stripe)
+- When enforcing: free=3 AI/day, pro=25, coach=50
 
 ## Build + deploy
 ```bash
