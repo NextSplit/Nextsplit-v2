@@ -176,9 +176,9 @@
           "times": [],
           "sessions": [
             {
-              "c": "gym-b",
-              "n": "Strength B — Upper body",
-              "det": "Pull-ups 2x12 · DB row 2x12 · Push-ups 2x12 · Face pulls 2x12 · Core circuit 2x12s — Your first upper body session. Focus on form, not load. Upper body and core strength directly improves your running posture and arm drive efficiency.",
+              "c": "gym-a",
+              "n": "Strength A — Lower body",
+              "det": "Goblet squat 2x12 · Romanian deadlift 2x12 · Reverse lunge 2x12 · Calf raise 3x15 · Core circuit 2x30s — Your first lower body strength session. Keep loads light — this week is about learning the movements. Lower body strength is the foundation of running economy.",
               "km": 0
             }
           ],

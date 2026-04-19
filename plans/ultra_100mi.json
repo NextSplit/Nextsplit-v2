@@ -179,9 +179,9 @@
           "times": [],
           "sessions": [
             {
-              "c": "gym-b",
-              "n": "Strength B — Upper body",
-              "det": "Pull-ups 3x12 · DB row 3x12 · Overhead press 3x12 · Face pulls 3x12 · Core circuit 3x12s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "c": "gym-a",
+              "n": "Strength A — Lower body",
+              "det": "Goblet squat 2x12 · Romanian deadlift 2x12 · Reverse lunge 2x12 · Calf raise 3x15 · Core circuit 2x30s — Your first lower body strength session. Keep loads light — this week is about learning the movements. Lower body strength is the foundation of running economy.",
               "km": 0
             }
           ],

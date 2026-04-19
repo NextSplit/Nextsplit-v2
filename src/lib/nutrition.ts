@@ -10,7 +10,10 @@ export function getDayType(sessions: Array<{ c: string; km?: number }>): DayType
   const totalKm = sessions.reduce((a, s) => a + (s.km || 0), 0)
   if (codes.some(c => c === 'run-long') || totalKm >= 16) return 'long'
   if (codes.some(c => c === 'run-tempo' || c === 'run-int' || c === 'run-mp')) return 'quality'
-  return 'easy'
+  if (codes.some(c => c.startsWith('run-'))) return 'easy'
+  // Gym-only day: treat as easy (moderate calorie/carb needs for recovery and performance)
+  if (codes.some(c => c.startsWith('gym'))) return 'easy'
+  return 'rest'
 }
 
 export const DAY_TYPE_CONFIG: Record<DayType, {

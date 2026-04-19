@@ -51,10 +51,12 @@ export function usePlanHistory() {
           .eq('done', true)
 
         const logArr = (logs ?? []) as Pick<TrainingLog, 'done' | 'km' | 'week_n' | 'day_i' | 'session_i'>[]
-        const totalKm = logArr.reduce((s, l) => s + (l.km ?? 0), 0)
-        const loggedSessions = logArr.length
-        const totalSessions = weeks.reduce((s, w) =>
-          s + w.days.reduce((ds, d) => ds + d.sessions.filter(s => s.c !== 'rest').length, 0), 0)
+        // Exclude ad-hoc sessions (session_i === 99) from planned stats
+        const plannedLogs = logArr.filter(l => l.session_i !== 99)
+        const totalKm = plannedLogs.reduce((sum, l) => sum + (l.km ?? 0), 0)
+        const loggedSessions = plannedLogs.length
+        const totalSessions = weeks.reduce((sum, w) =>
+          sum + w.days.reduce((ds, d) => ds + d.sessions.filter(sess => sess.c !== 'rest').length, 0), 0)
 
         summaries.push({
           plan,
