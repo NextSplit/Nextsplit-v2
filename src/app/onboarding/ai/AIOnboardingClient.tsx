@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import OnboardingProgress from '@/components/OnboardingProgress'
 
 const GOALS = [
   { id: '5k',      label: '5K',             emoji: '🏃', desc: 'Run your first or faster 5K' },
@@ -40,6 +41,24 @@ const SLUG_LABELS: Record<string, string> = {
 
 type Step = 'goal' | 'level' | 'race_date' | 'name' | 'analysing' | 'recommendation' | 'activating'
 
+const STEP_INDEX: Record<Step, number> = {
+  goal: 1, level: 2, race_date: 3, name: 4, analysing: 4, recommendation: 4, activating: 4
+}
+
+function OptionButton({ onClick, emoji, title, desc }: { onClick: () => void; emoji?: string; title: string; desc: string }) {
+  return (
+    <button onClick={onClick}
+      className="w-full rounded-2xl border border-white/10 hover:border-white/25 p-4 text-left transition-all active:scale-[0.98] flex items-center gap-4"
+      style={{ background: 'rgba(255,255,255,0.04)' }}>
+      {emoji && <span className="text-2xl w-8 text-center flex-shrink-0">{emoji}</span>}
+      <div>
+        <div className="text-sm font-bold text-white">{title}</div>
+        <div className="text-xs text-zinc-400 mt-0.5 leading-snug">{desc}</div>
+      </div>
+    </button>
+  )
+}
+
 export default function AIOnboardingClient() {
   const router = useRouter()
   const [step, setStep] = useState<Step>('goal')
@@ -55,12 +74,19 @@ export default function AIOnboardingClient() {
   const selectedLevel = LEVELS.find(l => l.id === level)
   const today = new Date().toISOString().split('T')[0]
 
+  function handleBack() {
+    if (step === 'level') setStep('goal')
+    else if (step === 'race_date') setStep('level')
+    else if (step === 'name') setStep('race_date')
+    else if (step === 'recommendation') setStep('name')
+    else router.push('/onboarding')
+  }
+
   async function analyse() {
     setStep('analysing')
     setError('')
     const slug = SLUG_MAP[`${goal}_${level}`] ?? 'marathon_novice'
     setChosenSlug(slug)
-
     try {
       const res = await fetch('/api/ai/recommend', {
         method: 'POST',
@@ -71,13 +97,11 @@ export default function AIOnboardingClient() {
       if (!res.ok || !data.recommendation) throw new Error(data.error || 'Failed')
       setRecommendation(data.recommendation)
       if (!planName) setPlanName(data.suggestedName || `${selectedGoal?.label} ${new Date().getFullYear()}`)
-      setStep('recommendation')
     } catch {
-      // Fall back to recommendation step with generic message
       setRecommendation(`Based on your ${selectedLevel?.label.toLowerCase()} experience and ${selectedGoal?.label} goal, I've selected the **${SLUG_LABELS[slug]}** plan. This gives you the right structure and volume to hit your target.`)
       if (!planName) setPlanName(`${selectedGoal?.label} ${new Date().getFullYear()}`)
-      setStep('recommendation')
     }
+    setStep('recommendation')
   }
 
   async function activate() {
@@ -87,12 +111,7 @@ export default function AIOnboardingClient() {
       const res = await fetch('/api/plans/activate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slug: chosenSlug,
-          name: planName.trim() || `${selectedGoal?.label} Plan`,
-          race_date: raceDate || undefined,
-          plan_type: 'ai_bespoke',
-        }),
+        body: JSON.stringify({ slug: chosenSlug, name: planName.trim() || `${selectedGoal?.label} Plan`, race_date: raceDate || undefined, plan_type: 'ai_bespoke' }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to create plan')
@@ -103,148 +122,136 @@ export default function AIOnboardingClient() {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-[#1a1a1a] flex flex-col px-6 pt-16 pb-10">
-      <button
-        onClick={() => {
-          if (step === 'level') setStep('goal')
-          else if (step === 'race_date') setStep('level')
-          else if (step === 'name') setStep('race_date')
-          else if (step === 'recommendation') setStep('name')
-          else router.push('/onboarding')
-        }}
-        className="text-[#888] text-sm mb-8 self-start"
-      >
-        ← Back
-      </button>
+  const showProgress = !['analysing', 'activating'].includes(step)
 
-      {/* Goal */}
+  return (
+    <div className="min-h-screen flex flex-col px-5 pt-14 pb-10"
+      style={{ background: 'linear-gradient(160deg, #0f172a 0%, #18181b 60%, #0f172a 100%)' }}>
+
+      {showProgress && (
+        <OnboardingProgress current={STEP_INDEX[step]} total={4} onBack={handleBack} />
+      )}
+
       {step === 'goal' && (
         <div>
-          <div className="text-3xl mb-2">🤖</div>
-          <h1 className="text-2xl font-bold text-white mb-1">What&apos;s your goal?</h1>
-          <p className="text-[#888] text-sm mb-8">We&apos;ll build the right plan around it.</p>
+          <div className="text-3xl mb-3">🤖</div>
+          <h1 className="text-2xl font-black text-white mb-1">What&apos;s your goal?</h1>
+          <p className="text-zinc-400 text-sm mb-7">We&apos;ll build the right plan around it.</p>
           <div className="space-y-2.5">
             {GOALS.map(g => (
-              <button key={g.id} onClick={() => { setGoal(g.id); setStep('level') }}
-                className="w-full bg-white/10 hover:bg-white/15 rounded-2xl p-4 text-left transition-colors flex items-center gap-4">
-                <span className="text-2xl">{g.emoji}</span>
-                <div>
-                  <div className="text-sm font-semibold text-white">{g.label}</div>
-                  <div className="text-xs text-[#888] mt-0.5">{g.desc}</div>
-                </div>
-              </button>
+              <OptionButton key={g.id} emoji={g.emoji} title={g.label} desc={g.desc}
+                onClick={() => { setGoal(g.id); setStep('level') }} />
             ))}
           </div>
         </div>
       )}
 
-      {/* Level */}
       {step === 'level' && (
         <div>
-          <div className="text-sm text-[#0D9488] font-semibold mb-6">{selectedGoal?.label} ✓</div>
-          <h1 className="text-2xl font-bold text-white mb-1">Your experience level?</h1>
-          <p className="text-[#888] text-sm mb-8">We&apos;ll calibrate volume and intensity.</p>
+          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-teal-400">{selectedGoal?.label} ✓</span>
+          </div>
+          <h1 className="text-2xl font-black text-white mb-1">Your experience level?</h1>
+          <p className="text-zinc-400 text-sm mb-7">We&apos;ll calibrate volume and intensity.</p>
           <div className="space-y-2.5">
             {LEVELS.map(l => (
-              <button key={l.id} onClick={() => { setLevel(l.id); setStep('race_date') }}
-                className="w-full bg-white/10 hover:bg-white/15 rounded-2xl p-4 text-left transition-colors">
-                <div className="text-sm font-semibold text-white">{l.label}</div>
-                <div className="text-xs text-[#888] mt-0.5">{l.desc}</div>
-              </button>
+              <OptionButton key={l.id} title={l.label} desc={l.desc}
+                onClick={() => { setLevel(l.id); setStep('race_date') }} />
             ))}
           </div>
         </div>
       )}
 
-      {/* Race date */}
       {step === 'race_date' && (
         <div>
-          <div className="text-sm text-[#0D9488] font-semibold mb-6">{selectedGoal?.label} · {selectedLevel?.label} ✓</div>
-          <h1 className="text-2xl font-bold text-white mb-1">Race date?</h1>
-          <p className="text-[#888] text-sm mb-8">Skip if you don&apos;t have one — you can add it later.</p>
+          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-teal-400">{selectedGoal?.label} · {selectedLevel?.label} ✓</span>
+          </div>
+          <h1 className="text-2xl font-black text-white mb-1">Race date?</h1>
+          <p className="text-zinc-400 text-sm mb-7">Skip if you don&apos;t have one — add it later.</p>
           <input type="date" value={raceDate} onChange={e => setRaceDate(e.target.value)} min={today}
-            className="w-full bg-white/10 text-white border border-white/20 rounded-2xl px-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] mb-4" />
+            className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500 mb-4"
+            style={{ background: 'rgba(255,255,255,0.07)' }} />
           <button onClick={() => setStep('name')}
-            className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-semibold">
+            className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
             {raceDate ? 'Continue →' : 'Skip →'}
           </button>
         </div>
       )}
 
-      {/* Name */}
       {step === 'name' && (
         <div>
-          <div className="text-sm text-[#0D9488] font-semibold mb-6">
-            {selectedGoal?.label} · {selectedLevel?.label}{raceDate ? ' · ' + new Date(raceDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''} ✓
+          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-teal-400">
+              {selectedGoal?.label} · {selectedLevel?.label}{raceDate ? ' · ' + new Date(raceDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''} ✓
+            </span>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">Name your plan</h1>
-          <p className="text-[#888] text-sm mb-8">Something to remember it by.</p>
+          <h1 className="text-2xl font-black text-white mb-1">Name your plan</h1>
+          <p className="text-zinc-400 text-sm mb-7">Something to remember it by.</p>
           <input value={planName} onChange={e => setPlanName(e.target.value)}
             placeholder={`${selectedGoal?.label} ${new Date().getFullYear()}`}
-            className="w-full bg-white/10 text-white border border-white/20 rounded-2xl px-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] mb-4 placeholder:text-white/30" />
+            className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-teal-500 mb-4"
+            style={{ background: 'rgba(255,255,255,0.07)' }} />
           <button onClick={analyse}
-            className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-semibold">
+            className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
             Analyse my profile →
           </button>
         </div>
       )}
 
-      {/* Analysing */}
       {step === 'analysing' && (
-        <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className="text-5xl mb-6 animate-pulse">🤖</div>
+        <div className="flex-1 flex flex-col items-center justify-center text-center py-20">
+          <div className="text-6xl mb-6 animate-pulse">🤖</div>
           <p className="text-white font-bold text-lg mb-2">Analysing your profile…</p>
-          <p className="text-[#888] text-sm">Finding the perfect plan structure for you.</p>
+          <p className="text-zinc-400 text-sm">Finding the perfect plan structure for you.</p>
+          <div className="flex gap-1.5 mt-8">
+            {[0,1,2].map(i => (
+              <div key={i} className="w-2 h-2 rounded-full bg-teal-500 animate-bounce"
+                style={{ animationDelay: `${i * 0.15}s` }} />
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Recommendation */}
       {step === 'recommendation' && (
         <div>
-          <div className="text-sm text-[#0D9488] font-semibold mb-6">Your AI recommendation</div>
-          <div className="text-2xl mb-1">🤖</div>
-          <h1 className="text-xl font-bold text-white mb-1">{SLUG_LABELS[chosenSlug]}</h1>
-          <p className="text-[#555] text-xs mb-4 font-medium uppercase tracking-wide">Recommended plan</p>
-
-          {/* Coach message */}
-          <div className="bg-white/8 rounded-2xl p-4 mb-6 border border-white/10">
-            <p className="text-[#ccc] text-sm leading-relaxed">
+          <div className="text-xs font-bold text-teal-400 uppercase tracking-wider mb-5">Your AI recommendation</div>
+          <div className="rounded-2xl border border-white/10 p-5 mb-5"
+            style={{ background: 'rgba(255,255,255,0.04)' }}>
+            <div className="text-2xl mb-2">🤖</div>
+            <h2 className="text-xl font-black text-white mb-0.5">{SLUG_LABELS[chosenSlug]}</h2>
+            <p className="text-zinc-500 text-xs uppercase tracking-wide font-semibold mb-4">Recommended plan</p>
+            <p className="text-zinc-300 text-sm leading-relaxed">
               {recommendation.split('**').map((part, i) =>
-                i % 2 === 1
-                  ? <strong key={i} className="text-white">{part}</strong>
-                  : part
+                i % 2 === 1 ? <strong key={i} className="text-white">{part}</strong> : part
               )}
             </p>
           </div>
-
-          {/* Plan name edit */}
           <div className="mb-5">
-            <label className="text-xs font-semibold text-[#888] block mb-1.5">Plan name</label>
+            <label className="text-xs font-bold text-zinc-400 block mb-2">Plan name</label>
             <input value={planName} onChange={e => setPlanName(e.target.value)}
-              className="w-full bg-white/10 text-white border border-white/20 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+              className="w-full rounded-xl border border-white/20 px-3 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              style={{ background: 'rgba(255,255,255,0.07)' }} />
           </div>
-
           {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
-
           <div className="space-y-2.5">
             <button onClick={activate}
-              className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-semibold">
+              className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
               Start this plan →
             </button>
             <button onClick={() => setStep('goal')}
-              className="w-full text-[#888] py-3 text-xs font-medium">
+              className="w-full text-zinc-500 py-3 text-xs font-medium">
               Choose differently
             </button>
           </div>
         </div>
       )}
 
-      {/* Activating */}
       {step === 'activating' && (
-        <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className="text-5xl mb-6 animate-bounce">🏃</div>
+        <div className="flex-1 flex flex-col items-center justify-center text-center py-20">
+          <div className="text-6xl mb-6 animate-bounce">🏃</div>
           <p className="text-white font-bold text-lg">Setting up your plan…</p>
+          <p className="text-zinc-400 text-sm mt-1">Almost there!</p>
         </div>
       )}
     </div>
