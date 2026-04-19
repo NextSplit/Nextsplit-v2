@@ -80,7 +80,18 @@ export default function NutritionClient() {
   const [showRecipeForm, setShowRecipeForm] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
   const [assigningSlot, setAssigningSlot] = useState<{ date: string; slot: MealSlotId } | null>(null)
-  const [tdee, setTdee] = useState<{ height: number; age: number; sex: 'male' | 'female' } | null>(null)
+  const [tdee, setTdee] = useState<{ height: number; age: number; sex: 'male' | 'female' } | null>(() => {
+    try {
+      const stored = localStorage.getItem('nextsplit_tdee')
+      return stored ? JSON.parse(stored) : null
+    } catch { return null }
+  })
+
+  function saveTdee(h: number, a: number, s: 'male' | 'female') {
+    const data = { height: h, age: a, sex: s }
+    setTdee(data)
+    try { localStorage.setItem('nextsplit_tdee', JSON.stringify(data)) } catch {}
+  }
   const { logs: activityLogs, extraCaloriesToday } = useActivityLog()
 
   function getMacroTargets(date: string) {
@@ -96,7 +107,7 @@ export default function NutritionClient() {
       profile.weight_kg,
       dayType,
       tdee?.height,
-      tdee?.age,
+      tdee?.age ?? profile?.age ?? undefined,
       tdee?.sex
     )
     const extraKcal = date === new Date().toISOString().slice(0, 10)
@@ -228,7 +239,7 @@ export default function NutritionClient() {
             </div>
 
             {/* TDEE profile card */}
-            <TDEESetupCard onSave={(h, a, s) => setTdee({ height: h, age: a, sex: s })} />
+            <TDEESetupCard onSave={saveTdee} />
 
             {/* Supplement tracker */}
             <SupplementTracker />

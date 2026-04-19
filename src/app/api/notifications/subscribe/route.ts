@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any)
+    const { error } = await db(supabase)
       .from('push_subscriptions')
       .upsert(
         { user_id: user.id, endpoint, p256dh, auth, updated_at: new Date().toISOString() },
@@ -35,7 +36,7 @@ export async function DELETE() {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any).from('push_subscriptions').delete().eq('user_id', user.id)
+    await db(supabase).from('push_subscriptions').delete().eq('user_id', user.id)
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('[push/unsubscribe]', err)

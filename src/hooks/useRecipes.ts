@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { Recipe, RecipeIngredient } from '@/types/database'
 import { STARTER_RECIPES } from '@/lib/starterRecipes'
+import { db } from '@/lib/supabase/db'
 
 export interface CreateRecipeParams {
   name: string
@@ -32,7 +33,7 @@ export function useRecipes() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { if (!cancelled) setLoading(false); return }
 
-      const { data, error: fetchErr } = await (supabase as any)
+      const { data, error: fetchErr } = await db(supabase)
         .from('recipes')
         .select('*')
         .eq('user_id', user.id)
@@ -51,7 +52,7 @@ export function useRecipes() {
         if (existing.length === 0) {
           const seeded: Recipe[] = []
           for (const r of STARTER_RECIPES) {
-            const { data: inserted } = await (supabase as any)
+            const { data: inserted } = await db(supabase)
               .from('recipes')
               .insert({ user_id: user.id, ...r })
               .select()
@@ -75,7 +76,7 @@ export function useRecipes() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
 
-    const { data, error: err } = await (supabase as any)
+    const { data, error: err } = await db(supabase)
       .from('recipes')
       .insert({ user_id: user.id, ...params })
       .select()
@@ -87,7 +88,7 @@ export function useRecipes() {
   }, [supabase, refresh])
 
   const updateRecipe = useCallback(async (id: string, params: Partial<CreateRecipeParams>): Promise<void> => {
-    const { error: err } = await (supabase as any)
+    const { error: err } = await db(supabase)
       .from('recipes')
       .update(params)
       .eq('id', id)
@@ -97,7 +98,7 @@ export function useRecipes() {
   }, [supabase, refresh])
 
   const deleteRecipe = useCallback(async (id: string): Promise<void> => {
-    const { error: err } = await (supabase as any)
+    const { error: err } = await db(supabase)
       .from('recipes')
       .delete()
       .eq('id', id)
@@ -110,7 +111,7 @@ export function useRecipes() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
 
-    const { error: err } = await (supabase as any)
+    const { error: err } = await db(supabase)
       .from('recipes')
       .insert({
         user_id: user.id,

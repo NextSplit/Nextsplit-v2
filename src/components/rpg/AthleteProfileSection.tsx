@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useProfile } from '@/hooks/useProfile'
 import { useSupabase } from '@/hooks/useSupabase'
 import { useToast } from '@/components/Toast'
+import { db } from '@/lib/supabase/db'
 
 function AthleteProfileSection() {
   const supabase = useSupabase()
@@ -26,7 +27,7 @@ function AthleteProfileSection() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      await (supabase as any).from('profiles').upsert({
+      await db(supabase).from('profiles').upsert({
         id: user.id,
         weight_kg: weightKg ? Number(weightKg) : null,
         injury_notes: injuryNotes || null,

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { WellnessLog } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 interface LogWellnessParams {
   log_date: string        // YYYY-MM-DD
@@ -58,7 +59,7 @@ export function useWellness(): UseWellnessReturn {
       const since = new Date()
       since.setDate(since.getDate() - 28)
 
-      const { data, error: fetchErr } = await (supabase as any)
+      const { data, error: fetchErr } = await db(supabase)
         .from('wellness_logs')
         .select('*')
         .eq('user_id', user.id)
@@ -99,7 +100,7 @@ export function useWellness(): UseWellnessReturn {
       notes: params.notes ?? null,
     }
 
-    const { data, error: upsertErr } = await (supabase as any)
+    const { data, error: upsertErr } = await db(supabase)
       .from('wellness_logs')
       .upsert(row, { onConflict: 'user_id,log_date,log_type' })
       .select()

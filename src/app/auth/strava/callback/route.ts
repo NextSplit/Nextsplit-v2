@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -43,7 +44,7 @@ export async function GET(request: Request) {
     if (!user) return NextResponse.redirect(`${origin}/auth/login`)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any).from('strava_connections').upsert({
+    await db(supabase).from('strava_connections').upsert({
       user_id: user.id,
       athlete_id: tokens.athlete?.id,
       access_token: tokens.access_token,

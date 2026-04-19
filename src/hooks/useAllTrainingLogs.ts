@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
+import { db } from '@/lib/supabase/db'
 import type { TrainingLog } from '@/types/database'
 
 /**
@@ -26,7 +27,7 @@ export function useAllTrainingLogs() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { if (!cancelled) setLoading(false); return }
 
-      const { data, error: fetchErr } = await (supabase as any)
+      const { data, error: fetchErr } = await db(supabase)
         .from('training_logs')
         .select('*')
         .eq('user_id', user.id)

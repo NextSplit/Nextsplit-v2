@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { TrainingLog } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 interface LogSessionParams {
   plan_id: string
@@ -53,7 +54,7 @@ export function useTrainingLog(planId: string | null): UseTrainingLogReturn {
     setLoading(true)
 
     async function fetchLogs() {
-      const { data, error: fetchErr } = await (supabase as any)
+      const { data, error: fetchErr } = await db(supabase)
         .from('training_logs')
         .select('*')
         .eq('plan_id', planId!)
@@ -100,7 +101,7 @@ export function useTrainingLog(planId: string | null): UseTrainingLogReturn {
     }
 
     // Upsert — idempotent on (user_id, plan_id, week_n, day_i, session_i)
-    const { data, error: upsertErr } = await (supabase as any)
+    const { data, error: upsertErr } = await db(supabase)
       .from('training_logs')
       .upsert(row, { onConflict: 'user_id,plan_id,week_n,day_i,session_i' })
       .select()
@@ -112,7 +113,7 @@ export function useTrainingLog(planId: string | null): UseTrainingLogReturn {
   }, [supabase, refresh])
 
   const undoSession = useCallback(async (logId: string) => {
-    const { error: delErr } = await (supabase as any)
+    const { error: delErr } = await db(supabase)
       .from('training_logs')
       .delete()
       .eq('id', logId)

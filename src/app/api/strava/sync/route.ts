@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 async function refreshStravaToken(
   refreshToken: string,
@@ -33,7 +34,7 @@ export async function GET() {
 
   // Get stored connection
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: conn, error: connErr } = await (supabase as any)
+  const { data: conn, error: connErr } = await db(supabase)
     .from('strava_connections')
     .select('*')
     .eq('user_id', user.id)
@@ -53,7 +54,7 @@ export async function GET() {
       accessToken = refreshed.access_token
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('strava_connections')
         .update({
           access_token: refreshed.access_token,

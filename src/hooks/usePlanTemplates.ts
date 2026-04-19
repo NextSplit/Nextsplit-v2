@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { PlanTemplate, UserPlan } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 interface ActivatePlanParams {
   template_id: string
@@ -42,7 +43,7 @@ export function usePlanTemplates(): UsePlanTemplatesReturn {
     setLoading(true)
 
     async function fetchTemplates() {
-      const { data, error: fetchErr } = await (supabase as any)
+      const { data, error: fetchErr } = await db(supabase)
         .from('plan_templates')
         .select('id, slug, name, subtitle, distance, level, weeks_min, weeks_max, runs_per_week, peak_km_week, longest_run_km, description, meta, created_at')
         // Do NOT select weeks_data here — too large for list views
@@ -65,14 +66,14 @@ export function usePlanTemplates(): UsePlanTemplatesReturn {
     if (!user) throw new Error('Not authenticated')
 
     // First, archive any existing active plan
-    await (supabase as any)
+    await db(supabase)
       .from('user_plans')
       .update({ status: 'archived', updated_at: new Date().toISOString() })
       .eq('user_id', user.id)
       .eq('status', 'active')
 
     // Fetch the full template (with weeks_data) to copy into user_plans
-    const { data: template, error: tErr } = await (supabase as any)
+    const { data: template, error: tErr } = await db(supabase)
       .from('plan_templates')
       .select('*')
       .eq('id', params.template_id)
@@ -83,7 +84,7 @@ export function usePlanTemplates(): UsePlanTemplatesReturn {
     const t = template as PlanTemplate
     const startDate = params.start_date ?? new Date().toISOString().split('T')[0]
 
-    const { data: newPlan, error: insertErr } = await (supabase as any)
+    const { data: newPlan, error: insertErr } = await db(supabase)
       .from('user_plans')
       .insert({
         user_id: user.id,

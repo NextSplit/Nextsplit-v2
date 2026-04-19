@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
+import { db } from '@/lib/supabase/db'
 
 export async function POST(req: Request) {
   // Require a secret header to prevent accidental/unauthorised seeding
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase as any)
+      const { error } = await db(supabase)
         .from('plan_templates')
         .upsert(record, { onConflict: 'slug' })
 

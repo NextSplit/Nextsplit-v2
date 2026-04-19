@@ -6,6 +6,7 @@ import { usePlanHistory, ArchivedPlanSummary } from '@/hooks/usePlanHistory'
 import { useSupabase } from '@/hooks/useSupabase'
 import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
 import type { PlanWeek, PlanDay, TrainingLog } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -135,7 +136,7 @@ function PlanDetail({ summary, onBack }: { summary: ArchivedPlanSummary; onBack:
   useEffect(() => {
     let cancelled = false
     async function fetchLogs() {
-      const { data } = await (supabase as any)
+      const { data } = await db(supabase)
         .from('training_logs')
         .select('*')
         .eq('plan_id', summary.plan.id)

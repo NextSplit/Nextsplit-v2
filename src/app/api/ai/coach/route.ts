@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
+import { db } from '@/lib/supabase/db'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
 
   // ── Fetch plan ──────────────────────────────────────────────────────────────
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: planData } = await (supabase as any)
+  const { data: planData } = await db(supabase)
     .from('user_plans').select('*').eq('user_id', user.id)
     .eq('status', 'active').maybeSingle()
 
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
 
   // ── Fetch last 4 weeks of logs ──────────────────────────────────────────────
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: logsData } = await (supabase as any)
+  const { data: logsData } = await db(supabase)
     .from('training_logs').select('*').eq('plan_id', planData.id)
     .order('week_n', { ascending: false }).limit(60)
 
@@ -97,7 +98,7 @@ export async function POST(req: Request) {
 
   const todayStr = new Date().toISOString().split('T')[0]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: wellnessData } = await (supabase as any)
+  const { data: wellnessData } = await db(supabase)
     .from('wellness_logs').select('sleep, soreness, mood, log_date')
     .eq('user_id', user.id).eq('log_type', 'daily')
     .gte('log_date', new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0])
@@ -108,7 +109,7 @@ export async function POST(req: Request) {
 
   // ── Fetch gym logs for current plan ────────────────────────────────────────
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: gymLogsData } = await (supabase as any)
+  const { data: gymLogsData } = await db(supabase)
     .from('gym_logs')
     .select('week_n, day_i, session_i, exercises')
     .eq('plan_id', planData.id)

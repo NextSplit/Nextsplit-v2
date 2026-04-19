@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
     const { title, body, url } = await req.json()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: sub } = await (supabase as any)
+    const { data: sub } = await db(supabase)
       .from('push_subscriptions')
       .select('endpoint, p256dh, auth')
       .eq('user_id', user.id)

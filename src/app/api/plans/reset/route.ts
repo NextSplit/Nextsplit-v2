@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 export async function POST(req: Request) {
   const supabase = await createClient()
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
   if (!plan) return NextResponse.json({ error: 'Plan not found' }, { status: 404 })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await db(supabase)
     .from('user_plans')
     .update({ current_week: 1 })
     .eq('id', plan_id)

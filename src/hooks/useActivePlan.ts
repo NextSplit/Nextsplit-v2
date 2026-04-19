@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { UserPlan, PlanWeek } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 interface UseActivePlanReturn {
   plan: UserPlan | null
@@ -74,14 +75,14 @@ export function useActivePlan(): UseActivePlanReturn {
     if (nextWeek > plan.total_weeks) {
       // Plan complete — mark as completed instead of advancing
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: upErr } = await (supabase as any)
+      const { error: upErr } = await db(supabase)
         .from('user_plans')
         .update({ status: 'completed', completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
         .eq('id', plan.id)
       if (upErr) throw new Error(upErr.message)
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: upErr } = await (supabase as any)
+      const { error: upErr } = await db(supabase)
         .from('user_plans')
         .update({ current_week: nextWeek, updated_at: new Date().toISOString() })
         .eq('id', plan.id)
@@ -95,7 +96,7 @@ export function useActivePlan(): UseActivePlanReturn {
   ) => {
     if (!plan) return
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: upErr } = await (supabase as any)
+    const { error: upErr } = await db(supabase)
       .from('user_plans')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', plan.id)
@@ -106,7 +107,7 @@ export function useActivePlan(): UseActivePlanReturn {
   const archivePlan = useCallback(async () => {
     if (!plan) return
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: upErr } = await (supabase as any)
+    const { error: upErr } = await db(supabase)
       .from('user_plans')
       .update({
         status: 'archived',

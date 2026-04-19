@@ -32,6 +32,7 @@ import TrainingSummary from '@/components/rpg/TrainingSummary'
 import PWAProfileCard from '@/components/rpg/PWAProfileCard'
 import StravaSection from '@/components/rpg/StravaSection'
 import AthleteProfileSection from '@/components/rpg/AthleteProfileSection'
+import { db } from '@/lib/supabase/db'
 
 const RACE_DISTANCES = [
   { label: '5K', km: 5 },
@@ -140,7 +141,7 @@ export default function ProfileClient({
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        await (supabase as any).from('profiles').upsert({ id: user.id, display_name: nameInput.trim() })
+        await db(supabase).from('profiles').upsert({ id: user.id, display_name: nameInput.trim() })
         setDisplayName(nameInput.trim())
         toastSuccess('Name updated')
         router.refresh()

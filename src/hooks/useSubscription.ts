@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import { canAccess, PREMIUM_ENFORCED, type Tier, type FeatureKey } from '@/lib/features'
+import { db } from '@/lib/supabase/db'
 
 export interface Subscription {
   tier: Tier
@@ -61,7 +62,7 @@ export function useSubscription(): UseSubscriptionReturn {
 
         // Try to read from subscriptions table (may not exist yet — that's fine)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data, error } = await (supabase as any)
+        const { data, error } = await db(supabase)
           .from('subscriptions')
           .select('tier, status, current_period_end, trial_end, stripe_customer_id')
           .eq('user_id', user.id)

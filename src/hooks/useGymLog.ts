@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { GymLog } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 export interface GymExerciseSet {
   weight: number | null
@@ -55,7 +56,7 @@ export function useGymLog(planId: string | null): UseGymLogReturn {
     setLoading(true)
 
     async function fetchGymLogs() {
-      const { data, error: fetchErr } = await (supabase as any)
+      const { data, error: fetchErr } = await db(supabase)
         .from('gym_logs')
         .select('*')
         .eq('plan_id', planId!)
@@ -92,7 +93,7 @@ export function useGymLog(planId: string | null): UseGymLogReturn {
       logged_at: new Date().toISOString(),
     }
 
-    const { data, error: upsertErr } = await (supabase as any)
+    const { data, error: upsertErr } = await db(supabase)
       .from('gym_logs')
       .upsert(row, { onConflict: 'user_id,plan_id,week_n,day_i,session_i' })
       .select()

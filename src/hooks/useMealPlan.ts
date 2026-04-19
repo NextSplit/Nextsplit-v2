@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { MealPlanEntry, Recipe } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 export interface MealPlanEntryWithRecipe extends MealPlanEntry {
   recipe: Recipe
@@ -27,7 +28,7 @@ export function useMealPlan(startDate: string, endDate: string) {
       if (!user) { if (!cancelled) setLoading(false); return }
 
       // Fetch entries in date range
-      const { data: entryData, error: entryErr } = await (supabase as any)
+      const { data: entryData, error: entryErr } = await db(supabase)
         .from('meal_plan_entries')
         .select('*')
         .eq('user_id', user.id)
@@ -42,7 +43,7 @@ export function useMealPlan(startDate: string, endDate: string) {
 
       // Fetch associated recipes
       const recipeIds = [...new Set((entryData as MealPlanEntry[]).map(e => e.recipe_id))]
-      const { data: recipeData, error: recipeErr } = await (supabase as any)
+      const { data: recipeData, error: recipeErr } = await db(supabase)
         .from('recipes')
         .select('*')
         .in('id', recipeIds)
@@ -71,7 +72,7 @@ export function useMealPlan(startDate: string, endDate: string) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
 
-    const { error: err } = await (supabase as any)
+    const { error: err } = await db(supabase)
       .from('meal_plan_entries')
       .upsert(
         { user_id: user.id, ...params },
@@ -83,7 +84,7 @@ export function useMealPlan(startDate: string, endDate: string) {
   }, [supabase, refresh])
 
   const removeMeal = useCallback(async (id: string): Promise<void> => {
-    const { error: err } = await (supabase as any)
+    const { error: err } = await db(supabase)
       .from('meal_plan_entries')
       .delete()
       .eq('id', id)

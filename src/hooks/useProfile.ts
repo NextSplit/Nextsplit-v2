@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { Profile } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 interface UseProfileReturn {
   profile: Profile | null
@@ -43,7 +44,7 @@ export function useProfile(): UseProfileReturn {
         return
       }
 
-      const { data, error: fetchErr } = await (supabase as any)
+      const { data, error: fetchErr } = await db(supabase)
         .from('profiles')
         .select('*')
         .eq('id', user.id)
@@ -71,7 +72,7 @@ export function useProfile(): UseProfileReturn {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
 
-    const { error: updateErr } = await (supabase as any)
+    const { error: updateErr } = await db(supabase)
       .from('profiles')
       .update(updates)
       .eq('id', user.id)

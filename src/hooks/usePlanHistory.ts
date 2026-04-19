@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { UserPlan, PlanWeek, TrainingLog } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 export interface ArchivedPlanSummary {
   plan: UserPlan
@@ -29,7 +30,7 @@ export function usePlanHistory() {
       if (!user) { if (!cancelled) setLoading(false); return }
 
       // Fetch archived plans
-      const { data: archivedPlans } = await (supabase as any)
+      const { data: archivedPlans } = await db(supabase)
         .from('user_plans')
         .select('*')
         .eq('user_id', user.id)
@@ -44,7 +45,7 @@ export function usePlanHistory() {
       for (const plan of archivedPlans as UserPlan[]) {
         const weeks = (plan.weeks_data as unknown as PlanWeek[]) ?? []
 
-        const { data: logs } = await (supabase as any)
+        const { data: logs } = await db(supabase)
           .from('training_logs')
           .select('done, km, week_n, day_i, session_i')
           .eq('plan_id', plan.id)

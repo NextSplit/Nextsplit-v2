@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { Race } from '@/types/database'
+import { db } from '@/lib/supabase/db'
 
 interface AddRaceParams {
   name: string
@@ -55,7 +56,7 @@ export function useRaces(): UseRacesReturn {
         return
       }
 
-      const { data, error: fetchErr } = await (supabase as any)
+      const { data, error: fetchErr } = await db(supabase)
         .from('races')
         .select('*')
         .eq('user_id', user.id)
@@ -80,7 +81,7 @@ export function useRaces(): UseRacesReturn {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
 
-    const { data, error: insertErr } = await (supabase as any)
+    const { data, error: insertErr } = await db(supabase)
       .from('races')
       .insert({
         user_id: user.id,
@@ -103,7 +104,7 @@ export function useRaces(): UseRacesReturn {
   }, [supabase, refresh])
 
   const logResult = useCallback(async (raceId: string, actual_time_secs: number) => {
-    const { error: updateErr } = await (supabase as any)
+    const { error: updateErr } = await db(supabase)
       .from('races')
       .update({ actual_time_secs })
       .eq('id', raceId)
@@ -112,7 +113,7 @@ export function useRaces(): UseRacesReturn {
   }, [supabase, refresh])
 
   const deleteRace = useCallback(async (raceId: string) => {
-    const { error: delErr } = await (supabase as any)
+    const { error: delErr } = await db(supabase)
       .from('races')
       .delete()
       .eq('id', raceId)

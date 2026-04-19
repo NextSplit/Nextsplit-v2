@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 function isAuthorized(req: NextRequest) {
   return req.headers.get('authorization') === `Bearer ${process.env.CRON_SECRET ?? ''}`
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
     const hh = now.getUTCHours().toString().padStart(2, '0')
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profiles } = await (supabase as any)
+    const { data: profiles } = await db(supabase)
       .from('profiles')
       .select('id, full_name, notification_time')
       .eq('notifications_enabled', true)
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest) {
     const userIds = profiles.map(p => p.id)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: subs } = await (supabase as any)
+    const { data: subs } = await db(supabase)
       .from('push_subscriptions')
       .select('user_id, endpoint, p256dh, auth')
       .in('user_id', userIds) as { data: PushSub[] | null }
@@ -48,7 +49,7 @@ export async function GET(req: NextRequest) {
     if (!subs?.length) return NextResponse.json({ ok: true, sent: 0 })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: plans } = await (supabase as any)
+    const { data: plans } = await db(supabase)
       .from('user_plans')
       .select('user_id, name')
       .in('user_id', userIds)
@@ -81,7 +82,7 @@ export async function GET(req: NextRequest) {
         errors.push(`${sub.user_id}: ${msg}`)
         if (msg.includes('410') || msg.includes('404')) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (supabase as any).from('push_subscriptions').delete().eq('user_id', sub.user_id)
+          await db(supabase).from('push_subscriptions').delete().eq('user_id', sub.user_id)
         }
       }
     }
