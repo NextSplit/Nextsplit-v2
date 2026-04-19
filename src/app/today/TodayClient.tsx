@@ -424,14 +424,14 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
       <div className="flex items-start gap-3 p-5" onClick={onTap}>
         {/* Type indicator — tap for focus mode (gym: tap routes to live tracker) */}
         <button
-          onClick={e => { e.stopPropagation(); session.c.startsWith('gym') ? onTap() : onFocus() }}
+          onClick={e => { e.stopPropagation(); session.c?.startsWith('gym') ? onTap() : onFocus() }}
           className={`flex flex-col items-center gap-0.5 flex-shrink-0`}
         >
           <div className={`w-11 h-11 rounded-xl ${cfg.colour} flex items-center justify-center text-xl active:scale-95 transition-transform`}>
             {cfg.emoji}
           </div>
           <span className="text-[8px] text-gray-400 font-medium">
-            {session.c.startsWith('gym') ? 'Track' : 'Focus'}
+            {session.c?.startsWith('gym') ? 'Track' : 'Focus'}
           </span>
         </button>
 
@@ -478,7 +478,7 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
               </span>
             </div>
           )}
-          {session.c.startsWith('gym') && !done ? (
+          {session.c?.startsWith('gym') && !done ? (
             // Gym sessions get a "Start" pill instead of quick-done circle
             <button
               onClick={e => { e.stopPropagation(); onTap() }}
@@ -887,8 +887,8 @@ export default function TodayClient() {
             {todaySessions.map((session, sessI) => {
               const key = `${weekN}_${planDayIndex}_${sessI}`
               const log = logs[key] ?? null
-              const isGym = session.c.startsWith('gym')
-              const isRun = session.c.startsWith('run')
+              const isGym = session.c?.startsWith('gym')
+              const isRun = session.c?.startsWith('run')
               return (
                 <div key={sessI}>
                   <SessionCard
@@ -941,7 +941,7 @@ export default function TodayClient() {
             {/* Low readiness suggestion — shown only when readiness ≤5 */}
             {isToday && readinessScore !== null && readinessScore <= 5 && todaySessions.length > 0 && (() => {
               const isVeryLow = readinessScore <= 3
-              const hasRunSessions = todaySessions.some(s => s.c.startsWith('run'))
+              const hasRunSessions = todaySessions.some(s => s?.c?.startsWith('run'))
               return (
                 <div className="bg-amber-50 rounded-2xl border border-amber-100 p-4">
                   <div className="flex items-start gap-2.5 mb-3">
@@ -960,7 +960,7 @@ export default function TodayClient() {
                       <button
                         onClick={() => {
                           todaySessions.forEach((session, sessI) => {
-                            if (session.c.startsWith('run') && !logs[`${weekN}_${planDayIndex}_${sessI}`]?.done) {
+                            if (session.c?.startsWith('run') && !logs[`${weekN}_${planDayIndex}_${sessI}`]?.done) {
                               handleLogSession({ week_n: weekN, day_i: planDayIndex, session_i: sessI, done: true, effort: 4, km: Math.round(session.km * 0.8) || undefined, notes: 'Adapted — low readiness day' })
                             }
                           })
@@ -1141,7 +1141,7 @@ export default function TodayClient() {
             {isToday && <WellnessCheckIn onReadiness={setReadinessScore} />}
 
             {/* Weather — below the fold, running sessions only */}
-            {isToday && todaySessions.some(s => s.c.startsWith('run')) && (
+            {isToday && todaySessions.some(s => s?.c?.startsWith('run')) && (
               <WeatherWidget />
             )}
 

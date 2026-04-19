@@ -70,7 +70,7 @@ export async function POST(req: Request) {
         ...week,
         days: week.days.map(day => ({
           ...day,
-          sessions: day.sessions.filter((s: PlanSession) => !s.c.startsWith('gym')),
+          sessions: day.sessions.filter((s: PlanSession) => !s?.c?.startsWith('gym')),
         })),
       }))
 

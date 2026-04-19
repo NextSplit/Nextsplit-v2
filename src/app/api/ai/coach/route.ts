@@ -122,7 +122,7 @@ export async function POST(req: Request) {
   const gymDoneByWeek: Record<number, number> = {}
   for (const w of weeks) {
     const gymSessions = w.days.flatMap((d: { sessions: Array<{ c: string }> }) =>
-      d.sessions.filter((s: { c: string }) => s.c.startsWith('gym'))
+      d.sessions.filter((s: { c: string }) => s?.c?.startsWith('gym'))
     ).length
     gymPlannedByWeek[w.n] = gymSessions
     gymDoneByWeek[w.n] = gymLogs.filter(g => g.week_n === w.n).length

@@ -340,11 +340,11 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
                             onClick={() => onLogSession(weekN, dayIndex, sessI)}
                             className={`flex-shrink-0 text-[10px] font-bold px-2.5 py-1.5 rounded-lg ${
                               isDone ? 'bg-emerald-100 text-emerald-700' :
-                              session.c.startsWith('gym') ? 'bg-amber-500 text-white' :
+                              session.c?.startsWith('gym') ? 'bg-amber-500 text-white' :
                               'bg-[#0D9488] text-white'
                             }`}
                           >
-                            {isDone ? '✓ Done' : session.c.startsWith('gym') ? 'Start →' : 'Log'}
+                            {isDone ? '✓ Done' : session.c?.startsWith('gym') ? 'Start →' : 'Log'}
                           </button>
                         )}
                       </div>
@@ -560,7 +560,7 @@ function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDa
         const gymSessionsThisWeek = week.days.flatMap((d, dayI) =>
           d.sessions
             .map((s, sessI) => ({ s, dayI, sessI }))
-            .filter(({ s }) => s.c.startsWith('gym'))
+            .filter(({ s }) => s?.c?.startsWith('gym'))
         )
         if (gymSessionsThisWeek.length === 0) return null
         const gymDone = gymSessionsThisWeek.filter(({ dayI, sessI }) =>
@@ -708,7 +708,7 @@ export default function PlanClient() {
     const session = week?.days[dayI]?.sessions[sessI]
     if (!session) return
     // Gym sessions go to live tracker, not the log modal
-    if (session.c.startsWith('gym')) {
+    if (session.c?.startsWith('gym')) {
       router.push(`/gym/live/${weekN}/${dayI}/${sessI}`)
       return
     }
