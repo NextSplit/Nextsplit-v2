@@ -97,6 +97,8 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
   // Delay entrance for dramatic effect
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 80)
+    // Mark plan as completed in localStorage so Today tab shows re-engagement prompt
+    try { localStorage.setItem('nextsplit_plan_completed', '1') } catch {}
     return () => clearTimeout(t)
   }, [])
 

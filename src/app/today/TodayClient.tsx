@@ -54,6 +54,19 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
   const [expanded, setExpanded] = useState(!!existingLog)
   const [bottomInset, setBottomInset] = useState(0)
 
+  // Dirty check — has the user changed anything from defaults?
+  const isDirty = notes.trim() !== (existingLog?.notes ?? '') ||
+    paceInput !== (existingLog?.pace ?? '') ||
+    durationMins !== (existingLog?.duration_secs ? Math.round(existingLog.duration_secs / 60) : prefillDurationSecs ? Math.round(prefillDurationSecs / 60) : 0) ||
+    (km !== (existingLog?.km ?? session.km ?? 0) && km > 0)
+
+  function handleBackdropClick() {
+    if (isDirty) {
+      if (!window.confirm('Discard changes?')) return
+    }
+    onClose()
+  }
+
   // Keyboard avoidance — lift modal when virtual keyboard appears
   useEffect(() => {
     const vv = window.visualViewport
@@ -110,7 +123,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end" onClick={handleBackdropClick}>
       <div
         className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl max-h-[92vh] flex flex-col"
         style={{ marginBottom: bottomInset }}
@@ -251,7 +264,7 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, prefill
         <div className="px-6 pb-6 pt-3 border-t border-gray-50">
           <div className="flex gap-3">
             <button
-              onClick={onClose}
+              onClick={handleBackdropClick}
               className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600"
             >
               Cancel
@@ -441,20 +454,24 @@ export default function TodayClient() {
   const dayOfWeek = viewDate.getDay()
   const planDayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1
 
-  // Determine which plan week the viewDate falls in
+  // Determine which plan week the viewDate falls in.
+  // Plan weeks run Mon–Sun. We compare week-start Mondays so Sunday
+  // stays in the same week as the preceding Mon–Sat, not the next.
   const viewWeekN = useMemo(() => {
     if (!plan || dateOffset === 0) return plan?.current_week ?? 1
-    // Work out how many weeks ago viewDate is relative to the start of current week
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const todayDow = today.getDay()
-    // Monday of current week
+    // Monday of the week containing today
     const currentWeekMonday = new Date(today)
     currentWeekMonday.setDate(today.getDate() - (todayDow === 0 ? 6 : todayDow - 1))
+    // Monday of the week containing viewDate
     const vd = new Date(viewDate)
     vd.setHours(0, 0, 0, 0)
-    const diffMs = vd.getTime() - currentWeekMonday.getTime()
-    const diffWeeks = Math.floor(diffMs / (7 * 86400000))
+    const vdDow = vd.getDay()
+    const vdMonday = new Date(vd)
+    vdMonday.setDate(vd.getDate() - (vdDow === 0 ? 6 : vdDow - 1))
+    const diffWeeks = Math.round((vdMonday.getTime() - currentWeekMonday.getTime()) / (7 * 86400000))
     return Math.max(1, Math.min(plan.total_weeks, (plan.current_week ?? 1) + diffWeeks))
   }, [plan, dateOffset, viewDate])
 
@@ -492,18 +509,28 @@ export default function TodayClient() {
     const log = await logSession({ plan_id: plan.id, ...params })
     hapticLight()
 
-    // Check for new personal best
-    if (params.km && params.pace && params.done) {
-      const existingLogs = Object.values(logs)
-      const existingPBs = computePersonalBests(existingLogs)
-      const pb = checkNewPB(
-        { km: params.km, pace: params.pace, week_n: params.week_n, logged_at: new Date().toISOString(), done: true },
-        existingPBs
-      )
-      if (pb) {
-        hapticSuccess()
-        setNewPB({ distance: pb.distance, timeStr: pb.timeStr })
-        setTimeout(() => setNewPB(null), 6000)
+    // Check for new personal best — auto-calculate pace if not explicitly provided
+    if (params.km && params.done) {
+      // Derive pace from duration if not provided
+      let effectivePace = params.pace
+      if (!effectivePace && params.duration_secs && params.km > 0) {
+        const secsPerKm = params.duration_secs / params.km
+        const m = Math.floor(secsPerKm / 60)
+        const s = Math.round(secsPerKm % 60)
+        effectivePace = `${m}:${String(s).padStart(2, '0')}`
+      }
+      if (effectivePace) {
+        const existingLogs = Object.values(logs)
+        const existingPBs = computePersonalBests(existingLogs)
+        const pb = checkNewPB(
+          { km: params.km, pace: effectivePace, week_n: params.week_n, logged_at: new Date().toISOString(), done: true },
+          existingPBs
+        )
+        if (pb) {
+          hapticSuccess()
+          setNewPB({ distance: pb.distance, timeStr: pb.timeStr })
+          setTimeout(() => setNewPB(null), 6000)
+        }
       }
     }
 
@@ -637,16 +664,30 @@ export default function TodayClient() {
       <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
 
         {/* No plan state */}
-        {!loading && !plan && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
-            <div className="text-5xl mb-4">🏃</div>
-            <h2 className="text-base font-bold text-gray-900 mb-2">No active plan</h2>
-            <p className="text-sm text-gray-500 mb-5">Choose a training plan to get started.</p>
-            <a href="/onboarding" className="inline-block bg-[#0D9488] text-white px-6 py-3 rounded-xl text-sm font-semibold">
-              Choose a plan →
-            </a>
-          </div>
-        )}
+        {!loading && !plan && (() => {
+          const hadPlan = typeof window !== 'undefined' && !!localStorage.getItem('nextsplit_plan_completed')
+          return (
+            <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+              <div className="text-5xl mb-4">{hadPlan ? '🎉' : '🏃'}</div>
+              <h2 className="text-base font-bold text-gray-900 mb-2">
+                {hadPlan ? 'Plan complete — what\'s next?' : 'No active plan'}
+              </h2>
+              <p className="text-sm text-gray-500 mb-5">
+                {hadPlan
+                  ? 'Amazing work finishing your plan. Ready to pick your next challenge?'
+                  : 'Choose a training plan to get started.'}
+              </p>
+              <a href="/onboarding" className="inline-block bg-[#0D9488] text-white px-6 py-3 rounded-xl text-sm font-semibold">
+                {hadPlan ? 'Start next plan →' : 'Choose a plan →'}
+              </a>
+              {hadPlan && (
+                <div className="mt-3">
+                  <a href="/profile" className="text-xs text-gray-400 underline">View your history</a>
+                </div>
+              )}
+            </div>
+          )
+        })()}
 
         {/* Loading skeletons */}
         {loading && (
