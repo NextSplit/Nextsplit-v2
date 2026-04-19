@@ -389,3 +389,34 @@ export interface AthleteSummary {
   relationship: CoachAthlete
 }
 
+export interface CoachReview {
+  id: string
+  coach_id: string
+  athlete_id: string
+  plan_id: string | null
+  rating: number
+  review_text: string | null
+  coach_reply: string | null
+  is_visible: boolean
+  created_at: string
+}
+
+export interface CoachAutomationRule {
+  id: string
+  coach_id: string
+  trigger: 'session_missed' | 'pb_achieved' | 'acwr_high' | 'acwr_low' |
+           'streak_achieved' | 'plan_completed' | 'inactive_3days' | 'wellness_low'
+  template: string
+  is_active: boolean
+  require_approval: boolean
+  created_at: string
+}
+
+/** Extended coach message with voice support */
+export interface CoachMessageV2 extends CoachMessage {
+  message_type: 'text' | 'voice'
+  audio_url: string | null
+  auto_sent: boolean          // true if sent by AI automation
+  rule_id: string | null      // which automation rule triggered it
+}
+

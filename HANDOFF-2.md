@@ -629,6 +629,166 @@ Running + strength (gym sessions) as primary focus. Coach sees all activity the 
 
 ---
 
+
+## COACH PLATFORM — LOCKED DECISIONS
+
+All design decisions are confirmed. This section is the source of truth for building the coach platform.
+
+### Account Model
+Everyone starts as a standard athlete account. To become a coach:
+1. Athlete applies via Settings → "Become a coach"
+2. Fills in profile: name, bio, credentials, specialities, photo
+3. Submits for review (NextSplit manual review)
+4. Two tiers issued:
+   - **Unverified coach** — anyone can apply, gets a coach profile and dashboard, marked as "Not yet verified". Can manage athletes and sell plans.
+   - **Verified coach** ✅ — NextSplit has reviewed their credentials. Gets a verification badge, higher marketplace visibility, increased athlete limits.
+5. Once approved, a **Coach tab** appears in the bottom nav (alongside Today/Plan/Fuel/Coach/Character)
+6. Coach still has a full athlete profile — they can train themselves AND coach others in the same app
+
+**DB implication:** Add `is_coach boolean DEFAULT false` and `coach_verified boolean DEFAULT false` to profiles table.
+
+### Coach Dashboard Location
+Lives **inside the main app** as an extra tab in the bottom nav:
+- Standard user: Today / Plan / Fuel / Coach / Character
+- Coach user: Today / Plan / Fuel / **Squad** / Coach / Character
+- The Squad tab is the coach dashboard — squad view, athlete drill-downs, messaging, earnings
+- Mobile-first, same PWA, no separate app needed
+- Coach can switch between their own training (Today tab) and their squad management (Squad tab) seamlessly
+
+### Multi-Sport Scope
+
+**Individual athlete:** Any sport they log — running, cycling, swimming, hiking, yoga. The `activity_logs` table handles cross-training. Running stays the primary plan structure but athletes can log anything.
+
+**Coach platform:** Full multi-sport visibility. A triathlon coach sees all three disciplines. The coach squad view shows a sport breakdown per athlete (runs this week: 3, swims: 2, cycles: 1).
+
+**Phase implication:** 
+- Phase 2 soft launch: running + gym (what's built)
+- Phase 3 full platform: extend coach views to show all `activity_logs` types
+- Future: structured triathlon plan templates (swim/bike/run blocks in `weeks_data`)
+
+### Coach Pricing (Freemium)
+- **Free tier:** up to 5 active athletes, full platform access, plan selling enabled
+- **Pro coach (£29/mo):** unlimited athletes, advanced analytics, priority in marketplace, custom branding on plan pages
+- **No percentage cut on coaching subscriptions** — coach sets their own price, collects directly via Stripe Connect
+- **Plan sales:** 70% coach / 30% NextSplit (on one-off plan purchases only)
+- **Recommended pricing bands** shown in coach settings to guide new coaches:
+  - Beginner athletes: £40–£80/month suggested
+  - Intermediate: £60–£120/month suggested
+  - Performance/elite: £100–£200/month suggested
+  - Coach sets their actual price freely within or outside these bands
+
+### Coach Verification (Two-tier)
+| Tier | Badge | How | Benefits |
+|---|---|---|---|
+| Unverified | None | Self-register | Basic profile, manage 5 athletes free |
+| Verified ✅ | Green tick | NextSplit review | Marketplace prominence, higher limits, trust signal |
+
+Verification review checks:
+- Coaching qualification (UESCA, UK Athletics, etc.) OR
+- Demonstrable experience (competitive running background, years coaching)
+- Professional social presence (Strava, Instagram, website)
+- Manual review by NextSplit team — not automated
+
+### Messaging Format: Text + Voice
+- **Text messages** — default, async, threaded by athlete
+- **Voice messages** — coach records a short voice note (up to 2 minutes), athlete plays it in the app
+  - This is the differentiator. A 60-second voice message from your coach after a hard session is worth more than a text. It feels personal.
+  - Stored as audio file in Supabase Storage
+  - Transcription optional (accessibility + searchability)
+- No video — keeps it simple and storage manageable
+- Both directions: coach sends to athlete AND athlete can send voice/text to coach
+
+**DB implication:** Add `message_type text DEFAULT 'text' CHECK (type IN ('text', 'voice'))` and `audio_url text` to `coach_messages` table.
+
+### Coach Ratings & Reviews
+- **Triggered:** after an athlete completes a full plan purchased from a coach, or after 3 months of active coaching
+- **Format:** Star rating (1–5) + written review (optional, 500 chars max)
+- **Visibility:** Public on coach's marketplace profile
+- **Minimum threshold:** Reviews only shown publicly once coach has 5+ reviews (prevents unfair early damage from one bad review)
+- **Coach response:** Coach can reply to reviews publicly (one reply per review)
+- **Moderation:** NextSplit can hide reviews that violate community standards
+
+**DB schema:**
+```sql
+CREATE TABLE coach_reviews (
+  id            uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  coach_id      uuid REFERENCES coach_profiles(user_id) NOT NULL,
+  athlete_id    uuid REFERENCES auth.users(id) NOT NULL,
+  plan_id       uuid REFERENCES plan_templates(id),
+  rating        integer NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  review_text   text,
+  coach_reply   text,
+  is_visible    boolean DEFAULT false,  -- set true once coach hits 5+ reviews
+  created_at    timestamptz DEFAULT now() NOT NULL,
+  UNIQUE(coach_id, athlete_id)
+);
+```
+
+### Refund Policy
+- **Plan purchases (one-off):** 14-day refund window if athlete hasn't activated the plan. No refund after activation. Handled by NextSplit via Stripe.
+- **Ongoing coaching subscriptions:** No refunds — industry standard. Athlete can cancel anytime, access continues to end of billing period.
+- **Disputes:** Between coach and athlete in the first instance. NextSplit mediates if unresolved after 7 days. NextSplit can issue refund and remove coach if found at fault.
+- **Terms of service:** Clear refund policy shown at checkout — legally required.
+
+### AI Autonomy in Coach Communications
+Coach sets rules → AI acts within them autonomously. This is the most powerful model.
+
+**How it works:**
+1. Coach configures "automation rules" in their Squad settings:
+   - "If athlete misses 2+ sessions in a week → send check-in message"
+   - "If athlete logs a PB → send congratulations"
+   - "If ACWR > 1.3 → warn athlete to ease off"
+   - "If athlete hasn't logged for 3 days → send nudge"
+2. Coach writes their own message templates for each trigger (in their voice)
+3. AI fills in the specifics (which session, what the PB was, what the ACWR reading is)
+4. Message is sent automatically, appears as from the coach
+5. Coach sees a log of all auto-sent messages in the messaging tab
+6. Coach can override: review and approve before sending (optional mode)
+
+**Why this is the right model:** A coach with 20 athletes cannot personally monitor every session. The AI gives them scale without losing the personal feel. The athlete gets a message that feels from their coach (because the template is the coach's words, the AI just fills the data in). The coach stays informed without being overwhelmed.
+
+**DB schema needed:**
+```sql
+CREATE TABLE coach_automation_rules (
+  id          uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  coach_id    uuid REFERENCES coach_profiles(user_id) ON DELETE CASCADE,
+  trigger     text NOT NULL CHECK (trigger IN (
+    'session_missed', 'pb_achieved', 'acwr_high', 'acwr_low',
+    'streak_achieved', 'plan_completed', 'inactive_3days', 'wellness_low'
+  )),
+  template    text NOT NULL,     -- coach's message template with {athlete_name}, {session_name} etc.
+  is_active   boolean DEFAULT true,
+  require_approval boolean DEFAULT false,  -- if true, coach reviews before send
+  created_at  timestamptz DEFAULT now()
+);
+```
+
+### Cold Outreach Rules
+- **Athletes → coaches:** Athletes can message any coach from their marketplace profile page ("Send enquiry"). This is how an athlete starts a coaching relationship.
+- **Coaches → athletes:** Coaches CANNOT cold-message athletes they don't coach. No spam, no recruitment pressure.
+- **Exception:** Coaches can post to their public club feed — athletes who follow the club see it.
+- This protects athletes and keeps the platform trust-based. Coaches grow through their marketplace profile and club, not through direct outreach.
+
+### The Squad Tab (Coach Dashboard) — Expanded Design
+
+Bottom nav for coaches:
+```
+Today | Plan | Fuel | Squad | Coach | Character
+```
+
+Squad tab sections:
+1. **Squad overview** (default) — athlete status cards (🟢🟡🔴)
+2. **Athlete detail** — tap any athlete → full drill-down
+3. **Messages** — all conversations, unread badges
+4. **Plans** — coach's published plans + earnings
+5. **Automation** — rule configuration
+6. **Earnings** — Stripe Connect dashboard embed
+
+The Squad tab is coach-only. Athletes with no coach role never see it. The Coach tab (existing) remains the AI coaching card for athletes — separate concern.
+
+
+---
+
 ## COMPETITIVE POSITIONING
 
 | App | Strength | Weakness | Our angle |
