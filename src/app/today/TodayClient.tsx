@@ -13,6 +13,8 @@ import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import WeatherWidget from '@/components/WeatherWidget'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
 import FocusMode from '@/components/FocusMode'
+import ShareSessionCard from '@/components/ShareSessionCard'
+import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import StravaSyncButton from '@/components/StravaSyncButton'
 import { useRouter } from 'next/navigation'
 
@@ -428,6 +430,8 @@ export default function TodayClient() {
   const [undoXP, setUndoXP] = useState(0)
   const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
   const [undoSecsLeft, setUndoSecsLeft] = useState(8)
+  const [shareSession, setShareSession] = useState<{ session: PlanSession; log: TrainingLog } | null>(null)
+  const [ceremonyDismissed, setCeremonyDismissed] = useState(false)
 
   const router = useRouter()
   const viewDate = offsetDate(dateOffset)
@@ -508,6 +512,7 @@ export default function TodayClient() {
     setUndoXP(session ? getSessionXP(session.c) : 10)
     const timer = setTimeout(() => setUndoInfo(null), 8000)
     setUndoInfo({ logId: log.id, timer })
+    if (session) setShareSession({ session, log })
   }, [plan, logSession, undoInfo, planDay, logs])
 
   const handleQuickDone = useCallback(async (dayI: number, sessI: number, session: PlanSession) => {
@@ -1117,12 +1122,20 @@ export default function TodayClient() {
                 />
               </div>
             </div>
-            <button
-              onClick={handleUndo}
-              className="text-sm font-bold text-[#34D399] ml-5 shrink-0"
-            >
-              Undo
-            </button>
+            <div className="flex items-center gap-3 ml-5 shrink-0">
+              <button
+                onClick={() => shareSession && setShareSession(shareSession)}
+                className="text-sm font-bold text-blue-400"
+              >
+                Share
+              </button>
+              <button
+                onClick={handleUndo}
+                className="text-sm font-bold text-[#34D399]"
+              >
+                Undo
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1167,6 +1180,25 @@ export default function TodayClient() {
           prefillDurationSecs={modalSession.prefillDurationSecs}
           onClose={() => setModalSession(null)}
           onSave={handleLogSession}
+        />
+      )}
+
+      {/* Share session card modal */}
+      {shareSession && (
+        <ShareSessionCard
+          session={shareSession.session}
+          log={shareSession.log}
+          weekN={weekN}
+          onClose={() => setShareSession(null)}
+        />
+      )}
+
+      {/* Plan completion ceremony */}
+      {plan?.status === 'completed' && !ceremonyDismissed && (
+        <PlanCompletionCeremony
+          plan={plan}
+          logs={logs}
+          onClose={() => setCeremonyDismissed(true)}
         />
       )}
     </div>

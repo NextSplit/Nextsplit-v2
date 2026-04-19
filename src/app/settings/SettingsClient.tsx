@@ -7,6 +7,7 @@ import { useActivePlan } from '@/hooks/useActivePlan'
 import { useToast } from '@/components/Toast'
 import { setThemePreference } from '@/components/ThemeWrapper'
 import { setUnits } from '@/lib/units'
+import { usePushNotifications } from '@/hooks/usePushNotifications'
 import type { Profile } from '@/types/database'
 
 interface Props {
@@ -167,6 +168,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
   const { profile, updateProfile } = useProfile()
   const { plan, archivePlan } = useActivePlan()
   const { success, error: toastError, warning } = useToast()
+  const { subscribe: pushSubscribe, unsubscribe: pushUnsubscribe, status: pushStatus } = usePushNotifications()
 
   // Use live profile if loaded, fall back to server-rendered initial
   const p = profile ?? initialProfile
@@ -235,14 +237,20 @@ export default function SettingsClient({ email, initialProfile }: Props) {
   }
 
   async function saveNotifications(val: boolean) {
-    if (val && 'Notification' in window) {
-      const perm = await Notification.requestPermission()
-      if (perm !== 'granted') {
-        toastError('Please allow notifications in your browser settings')
-        return
-      }
-    }
     try {
+      if (val) {
+        const ok = await pushSubscribe()
+        if (!ok) {
+          if (pushStatus === 'denied') {
+            toastError('Please allow notifications in your browser settings')
+          } else {
+            toastError('Could not enable notifications')
+          }
+          return
+        }
+      } else {
+        await pushUnsubscribe()
+      }
       await updateProfile({ notifications_enabled: val })
       success(val ? 'Notifications enabled' : 'Notifications disabled')
     } catch { toastError('Failed to update notifications') }

@@ -70,13 +70,23 @@ export function useActivePlan(): UseActivePlanReturn {
 
   const advanceWeek = useCallback(async () => {
     if (!plan) return
-    const nextWeek = Math.min(plan.current_week + 1, plan.total_weeks)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: upErr } = await (supabase as any)
-      .from('user_plans')
-      .update({ current_week: nextWeek, updated_at: new Date().toISOString() })
-      .eq('id', plan.id)
-    if (upErr) throw new Error(upErr.message)
+    const nextWeek = plan.current_week + 1
+    if (nextWeek > plan.total_weeks) {
+      // Plan complete — mark as completed instead of advancing
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: upErr } = await (supabase as any)
+        .from('user_plans')
+        .update({ status: 'completed', completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+        .eq('id', plan.id)
+      if (upErr) throw new Error(upErr.message)
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: upErr } = await (supabase as any)
+        .from('user_plans')
+        .update({ current_week: nextWeek, updated_at: new Date().toISOString() })
+        .eq('id', plan.id)
+      if (upErr) throw new Error(upErr.message)
+    }
     refresh()
   }, [supabase, plan, refresh])
 
