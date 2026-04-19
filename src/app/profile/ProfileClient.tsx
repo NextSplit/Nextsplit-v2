@@ -1176,7 +1176,7 @@ export default function ProfileClient({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-gray-900">{displayName || 'Profile'}</h1>
+                <h1 className="text-lg font-bold text-gray-900">{displayName || 'Character'}</h1>
                 <button onClick={() => { setNameInput(displayName); setEditingName(true) }}
                   className="text-gray-300 text-sm">✎</button>
               </div>
@@ -1212,7 +1212,13 @@ export default function ProfileClient({
         {/* Next Reward Card — immediately below hero for motivation */}
         <NextRewardCard stats={rpgStats} unlockedIds={unlockedIds} />
 
-        {/* Weekly XP chart — replaces raw feed */}
+        {/* Badges — near top so achievements are immediately visible */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <p className="text-sm font-bold text-gray-900 mb-3">🏆 Badges</p>
+          <BadgeGrid unlockedIds={unlockedIds} stats={rpgStats} />
+        </div>
+
+        {/* Weekly XP chart */}
         <WeeklyXPChart logs={logs} weeks={weeks} />
 
         {/* Streak + consistency */}
@@ -1239,12 +1245,6 @@ export default function ProfileClient({
           </div>
         )}
 
-        {/* Badges — with proximity indicators */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4">
-          <p className="text-sm font-bold text-gray-900 mb-3">🏆 Badges</p>
-          <BadgeGrid unlockedIds={unlockedIds} stats={rpgStats} />
-        </div>
-
         {/* Personal bests */}
         {personalBests.length > 0 && (
           <div className="bg-white rounded-2xl border border-gray-100 p-4">
@@ -1264,6 +1264,13 @@ export default function ProfileClient({
         {/* Training summary */}
         <TrainingSummary logs={logs} />
 
+        {/* ── Account & Integrations ─────────────────────────────────── */}
+        <div className="flex items-center gap-3 px-1 pt-2">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Account &amp; Integrations</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+
         {/* Strava */}
         <StravaSection clientId={stravaClientId} isConnected={isStravaConnected} />
 
@@ -1272,6 +1279,21 @@ export default function ProfileClient({
 
         {/* Athlete profile */}
         <AthleteProfileSection />
+
+        {/* Settings link */}
+        <a href="/settings"
+          className="flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <span className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </span>
+            <span className="text-sm font-semibold text-gray-700">Settings</span>
+          </div>
+          <span className="text-gray-300 text-lg">›</span>
+        </a>
 
         {/* Data export */}
         <div className="bg-white rounded-2xl border border-gray-100 p-4">

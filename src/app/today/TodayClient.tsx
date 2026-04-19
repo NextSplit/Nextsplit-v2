@@ -701,138 +701,7 @@ export default function TodayClient() {
         {/* Sessions */}
         {!loading && plan && (
           <>
-            {/* Weather — today only, running sessions only */}
-            {isToday && todaySessions.some(s => s.c.startsWith('run')) && (
-              <WeatherWidget />
-            )}
-
-            {/* Wellness check-in — today only */}
-            {isToday && <WellnessCheckIn onReadiness={setReadinessScore} />}
-
-            {/* Monday weekly report */}
-            {isToday && weeklyReport && (() => {
-              const r = weeklyReport
-              const vsArrow = r.vsLastWeek === 'up' ? '↑' : r.vsLastWeek === 'down' ? '↓' : '→'
-              const vsColour = r.vsLastWeek === 'up' ? 'text-emerald-600' : r.vsLastWeek === 'down' ? 'text-red-500' : 'text-gray-500'
-              return (
-                <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-violet-100/50">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-[11px] font-bold text-violet-800 uppercase tracking-wide">Week {r.weekN} · {r.weekTitle}</p>
-                        <p className="text-xs text-violet-600 mt-0.5">Your weekly report</p>
-                      </div>
-                      <span className="text-2xl">{r.completionPct >= 90 ? '🌟' : r.completionPct >= 60 ? '✅' : '💪'}</span>
-                    </div>
-                  </div>
-                  <div className="px-4 py-3 grid grid-cols-3 gap-3 border-b border-violet-100/30">
-                    <div className="text-center">
-                      <div className="text-lg font-black text-violet-900">{r.completionPct}%</div>
-                      <div className="text-[10px] text-violet-500">sessions done</div>
-                      <div className="text-[9px] text-violet-400">{r.sessionsDone}/{r.sessionsPlanned}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-black text-violet-900">{r.kmLogged}</div>
-                      <div className="text-[10px] text-violet-500">km logged</div>
-                      <div className="text-[9px] text-violet-400">of {r.kmPlanned} planned</div>
-                    </div>
-                    <div className="text-center">
-                      <div className={`text-lg font-black ${vsColour}`}>{vsArrow} {r.lastWeekKm > 0 ? Math.abs(Math.round((r.kmLogged - r.lastWeekKm) * 10) / 10) : '—'}</div>
-                      <div className="text-[10px] text-violet-500">vs prev week</div>
-                      {r.avgEffort && <div className="text-[9px] text-violet-400">RPE {r.avgEffort} avg</div>}
-                    </div>
-                  </div>
-                  {(r.bestSession || r.lookAheadNote) && (
-                    <div className="px-4 py-3 space-y-1.5">
-                      {r.bestSession && (
-                        <p className="text-xs text-violet-700">
-                          <span className="font-semibold">Best session:</span> {r.bestSession}
-                        </p>
-                      )}
-                      {r.lookAheadNote && (
-                        <p className="text-xs text-violet-600 leading-relaxed line-clamp-2">
-                          <span className="font-semibold">This week:</span> {r.lookAheadNote}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )
-            })()}
-
-            {/* Low readiness suggestion */}
-            {isToday && readinessScore !== null && readinessScore <= 5 && todaySessions.length > 0 && (() => {
-              const isVeryLow = readinessScore <= 3
-              const hasRunSessions = todaySessions.some(s => s.c.startsWith('run'))
-              return (
-                <div className="bg-amber-50 rounded-2xl border border-amber-100 p-4">
-                  <div className="flex items-start gap-2.5 mb-3">
-                    <span className="text-base mt-0.5">🔄</span>
-                    <div>
-                      <p className="text-[11px] font-bold text-amber-800 mb-0.5">Low readiness today</p>
-                      <p className="text-xs text-amber-700 leading-relaxed">
-                        {isVeryLow
-                          ? 'Readiness is very low. Recovery is training — a bad day forced is two bad days.'
-                          : 'Consider modifying today\'s session. Your body is telling you something.'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    {hasRunSessions && !isVeryLow && (
-                      <button
-                        onClick={() => {
-                          // Quick-log all run sessions as easy
-                          todaySessions.forEach((session, sessI) => {
-                            if (session.c.startsWith('run') && !logs[`${weekN}_${planDayIndex}_${sessI}`]?.done) {
-                              handleLogSession({ week_n: weekN, day_i: planDayIndex, session_i: sessI, done: true, effort: 4, km: Math.round(session.km * 0.8) || undefined, notes: 'Adapted — low readiness day' })
-                            }
-                          })
-                        }}
-                        className="w-full py-2 rounded-xl bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold"
-                      >
-                        🏃 Log as easy effort (−20% volume)
-                      </button>
-                    )}
-                    <button
-                      onClick={() => {
-                        todaySessions.forEach((_, sessI) => {
-                          if (!logs[`${weekN}_${planDayIndex}_${sessI}`]?.done) {
-                            handleLogSession({ week_n: weekN, day_i: planDayIndex, session_i: sessI, done: true, effort: 1, notes: 'Rest day — low readiness' })
-                          }
-                        })
-                      }}
-                      className="w-full py-2 rounded-xl bg-white border border-amber-200 text-amber-700 text-xs font-semibold"
-                    >
-                      😴 Rest instead (log as complete)
-                    </button>
-                    <button
-                      onClick={() => {
-                        /* dismiss — do nothing, card stays until readiness is re-logged */
-                        setReadinessScore(6) // bump above threshold to dismiss
-                      }}
-                      className="w-full py-1.5 text-[10px] text-amber-500 font-medium"
-                    >
-                      Keep original plan →
-                    </button>
-                  </div>
-                </div>
-              )
-            })()}
-
-            {/* Sunday coach banner — next week preview */}
-            {isToday && viewDate.getDay() === 0 && plan && plan.current_week < plan.total_weeks && (
-              <div className="bg-gradient-to-r from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-base mt-0.5">🗓️</span>
-                <div>
-                  <p className="text-[11px] font-bold text-violet-800 mb-0.5">Week {weekN} complete!</p>
-                  <p className="text-xs text-violet-700 leading-relaxed">
-                    Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what&apos;s ahead.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Week note — shown at top on today only */}
+            {/* Week note chip — compact, shown at top on today only */}
             {isToday && currentWeek?.note && (
               <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
                 <span className="text-base mt-0.5">📋</span>
@@ -866,87 +735,7 @@ export default function TodayClient() {
               </div>
             )}
 
-            {/* Contextual fuel card — real data from plan day */}
-            {isToday && planDay && planDay.nut && planDay.nut.length > 0 && (() => {
-              const now = new Date()
-              const currentHour = now.getHours() + now.getMinutes() / 60
-
-              // Parse a time string like "05:30", "During run", "On wake" into a float hour
-              function parseHour(t: string): number | null {
-                const m = t.match(/^(\d{1,2}):(\d{2})/)
-                if (m) return parseInt(m[1]) + parseInt(m[2]) / 60
-                if (/wake|morning/i.test(t)) return 6
-                if (/lunch/i.test(t)) return 12
-                if (/dinner|evening/i.test(t)) return 18
-                if (/during/i.test(t)) return currentHour // show during-run entries when running
-                return null
-              }
-
-              // Priority: upcoming entries in next 3h, plus always show macro target
-              const nutByPriority = planDay.nut
-                .map(n => ({ ...n, hour: parseHour(n.t) }))
-                .filter(n => {
-                  if (n.cat === 'macro') return false // shown separately
-                  if (n.hour === null) return true // non-timed always show
-                  return n.hour >= currentHour - 0.5 && n.hour <= currentHour + 4
-                })
-                .sort((a, b) => (a.hour ?? 99) - (b.hour ?? 99))
-                .slice(0, 4)
-
-              const macroEntry = planDay.nut.find(n => n.cat === 'macro')
-
-              if (nutByPriority.length === 0 && !macroEntry) return null
-
-              const catStyle: Record<string, { bg: string; icon: string; text: string; dot: string }> = {
-                hydration: { bg: 'bg-blue-50',   icon: '💧', text: 'text-blue-800',   dot: 'bg-blue-300'   },
-                food:      { bg: 'bg-green-50',  icon: '🍽️', text: 'text-green-800',  dot: 'bg-green-300'  },
-                fuel:      { bg: 'bg-amber-50',  icon: '⚡',  text: 'text-amber-800',  dot: 'bg-amber-300'  },
-                info:      { bg: 'bg-gray-50',   icon: 'ℹ️', text: 'text-gray-600',   dot: 'bg-gray-300'   },
-                macro:     { bg: 'bg-purple-50', icon: '📊', text: 'text-purple-800', dot: 'bg-purple-300' },
-              }
-
-              return (
-                <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-50">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm">🍽️</span>
-                      <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wide">Today&apos;s fuel plan</span>
-                    </div>
-                    <span className="text-[10px] text-gray-400">Next {nutByPriority.length > 0 ? nutByPriority.length : ''} entries</span>
-                  </div>
-                  <div className="divide-y divide-gray-50">
-                    {nutByPriority.map((n, i) => {
-                      const s = catStyle[n.cat] ?? catStyle.food
-                      return (
-                        <div key={i} className={`px-4 py-2.5 flex items-start gap-2.5 ${s.bg}`}>
-                          <span className="text-base flex-shrink-0 mt-0.5">{s.icon}</span>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className={`text-[10px] font-bold ${s.text}`}>{decodeHtml(n.t)}</span>
-                              <span className={`text-[11px] font-semibold ${s.text}`}>{decodeHtml(n.l)}</span>
-                            </div>
-                            <p className={`text-[11px] leading-relaxed ${s.text} opacity-80 mt-0.5`}>{decodeHtml(n.d)}</p>
-                          </div>
-                        </div>
-                      )
-                    })}
-                    {macroEntry && (
-                      <div className="px-4 py-2.5 flex items-center gap-2.5 bg-purple-50">
-                        <span className="text-base flex-shrink-0">📊</span>
-                        <div>
-                          <div className="text-[10px] font-bold text-purple-700 mb-0.5">Daily targets</div>
-                          <p className="text-[11px] text-purple-800 font-medium">{decodeHtml(macroEntry.d)}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )
-            })()}
-
-
-
-            {/* Session cards */}
+            {/* ── HERO: Session cards ─────────────────────────────────── */}
             {todaySessions.map((session, sessI) => {
               const key = `${weekN}_${planDayIndex}_${sessI}`
               const log = logs[key] ?? null
@@ -1001,28 +790,60 @@ export default function TodayClient() {
               )
             })}
 
-            {/* Nutrition: shown via the contextual fuel card above sessions — no duplicate strip needed */}
-
-            {/* Sleep note */}
-            {planDay?.sleep && (
-              <div className="bg-indigo-50 rounded-2xl border border-indigo-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-base mt-0.5">🌙</span>
-                <p className="text-xs text-indigo-700 leading-relaxed">{planDay.sleep}</p>
-              </div>
-            )}
-
-            {/* Missed session suggestion — past days with incomplete sessions */}
-            {!isToday && dateOffset < 0 && todaySessions.length > 0 && doneTodayCount < todaySessions.length && (
-              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-base mt-0.5">💡</span>
-                <div>
-                  <p className="text-[11px] font-bold text-amber-800 mb-0.5">Missed {todaySessions.length - doneTodayCount} session{todaySessions.length - doneTodayCount > 1 ? 's' : ''}</p>
-                  <p className="text-xs text-amber-700 leading-relaxed">
-                    You can still log these — tap the ✓ to mark them done. Or skip and keep moving.
-                  </p>
+            {/* Low readiness suggestion — shown only when readiness ≤5 */}
+            {isToday && readinessScore !== null && readinessScore <= 5 && todaySessions.length > 0 && (() => {
+              const isVeryLow = readinessScore <= 3
+              const hasRunSessions = todaySessions.some(s => s.c.startsWith('run'))
+              return (
+                <div className="bg-amber-50 rounded-2xl border border-amber-100 p-4">
+                  <div className="flex items-start gap-2.5 mb-3">
+                    <span className="text-base mt-0.5">🔄</span>
+                    <div>
+                      <p className="text-[11px] font-bold text-amber-800 mb-0.5">Low readiness today</p>
+                      <p className="text-xs text-amber-700 leading-relaxed">
+                        {isVeryLow
+                          ? 'Readiness is very low. Recovery is training — a bad day forced is two bad days.'
+                          : 'Consider modifying today\'s session. Your body is telling you something.'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {hasRunSessions && !isVeryLow && (
+                      <button
+                        onClick={() => {
+                          todaySessions.forEach((session, sessI) => {
+                            if (session.c.startsWith('run') && !logs[`${weekN}_${planDayIndex}_${sessI}`]?.done) {
+                              handleLogSession({ week_n: weekN, day_i: planDayIndex, session_i: sessI, done: true, effort: 4, km: Math.round(session.km * 0.8) || undefined, notes: 'Adapted — low readiness day' })
+                            }
+                          })
+                        }}
+                        className="w-full py-2 rounded-xl bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold"
+                      >
+                        🏃 Log as easy effort (−20% volume)
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        todaySessions.forEach((_, sessI) => {
+                          if (!logs[`${weekN}_${planDayIndex}_${sessI}`]?.done) {
+                            handleLogSession({ week_n: weekN, day_i: planDayIndex, session_i: sessI, done: true, effort: 1, notes: 'Rest day — low readiness' })
+                          }
+                        })
+                      }}
+                      className="w-full py-2 rounded-xl bg-white border border-amber-200 text-amber-700 text-xs font-semibold"
+                    >
+                      😴 Rest instead (log as complete)
+                    </button>
+                    <button
+                      onClick={() => setReadinessScore(6)}
+                      className="w-full py-1.5 text-[10px] text-amber-500 font-medium"
+                    >
+                      Keep original plan →
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )
+            })()}
 
             {/* All done celebration */}
             {isToday && todaySessions.length > 0 && doneTodayCount === todaySessions.length && (
@@ -1049,7 +870,174 @@ export default function TodayClient() {
                 )}
               </div>
             )}
-            {/* Week complete → advance prompt (Sunday or all sessions done across whole week) */}
+
+            {/* Missed session suggestion — past days with incomplete sessions */}
+            {!isToday && dateOffset < 0 && todaySessions.length > 0 && doneTodayCount < todaySessions.length && (
+              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
+                <span className="text-base mt-0.5">💡</span>
+                <div>
+                  <p className="text-[11px] font-bold text-amber-800 mb-0.5">Missed {todaySessions.length - doneTodayCount} session{todaySessions.length - doneTodayCount > 1 ? 's' : ''}</p>
+                  <p className="text-xs text-amber-700 leading-relaxed">
+                    You can still log these — tap the ✓ to mark them done. Or skip and keep moving.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Sleep note */}
+            {planDay?.sleep && (
+              <div className="bg-indigo-50 rounded-2xl border border-indigo-100 px-4 py-3 flex items-start gap-2.5">
+                <span className="text-base mt-0.5">🌙</span>
+                <p className="text-xs text-indigo-700 leading-relaxed">{planDay.sleep}</p>
+              </div>
+            )}
+
+            {/* Contextual fuel card — secondary, below the fold */}
+            {isToday && planDay && planDay.nut && planDay.nut.length > 0 && (() => {
+              const now = new Date()
+              const currentHour = now.getHours() + now.getMinutes() / 60
+
+              function parseHour(t: string): number | null {
+                const m = t.match(/^(\d{1,2}):(\d{2})/)
+                if (m) return parseInt(m[1]) + parseInt(m[2]) / 60
+                if (/wake|morning/i.test(t)) return 6
+                if (/lunch/i.test(t)) return 12
+                if (/dinner|evening/i.test(t)) return 18
+                if (/during/i.test(t)) return currentHour
+                return null
+              }
+
+              const nutByPriority = planDay.nut
+                .map(n => ({ ...n, hour: parseHour(n.t) }))
+                .filter(n => {
+                  if (n.cat === 'macro') return false
+                  if (n.hour === null) return true
+                  return n.hour >= currentHour - 0.5 && n.hour <= currentHour + 4
+                })
+                .sort((a, b) => (a.hour ?? 99) - (b.hour ?? 99))
+                .slice(0, 4)
+
+              const macroEntry = planDay.nut.find(n => n.cat === 'macro')
+              if (nutByPriority.length === 0 && !macroEntry) return null
+
+              const catStyle: Record<string, { bg: string; icon: string; text: string; dot: string }> = {
+                hydration: { bg: 'bg-blue-50',   icon: '💧', text: 'text-blue-800',   dot: 'bg-blue-300'   },
+                food:      { bg: 'bg-green-50',  icon: '🍽️', text: 'text-green-800',  dot: 'bg-green-300'  },
+                fuel:      { bg: 'bg-amber-50',  icon: '⚡',  text: 'text-amber-800',  dot: 'bg-amber-300'  },
+                info:      { bg: 'bg-gray-50',   icon: 'ℹ️', text: 'text-gray-600',   dot: 'bg-gray-300'   },
+                macro:     { bg: 'bg-purple-50', icon: '📊', text: 'text-purple-800', dot: 'bg-purple-300' },
+              }
+
+              return (
+                <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-50">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">🍽️</span>
+                      <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wide">Today&apos;s fuel plan</span>
+                    </div>
+                    <span className="text-[10px] text-gray-400">Next {nutByPriority.length > 0 ? nutByPriority.length : ''} entries</span>
+                  </div>
+                  <div className="divide-y divide-gray-50">
+                    {nutByPriority.map((n, i) => {
+                      const s = catStyle[n.cat] ?? catStyle.food
+                      return (
+                        <div key={i} className={`px-4 py-2.5 flex items-start gap-2.5 ${s.bg}`}>
+                          <span className="text-base flex-shrink-0 mt-0.5">{s.icon}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className={`text-[10px] font-bold ${s.text}`}>{decodeHtml(n.t)}</span>
+                              <span className={`text-[11px] font-semibold ${s.text}`}>{decodeHtml(n.l)}</span>
+                            </div>
+                            <p className={`text-[11px] leading-relaxed ${s.text} opacity-80 mt-0.5`}>{decodeHtml(n.d)}</p>
+                          </div>
+                        </div>
+                      )
+                    })}
+                    {macroEntry && (
+                      <div className="px-4 py-2.5 flex items-center gap-2.5 bg-purple-50">
+                        <span className="text-base flex-shrink-0">📊</span>
+                        <div>
+                          <div className="text-[10px] font-bold text-purple-700 mb-0.5">Daily targets</div>
+                          <p className="text-[11px] text-purple-800 font-medium">{decodeHtml(macroEntry.d)}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })()}
+
+            {/* Wellness check-in — below the fold */}
+            {isToday && <WellnessCheckIn onReadiness={setReadinessScore} />}
+
+            {/* Weather — below the fold, running sessions only */}
+            {isToday && todaySessions.some(s => s.c.startsWith('run')) && (
+              <WeatherWidget />
+            )}
+
+            {/* Monday weekly report — below the fold */}
+            {isToday && weeklyReport && (() => {
+              const r = weeklyReport
+              const vsArrow = r.vsLastWeek === 'up' ? '↑' : r.vsLastWeek === 'down' ? '↓' : '→'
+              const vsColour = r.vsLastWeek === 'up' ? 'text-emerald-600' : r.vsLastWeek === 'down' ? 'text-red-500' : 'text-gray-500'
+              return (
+                <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-violet-100/50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-[11px] font-bold text-violet-800 uppercase tracking-wide">Week {r.weekN} · {r.weekTitle}</p>
+                        <p className="text-xs text-violet-600 mt-0.5">Your weekly report</p>
+                      </div>
+                      <span className="text-2xl">{r.completionPct >= 90 ? '🌟' : r.completionPct >= 60 ? '✅' : '💪'}</span>
+                    </div>
+                  </div>
+                  <div className="px-4 py-3 grid grid-cols-3 gap-3 border-b border-violet-100/30">
+                    <div className="text-center">
+                      <div className="text-lg font-black text-violet-900">{r.completionPct}%</div>
+                      <div className="text-[10px] text-violet-500">sessions done</div>
+                      <div className="text-[9px] text-violet-400">{r.sessionsDone}/{r.sessionsPlanned}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-black text-violet-900">{r.kmLogged}</div>
+                      <div className="text-[10px] text-violet-500">km logged</div>
+                      <div className="text-[9px] text-violet-400">of {r.kmPlanned} planned</div>
+                    </div>
+                    <div className="text-center">
+                      <div className={`text-lg font-black ${vsColour}`}>{vsArrow} {r.lastWeekKm > 0 ? Math.abs(Math.round((r.kmLogged - r.lastWeekKm) * 10) / 10) : '—'}</div>
+                      <div className="text-[10px] text-violet-500">vs prev week</div>
+                      {r.avgEffort && <div className="text-[9px] text-violet-400">RPE {r.avgEffort} avg</div>}
+                    </div>
+                  </div>
+                  {(r.bestSession || r.lookAheadNote) && (
+                    <div className="px-4 py-3 space-y-1.5">
+                      {r.bestSession && (
+                        <p className="text-xs text-violet-700">
+                          <span className="font-semibold">Best session:</span> {r.bestSession}
+                        </p>
+                      )}
+                      {r.lookAheadNote && (
+                        <p className="text-xs text-violet-600 leading-relaxed line-clamp-2">
+                          <span className="font-semibold">This week:</span> {r.lookAheadNote}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
+
+            {/* Sunday coach banner — below the fold */}
+            {isToday && viewDate.getDay() === 0 && plan && plan.current_week < plan.total_weeks && (
+              <div className="bg-gradient-to-r from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 px-4 py-3 flex items-start gap-2.5">
+                <span className="text-base mt-0.5">🗓️</span>
+                <div>
+                  <p className="text-[11px] font-bold text-violet-800 mb-0.5">Week {weekN} complete!</p>
+                  <p className="text-xs text-violet-700 leading-relaxed">
+                    Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what&apos;s ahead.
+                  </p>
+                </div>
+              </div>
+            )}
             {/* Tomorrow's sessions preview — shown when today is all done */}
             {isToday && todaySessions.length > 0 && doneTodayCount === todaySessions.length && (() => {
               const tomorrowDayIndex = (planDayIndex + 1) % 7

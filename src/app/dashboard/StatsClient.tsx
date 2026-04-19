@@ -1144,7 +1144,7 @@ export default function StatsClient() {
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-lg font-bold text-gray-900">Stats</h1>
+            <h1 className="text-lg font-bold text-gray-900">Coach</h1>
             <div className="flex items-center gap-2">
               {plan && <span className="text-xs text-gray-400">{plan.name}</span>}
               <DarkModeToggle />
@@ -1289,13 +1289,13 @@ export default function StatsClient() {
                   )
                 })()}
                 <CoachingCard />
-                <SessionSummary logs={logs} weeks={weeks} />
                 <PBCard logs={logs} />
                 <WeeklyVolumeChart logs={logs} weeks={weeks} />
-                <WellnessTrend />
-                <WeightTrend />
                 <ACWRChart logs={logs} weeks={weeks} />
                 <PaceTrend logs={logs} />
+                <SessionSummary logs={logs} weeks={weeks} />
+                <WellnessTrend />
+                <WeightTrend />
               </>
             )}
           </>
