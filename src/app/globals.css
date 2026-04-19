@@ -124,31 +124,51 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 /* ─── Dark mode global overrides ────────────────────────────────────────────
-   Since components use hardcoded Tailwind colours, we override the most
-   impactful patterns here rather than touching every class.
+   Using [class] attribute selectors for higher specificity than Tailwind utils.
    ──────────────────────────────────────────────────────────────────────────── */
-.dark .bg-white        { background-color: var(--color-surface) !important; }
-.dark .bg-\[#f8f8f6\]  { background-color: var(--color-bg) !important; }
-.dark .bg-gray-50      { background-color: var(--color-surface-2) !important; }
-.dark .bg-gray-100     { background-color: var(--color-surface-3) !important; }
-.dark .bg-gray-200     { background-color: #52525b !important; }
 
-.dark .border-gray-100 { border-color: var(--color-border) !important; }
-.dark .border-gray-200 { border-color: var(--color-border-2) !important; }
+/* Page backgrounds */
+.dark [class*="bg-white"],
+.dark [class*="bg-\\[#f8f8f6\\]"] {
+  background-color: var(--color-surface) !important;
+}
+.dark [class*="min-h-screen"] {
+  background-color: var(--color-bg) !important;
+}
+.dark [class*="bg-gray-50"] {
+  background-color: var(--color-surface-2) !important;
+}
+.dark [class*="bg-gray-100"] {
+  background-color: var(--color-surface-3) !important;
+}
+.dark [class*="bg-gray-200"] {
+  background-color: #52525b !important;
+}
 
-.dark .text-gray-900   { color: var(--color-text-primary) !important; }
-.dark .text-gray-800   { color: var(--color-text-primary) !important; }
-.dark .text-gray-700   { color: var(--color-text-secondary) !important; }
-.dark .text-gray-600   { color: var(--color-text-secondary) !important; }
-.dark .text-gray-500   { color: var(--color-text-secondary) !important; }
-.dark .text-gray-400   { color: var(--color-text-tertiary) !important; }
-.dark .text-gray-300   { color: var(--color-text-disabled) !important; }
+/* Borders */
+.dark [class*="border-gray-100"] { border-color: var(--color-border) !important; }
+.dark [class*="border-gray-200"] { border-color: var(--color-border-2) !important; }
+
+/* Text */
+.dark [class*="text-gray-900"],
+.dark [class*="text-gray-800"] { color: var(--color-text-primary) !important; }
+.dark [class*="text-gray-700"],
+.dark [class*="text-gray-600"],
+.dark [class*="text-gray-500"] { color: var(--color-text-secondary) !important; }
+.dark [class*="text-gray-400"] { color: var(--color-text-tertiary) !important; }
+.dark [class*="text-gray-300"] { color: var(--color-text-disabled) !important; }
 
 /* Sticky headers */
-.dark .sticky          { background-color: var(--color-surface) !important; }
+.dark .sticky { background-color: var(--color-surface) !important; }
+
+/* Bottom nav */
+.dark nav {
+  background-color: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+}
 
 /* Inputs and selects */
-.dark input:not([type="range"]):not([type="checkbox"]),
+.dark input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
 .dark select,
 .dark textarea {
   background-color: var(--color-surface-2) !important;
@@ -156,9 +176,13 @@ input[type="range"]::-webkit-slider-runnable-track {
   border-color: var(--color-border-2) !important;
 }
 
-/* Bottom nav */
-.dark nav { background-color: var(--color-surface) !important; border-color: var(--color-border) !important; }
+/* Cards — any rounded element with white bg */
+.dark [class*="rounded"][class*="bg-white"] {
+  background-color: var(--color-surface) !important;
+}
 
-/* Modals / overlays that use bg-white */
-.dark .fixed.inset-0 > .bg-white { background-color: var(--color-surface) !important; }
+/* Pulse skeleton loaders */
+.dark [class*="animate-pulse"] {
+  background-color: var(--color-surface-2) !important;
+}
 
