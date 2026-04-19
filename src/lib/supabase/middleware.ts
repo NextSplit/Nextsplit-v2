@@ -32,7 +32,7 @@ export async function updateSession(request: NextRequest) {
   // Protect app routes
   const url = request.nextUrl.clone()
   const isAuthRoute = url.pathname.startsWith('/auth')
-  const isPublicRoute = url.pathname === '/' || isAuthRoute
+  const isPublicRoute = url.pathname === '/' || isAuthRoute || url.pathname.startsWith('/u/')
 
   if (!user && !isPublicRoute) {
     url.pathname = '/auth/login'

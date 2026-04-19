@@ -1373,6 +1373,38 @@ export default function ProfileClient({
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
+        {/* Public profile link */}
+        {displayName && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <p className="text-sm font-semibold text-gray-900">Your public profile</p>
+                <p className="text-[10px] text-gray-400 mt-0.5">nextsplit.app/u/{encodeURIComponent(displayName)}</p>
+              </div>
+              <a
+                href={`/u/${encodeURIComponent(displayName)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] font-semibold text-teal-600 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-xl"
+              >
+                Preview →
+              </a>
+            </div>
+            <button
+              onClick={() => {
+                const url = `${window.location.origin}/u/${encodeURIComponent(displayName)}`
+                navigator.clipboard?.writeText(url).then(() => {
+                  const el = document.getElementById('profile-copy-confirm')
+                  if (el) { el.textContent = '✓ Copied!'; setTimeout(() => { if (el) el.textContent = 'Copy link' }, 2000) }
+                })
+              }}
+              className="w-full py-2 rounded-xl bg-gray-50 text-gray-600 text-xs font-semibold border border-gray-100"
+            >
+              <span id="profile-copy-confirm">Copy link</span>
+            </button>
+          </div>
+        )}
+
         {/* Strava */}
         <StravaSection clientId={stravaClientId} isConnected={isStravaConnected} />
 
