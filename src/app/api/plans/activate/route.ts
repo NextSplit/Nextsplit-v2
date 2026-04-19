@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { template_id, slug, name, race_date, plan_type } = body
+  const { template_id, slug, name, race_date, plan_type, include_gym = true } = body
 
   if ((!template_id && !slug) || !name) {
     return NextResponse.json({ error: 'template_id (or slug) and name are required' }, { status: 400 })
@@ -59,6 +59,21 @@ export async function POST(req: Request) {
     }
   }
 
+  // Strip gym sessions if user opted out
+  type PlanSession = { c: string; n: string; det: string; km: number }
+  type PlanDay = { sessions: PlanSession[] }
+  type PlanWeek = { days: PlanDay[] }
+
+  const weeksData: PlanWeek[] = include_gym
+    ? t.weeks_data as PlanWeek[]
+    : (t.weeks_data as PlanWeek[]).map(week => ({
+        ...week,
+        days: week.days.map(day => ({
+          ...day,
+          sessions: day.sessions.filter((s: PlanSession) => !s.c.startsWith('gym')),
+        })),
+      }))
+
   const { data: newPlan, error: insertErr } = await supabase
     .from('user_plans')
     .insert({
@@ -72,12 +87,13 @@ export async function POST(req: Request) {
       start_date: startDate,
       total_weeks: t.weeks_min,
       current_week: 1,
-      weeks_data: t.weeks_data,
+      weeks_data: weeksData,
       meta: {
         peak_km_week: t.peak_km_week,
         longest_run_km: t.longest_run_km,
         distance: t.distance,
         level: t.level,
+        include_gym,
       },
     } as never)
     .select()

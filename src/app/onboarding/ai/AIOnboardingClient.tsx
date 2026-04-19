@@ -39,11 +39,16 @@ const SLUG_LABELS: Record<string, string> = {
   'ultra_50mi': '50-Mile Ultra', 'ultra_100mi': '100-Mile Ultra',
 }
 
-type Step = 'goal' | 'level' | 'race_date' | 'name' | 'analysing' | 'recommendation' | 'activating'
+type Step = 'goal' | 'level' | 'race_date' | 'gym' | 'name' | 'analysing' | 'recommendation' | 'activating'
 
 const STEP_INDEX: Record<Step, number> = {
-  goal: 1, level: 2, race_date: 3, name: 4, analysing: 4, recommendation: 4, activating: 4
+  goal: 1, level: 2, race_date: 3, gym: 4, name: 5, analysing: 5, recommendation: 5, activating: 5
 }
+
+const GYM_OPTIONS = [
+  { id: 'yes',  label: 'Yes — include strength sessions',  emoji: '🏋️', desc: 'Gym sessions on rest days build injury resilience and running economy' },
+  { id: 'no',   label: 'Running only',                     emoji: '🏃', desc: 'Pure running plan — I\'ll manage my own strength work' },
+]
 
 function OptionButton({ onClick, emoji, title, desc }: { onClick: () => void; emoji?: string; title: string; desc: string }) {
   return (
@@ -65,6 +70,7 @@ export default function AIOnboardingClient() {
   const [goal, setGoal] = useState('')
   const [level, setLevel] = useState('')
   const [raceDate, setRaceDate] = useState('')
+  const [gymPreference, setGymPreference] = useState<'yes'|'no'>('yes')
   const [planName, setPlanName] = useState('')
   const [recommendation, setRecommendation] = useState('')
   const [chosenSlug, setChosenSlug] = useState('')
@@ -77,7 +83,8 @@ export default function AIOnboardingClient() {
   function handleBack() {
     if (step === 'level') setStep('goal')
     else if (step === 'race_date') setStep('level')
-    else if (step === 'name') setStep('race_date')
+    else if (step === 'gym') setStep('race_date')
+    else if (step === 'name') setStep('gym')
     else if (step === 'recommendation') setStep('name')
     else router.push('/onboarding')
   }
@@ -91,7 +98,7 @@ export default function AIOnboardingClient() {
       const res = await fetch('/api/ai/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ goal, level, raceDate: raceDate || null, slug }),
+        body: JSON.stringify({ goal, level, raceDate: raceDate || null, slug, includeGym: gymPreference === 'yes' }),
       })
       const data = await res.json()
       if (!res.ok || !data.recommendation) throw new Error(data.error || 'Failed')
@@ -111,11 +118,17 @@ export default function AIOnboardingClient() {
       const res = await fetch('/api/plans/activate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: chosenSlug, name: planName.trim() || `${selectedGoal?.label} Plan`, race_date: raceDate || undefined, plan_type: 'ai_bespoke' }),
+        body: JSON.stringify({
+          slug: chosenSlug,
+          name: planName.trim() || `${selectedGoal?.label} Plan`,
+          race_date: raceDate || undefined,
+          plan_type: 'ai_bespoke',
+          include_gym: gymPreference === 'yes',
+        }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to create plan')
-      router.push('/today')
+      router.push(data.raceTooSoon ? '/today?notice=race_soon' : '/today')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
       setStep('recommendation')
@@ -129,7 +142,7 @@ export default function AIOnboardingClient() {
       style={{ background: 'linear-gradient(160deg, #0f172a 0%, #18181b 60%, #0f172a 100%)' }}>
 
       {showProgress && (
-        <OnboardingProgress current={STEP_INDEX[step]} total={4} onBack={handleBack} />
+        <OnboardingProgress current={STEP_INDEX[step]} total={5} onBack={handleBack} />
       )}
 
       {step === 'goal' && (
@@ -172,10 +185,28 @@ export default function AIOnboardingClient() {
           <input type="date" value={raceDate} onChange={e => setRaceDate(e.target.value)} min={today}
             className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500 mb-4"
             style={{ background: 'rgba(255,255,255,0.07)' }} />
-          <button onClick={() => setStep('name')}
+          <button onClick={() => setStep('gym')}
             className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
             {raceDate ? 'Continue →' : 'Skip →'}
           </button>
+        </div>
+      )}
+
+      {step === 'gym' && (
+        <div>
+          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-teal-400">
+              {selectedGoal?.label} · {selectedLevel?.label}{raceDate ? ' · ' + new Date(raceDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''} ✓
+            </span>
+          </div>
+          <h1 className="text-2xl font-black text-white mb-1">Include strength training?</h1>
+          <p className="text-zinc-400 text-sm mb-7">Gym sessions on rest days build injury resilience and running economy — the best runners train both.</p>
+          <div className="space-y-2.5">
+            {GYM_OPTIONS.map(opt => (
+              <OptionButton key={opt.id} emoji={opt.emoji} title={opt.label} desc={opt.desc}
+                onClick={() => { setGymPreference(opt.id as 'yes'|'no'); setStep('name') }} />
+            ))}
+          </div>
         </div>
       )}
 
@@ -183,7 +214,7 @@ export default function AIOnboardingClient() {
         <div>
           <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
             <span className="text-xs font-bold text-teal-400">
-              {selectedGoal?.label} · {selectedLevel?.label}{raceDate ? ' · ' + new Date(raceDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''} ✓
+              {selectedGoal?.label} · {selectedLevel?.label} · {gymPreference === 'yes' ? '🏋️ Gym' : '🏃 Run only'} ✓
             </span>
           </div>
           <h1 className="text-2xl font-black text-white mb-1">Name your plan</h1>

@@ -170,6 +170,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }) {
   const [raceDateInput, setRaceDateInput] = useState('')
   const [planName, setPlanName] = useState(plan.name)
+  const [includeGym, setIncludeGym] = useState(true)
   const [activating, setActivating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const meta = plan.meta as Record<string, unknown>
@@ -182,7 +183,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
       const res = await fetch('/api/plans/activate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ template_id: plan.id, name: planName, race_date: raceDateInput || null }),
+        body: JSON.stringify({ template_id: plan.id, name: planName, race_date: raceDateInput || null, include_gym: includeGym }),
       })
       if (!res.ok) {
         const body = await res.json()
@@ -190,7 +191,6 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
       }
       const result = await res.json()
       if (result.raceTooSoon) {
-        // Still navigate but carry a warning
         window.location.href = '/today?notice=race_soon'
       } else {
         window.location.href = '/today'
@@ -302,6 +302,29 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
               We&apos;ll align your training weeks to build up to race day.
             </p>
           </div>
+
+          {/* Gym toggle */}
+          <button
+            onClick={() => setIncludeGym(g => !g)}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
+              includeGym ? 'border-amber-200 bg-amber-50' : 'border-gray-100 bg-gray-50'
+            }`}
+          >
+            <span className="text-xl">{includeGym ? '🏋️' : '🏃'}</span>
+            <div className="flex-1 text-left">
+              <p className={`text-xs font-bold ${includeGym ? 'text-amber-800' : 'text-gray-600'}`}>
+                {includeGym ? 'Strength sessions included' : 'Running only'}
+              </p>
+              <p className={`text-[10px] mt-0.5 ${includeGym ? 'text-amber-600' : 'text-gray-400'}`}>
+                {includeGym
+                  ? 'Gym sessions on rest days — builds injury resilience'
+                  : 'Tap to add gym sessions to your plan'}
+              </p>
+            </div>
+            <div className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${includeGym ? 'bg-amber-500' : 'bg-gray-200'}`}>
+              <div className={`w-4 h-4 bg-white rounded-full mt-1 transition-all ${includeGym ? 'ml-5' : 'ml-1'}`} />
+            </div>
+          </button>
 
           {error && (
             <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-xl border border-red-100">{error}</p>
