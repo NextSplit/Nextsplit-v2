@@ -455,3 +455,32 @@ export interface SquadRunnerSummary {
 /** Full three-tier account type */
 export type AccountTier = 'athlete' | 'split_leader' | 'professional_coach'
 
+export interface FeaturedPlan {
+  id: string
+  template_id: string
+  week_start: string
+  feature_type: 'algorithmic' | 'editorial' | 'debut'
+  position: number
+  impressions: number
+  clicks: number
+  conversions: number
+  created_at: string
+}
+
+/** Plan template with computed marketplace stats */
+export interface PlanTemplateWithStats extends PlanTemplate {
+  avg_completion_rate: number | null
+  total_starts: number
+  total_completions: number
+  avg_rating: number | null
+  review_count: number
+  author_type: 'nextsplit' | 'coach'
+  author_id: string | null
+  price_gbp: number | null
+  is_public: boolean
+  preview_weeks: number
+  // Joined
+  coach_profile?: CoachProfile
+  is_featured_this_week?: boolean
+}
+

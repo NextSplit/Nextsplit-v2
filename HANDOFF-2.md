@@ -721,9 +721,11 @@ This is the complete tier structure for NextSplit. Every product decision should
 - Verified badge
 - Unlimited athletes
 
-**Cost to their runners:** Free to follow a Split Leader — same as joining a public club. Runners don't pay the Split Leader anything. The value is the community and informal guidance.
+**Cost to their runners:** Free. Zero friction. "Join my squad" — no payment required, no Pro needed. Runners just need a NextSplit account (free tier is fine).
 
-**Plan sharing:** Split Leaders can share their plans within their squad only — not on the public marketplace. Plans are free, not sold. This keeps the tier informal and community-driven.
+**Plan sharing:** Informal only — no selling. Split Leaders share the plan they're following themselves with their squad. Runners get access, no money changes hands. This is intentional — Split Leader is a community and acquisition feature, not a revenue feature. Its job is to bring runners onto NextSplit and into Pro, then feed the upgrade funnel into Professional Coach.
+
+**Why this works:** A Split Leader saying "come do my plan with me, it's free" is one of the most natural user acquisition mechanisms possible. It costs nothing to say yes. Every runner who joins needs a NextSplit account — even a free account is a user acquired. Many will convert to Pro to unlock analytics, AI coaching, and pace zones.
 
 **The upgrade trigger:** Split Leader hits 5 runners and wants more → must upgrade to Professional Coach. Or wants to sell plans, use the plan builder, send voice messages → upgrade. The cap and feature limits are the natural sales funnel.
 
@@ -750,7 +752,8 @@ This is the complete tier structure for NextSplit. Every product decision should
 - **AI automation rules** — set triggers, coach writes templates, AI acts autonomously within them
 - **Voice messages** — 60-second voice notes, stored in Supabase Storage
 - **Plan builder** — create custom structured plans in-app, paces as zone references
-- **Public marketplace listing** — sell plans to any NextSplit user
+- **Public marketplace listing** — sell plans to any NextSplit user globally
+- **Featured Plans** — eligible for weekly NextSplit editorial and algorithmic featuring
 - **Bespoke athlete plans** — create custom plans per athlete (not from a template)
 - **Verified badge** — if credentials approved
 - **Coach-led public club** — grows their audience, client acquisition channel
@@ -1026,6 +1029,113 @@ Squad tab sections:
 6. **Earnings** — Stripe Connect dashboard embed
 
 The Squad tab is coach-only. Athletes with no coach role never see it. The Coach tab (existing) remains the AI coaching card for athletes — separate concern.
+
+
+---
+
+
+## FEATURED PLANS — THE CONNECTION LOOP
+
+This is the mechanism that makes the marketplace feel alive and creates a flywheel between runners and coaches.
+
+### What it is
+Every week, 3–5 plans are featured prominently across NextSplit:
+- **Today tab** — featured plan card shown to athletes without an active plan, or between plans
+- **Marketplace homepage** — hero placement above all other plans
+- **Push notification** — Monday morning: "This week's featured plan: Sub-4 Marathon by Sarah Jones"
+- **Coach profile boost** — featured coach's profile gets higher search ranking that week
+
+### How plans are selected (hybrid algorithm + editorial)
+
+**Algorithmic signals:**
+- Starts this week — momentum indicator ("47 runners started this")
+- Completion rate — quality indicator (only plans with >70% avg completion eligible)
+- Review score — trust indicator (minimum 4.0 stars, minimum 5 reviews)
+- Recency boost — new plans from verified coaches get a debut feature window
+
+**Editorial picks (NextSplit curated):**
+- NextSplit Official plans always eligible
+- Seasonal relevance (spring marathon season → marathon plans featured)
+- Distance diversity — always at least one 5K and one beginner plan featured
+- New verified coach spotlight — first plan from a newly verified coach gets featured
+
+**Coach can never pay for featuring** — it's purely merit-based. This maintains trust with runners and fairness between coaches.
+
+### The connection loop
+
+```
+Runner sees featured plan
+        ↓
+Social proof: "47 runners started this week"
+        ↓
+Runner buys plan (coach earns 70%)
+        ↓
+Runner discovers coach's public club → joins
+        ↓
+Coach has warm lead for ongoing coaching subscription
+        ↓
+Runner gets great results → leaves review
+        ↓
+Review improves plan's featuring score
+        ↓
+Plan gets featured again → more runners
+        ↓
+Coach earns more → invests in NextSplit → tells other coaches
+```
+
+### What this means for coaches
+Being featured on NextSplit is genuinely valuable — exposure to the entire platform user base. A coach with a featured plan might get 20–50 new plan purchases in a week without any additional effort. This is the business case for:
+- Writing high quality plans with proper coaching rationale
+- Staying on NextSplit (you can't be featured if you leave)
+- Getting athletes to complete plans and leave reviews
+- Becoming verified (unverified coaches are ineligible for featuring)
+
+### What this means for NextSplit
+Featured Plans is an editorial product. Someone (initially you) makes the weekly picks. Over time this becomes a strong brand asset — "NextSplit's Plan of the Week" becomes something coaches aspire to and runners trust.
+
+It also creates a natural content marketing opportunity:
+- Weekly email/notification to all users ("This week's featured plans")
+- Social media content (coach spotlight, athlete results)
+- SEO: "best marathon training plan 2026" — feature the top-rated plan
+
+### DB schema additions
+
+```sql
+-- Track featuring history
+CREATE TABLE featured_plans (
+  id              uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  template_id     uuid REFERENCES plan_templates(id) NOT NULL,
+  week_start      date NOT NULL,               -- Monday of the feature week
+  feature_type    text CHECK (feature_type IN ('algorithmic', 'editorial', 'debut')),
+  position        integer,                      -- 1-5 placement order
+  impressions     integer DEFAULT 0,
+  clicks          integer DEFAULT 0,
+  conversions     integer DEFAULT 0,            -- plan purchases during feature week
+  created_at      timestamptz DEFAULT now()
+);
+
+-- Track plan completion rates (needed for featuring algorithm)
+-- Add to plan_purchases or compute from user_plans
+ALTER TABLE plan_templates
+  ADD COLUMN IF NOT EXISTS avg_completion_rate numeric(4,2),  -- 0.00-1.00
+  ADD COLUMN IF NOT EXISTS total_starts       integer DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS total_completions  integer DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS avg_rating         numeric(3,2),
+  ADD COLUMN IF NOT EXISTS review_count       integer DEFAULT 0;
+
+-- These columns are updated by triggers or background jobs when:
+-- - A user activates a plan (total_starts++)
+-- - A user completes/archives a plan (total_completions++)
+-- - A review is submitted (avg_rating recalculated)
+```
+
+### Future evolution
+Once there are enough plans and coaches:
+- **Seasonal campaigns** — "Spring Marathon Season" featured collection
+- **Distance collections** — "Best 5K plans" curated page
+- **Coach spotlights** — monthly deep-dive on a featured coach (blog + notification)
+- **Athlete stories** — runner who followed a featured plan shares their race result
+- **Coach earnings transparency** — "Top earning coaches this month" — aspirational for new coaches
 
 
 ---
