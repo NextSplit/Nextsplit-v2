@@ -1,241 +1,423 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import React from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useMealPlan } from '@/hooks/useMealPlan'
 import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
-import { MEAL_SLOTS } from '@/types/database'
-import type { PlanWeek, PlanDay, PlanSession, MealPlanEntryWithRecipe } from '@/types/database'
+import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
-const PHASE_LABELS: Record<string, { label: string; colour: string }> = {
-  p1: { label: 'Phase 1', colour: 'bg-teal-100 text-teal-800' },
-  p2: { label: 'Phase 2', colour: 'bg-violet-100 text-violet-800' },
-  tr: { label: 'Travel', colour: 'bg-amber-100 text-amber-800' },
+// ─── Constants ─────────────────────────────────────────────────────────────────
+
+const PHASE_LABELS: Record<string, { label: string; bg: string; text: string }> = {
+  p1: { label: 'Phase 1', bg: 'bg-teal-100',   text: 'text-teal-800'   },
+  p2: { label: 'Phase 2', bg: 'bg-violet-100', text: 'text-violet-800' },
+  tr: { label: 'Travel',  bg: 'bg-amber-100',  text: 'text-amber-800'  },
 }
 
-const WEEK_TYPE: Record<string, { label: string; colour: string }> = {
-  k: { label: 'Build', colour: 'text-blue-600' },
-  d: { label: 'Deload', colour: 'text-orange-500' },
-  p: { label: 'Peak', colour: 'text-red-600' },
-  r: { label: 'Race', colour: 'text-yellow-600' },
+const WEEK_TYPE: Record<string, { label: string; colour: string; dot: string }> = {
+  k: { label: 'Build',  colour: 'text-blue-600',   dot: 'bg-blue-400'   },
+  d: { label: 'Deload', colour: 'text-orange-500', dot: 'bg-orange-400' },
+  p: { label: 'Peak',   colour: 'text-red-600',    dot: 'bg-red-400'    },
+  r: { label: 'Race',   colour: 'text-yellow-600', dot: 'bg-yellow-400' },
 }
 
-function SessionPill({ session }: { session: PlanSession }) {
-  const cfg = getSessionType(session.c)
-  const name = decodeHtml(session.n)
-  return (
-    <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${cfg.colour} ${cfg.textColour} text-[10px] font-medium`}>
-      <span className={`w-1 h-1 rounded-full ${cfg.dot}`} />
-      {name.length > 22 ? name.slice(0, 22) + '…' : name}
-      {session.km > 0 && <span className="opacity-70 ml-0.5">{fmtKm(session.km)}</span>}
-    </div>
-  )
+const NUT_CAT: Record<string, { bg: string; text: string; border: string; icon: string }> = {
+  hydration: { bg: 'bg-blue-50',   text: 'text-blue-800',   border: 'border-blue-200',   icon: '💧' },
+  food:      { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-200',  icon: '🍽️' },
+  fuel:      { bg: 'bg-amber-50',  text: 'text-amber-800',  border: 'border-amber-200',  icon: '⚡' },
+  info:      { bg: 'bg-gray-50',   text: 'text-gray-600',   border: 'border-gray-200',   icon: 'ℹ️' },
+  macro:     { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200', icon: '📊' },
 }
 
-function DayRow({ day, dayIndex, weekN, logs, isToday, mealEntries }: {
-  day: PlanDay; dayIndex: number; weekN: number
-  logs: Record<string, import('@/types/database').TrainingLog>; isToday: boolean
-  mealEntries: MealPlanEntryWithRecipe[]
+// ─── Day Drawer ─────────────────────────────────────────────────────────────────
+
+function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, isToday, isPast, onClose, onLogSession }: {
+  day: PlanDay; dayIndex: number; weekN: number; weekTitle: string
+  logs: Record<string, TrainingLog>; isToday: boolean; isPast: boolean
+  onClose: () => void
+  onLogSession: (weekN: number, dayI: number, sessI: number) => void
 }) {
-  const allDone = day.sessions.length > 0 && day.sessions.every((_, i) => logs[`${weekN}_${dayIndex}_${i}`]?.done)
+  const [bottomInset, setBottomInset] = useState(0)
+
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const fn = () => setBottomInset(Math.max(0, window.innerHeight - vv!.height - vv!.offsetTop))
+    vv.addEventListener('resize', fn)
+    vv.addEventListener('scroll', fn)
+    return () => { vv.removeEventListener('resize', fn); vv.removeEventListener('scroll', fn) }
+  }, [])
+
+  const nutItems = (day.nut || []).filter(n => n.cat !== 'macro')
+  const macroEntry = (day.nut || []).find(n => n.cat === 'macro')
+  const isRest = day.sessions.length === 0 || day.sessions.every(s => s.c === 'rest')
 
   return (
-    <div className={`px-4 py-3 border-b border-gray-50 last:border-0 ${isToday ? 'bg-teal-50/40' : ''}`}>
-      <div className="flex items-start gap-3">
-        <div className="w-10 text-center flex-shrink-0">
-          <div className={`text-xs font-bold ${isToday ? 'text-[#0D9488]' : 'text-gray-400'}`}>{day.d}</div>
-          {isToday && <div className="text-[9px] text-[#0D9488]">Today</div>}
-        </div>
-        <div className="flex-1 min-w-0 space-y-1.5">
-          {/* Training sessions */}
-          {day.sessions.length === 0 ? (
-            <span className="text-xs text-gray-400 italic">Rest</span>
-          ) : (
-            <div className="flex flex-wrap gap-1">
-              {day.sessions.map((s, i) => <SessionPill key={i} session={s} />)}
+    <div className="fixed inset-0 z-50 flex flex-col justify-end bg-black/20 backdrop-blur-[2px]" onClick={onClose}>
+      <div
+        className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl flex flex-col"
+        style={{ maxHeight: '88vh', marginBottom: bottomInset }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Handle + header */}
+        <div className="px-5 pt-4 pb-3 border-b border-gray-100 flex-shrink-0">
+          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={`text-base font-bold ${isToday ? 'text-[#0D9488]' : 'text-gray-900'}`}>{day.d}</span>
+                {isToday && <span className="text-[10px] font-bold text-[#0D9488] bg-teal-50 px-2 py-0.5 rounded-full">Today</span>}
+                {isPast && <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Past</span>}
+              </div>
+              <p className="text-[11px] text-gray-400 mt-0.5">{weekTitle}</p>
             </div>
-          )}
-          {/* Meal plan entries — shown inline between sessions */}
-          {mealEntries.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {mealEntries.slice(0, 3).map(e => {
-                const slot = MEAL_SLOTS.find(s => s.id === e.meal_slot)
-                return (
-                  <div key={e.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-medium">
-                    <span>{slot?.emoji ?? '🍽️'}</span>
-                    <span className="truncate max-w-[80px]">{e.recipe.name}</span>
-                  </div>
-                )
-              })}
-              {mealEntries.length > 3 && (
-                <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-50 text-amber-500 text-[10px] font-medium">
-                  +{mealEntries.length - 3} more
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">
+              <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="overflow-y-auto flex-1 px-5 py-4 space-y-5">
+
+          {/* Schedule + sleep */}
+          {((day.times || []).length > 0 || day.sleep) && (
+            <div className="flex gap-2">
+              {(day.times || []).length > 0 && (
+                <div className="flex-1 bg-gray-50 rounded-xl p-3">
+                  <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2">🕐 Schedule</div>
+                  {(day.times || []).map((t, i) => (
+                    <div key={i} className="flex gap-2 mb-1 last:mb-0">
+                      <span className="text-[11px] font-bold text-gray-600 w-10 flex-shrink-0">{t.t}</span>
+                      <span className="text-[11px] text-gray-500">{t.l}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {day.sleep && (
+                <div className="flex-1 bg-amber-50 rounded-xl p-3">
+                  <div className="text-[9px] font-bold text-amber-500 uppercase tracking-wider mb-1">😴 Sleep</div>
+                  <p className="text-[11px] text-amber-800 leading-relaxed">{day.sleep}</p>
                 </div>
               )}
             </div>
           )}
-          {/* Nutrition hint from plan data */}
-          {mealEntries.length === 0 && day.nut && day.nut.length > 0 && (
-            <div className="flex items-center gap-1 mt-0.5">
-              <span className="text-[10px]">🍽️</span>
-              <span className="text-[10px] text-gray-400 truncate">{day.nut[0].l}</span>
-              {day.nut.length > 1 && (
-                <span className="text-[10px] text-gray-400">+{day.nut.length - 1}</span>
-              )}
+
+          {/* Sessions */}
+          <div>
+            <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+              {isRest ? 'Rest Day' : 'Sessions'}
+            </div>
+            {isRest ? (
+              <div className="bg-gray-50 rounded-xl p-4 text-center">
+                <div className="text-2xl mb-1">🛌</div>
+                <p className="text-sm text-gray-400">Recovery day</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {day.sessions.map((session, sessI) => {
+                  const cfg = getSessionType(session.c)
+                  const isDone = !!logs[`${weekN}_${dayIndex}_${sessI}`]?.done
+                  const name = decodeHtml(session.n)
+                  const detail = session.det ? decodeHtml(session.det) : null
+                  return (
+                    <div key={sessI} className={`rounded-xl border p-3 ${isDone ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-100'}`}>
+                      <div className="flex items-start gap-2.5">
+                        <div className={`mt-0.5 w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[9px] font-bold ${isDone ? 'bg-emerald-500 text-white' : `${cfg.colour} ${cfg.textColour}`}`}>
+                          {isDone ? '✓' : cfg.label.slice(0,3).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className={`text-sm font-semibold ${isDone ? 'text-emerald-700 line-through' : 'text-gray-900'}`}>{name}</span>
+                            {session.km > 0 && <span className="text-[10px] text-gray-400">{fmtKm(session.km)}</span>}
+                          </div>
+                          {detail && <p className="text-[11px] text-gray-500 mt-0.5 leading-relaxed">{detail}</p>}
+                        </div>
+                        {!isPast && (
+                          <button
+                            onClick={() => onLogSession(weekN, dayIndex, sessI)}
+                            className={`flex-shrink-0 text-[10px] font-bold px-2.5 py-1.5 rounded-lg ${isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-[#0D9488] text-white'}`}
+                          >
+                            {isDone ? '✓ Done' : 'Log'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Nutrition timeline */}
+          {nutItems.length > 0 && (
+            <div>
+              <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2">Nutrition Timeline</div>
+              <div className="space-y-2">
+                {nutItems.map((n, i) => {
+                  const cat = NUT_CAT[n.cat] ?? NUT_CAT.food
+                  return (
+                    <div key={i} className={`rounded-xl border ${cat.bg} ${cat.border} p-3`}>
+                      <div className="flex items-start gap-2">
+                        <span className="text-base flex-shrink-0">{cat.icon}</span>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className={`text-[10px] font-bold ${cat.text}`}>{n.t}</span>
+                            <span className={`text-[11px] font-semibold ${cat.text}`}>{decodeHtml(n.l)}</span>
+                          </div>
+                          <p className={`text-[11px] leading-relaxed ${cat.text} opacity-80`}>{decodeHtml(n.d)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Macro targets */}
+          {macroEntry && (
+            <div className="bg-purple-50 border border-purple-100 rounded-xl p-3">
+              <div className="text-[9px] font-bold text-purple-400 uppercase tracking-wider mb-1">📊 Daily Macro Targets</div>
+              <p className="text-xs text-purple-800 font-medium leading-relaxed">{decodeHtml(macroEntry.d)}</p>
             </div>
           )}
         </div>
-        {allDone && (
-          <div className="w-5 h-5 rounded-full bg-emerald-400 flex items-center justify-center flex-shrink-0">
-            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-        )}
       </div>
     </div>
   )
 }
 
-function WeekRow({ week, isCurrent, logs, todayDayIndex, weekRef, mealsByDate, weekDates }: {
-  week: PlanWeek; isCurrent: boolean
-  logs: Record<string, import('@/types/database').TrainingLog>; todayDayIndex: number
-  weekRef?: React.RefObject<HTMLDivElement | null>
-  mealsByDate: Record<string, MealPlanEntryWithRecipe[]>
-  weekDates: string[]   // Mon–Sun ISO date strings for this week
+// ─── Day Row ────────────────────────────────────────────────────────────────────
+
+function DayRow({ day, dayIndex, weekN, logs, isToday, isPast, onOpen }: {
+  day: PlanDay; dayIndex: number; weekN: number
+  logs: Record<string, TrainingLog>; isToday: boolean; isPast: boolean
+  onOpen: () => void
 }) {
-  const [open, setOpen] = useState(isCurrent)
-  const phase = PHASE_LABELS[week.ph] ?? { label: week.ph, colour: 'bg-gray-100 text-gray-700' }
-  const weekType = WEEK_TYPE[week.b] ?? { label: '', colour: '' }
-  const totalSessions = week.days.reduce((a, d) => a + d.sessions.length, 0)
-  const doneSessions = week.days.reduce((acc, day, dayI) =>
-    acc + day.sessions.filter((_, sessI) => logs[`${week.n}_${dayI}_${sessI}`]?.done).length, 0)
+  const realSessions = day.sessions.filter(s => s.c !== 'rest')
+  const done = realSessions.filter((_, i) => logs[`${weekN}_${dayIndex}_${i}`]?.done).length
+  const allDone = realSessions.length > 0 && done === realSessions.length
+  const isRest = realSessions.length === 0
 
   return (
-    <div ref={weekRef} className={`rounded-2xl border overflow-hidden ${isCurrent ? 'border-[#0D9488] shadow-sm' : 'border-gray-100'} bg-white`}>
-      {/* Week header */}
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-3 p-4 text-left"
-      >
-        {/* Week number */}
-        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold ${
-          isCurrent ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-500'
+    <button
+      onClick={onOpen}
+      className={`w-full px-4 py-2.5 border-b border-gray-50 last:border-0 text-left flex items-center gap-3 active:bg-gray-50 transition-colors ${isToday ? 'bg-teal-50/50' : ''}`}
+    >
+      <div className="w-9 flex-shrink-0 text-center">
+        <div className={`text-xs font-bold ${isToday ? 'text-[#0D9488]' : isPast ? 'text-gray-300' : 'text-gray-400'}`}>{day.d}</div>
+        {isToday && <div className="w-1.5 h-1.5 bg-[#0D9488] rounded-full mx-auto mt-0.5" />}
+      </div>
+
+      <div className="flex-1 min-w-0">
+        {isRest ? (
+          <span className="text-[11px] text-gray-300 italic">Rest</span>
+        ) : (
+          <div className="flex flex-wrap gap-1">
+            {realSessions.map((s, i) => {
+              const cfg = getSessionType(s.c)
+              const isDone = !!logs[`${weekN}_${dayIndex}_${i}`]?.done
+              const name = decodeHtml(s.n)
+              return (
+                <div key={i} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${isDone ? 'bg-emerald-100 text-emerald-700' : `${cfg.colour} ${cfg.textColour}`} ${isPast && !isDone ? 'opacity-40' : ''}`}>
+                  <span className={`w-1 h-1 rounded-full ${isDone ? 'bg-emerald-500' : cfg.dot}`} />
+                  {name.length > 18 ? name.slice(0, 18) + '…' : name}
+                  {s.km > 0 && <span className="opacity-60 ml-0.5">{fmtKm(s.km)}</span>}
+                </div>
+              )
+            })}
+          </div>
+        )}
+        {/* Sleep hint — only on upcoming days */}
+        {day.sleep && !isPast && !isToday && (
+          <div className="flex items-center gap-1 mt-1">
+            <span className="text-[9px]">😴</span>
+            <span className="text-[9px] text-gray-300 truncate">{day.sleep}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex-shrink-0 flex items-center gap-1.5">
+        {allDone ? (
+          <div className="w-5 h-5 rounded-full bg-emerald-400 flex items-center justify-center">
+            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        ) : !isRest && (
+          <span className="text-[9px] text-gray-300">{done}/{realSessions.length}</span>
+        )}
+        <svg className="w-3 h-3 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </button>
+  )
+}
+
+// ─── Week Row ───────────────────────────────────────────────────────────────────
+
+function WeekRow({ week, status, logs, todayDayIndex, weekRef, onOpenDay }: {
+  week: PlanWeek; status: 'completed' | 'current' | 'upcoming'
+  logs: Record<string, TrainingLog>; todayDayIndex: number
+  weekRef?: React.RefObject<HTMLDivElement | null>
+  onOpenDay: (day: PlanDay, dayIndex: number) => void
+}) {
+  const isCurrent = status === 'current'
+  const isCompleted = status === 'completed'
+  const [open, setOpen] = useState(isCurrent)
+
+  const phase = PHASE_LABELS[week.ph] ?? { label: week.ph, bg: 'bg-gray-100', text: 'text-gray-600' }
+  const wtype = WEEK_TYPE[week.b] ?? null
+  const realSessions = week.days.flatMap((d, dayI) => d.sessions.filter(s => s.c !== 'rest').map((_, sessI) => `${week.n}_${dayI}_${sessI}`))
+  const totalSessions = realSessions.length
+  const doneSessions = realSessions.filter(k => logs[k]?.done).length
+  const progress = totalSessions > 0 ? doneSessions / totalSessions : 0
+
+  return (
+    <div
+      ref={weekRef}
+      className={`rounded-2xl border overflow-hidden bg-white transition-all ${
+        isCurrent ? 'border-[#0D9488] shadow-sm' : isCompleted ? 'border-gray-100 opacity-60' : 'border-gray-100'
+      }`}
+    >
+      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center gap-3 p-4 text-left">
+        {/* Badge */}
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm ${
+          isCurrent ? 'bg-[#0D9488] text-white' : isCompleted ? 'bg-gray-100 text-gray-300' : 'bg-gray-100 text-gray-500'
         }`}>
-          {week.n}
+          {isCompleted ? (
+            <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          ) : week.n}
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${phase.colour}`}>
-              {phase.label}
-            </span>
-            {weekType.label && (
-              <span className={`text-[10px] font-semibold ${weekType.colour}`}>{weekType.label}</span>
+          <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${phase.bg} ${phase.text}`}>{phase.label}</span>
+            {wtype && (
+              <div className="flex items-center gap-1">
+                <span className={`w-1.5 h-1.5 rounded-full ${wtype.dot}`} />
+                <span className={`text-[10px] font-semibold ${wtype.colour}`}>{wtype.label}</span>
+              </div>
             )}
-            {isCurrent && (
-              <span className="text-[10px] font-bold text-[#0D9488]">← Current</span>
-            )}
+            {isCurrent && <span className="text-[10px] font-bold text-[#0D9488]">← Now</span>}
           </div>
-          <div className="text-sm font-semibold text-gray-900 truncate">{week.title}</div>
-          <div className="text-[11px] text-gray-400 mt-0.5">
-            {week.kl[0]}–{week.kl[1]}km planned
-            {totalSessions > 0 && ` · ${doneSessions}/${totalSessions} done`}
+          <div className={`text-sm font-semibold truncate ${isCompleted ? 'text-gray-400' : 'text-gray-900'}`}>{decodeHtml(week.title)}</div>
+          <div className={`text-[10px] mt-0.5 ${isCompleted ? 'text-gray-300' : 'text-gray-400'}`}>
+            {week.kl[0]}–{week.kl[1]}km · {doneSessions}/{totalSessions} done
           </div>
         </div>
 
-        {/* Progress for current week */}
-        {isCurrent && totalSessions > 0 && (
-          <div className="text-right flex-shrink-0">
-            <div className="text-lg font-bold text-[#0D9488]">{doneSessions}</div>
-            <div className="text-[10px] text-gray-400">/{totalSessions}</div>
-          </div>
-        )}
-
-        <div className={`text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}>
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="flex-shrink-0 flex flex-col items-end gap-1">
+          {isCurrent && totalSessions > 0 && (
+            <div className="text-right">
+              <span className="text-base font-bold text-[#0D9488] leading-none">{doneSessions}</span>
+              <span className="text-[9px] text-gray-400">/{totalSessions}</span>
+            </div>
+          )}
+          {isCompleted && progress > 0 && (
+            <span className="text-[9px] text-gray-300">{Math.round(progress * 100)}%</span>
+          )}
+          <svg className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''} ${isCompleted ? 'text-gray-200' : 'text-gray-400'}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
         </div>
       </button>
 
+      {/* Progress bar */}
+      {isCurrent && totalSessions > 0 && (
+        <div className="px-4 pb-1">
+          <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-[#0D9488] rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
+          </div>
+        </div>
+      )}
+
       {/* Week note */}
       {open && week.note && (
         <div className="px-4 pb-2">
-          <p className="text-xs text-amber-700 bg-amber-50 rounded-xl px-3 py-2 leading-relaxed">{week.note}</p>
+          <p className={`text-xs rounded-xl px-3 py-2 leading-relaxed ${isCompleted ? 'bg-gray-50 text-gray-400' : 'bg-amber-50 text-amber-700'}`}>
+            {decodeHtml(week.note)}
+          </p>
         </div>
       )}
 
       {/* Day rows */}
       {open && (
         <div className="border-t border-gray-50">
-          {week.days.map((day, dayI) => {
-            // weekDates[dayI] is the exact ISO date for Mon(0)..Sun(6)
-            const dateForDay = weekDates[dayI] ?? null
-            return (
-              <DayRow
-                key={dayI}
-                day={day}
-                dayIndex={dayI}
-                weekN={week.n}
-                logs={logs}
-                isToday={isCurrent && dayI === todayDayIndex}
-                mealEntries={dateForDay ? (mealsByDate[dateForDay] ?? []) : []}
-              />
-            )
-          })}
+          {week.days.map((day, dayI) => (
+            <DayRow
+              key={dayI}
+              day={day as PlanDay}
+              dayIndex={dayI}
+              weekN={week.n}
+              logs={logs}
+              isToday={isCurrent && dayI === todayDayIndex}
+              isPast={isCompleted}
+              onOpen={() => onOpenDay(day, dayI)}
+            />
+          ))}
         </div>
       )}
     </div>
   )
 }
 
+// ─── Main ────────────────────────────────────────────────────────────────────────
+
 export default function PlanClient() {
   const { plan, weeks, currentWeek, loading, advanceWeek } = useActivePlan()
-  const { logs, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
+  const { logs, logSession } = useTrainingLog(plan?.id ?? null)
   const [advancing, setAdvancing] = useState(false)
+  const [viewMode, setViewMode] = useState<'active' | 'full'>('active')
+  const [completedExpanded, setCompletedExpanded] = useState(false)
+  const [phaseFilter, setPhaseFilter] = useState<string>('all')
+  const [drawerDay, setDrawerDay] = useState<{ day: PlanDay; dayIndex: number; weekN: number; weekTitle: string } | null>(null)
   const currentWeekRef = useRef<HTMLDivElement>(null)
 
-  // Compute current week date range for meal plan
-  const { start, end, weekDates } = useMemo(() => {
-    if (!plan) {
-      const t = new Date().toISOString().slice(0,10)
-      return { start: t, end: t, weekDates: [t] }
-    }
-    // Week starts on Monday: plan.start_date + (current_week-1)*7 days
+  const { start, end } = useMemo(() => {
+    if (!plan) { const t = new Date().toISOString().slice(0,10); return { start: t, end: t } }
     const s = new Date(plan.start_date + 'T00:00:00')
     s.setDate(s.getDate() + (plan.current_week - 1) * 7)
-    const dates: string[] = []
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(s)
-      d.setDate(d.getDate() + i)
-      dates.push(d.toISOString().slice(0, 10))
-    }
     const e = new Date(s); e.setDate(e.getDate() + 6)
-    return { start: s.toISOString().slice(0,10), end: e.toISOString().slice(0,10), weekDates: dates }
+    return { start: s.toISOString().slice(0,10), end: e.toISOString().slice(0,10) }
   }, [plan])
 
-  const { byDate: mealsByDate } = useMealPlan(start, end)
+  useMealPlan(start, end) // keep meal plan hook warm
 
-  // Scroll to current week on load
   useEffect(() => {
     if (!loading && plan && currentWeekRef.current) {
-      setTimeout(() => {
-        currentWeekRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }, 300)
+      setTimeout(() => currentWeekRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300)
     }
   }, [loading, plan])
 
-  // Today's day index Mon=0..Sun=6
-  const d = new Date().getDay()
-  const todayDayIndex = d === 0 ? 6 : d - 1
+  const todayDayIndex = (() => { const d = new Date().getDay(); return d === 0 ? 6 : d - 1 })()
 
-  // Check if current week is fully done
-  const weekComplete = currentWeek ? currentWeek.days.every((day, dayI) =>
-    day.sessions.length === 0 || day.sessions.every((_, sessI) => logs[`${currentWeek.n}_${dayI}_${sessI}`]?.done)
-  ) : false
+  const { completedWeeks, currentWeekObj, upcomingWeeks, availablePhases } = useMemo(() => {
+    if (!plan) return { completedWeeks: [] as PlanWeek[], currentWeekObj: null, upcomingWeeks: [] as PlanWeek[], availablePhases: [] as string[] }
+    const cw = plan.current_week
+    return {
+      completedWeeks: [...weeks.filter(w => w.n < cw)].reverse(),
+      currentWeekObj: weeks.find(w => w.n === cw) ?? null,
+      upcomingWeeks: weeks.filter(w => w.n > cw),
+      availablePhases: [...new Set(weeks.map(w => w.ph))],
+    }
+  }, [weeks, plan])
+
+  const filterWeek = useCallback((w: PlanWeek) => phaseFilter === 'all' || w.ph === phaseFilter, [phaseFilter])
+
+  const weekComplete = currentWeekObj ? currentWeekObj.days.every((day, dayI) => {
+    const real = day.sessions.filter(s => s.c !== 'rest')
+    return real.length === 0 || real.every((_, sessI) => logs[`${currentWeekObj.n}_${dayI}_${sessI}`]?.done)
+  }) : false
   const canAdvance = weekComplete && plan && plan.current_week < plan.total_weeks
 
   async function handleAdvance() {
@@ -244,13 +426,21 @@ export default function PlanClient() {
     try { await advanceWeek() } finally { setAdvancing(false) }
   }
 
-  if (loading || logsLoading) {
+  function openDay(week: PlanWeek, day: PlanDay, dayIndex: number) {
+    setDrawerDay({ day: day as PlanDay, dayIndex, weekN: week.n, weekTitle: decodeHtml(week.title) })
+  }
+
+  async function handleLogSession(weekN: number, dayI: number, sessI: number) {
+    if (!plan) return
+    try { await logSession({ plan_id: plan.id, week_n: weekN, day_i: dayI, session_i: sessI, done: true }) }
+    catch (e) { console.error(e) }
+  }
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#f8f8f6] pb-24 pt-16">
         <div className="max-w-lg mx-auto px-4 space-y-3">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />
-          ))}
+          {[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />)}
         </div>
       </div>
     )
@@ -262,37 +452,29 @@ export default function PlanClient() {
         <div className="text-center px-4">
           <div className="text-5xl mb-4">📋</div>
           <h2 className="text-base font-bold text-gray-900 mb-2">No active plan</h2>
-          <a href="/onboarding" className="inline-block bg-[#0D9488] text-white px-6 py-3 rounded-xl text-sm font-semibold mt-4">
-            Choose a plan →
-          </a>
+          <a href="/onboarding" className="inline-block bg-[#0D9488] text-white px-6 py-3 rounded-xl text-sm font-semibold mt-4">Choose a plan →</a>
         </div>
       </div>
     )
   }
 
+  const weeksRemaining = upcomingWeeks.length + 1
+
   return (
     <div className="min-h-screen bg-[#f8f8f6] pb-24">
+
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
-          <h1 className="text-lg font-bold text-gray-900">{plan.name}</h1>
-          <p className="text-xs text-gray-400 mt-0.5">
-            Week {plan.current_week} of {plan.total_weeks} · {weeks.length} weeks total
+          <h1 className="text-lg font-bold text-gray-900 truncate">{decodeHtml(plan.name)}</h1>
+          <p className="text-[11px] text-gray-400 mt-0.5">
+            Week {plan.current_week} of {plan.total_weeks}
             {plan.race_date && ` · Race: ${new Date(plan.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
           </p>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="bg-white border-b border-gray-100 px-4 py-3">
-        <div className="max-w-lg mx-auto">
-          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[#0D9488] rounded-full transition-all"
-              style={{ width: `${(plan.current_week / plan.total_weeks) * 100}%` }}
-            />
+          <div className="mt-2.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-[#0D9488] rounded-full transition-all" style={{ width: `${(plan.current_week / plan.total_weeks) * 100}%` }} />
           </div>
-          <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+          <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
             <span>Week 1</span>
             <span>{Math.round((plan.current_week / plan.total_weeks) * 100)}% complete</span>
             <span>Week {plan.total_weeks}</span>
@@ -300,14 +482,40 @@ export default function PlanClient() {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
+      {/* Controls */}
+      <div className="bg-white border-b border-gray-100 px-4 py-2.5">
+        <div className="max-w-lg mx-auto flex items-center gap-2">
+          {/* View toggle */}
+          <div className="flex bg-gray-100 rounded-xl p-0.5 flex-shrink-0">
+            {(['active', 'full'] as const).map(mode => (
+              <button key={mode} onClick={() => setViewMode(mode)}
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${viewMode === mode ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>
+                {mode === 'active' ? `Active (${weeksRemaining})` : 'Full plan'}
+              </button>
+            ))}
+          </div>
+          {/* Phase filter */}
+          {availablePhases.length > 1 && (
+            <div className="flex gap-1 overflow-x-auto flex-1" style={{ scrollbarWidth: 'none' }}>
+              {['all', ...availablePhases].map(ph => (
+                <button key={ph} onClick={() => setPhaseFilter(ph)}
+                  className={`flex-shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all ${phaseFilter === ph ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                  {ph === 'all' ? 'All' : (PHASE_LABELS[ph]?.label ?? ph)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
-        {/* Week complete — advance prompt */}
+      <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+
+        {/* Advance prompt */}
         {canAdvance && (
           <div className="bg-emerald-50 rounded-2xl border border-emerald-100 px-4 py-4 flex items-center justify-between">
             <div>
-              <p className="text-sm font-bold text-emerald-700">Week {plan!.current_week} complete! 🎉</p>
-              <p className="text-xs text-emerald-600 mt-0.5">Ready to move to Week {plan!.current_week + 1}?</p>
+              <p className="text-sm font-bold text-emerald-700">Week {plan.current_week} complete! 🎉</p>
+              <p className="text-xs text-emerald-600 mt-0.5">Ready for Week {plan.current_week + 1}?</p>
             </div>
             <button onClick={handleAdvance} disabled={advancing}
               className="px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold disabled:opacity-50 flex-shrink-0">
@@ -316,19 +524,78 @@ export default function PlanClient() {
           </div>
         )}
 
-        {weeks.map(week => (
-          <WeekRow
-            key={week.n}
-            week={week}
-            isCurrent={week.n === plan.current_week}
-            logs={logs}
-            todayDayIndex={todayDayIndex}
-            weekRef={week.n === plan.current_week ? currentWeekRef : undefined}
-            mealsByDate={week.n === plan.current_week ? mealsByDate : {}}
-            weekDates={week.n === plan.current_week ? weekDates : []}
-          />
-        ))}
+        {/* ── ACTIVE VIEW ── */}
+        {viewMode === 'active' && (
+          <>
+            {/* Completed accordion */}
+            {completedWeeks.filter(filterWeek).length > 0 && (
+              <div className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+                <button onClick={() => setCompletedExpanded(e => !e)} className="w-full flex items-center gap-3 px-4 py-3 text-left">
+                  <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold text-gray-400">{completedWeeks.filter(filterWeek).length} weeks completed</div>
+                    <div className="text-[10px] text-gray-300">Tap to review past weeks</div>
+                  </div>
+                  <svg className={`w-4 h-4 text-gray-300 transition-transform ${completedExpanded ? 'rotate-180' : ''}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {completedExpanded && (
+                  <div className="border-t border-gray-50 px-3 pb-3 pt-2 space-y-2">
+                    {completedWeeks.filter(filterWeek).map(week => (
+                      <WeekRow key={week.n} week={week} status="completed" logs={logs} todayDayIndex={-1}
+                        onOpenDay={(day, di) => openDay(week, day, di)} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Current */}
+            {currentWeekObj && filterWeek(currentWeekObj) && (
+              <WeekRow week={currentWeekObj} status="current" logs={logs} todayDayIndex={todayDayIndex}
+                weekRef={currentWeekRef} onOpenDay={(day, di) => openDay(currentWeekObj, day, di)} />
+            )}
+
+            {/* Upcoming */}
+            {upcomingWeeks.filter(filterWeek).map(week => (
+              <WeekRow key={week.n} week={week} status="upcoming" logs={logs} todayDayIndex={-1}
+                onOpenDay={(day, di) => openDay(week, day, di)} />
+            ))}
+          </>
+        )}
+
+        {/* ── FULL VIEW ── */}
+        {viewMode === 'full' && weeks.filter(filterWeek).map(week => {
+          const status = week.n < plan.current_week ? 'completed' : week.n === plan.current_week ? 'current' : 'upcoming'
+          return (
+            <WeekRow key={week.n} week={week} status={status} logs={logs}
+              todayDayIndex={status === 'current' ? todayDayIndex : -1}
+              weekRef={status === 'current' ? currentWeekRef : undefined}
+              onOpenDay={(day, di) => openDay(week, day, di)} />
+          )
+        })}
       </div>
+
+      {/* Day drawer */}
+      {drawerDay && (
+        <DayDrawer
+          day={drawerDay.day}
+          dayIndex={drawerDay.dayIndex}
+          weekN={drawerDay.weekN}
+          weekTitle={drawerDay.weekTitle}
+          logs={logs}
+          isToday={drawerDay.weekN === plan.current_week && drawerDay.dayIndex === todayDayIndex}
+          isPast={drawerDay.weekN < plan.current_week}
+          onClose={() => setDrawerDay(null)}
+          onLogSession={handleLogSession}
+        />
+      )}
     </div>
   )
 }
