@@ -467,7 +467,7 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
           )}
         </div>
 
-        {/* Quick-done / edit button — with XP float */}
+        {/* Quick-done / gym start / edit button — with XP float */}
         <div className="relative flex-shrink-0">
           {showXP && (
             <div className="absolute -top-1 left-1/2 -translate-x-1/2 pointer-events-none z-10 animate-xp-float">
@@ -476,25 +476,35 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus }: SessionCardP
               </span>
             </div>
           )}
-          <button
-            onClick={e => { e.stopPropagation(); handleQuickDoneWithAnim() }}
-            className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${
-              done
-                ? 'border-emerald-400 bg-emerald-400'
-                : 'border-gray-200 bg-white'
-            }`}
-          >
-            {done ? (
-              <svg
-                className={`w-5 h-5 text-white ${justDone ? 'animate-check-pop' : ''}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            ) : (
-              <div className="w-3 h-3 rounded-full border-2 border-gray-300" />
-            )}
-          </button>
+          {session.c.startsWith('gym') && !done ? (
+            // Gym sessions get a "Start" pill instead of quick-done circle
+            <button
+              onClick={e => { e.stopPropagation(); onTap() }}
+              className="px-3 py-2 rounded-xl bg-amber-500 text-white text-[11px] font-bold whitespace-nowrap active:scale-95 transition-transform"
+            >
+              Start →
+            </button>
+          ) : (
+            <button
+              onClick={e => { e.stopPropagation(); handleQuickDoneWithAnim() }}
+              className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${
+                done
+                  ? 'border-emerald-400 bg-emerald-400'
+                  : 'border-gray-200 bg-white'
+              }`}
+            >
+              {done ? (
+                <svg
+                  className={`w-5 h-5 text-white ${justDone ? 'animate-check-pop' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                <div className="w-3 h-3 rounded-full border-2 border-gray-300" />
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -822,13 +832,42 @@ export default function TodayClient() {
             )}
 
             {/* Rest day or no sessions */}
-            {todaySessions.length === 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
-                <div className="text-4xl mb-3">😴</div>
-                <p className="text-sm font-semibold text-gray-700">Rest day</p>
-                <p className="text-xs text-gray-400 mt-1">Recovery is training too.</p>
-              </div>
-            )}
+            {todaySessions.length === 0 && (() => {
+              // Check if there are gym sessions on this day in the plan
+              const gymSessions = planDay?.sessions?.filter((s: PlanSession) => s.c.startsWith('gym')) ?? []
+              if (gymSessions.length > 0) {
+                return (
+                  <div className="bg-white rounded-2xl border border-gray-100 p-5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-base">🏋️</span>
+                      <p className="text-sm font-bold text-gray-900">Gym day</p>
+                      <span className="text-[10px] text-gray-400 ml-auto">No run today</span>
+                    </div>
+                    <div className="space-y-2">
+                      {gymSessions.map((s: PlanSession, i: number) => (
+                        <button key={i}
+                          onClick={() => router.push(`/gym/live/${weekN}/${planDayIndex}/${i}`)}
+                          className="w-full flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-left">
+                          <span className="text-xl">{getSessionType(s.c).emoji}</span>
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-amber-900">{s.n}</p>
+                            <p className="text-[10px] text-amber-700 mt-0.5">{parseDet(s.det ?? '').technical.slice(0, 60)}…</p>
+                          </div>
+                          <span className="text-amber-500 font-bold text-xs">Start →</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
+              return (
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+                  <div className="text-4xl mb-3">😴</div>
+                  <p className="text-sm font-semibold text-gray-700">Rest day</p>
+                  <p className="text-xs text-gray-400 mt-1">Recovery is training too.</p>
+                </div>
+              )
+            })()}
 
             {/* Session timing row */}
             {planDay && planDay.times && planDay.times.length > 0 && (

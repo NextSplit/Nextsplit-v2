@@ -106,6 +106,28 @@ export async function POST(req: Request) {
   const recentWellness = (wellnessData ?? []) as Array<{ sleep: number|null; soreness: number|null; mood: number|null; log_date: string }>
   const todayWellness = recentWellness.find(w => w.log_date === todayStr)
 
+  // ── Fetch gym logs for current plan ────────────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: gymLogsData } = await (supabase as any)
+    .from('gym_logs')
+    .select('week_n, day_i, session_i, exercises')
+    .eq('plan_id', planData.id)
+    .order('week_n', { ascending: false })
+    .limit(30)
+
+  const gymLogs = (gymLogsData ?? []) as Array<{ week_n: number; day_i: number; session_i: number; exercises: unknown[] }>
+
+  // Count planned gym sessions per week from weeks_data
+  const gymPlannedByWeek: Record<number, number> = {}
+  const gymDoneByWeek: Record<number, number> = {}
+  for (const w of weeks) {
+    const gymSessions = w.days.flatMap((d: { sessions: Array<{ c: string }> }) =>
+      d.sessions.filter((s: { c: string }) => s.c.startsWith('gym'))
+    ).length
+    gymPlannedByWeek[w.n] = gymSessions
+    gymDoneByWeek[w.n] = gymLogs.filter(g => g.week_n === w.n).length
+  }
+
   const recentNotes = logs.filter(l => l.notes && l.done).slice(0, 5)
     .map(l => `Week ${l.week_n}: "${l.notes}"`)
 
@@ -114,6 +136,10 @@ export async function POST(req: Request) {
     ? Math.ceil((new Date(raceDate).getTime() - Date.now()) / 86_400_000)
     : null
 
+  // Current week gym status
+  const gymPlannedThisWeek = gymPlannedByWeek[currentWeekN] ?? 0
+  const gymDoneThisWeek = gymDoneByWeek[currentWeekN] ?? 0
+
   const context = `
 ATHLETE PROFILE:
 - Plan: ${planData.name}
@@ -121,13 +147,15 @@ ATHLETE PROFILE:
 - Race date: ${raceDate ?? 'not set'}${daysToRace ? ` (${daysToRace} days away)` : ''}
 - Week focus: ${currentWeek?.title ?? 'unknown'} (${currentWeek?.b === 'd' ? 'deload' : currentWeek?.b === 'r' ? 'race week' : 'build'})
 - ACWR: ${acwr ?? 'insufficient data'}${acwr ? (acwr > 1.3 ? ' ⚠️ HIGH' : acwr < 0.8 ? ' ⚠️ LOW' : ' ✅ GOOD') : ''}
+${gymPlannedThisWeek > 0 ? `- Strength sessions this week: ${gymDoneThisWeek}/${gymPlannedThisWeek} completed` : ''}
 ${todayWellness ? `- Today's readiness: sleep ${todayWellness.sleep}/5, soreness ${todayWellness.soreness}/5, mood ${todayWellness.mood}/5` : ''}
 
 LAST 4 WEEKS:
 ${weekSummaries.map(w =>
   `Week ${w.week}: ${w.sessions_done}/${w.sessions_planned} sessions, ${w.km_logged}/${w.km_planned}km` +
   (w.avg_effort ? `, RPE ${w.avg_effort}/10` : '') +
-  (w.avg_pace ? `, ${w.avg_pace}/km avg` : '')
+  (w.avg_pace ? `, ${w.avg_pace}/km avg` : '') +
+  (gymPlannedByWeek[w.week] ? `, gym ${gymDoneByWeek[w.week] ?? 0}/${gymPlannedByWeek[w.week]}` : '')
 ).join('\n')}
 
 ${recentNotes.length ? `ATHLETE NOTES:\n${recentNotes.join('\n')}` : ''}
