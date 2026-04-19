@@ -499,16 +499,26 @@ function BadgeGrid({ unlockedIds, stats }: { unlockedIds: Set<string>; stats: RP
 // ─── Hero Card (character + XP + level) ──────────────────────────────────────
 
 function HeroCard({
-  charId, stats, displayName, onEditChar
+  charId, stats, displayName, kitColour, charState, medal, onEditChar, onCustomise
 }: {
   charId: string
   stats: RPGStats
   displayName: string
+  kitColour: string
+  charState: 'idle' | 'running' | 'celebrating'
+  medal: string | null
   onEditChar: () => void
+  onCustomise: () => void
 }) {
   const progress = getXPProgress(stats.xp)
   const toNext = getXPToNext(stats.xp)
   const ch = RPG_CHARS.find(c => c.id === charId) ?? RPG_CHARS[0]
+  // Override the character's accent with the chosen kit colour
+  const charWithKit = { ...ch, accent: kitColour }
+
+  // State label
+  const stateLabel = charState === 'celebrating' ? '🎉 Plan complete!' : charState === 'running' ? '🏃 Training today' : '😴 Rest day'
+  const stateLabelColour = charState === 'celebrating' ? 'text-yellow-300' : charState === 'running' ? 'text-emerald-300' : 'text-gray-400'
 
   return (
     <div className="rounded-3xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f3460 100%)' }}>
@@ -516,14 +526,22 @@ function HeroCard({
         <div className="flex items-start gap-4 mb-4">
           {/* Character avatar */}
           <div className="relative flex-shrink-0">
-            <button onClick={onEditChar}
-              className="block" title="Change character">
-              <div dangerouslySetInnerHTML={{ __html: renderCharSVG(charId, stats.level.level, 88, 108) }} />
+            <button onClick={onEditChar} className="block" title="Change character">
+              <div
+                className={charState === 'celebrating' ? 'animate-bounce' : ''}
+                dangerouslySetInnerHTML={{ __html: renderCharSVG(charWithKit.id, stats.level.level, 88, 108, kitColour) }}
+              />
             </button>
             {/* Level badge */}
             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#0D9488] text-white text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-lg">
               Lv.{stats.level.level}
             </div>
+            {/* Medal overlay */}
+            {medal && (
+              <div className="absolute -top-2 -right-2 text-xl leading-none drop-shadow-lg">
+                {medal}
+              </div>
+            )}
             {/* Edit hint */}
             <button onClick={onEditChar}
               className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full border border-gray-200 flex items-center justify-center text-[10px] text-gray-500 shadow">
@@ -533,9 +551,11 @@ function HeroCard({
 
           {/* Name + level + XP */}
           <div className="flex-1 min-w-0 pt-1">
-            <div className="text-white font-black text-lg leading-tight">{displayName}</div>
+            <div className="flex items-center gap-2">
+              <div className="text-white font-black text-lg leading-tight">{displayName}</div>
+            </div>
             <div className="text-teal-300 text-xs font-semibold mt-0.5">{stats.level.name}</div>
-            <div className="text-gray-400 text-[10px] mt-0.5">{ch.specialty}</div>
+            <div className={`text-[10px] mt-0.5 font-medium ${stateLabelColour}`}>{stateLabel}</div>
 
             {/* XP bar */}
             <div className="mt-3">
@@ -549,7 +569,7 @@ function HeroCard({
                 <div className="h-full rounded-full transition-all duration-1000"
                   style={{
                     width: `${progress}%`,
-                    background: 'linear-gradient(90deg, #0D9488, #818cf8)'
+                    background: `linear-gradient(90deg, ${kitColour}, #818cf8)`
                   }} />
               </div>
             </div>
@@ -564,8 +584,8 @@ function HeroCard({
           <StatBar label="Nutrition" value={stats.nutrition} colour="bg-amber-500"   tip="↑ Track meals and supplement days" />
         </div>
 
-        {/* Quick stats strip */}
-        <div className="grid grid-cols-4 gap-2">
+        {/* Quick stats strip + customise button */}
+        <div className="grid grid-cols-4 gap-2 mb-3">
           {[
             { label: 'km',          value: stats.totalKm + '',    colour: 'text-emerald-400' },
             { label: 'sessions',    value: stats.totalRuns + '',  colour: 'text-blue-400' },
@@ -578,6 +598,14 @@ function HeroCard({
             </div>
           ))}
         </div>
+
+        {/* Customise kit button */}
+        <button
+          onClick={onCustomise}
+          className="w-full py-1.5 rounded-xl bg-white/10 text-gray-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 hover:bg-white/20 transition-colors"
+        >
+          <span style={{ color: kitColour }}>●</span> Customise kit
+        </button>
       </div>
     </div>
   )
@@ -1010,6 +1038,8 @@ export default function ProfileClient({
   const [showCharSelect, setShowCharSelect] = useState(false)
   const [badgeToast, setBadgeToast] = useState<RPGBadge | null>(null)
   const [seenBadgeIds, setSeenBadgeIds] = useState<string[]>([])
+  const [kitColour, setKitColour] = useState('#0D9488')
+  const [showCustomiser, setShowCustomiser] = useState(false)
 
   useEffect(() => {
     setStravaClientId(process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID ?? null)
@@ -1018,6 +1048,8 @@ export default function ProfileClient({
     if (saved) setCharId(saved)
     const seen = localStorage.getItem('nextsplit_rpg_seen_badges')
     if (seen) setSeenBadgeIds(JSON.parse(seen))
+    const savedKit = localStorage.getItem('nextsplit_kit_colour')
+    if (savedKit) setKitColour(savedKit)
 
     // Show toast based on Strava OAuth redirect status
     if (stravaStatus === 'connected') {
@@ -1041,6 +1073,11 @@ export default function ProfileClient({
   function handleCharSelect(id: string) {
     setCharId(id)
     localStorage.setItem('nextsplit_rpg_char', id)
+  }
+
+  function handleKitColour(colour: string) {
+    setKitColour(colour)
+    localStorage.setItem('nextsplit_kit_colour', colour)
   }
 
   async function saveDisplayName() {
@@ -1158,6 +1195,16 @@ export default function ProfileClient({
 
   const heroDisplayName = displayName || (RPG_CHARS.find(c => c.id === charId)?.label ?? 'Runner')
 
+  // Character state: celebrating if plan complete, running if sessions logged today, idle otherwise
+  const todayStr = new Date().toISOString().slice(0, 10)
+  const loggedToday = allLogs.some(l => l.done && l.logged_at?.slice(0, 10) === todayStr)
+  const planComplete = plan?.status === 'completed'
+  const charState: 'celebrating' | 'running' | 'idle' =
+    planComplete ? 'celebrating' : loggedToday ? 'running' : 'idle'
+
+  // Medal: gold for plan complete, silver for 30-day streak, bronze for 7-day streak
+  const medal = planComplete ? '🥇' : rpgStats.streak >= 30 ? '🥈' : rpgStats.streak >= 7 ? '🥉' : null
+
   return (
     <div className="min-h-screen bg-[#f8f8f6] pb-24">
       {/* Header */}
@@ -1206,8 +1253,39 @@ export default function ProfileClient({
           charId={charId}
           stats={rpgStats}
           displayName={heroDisplayName}
+          kitColour={kitColour}
+          charState={charState}
+          medal={medal}
           onEditChar={() => setShowCharSelect(true)}
+          onCustomise={() => setShowCustomiser(s => !s)}
         />
+
+        {/* Kit colour customiser — inline, expandable */}
+        {showCustomiser && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+            <p className="text-xs font-bold text-gray-700 mb-3">Kit colour</p>
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { hex: '#0D9488', label: 'Teal' },
+                { hex: '#F97316', label: 'Orange' },
+                { hex: '#DC2626', label: 'Red' },
+                { hex: '#2563EB', label: 'Blue' },
+                { hex: '#7C3AED', label: 'Purple' },
+                { hex: '#D97706', label: 'Amber' },
+                { hex: '#059669', label: 'Green' },
+                { hex: '#DB2777', label: 'Pink' },
+              ].map(({ hex, label }) => (
+                <button
+                  key={hex}
+                  onClick={() => handleKitColour(hex)}
+                  title={label}
+                  className={`w-9 h-9 rounded-full border-4 transition-all ${kitColour === hex ? 'border-gray-900 scale-110' : 'border-transparent'}`}
+                  style={{ backgroundColor: hex }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Next Reward Card — immediately below hero for motivation */}
         <NextRewardCard stats={rpgStats} unlockedIds={unlockedIds} />

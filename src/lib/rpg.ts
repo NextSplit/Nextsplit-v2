@@ -274,7 +274,7 @@ export function checkNewBadges(stats: RPGStats, alreadyUnlocked: string[]): RPGB
 
 // ─── SVG Character Renderer ───────────────────────────────────────────────────
 
-export function renderCharSVG(charId: string, level: number, w: number, h: number): string {
+export function renderCharSVG(charId: string, level: number, w: number, h: number, kitColourOverride?: string): string {
   const ch = RPG_CHARS.find(c => c.id === charId) ?? RPG_CHARS[0]
   const { skin, hair } = ch
   const isFemale = charId.startsWith('f')
@@ -283,8 +283,11 @@ export function renderCharSVG(charId: string, level: number, w: number, h: numbe
   const rpgLevel = getLevelForXP(RPG_LEVELS.find(l => l.level === level)?.minXP ?? 0)
   const tier = rpgLevel?.tier ?? 0
 
-  // Kit colours evolve: grey → blue → teal → red/gold
-  const kitCol  = [ch.accent, ch.accent, '#1a1a1a', ch.accent][tier]
+  // Use override kit colour if provided, otherwise use character default
+  const baseAccent = kitColourOverride ?? ch.accent
+
+  // Kit colours evolve: grey → accent → dark → accent
+  const kitCol  = [baseAccent, baseAccent, '#1a1a1a', baseAccent][tier]
   const shoeCol = ['#777', '#333', '#111', '#7B1FA2'][tier]
 
   // Accessories unlock at levels
