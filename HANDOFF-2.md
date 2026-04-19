@@ -1,5 +1,5 @@
 # NextSplit v2 — Dev Session Handoff
-_Last updated: end of session 15 (Quality pass complete)_
+_Last updated: end of session 16 (UX/design audit pass complete)_
 
 ## START OF SESSION CHECKLIST
 1. Reuse GitHub token from conversation history
@@ -16,77 +16,60 @@ _Last updated: end of session 15 (Quality pass complete)_
 
 ## Git log (latest first)
 ```
-7f30d60  Quality pass: useToast everywhere, inline confirm dialogs, Fuel empty states, tap feedback
+9d6dcfb  UX audit: auth/onboarding brand alignment, plan browser teal redesign, FocusMode logged state, WellnessCheckIn dismiss fix, PWA card Tailwind, haptic in Plan, form onSubmit fix
+7f30d60  Quality pass: useToast everywhere, CoachingCard teal, inline confirms, Fuel empty states, tap feedback
 deabb41  docs: update HANDOFF-2 after Phase 10 complete
 23248ac  Phase 10: upgraded ShareSessionCard, WeeklyShareCard, public profile, middleware
-a41b248  Phase UI-5: PB toast confetti, XP float, check-pop, LevelUp star burst, undo slide-up
-5d7a7ce  Phase UI-4: TDEE calculator, AI fuel coach, calorie ring, macro bars
 ```
 
 ## Phases complete
 - Phase 0–9  ✅ Foundation, AI, Strava
-- Phase UI-1 ✅ Tab renames + reorders
-- Phase UI-2 ✅ Session card redesign, progress bar, colour tightening
-- Phase UI-3 ✅ Character: kit colour, states, medals
-- Phase UI-4 ✅ Fuel: TDEE, AI coach, calorie ring
-- Phase UI-5 ✅ Motion & delight: confetti, XP float, star burst
-- Phase 10  ✅ Social: share cards, public profile /u/[name]
-- Quality   ✅ Toast system, empty states, inline confirms, tap feedback
+- Phase UI-1–5 ✅ Full UI overhaul
+- Phase 10  ✅ Social: share cards, public profile
+- Quality   ✅ Toast system, empty states, inline confirms
+- UX Audit  ✅ Brand alignment, onboarding, auth pages, FocusMode, dismiss fixes
 
 ---
 
-## Quality pass — what was fixed
-- **useToast wired into all 5 tabs** (Today, Plan, Coach, Fuel, Character) — every action now has success/error feedback
-- **CoachingCard**: violet→teal, smart error messages (rate limit vs API key vs network), three-dot loading animation, mode switching resets state
-- **All `window.confirm()`/`window.alert()` removed** — replaced with inline confirm patterns (RaceCard, RecipeCard, LogModal discard warning)
-- **Fuel tab**: loading skeletons, no-plan empty state with CTA, better recipes empty state with action button, recipe delete/duplicate/save all show toasts
-- **Global tap feedback**: `button:active { transform: scale(0.97) }` in globals.css
-- **Coach tab empty state**: better copy ("Your coach is ready") with value proposition
-- **Fuel h1**: fixed from `text-[15px]` to `text-lg` to match other tabs
-- **LogModal discard**: amber warning card with "Keep editing" / "Discard" instead of browser dialog
+## What was fixed in the UX audit passes
+
+### Quality pass (session 15)
+- useToast wired into all 5 tabs — every action has feedback
+- CoachingCard: violet→teal, smart error messages, three-dot loading
+- All window.confirm/alert replaced with inline confirm patterns
+- Fuel tab: loading skeletons, no-plan state, better recipe empty state
+- Global tap feedback: button:active { transform: scale(0.97) } in globals.css
+- LogModal discard: amber warning with Keep/Discard instead of browser dialog
+
+### UX/Design audit (session 16)
+- Auth pages (login/signup): dark brand header ("Track. Log. Level up."), teal CTAs, teal focus rings — matches the app visual language
+- Auth forms: `form action=` → `form onSubmit=` (client component correctness)
+- Onboarding entry: AI bespoke tag violet→teal
+- Plan browser (PlanBrowserClient): complete rewrite — teal filter pills, teal CTA, plan detail with teal gradient hero, coach notes promoted to near top with teal card
+- FocusMode logged state: now shows "✓ Session logged" + prominent "Done — back to Today" button
+- WellnessCheckIn dismiss: replaced `setSaving` hack with proper `dismissed` boolean state
+- PWAProfileCard: replaced all inline styles with Tailwind classes (dark mode compatible)
+- Plan tab: added hapticLight() on session log success
 
 ---
 
 ## EXACT NEXT STEPS
 
-### Phase 11 — Stripe + Pro tier (NEXT)
+### Remaining audit items (lower priority, do when ready)
+1. **Explore what happens when onboarding AI call fails mid-flow** — the fallback text is good but never tested
+2. **Manual onboarding flow** — not audited in detail, check if it follows the same visual language
+3. **Lifestyle onboarding** — quick check that the step flow is smooth
 
-#### Prerequisite: Supabase migration
-Run this in the Supabase SQL editor BEFORE starting Phase 11:
+### Phase 11 — Stripe + Pro tier (backlogged)
+SQL to run first in Supabase:
 ```sql
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_pro boolean DEFAULT false;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS pro_expires_at timestamptz;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS stripe_customer_id text;
 ```
-Then update `src/types/database.ts` Profile type to add these 3 fields.
+Env vars needed: STRIPE_SECRET_KEY, STRIPE_PRICE_MONTHLY, STRIPE_PRICE_ANNUAL, STRIPE_WEBHOOK_SECRET
 
-#### Tasks
-
-**TASK 1 — Stripe checkout API route**
-`src/app/api/stripe/checkout/route.ts`
-POST handler → create Stripe Checkout session → return URL
-- Monthly: £7.99/mo, Annual: £59/yr
-- Success: `/profile?pro=success`, Cancel: `/profile`
-- Env vars needed: `STRIPE_SECRET_KEY`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_ANNUAL`
-
-**TASK 2 — Stripe webhook**
-`src/app/api/stripe/webhook/route.ts`
-- `checkout.session.completed` → set profiles.is_pro=true, pro_expires_at
-- `customer.subscription.deleted` → set is_pro=false
-- Env var: `STRIPE_WEBHOOK_SECRET`
-
-**TASK 3 — ProGate integration**
-`src/components/ProGate.tsx` already exists — update to check profiles.is_pro from Supabase.
-Gate behind Pro:
-- Unlimited AI coaching (currently 5/day)
-- ACWR chart + pace trend in Coach tab
-- Character cosmetics (kit colour) — decide at build time if gated or free for launch
-
-**TASK 4 — Pro upgrade card**
-In `ProfileClient.tsx` Account section — for non-Pro users, show upgrade card.
-For Pro users: show "Pro ✓" badge on HeroCard.
-
-### Phase 12 — Coach tier (after Phase 11)
+### Phase 12 — Coach tier (backlogged)
 
 ---
 
@@ -96,20 +79,23 @@ For Pro users: show "Pro ✓" badge on HeroCard.
 - Character tab:    src/app/profile/ProfileClient.tsx
 - Fuel tab:         src/app/nutrition/NutritionClient.tsx
 - Plan tab:         src/app/plan/PlanClient.tsx
-- Public profile:   src/app/u/[username]/page.tsx
-- CoachingCard:     src/components/CoachingCard.tsx (teal, improved errors)
-- Share cards:      src/components/ShareSessionCard.tsx, WeeklyShareCard.tsx
-- Toast:            src/components/Toast.tsx (useToast hook, ToastProvider in layout)
-- Global CSS:       src/app/globals.css (keyframes + global tap feedback)
-- ProGate:          src/components/ProGate.tsx
-- Middleware:       src/lib/supabase/middleware.ts
+- Auth: login       src/app/auth/login/page.tsx
+- Auth: signup      src/app/auth/signup/page.tsx
+- Onboarding entry  src/app/onboarding/OnboardingEntry.tsx
+- Plan browser      src/app/onboarding/predetermined/PlanBrowserClient.tsx
+- FocusMode         src/components/FocusMode.tsx
+- WellnessCheckIn   src/components/WellnessCheckIn.tsx
+- CoachingCard      src/components/CoachingCard.tsx
+- Toast             src/components/Toast.tsx
+- Global CSS        src/app/globals.css (keyframes + tap feedback)
 
 ## Architecture
 - Next.js 16, Supabase, all tabs client components
 - Colour system: teal=brand, amber=warnings, emerald=success, red=danger only
-- No window.confirm/alert anywhere — all inline confirmation patterns
+- No window.confirm/alert — all inline confirmation patterns
 - Toast system: ToastProvider in layout.tsx, useToast() in every tab
-- Premium: NEXT_PUBLIC_PREMIUM_ENFORCED=false (all open until Phase 11)
+- Haptics: hapticLight() on session log, plan advance; hapticSuccess() on PB
+- Premium: NEXT_PUBLIC_PREMIUM_ENFORCED=false (all open)
 
 ## Build + deploy
 ```bash
