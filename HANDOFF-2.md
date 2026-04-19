@@ -1,5 +1,5 @@
 # NextSplit v2 — Dev Session Handoff
-_Last updated: end of session 5 (Phase 6 complete)_
+_Last updated: end of session 5 (Phase 7 complete)_
 
 ## ⚠️ START OF SESSION CHECKLIST
 1. Ask the user: **"Please share your GitHub token so I can clone the repo"**
@@ -15,143 +15,184 @@ _Last updated: end of session 5 (Phase 6 complete)_
 
 ## Deploy instructions
 **Auto-deploy is broken on Hobby plan. Never trigger the deploy hook yourself.**
-
 - Push to `main` with `git push origin main`
-- Then **tell the user** to open this URL in their browser to trigger Vercel deploy:
+- Tell the user to open this URL in their browser to trigger deploy:
   `https://api.vercel.com/v1/integrations/deploy/prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri/onqfsTdnji`
-- Never open that URL yourself — user does it manually
+- Never open that URL yourself
 
 ## Git log (latest first)
 ```
+bb8fbeb  Phase 7: premium framework (ProGate, useSubscription, feature flags, AI rate limiter)
+c7dff34  docs: update HANDOFF-2.md after Phase 6
 e127022  Phase 6: PB auto-pace, Sunday week fix, post-completion re-engagement, LogModal dirty-check
-e55f308  fix: 8-item audit sprint — duplicate nutrition, plan log modal, stats units, dark mode sync, strava gate, gym logs, wellness dismiss, sw debug log
-699109b  fix: PWA install button — capture beforeinstallprompt at module scope
-a4f0146  Phase 5C: PWA — install prompt, offline page, improved SW caching, better manifest
-5511fab  dark mode toggle on all tab headers
-036cbf1  fix: dark mode higher specificity CSS overrides
-bf6c56c  Phase 5B: Strava — fix callback URL, disconnect button
+e55f308  fix: 8-item audit sprint (8 bugs)
+699109b  fix: PWA install button
+a4f0146  Phase 5C: PWA
+5511fab  dark mode toggle all tabs
+036cbf1  fix: dark mode CSS
+bf6c56c  Phase 5B: Strava
 f4c10b7  Phase 5A: onboarding polish
-5a202cb  Phase 4: PB history card, dark mode global overrides, accessibility
-a81ce1d  fix: remove cron for Hobby plan compatibility
-589e7e6  Phase 3: share card, plan completion ceremony, push notifications
-55aeb73  Phase 2: contextual fuel card, pre-race AI brief, adaptive suggestions
-4c55fd0  Phase 1: settings, plan history, switching, units/dark mode
-68d68f1  Phase 0: CSS tokens, Toast, ErrorBoundary, units
+5a202cb  Phase 4: PB history, dark mode, accessibility
+589e7e6  Phase 3: share card, push notifications, plan completion
+55aeb73  Phase 2: fuel card, AI brief, adaptive suggestions
+4c55fd0  Phase 1: settings, plan history, units/dark mode
+68d68f1  Phase 0: CSS tokens, Toast, ErrorBoundary
 ```
 
 ## Phases complete
-- Phase 0 ✅ CSS tokens, Toast, ErrorBoundary, units
-- Phase 1 ✅ Settings, plan history, switching, units/dark mode prefs
-- Phase 2 ✅ Fuel card, PreRaceBrief, AdaptiveSuggestions
-- Phase 3 ✅ Haptics, ShareSessionCard, push notifications, plan completion ceremony
-- Phase 4 ✅ PB history card, dark mode CSS overrides, accessibility
-- Phase 5A ✅ Onboarding polish — entry screen, progress bars, animations
-- Phase 5B ✅ Strava — fixed callback URL, disconnect button
-- Phase 5B+ ✅ Dark mode toggle on all 5 tab headers
-- Phase 5C ✅ PWA — install prompt, offline page, SW caching, manifest shortcuts
-- Audit Fix Sprint ✅ 8 bugs fixed (duplicate nutrition, plan log modal, stats units, dark mode sync, strava gate, gym logs, wellness dismiss, sw debug)
-- Phase 6 ✅ PB auto-pace detection, Sunday week fix, post-completion re-engagement, LogModal dirty-check
+- Phase 0–5C ✅ (see previous handoffs)
+- Audit Fix Sprint ✅ 8 bugs fixed
+- Phase 6 ✅ PB auto-pace, Sunday week fix, post-completion re-engagement, LogModal dirty-check
+- Phase 7 ✅ Premium framework + AI rate limiting
 
-## Phase 6 — what was done (commit e127022)
-1. **PB detection** — now auto-calculates pace from `duration_secs / km` when no explicit pace entered, so quick-done + duration logs can trigger PB toasts
-2. **Sunday week fix** — `viewWeekN` in TodayClient now anchors by the Monday of each week (using `vdMonday`) so Sunday correctly stays in the current plan week, not the next
-3. **Post-completion re-engagement** — `PlanCompletionCeremony` sets `nextsplit_plan_completed` in localStorage on mount; TodayClient empty state reads this and shows "Plan complete — what's next?" with "Start next plan →" instead of generic "No active plan"
-4. **LogModal dirty-check** — backdrop tap and Cancel button now check `isDirty` and show `window.confirm('Discard changes?')` before closing if user has entered data
+## Phase 7 — what was built (commit bb8fbeb)
 
-## Vercel env vars
-- NEXT_PUBLIC_SUPABASE_URL ✅
-- NEXT_PUBLIC_SUPABASE_ANON_KEY ✅
-- NEXT_PUBLIC_SITE_URL ✅
-- NEXT_PUBLIC_VAPID_PUBLIC_KEY ✅
-- VAPID_PRIVATE_KEY ✅
-- VAPID_EMAIL ✅
-- CRON_SECRET ✅
-- ANTHROPIC_API_KEY ❌ NOT SET — add to unlock PreRaceBrief, AdaptiveSuggestions, CoachingCard
-- STRAVA_CLIENT_ID ❌ NOT SET — needs Strava developer app setup
-- STRAVA_CLIENT_SECRET ❌ NOT SET
+### New files
+| File | Purpose |
+|---|---|
+| `src/lib/features.ts` | Single source of truth — all feature keys, tier requirements, rate limits. **Edit here to move features behind/off paywall** |
+| `src/hooks/useSubscription.ts` | React hook — reads `subscriptions` table, exposes `isPro`, `canUseFeature(key)`, `isDevMode` |
+| `src/components/ProGate.tsx` | Wraps any feature — passes through in dev mode, shows upgrade prompt when enforced |
+| `src/lib/aiRateLimit.ts` | Server-side per-user daily AI call counter using `ai_usage` Supabase table |
 
-## Known remaining issues (low priority)
-- `decodeHtml` called on every render — memoize or run at data fetch time
-- Very small text (`text-[9px]`, `text-[10px]` gray-300) may be below WCAG AA contrast
-- Race date dual source of truth — `plan.race_date` drives countdown; races logged in Races section don't auto-sync
-- No shared PlanContext — each tab calls `useActivePlan()` independently (re-fetches on tab switch)
-- TodayClient is 700+ lines — could be split into sub-components with React.memo
+### How the premium framework works
+- `NEXT_PUBLIC_PREMIUM_ENFORCED=false` (current) → all gates open, all features available
+- `NEXT_PUBLIC_PREMIUM_ENFORCED=true` → tiers enforced, ProGate shows upgrade prompts
+- To move any feature behind paywall: change its tier in `FEATURE_TIERS` in `src/lib/features.ts`
+- ProGate usage: `<ProGate feature="ai_coaching_card"><CoachingCard /></ProGate>`
+- ProGate preview mode: `<ProGate feature="pace_trends" preview><PaceTrend /></ProGate>` (blurred with upgrade badge)
+- Silent gate: `<ProGate feature="acwr_chart" fallback={null}><ACWRChart /></ProGate>`
 
-## Next phases — recommended order
+### AI rate limiter
+- Checks `ai_usage` table (per user per day) before every AI call
+- In dev mode: 5 calls/user/day (prevents runaway costs during testing)
+- In prod mode: uses `AI_RATE_LIMITS` per tier (free=0, pro=10, coach=25)
+- Returns 429 with `rateLimited: true` if exceeded — all AI components already handle this gracefully
+- **Requires `ai_usage` table in Supabase** — SQL below. Until created, rate limiter fails open (allows all calls)
 
-### Phase 7 — AI Features (needs ANTHROPIC_API_KEY added to Vercel)
-All components already built, just need the env var:
-- `PreRaceBrief` — AI race day briefing (wired into Stats tab)
-- `AdaptiveSuggestions` — AI coaching suggestions (wired into Plan tab)
-- `CoachingCard` — AI coaching card (wired into Stats tab)
-- New to build: post-session AI feedback (1 sentence based on effort vs plan target)
-- New to build: AI onboarding flow completion (the "AI bespoke" path is a stub)
+### Supabase tables to create (for full Phase 7)
+Run these in Supabase SQL editor:
+
+```sql
+-- AI usage tracking
+CREATE TABLE ai_usage (
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     uuid REFERENCES auth.users NOT NULL,
+  date        date NOT NULL DEFAULT CURRENT_DATE,
+  call_count  integer NOT NULL DEFAULT 1,
+  tokens_in   integer NOT NULL DEFAULT 0,
+  tokens_out  integer NOT NULL DEFAULT 0,
+  UNIQUE (user_id, date)
+);
+ALTER TABLE ai_usage ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own usage" ON ai_usage FOR SELECT USING (auth.uid() = user_id);
+
+-- Subscriptions (skeleton — populate when Stripe is wired)
+CREATE TABLE subscriptions (
+  id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id             uuid REFERENCES auth.users NOT NULL UNIQUE,
+  tier                text NOT NULL DEFAULT 'free' CHECK (tier IN ('free','pro','coach')),
+  status              text NOT NULL DEFAULT 'none' CHECK (status IN ('active','trialing','cancelled','expired','none')),
+  stripe_customer_id  text,
+  stripe_sub_id       text,
+  current_period_end  timestamptz,
+  trial_end           timestamptz,
+  created_at          timestamptz DEFAULT now(),
+  updated_at          timestamptz DEFAULT now()
+);
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own subscription" ON subscriptions FOR SELECT USING (auth.uid() = user_id);
+
+-- Helper function for token usage increment
+CREATE OR REPLACE FUNCTION increment_token_usage(
+  p_user_id uuid, p_date date, p_tokens_in integer, p_tokens_out integer
+) RETURNS void LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE ai_usage
+  SET tokens_in = tokens_in + p_tokens_in, tokens_out = tokens_out + p_tokens_out
+  WHERE user_id = p_user_id AND date = p_date;
+END;
+$$;
+```
+
+### To activate AI features
+1. Add `ANTHROPIC_API_KEY` to Vercel env vars (console.anthropic.com → API Keys)
+2. Set spend limit of $20/month in Anthropic Console → Settings → Limits
+3. Add `NEXT_PUBLIC_PREMIUM_ENFORCED=false` to Vercel env (already false by default, but make it explicit)
+4. Run the Supabase SQL above to create `ai_usage` and `subscriptions` tables
+5. Deploy — AI features will be live for all users within the 5 calls/day dev limit
+
+## Vercel env vars needed
+| Var | Status | Notes |
+|---|---|---|
+| NEXT_PUBLIC_SUPABASE_URL | ✅ | |
+| NEXT_PUBLIC_SUPABASE_ANON_KEY | ✅ | |
+| NEXT_PUBLIC_SITE_URL | ✅ | |
+| NEXT_PUBLIC_VAPID_PUBLIC_KEY | ✅ | |
+| VAPID_PRIVATE_KEY | ✅ | |
+| VAPID_EMAIL | ✅ | |
+| CRON_SECRET | ✅ | |
+| ANTHROPIC_API_KEY | ❌ | Add to unlock AI features |
+| NEXT_PUBLIC_PREMIUM_ENFORCED | ❌ | Add as `false` explicitly |
+| STRAVA_CLIENT_ID | ❌ | Phase 8 |
+| STRAVA_CLIENT_SECRET | ❌ | Phase 8 |
+| SUPABASE_SERVICE_ROLE_KEY | ❌ | Needed for server-side rate limiter (uses anon key as fallback) |
+
+## Next phases
 
 ### Phase 8 — Strava full activation
-Steps needed:
-1. Create Strava developer app at https://developers.strava.com
+1. Create app at https://developers.strava.com
 2. Set redirect URI: `https://nextsplit-v2.vercel.app/auth/strava/callback`
-3. Add `STRAVA_CLIENT_ID` + `STRAVA_CLIENT_SECRET` to Vercel env vars
-4. Test: connect → sync → splits display → disconnect
-- `nextsplit_strava_connected` localStorage flag already wired — button auto-shows after connect
+3. Add `STRAVA_CLIENT_ID` + `STRAVA_CLIENT_SECRET` to Vercel
+4. Test connect → sync → splits → disconnect flow
 
-### Phase 9 — Data depth & analytics
-- Body weight trending graph (data already in `wellness_logs.weight_kg`, not surfaced in Stats)
-- Sleep score trending (data in `wellness_logs.sleep`, not surfaced)
-- Weekly training load chart improvement (ACWR chart exists, needs better explanation UI)
-- Heart rate zone analysis (requires HR from Strava or manual entry)
-- Race predictor improvement (currently basic — could use Riegel formula with actual PB data)
+### Phase 9 — Data depth
+- Body weight trending (data in `wellness_logs.weight_kg`, not in Stats)
+- Sleep score trending (data in `wellness_logs.sleep`, not in Stats)
+- Weekly email digest (needs Resend or similar)
+- Race predictor improvement using Riegel formula + actual PBs
 
-### Phase 10 — Social & sharing
-- Weekly email digest (needs cron + email provider e.g. Resend)
-- Garmin/Wahoo export (FIT file generation)
-- Share card: test canvas render on Safari/iOS (may need html2canvas fix)
-- Leaderboard / friend challenges (new tables needed)
+### Phase 10 — Social
+- Garmin/Wahoo FIT file export
+- Leaderboard / friend challenges
 
-### Phase 11 — Monetisation
-- Free tier: 1 active plan, no AI features
-- Pro tier: unlimited plans + AI + advanced analytics
-- Stripe integration + webhook
-- Coach tier: plan builder UI, athlete management dashboard
+### Phase 11 — Monetisation (flip the switch)
+Steps when ready to charge:
+1. Set `NEXT_PUBLIC_PREMIUM_ENFORCED=true` in Vercel
+2. Create Stripe account + products (Pro monthly, Pro annual)
+3. Build `/api/stripe/webhook` to write to `subscriptions` table
+4. Build `/settings?tab=subscription` upgrade page (ProGate already links here)
+5. All gates activate automatically — no other code changes needed
 
 ## Key files
-- Today:       src/app/today/TodayClient.tsx
-- Stats:       src/app/dashboard/StatsClient.tsx
-- Profile:     src/app/profile/ProfileClient.tsx
-- Fuel:        src/app/nutrition/NutritionClient.tsx
-- Plan:        src/app/plan/PlanClient.tsx
-- Settings:    src/app/settings/SettingsClient.tsx
-- History:     src/app/history/HistoryClient.tsx
-- Onboarding:  src/app/onboarding/ (OnboardingEntry.tsx + 4 sub-flows: ai, lifestyle, manual, predetermined)
-- Offline:     src/app/offline/page.tsx
-- Components:  DarkModeToggle, PWAInstallPrompt, ServiceWorkerRegistrar,
-               WellnessCheckIn, ShareSessionCard, PlanCompletionCeremony,
-               PreRaceBrief, AdaptiveSuggestions, CoachingCard, FocusMode, StravaSyncButton
-- Hooks:       useActivePlan, useTrainingLog, useGymLog, usePushNotifications,
-               useWellness, useProfile, usePlanHistory, useRaces
-- Lib:         haptics.ts, units.ts, rpg.ts, personalBests.ts, streak.ts, sessionUtils.ts, nutrition.ts
+- Feature flags:    src/lib/features.ts  ← edit this to change what's behind paywall
+- Subscription:     src/hooks/useSubscription.ts
+- Gate component:   src/components/ProGate.tsx
+- AI rate limiter:  src/lib/aiRateLimit.ts
+- AI coach route:   src/app/api/ai/coach/route.ts
+- AI recommend:     src/app/api/ai/recommend/route.ts
+- Today:            src/app/today/TodayClient.tsx
+- Stats:            src/app/dashboard/StatsClient.tsx
+- Plan:             src/app/plan/PlanClient.tsx
+- Profile:          src/app/profile/ProfileClient.tsx
+- Settings:         src/app/settings/SettingsClient.tsx
 
 ## Architecture notes
-- Supabase backend (9-table schema with RLS), Next.js 16 App Router
-- All tabs are client components — no RSC data fetching
-- Dark mode: localStorage + `.dark` on `<html>` — ThemeWrapper applies on mount, Settings syncs from Supabase
-- Units: localStorage `nextsplit_units` ('km'|'miles') — `useUnits()` hook + event dispatch
-- PWA: `/public/sw.js` registered eagerly by ServiceWorkerRegistrar; install prompt in PWAInstallPrompt
-- Strava connection state: localStorage `nextsplit_strava_connected` ('true'|'false'), written by StravaSection
-- Plan completion state: localStorage `nextsplit_plan_completed` ('1'), written by PlanCompletionCeremony
-- No shared state context — each tab fetches independently (known perf issue, acceptable for now)
-- 53 `as any` casts on Supabase calls — harmless at runtime, TypeScript types not auto-generated
+- Supabase backend (9 tables + 2 new tables for Phase 7), Next.js 16 App Router
+- Dark mode: localStorage + `.dark` on `<html>`
+- Units: localStorage `nextsplit_units`, `useUnits()` hook
+- PWA: `/public/sw.js`, ServiceWorkerRegistrar, PWAInstallPrompt
+- Premium: `NEXT_PUBLIC_PREMIUM_ENFORCED` env var — false = dev mode, all open
+- AI rate limit: `ai_usage` Supabase table, 5 calls/day/user in dev mode
+- Strava connection: localStorage `nextsplit_strava_connected`
+- Plan completion: localStorage `nextsplit_plan_completed`
 
 ## Build commands
 ```bash
 cd nextsplit-v2
 npm install
-node_modules/.bin/next build   # always verify before pushing
-git add -A
-git commit -m "your message"
+node_modules/.bin/next build   # verify before pushing
+git add -A && git commit -m "message"
 git push origin main
-# Then tell the user to open the deploy hook URL in their browser
+# Tell user to open deploy hook URL in browser
 ```
-
-## Handoff update instructions (for Claude)
-After each phase: update this file, commit it, push, then present it to the user with present_files tool.
