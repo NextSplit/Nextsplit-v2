@@ -218,9 +218,9 @@ const NUT_CAT: Record<string, { bg: string; text: string; border: string; icon: 
 
 // ─── Day Drawer ─────────────────────────────────────────────────────────────────
 
-function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, isToday, isPast, onClose, onLogSession }: {
+function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, isPast, onClose, onLogSession }: {
   day: PlanDay; dayIndex: number; weekN: number; weekTitle: string
-  logs: Record<string, TrainingLog>; isToday: boolean; isPast: boolean
+  logs: Record<string, TrainingLog>; gymLogs: Record<string, unknown>; isToday: boolean; isPast: boolean
   onClose: () => void
   onLogSession: (weekN: number, dayI: number, sessI: number) => void
 }) {
@@ -306,7 +306,7 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, isToday, isPast, onC
               <div className="space-y-2">
                 {day.sessions.map((session, sessI) => {
                   const cfg = getSessionType(session.c)
-                  const isDone = !!logs[`${weekN}_${dayIndex}_${sessI}`]?.done
+                  const isDone = !!logs[`${weekN}_${dayIndex}_${sessI}`]?.done || !!gymLogs[`${weekN}_${dayIndex}_${sessI}`]
                   const name = decodeHtml(session.n)
                   const detail = session.det ? decodeHtml(session.det) : null
                   return (
@@ -881,6 +881,7 @@ export default function PlanClient() {
           weekN={drawerDay.weekN}
           weekTitle={drawerDay.weekTitle}
           logs={logs}
+          gymLogs={gymLogs}
           isToday={drawerDay.weekN === plan.current_week && drawerDay.dayIndex === todayDayIndex}
           isPast={drawerDay.weekN < plan.current_week}
           onClose={() => setDrawerDay(null)}
