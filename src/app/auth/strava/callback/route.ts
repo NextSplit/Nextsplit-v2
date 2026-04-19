@@ -51,7 +51,10 @@ export async function GET(request: Request) {
       token_expires_at: new Date(tokens.expires_at * 1000).toISOString(),
     }, { onConflict: 'user_id' })
 
-    return NextResponse.redirect(`${origin}/profile?strava=connected`)
+    // Pass athlete name through redirect so client can store it
+    const athleteName = [tokens.athlete?.firstname, tokens.athlete?.lastname].filter(Boolean).join(' ')
+    const nameParam = athleteName ? `&athlete=${encodeURIComponent(athleteName)}` : ''
+    return NextResponse.redirect(`${origin}/profile?strava=connected${nameParam}`)
   } catch {
     return NextResponse.redirect(`${origin}/profile?strava=error`)
   }

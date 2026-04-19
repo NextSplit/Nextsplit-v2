@@ -781,10 +781,20 @@ function StravaSection({ isConnected, clientId }: { clientId: string | null; isC
   const STRAVA_CLIENT_ID = clientId ?? process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID
   const redirectUri = typeof window !== 'undefined' ? window.location.origin + '/auth/strava/callback' : ''
   const [disconnecting, setDisconnecting] = useState(false)
+  const [syncing, setSyncing] = useState(false)
+  const [lastSync, setLastSync] = useState<string | null>(null)
+  const [syncMsg, setSyncMsg] = useState<string | null>(null)
+  const [athleteName, setAthleteName] = useState<string | null>(null)
 
   // Keep localStorage flag in sync so StravaSyncButton knows connection state
   useEffect(() => {
-    try { localStorage.setItem('nextsplit_strava_connected', isConnected ? 'true' : 'false') } catch {}
+    try {
+      localStorage.setItem('nextsplit_strava_connected', isConnected ? 'true' : 'false')
+      if (isConnected) {
+        setLastSync(localStorage.getItem('nextsplit_strava_last_sync'))
+        setAthleteName(localStorage.getItem('nextsplit_strava_athlete'))
+      }
+    } catch {}
   }, [isConnected])
 
   function connectStrava() {
@@ -797,9 +807,32 @@ function StravaSection({ isConnected, clientId }: { clientId: string | null; isC
     setDisconnecting(true)
     try {
       await fetch('/api/strava/disconnect', { method: 'POST' })
+      try { localStorage.removeItem('nextsplit_strava_connected') } catch {}
+      try { localStorage.removeItem('nextsplit_strava_last_sync') } catch {}
+      try { localStorage.removeItem('nextsplit_strava_athlete') } catch {}
       window.location.reload()
     } finally {
       setDisconnecting(false)
+    }
+  }
+
+  async function manualSync() {
+    setSyncing(true)
+    setSyncMsg(null)
+    try {
+      const res = await fetch('/api/strava/sync')
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Sync failed')
+      const count = data.activities?.length ?? 0
+      const now = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+      try { localStorage.setItem('nextsplit_strava_last_sync', now) } catch {}
+      setLastSync(now)
+      setSyncMsg(`✓ Found ${count} recent activit${count === 1 ? 'y' : 'ies'}`)
+    } catch (e) {
+      setSyncMsg(e instanceof Error ? e.message : 'Sync failed')
+    } finally {
+      setSyncing(false)
+      setTimeout(() => setSyncMsg(null), 4000)
     }
   }
 
@@ -812,27 +845,53 @@ function StravaSection({ isConnected, clientId }: { clientId: string | null; isC
               <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
             </svg>
           </div>
-          <p className="text-sm font-bold text-gray-900">Strava</p>
+          <div>
+            <p className="text-sm font-bold text-gray-900">Strava</p>
+            {isConnected && athleteName && (
+              <p className="text-[10px] text-gray-400">{athleteName}</p>
+            )}
+          </div>
         </div>
         <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${isConnected ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
           {isConnected ? '✓ Connected' : 'Not connected'}
         </span>
       </div>
-      <p className="text-xs text-gray-400 mb-3 ml-8">
-        {isConnected ? 'Activities sync automatically from the Today tab' : 'Connect to import activities with one tap'}
-      </p>
+
       {isConnected ? (
-        <button onClick={disconnectStrava} disabled={disconnecting}
-          className="w-full py-2 rounded-xl border border-gray-200 text-gray-500 text-xs font-semibold disabled:opacity-50">
-          {disconnecting ? 'Disconnecting…' : 'Disconnect Strava'}
-        </button>
+        <>
+          <p className="text-xs text-gray-400 mb-3 ml-8">
+            Tap Strava on any session in Today to import activities
+            {lastSync && <span className="ml-1">· Last sync {lastSync}</span>}
+          </p>
+          {syncMsg && (
+            <p className={`text-xs font-medium mb-2 text-center ${syncMsg.startsWith('✓') ? 'text-emerald-600' : 'text-red-500'}`}>
+              {syncMsg}
+            </p>
+          )}
+          <div className="flex gap-2">
+            <button onClick={manualSync} disabled={syncing}
+              className="flex-1 py-2 rounded-xl bg-orange-50 border border-orange-200 text-orange-600 text-xs font-semibold disabled:opacity-50">
+              {syncing ? 'Syncing…' : '↻ Check for activities'}
+            </button>
+            <button onClick={disconnectStrava} disabled={disconnecting}
+              className="py-2 px-3 rounded-xl border border-gray-200 text-gray-400 text-xs font-semibold disabled:opacity-50">
+              {disconnecting ? '…' : 'Disconnect'}
+            </button>
+          </div>
+        </>
       ) : STRAVA_CLIENT_ID ? (
-        <button onClick={connectStrava}
-          className="w-full py-2.5 rounded-xl bg-orange-500 text-white text-xs font-bold active:scale-[0.98] transition-transform">
-          Connect Strava →
-        </button>
+        <>
+          <p className="text-xs text-gray-400 mb-3 ml-8">Connect to import activities with one tap from the Today tab</p>
+          <button onClick={connectStrava}
+            className="w-full py-2.5 rounded-xl bg-orange-500 text-white text-xs font-bold active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+            <svg viewBox="0 0 24 24" fill="white" className="w-3.5 h-3.5">
+              <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+            </svg>
+            Connect Strava
+          </button>
+        </>
       ) : (
-        <p className="text-xs text-gray-400 text-center py-1">Strava integration not configured</p>
+        <p className="text-xs text-gray-400 text-center py-1 ml-8">Strava integration not configured</p>
       )}
     </div>
   )
@@ -906,11 +965,13 @@ export default function ProfileClient({
   displayName: initialDisplayName,
   isStravaConnected,
   stravaStatus,
+  stravaAthlete,
 }: {
   email: string
   displayName: string
   isStravaConnected: boolean
   stravaStatus?: string
+  stravaAthlete?: string
 }) {
   const router = useRouter()
   const supabase = useSupabase()
@@ -939,6 +1000,7 @@ export default function ProfileClient({
   const [nameInput, setNameInput] = useState(initialDisplayName)
   const [savingName, setSavingName] = useState(false)
   const [stravaClientId, setStravaClientId] = useState<string | null>(null)
+  const [stravaToast, setStravaToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
   const [levelUpShow, setLevelUpShow] = useState(false)
   const [levelUpLevel, setLevelUpLevel] = useState(0)
   const [prevLevel, setPrevLevel] = useState<number | null>(null)
@@ -956,6 +1018,24 @@ export default function ProfileClient({
     if (saved) setCharId(saved)
     const seen = localStorage.getItem('nextsplit_rpg_seen_badges')
     if (seen) setSeenBadgeIds(JSON.parse(seen))
+
+    // Show toast based on Strava OAuth redirect status
+    if (stravaStatus === 'connected') {
+      if (stravaAthlete) {
+        try { localStorage.setItem('nextsplit_strava_athlete', stravaAthlete) } catch {}
+      }
+      setStravaToast({ type: 'success', msg: `✓ Strava connected${stravaAthlete ? ` as ${stravaAthlete}` : ''}!` })
+      setTimeout(() => setStravaToast(null), 5000)
+    } else if (stravaStatus === 'denied') {
+      setStravaToast({ type: 'error', msg: 'Strava connection was cancelled.' })
+      setTimeout(() => setStravaToast(null), 4000)
+    } else if (stravaStatus === 'error' || stravaStatus === 'token_error') {
+      setStravaToast({ type: 'error', msg: 'Strava connection failed — please try again.' })
+      setTimeout(() => setStravaToast(null), 4000)
+    } else if (stravaStatus === 'no_secret') {
+      setStravaToast({ type: 'error', msg: 'Strava not configured on this server yet.' })
+      setTimeout(() => setStravaToast(null), 4000)
+    }
   }, [])
 
   function handleCharSelect(id: string) {
@@ -1242,6 +1322,17 @@ export default function ProfileClient({
       {/* Badge unlock toast */}
       {badgeToast && (
         <BadgeToast badge={badgeToast} onDismiss={() => setBadgeToast(null)} />
+      )}
+
+      {/* Strava connection toast */}
+      {stravaToast && (
+        <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 pointer-events-none">
+          <div className={`rounded-2xl px-4 py-3 text-sm font-medium text-white shadow-xl text-center ${
+            stravaToast.type === 'success' ? 'bg-orange-500' : 'bg-red-500'
+          }`}>
+            {stravaToast.msg}
+          </div>
+        </div>
       )}
     </div>
   )

@@ -7,7 +7,7 @@ import type { Profile } from '@/types/database'
 export default async function ProfilePage({
   searchParams,
 }: {
-  searchParams: Promise<{ strava?: string }>
+  searchParams: Promise<{ strava?: string; athlete?: string }>
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -24,7 +24,7 @@ export default async function ProfilePage({
     .eq('user_id', user.id)
     .maybeSingle()
 
-  const { strava } = await searchParams
+  const { strava, athlete } = await searchParams
 
   return (
     <PageErrorBoundary name="profile">
@@ -33,6 +33,7 @@ export default async function ProfilePage({
         displayName={displayName}
         isStravaConnected={!!stravaConn}
         stravaStatus={strava}
+        stravaAthlete={athlete}
       />
     </PageErrorBoundary>
   )
