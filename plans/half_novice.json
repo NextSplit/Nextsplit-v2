@@ -83,7 +83,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "7km easy &middot; 6:00–6:20/km &middot; Conversational",
+              "det": "7km easy &middot; 6:00–6:20/km &middot; Conversational — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 7
             }
           ],
@@ -107,7 +107,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-c",
+              "n": "Posterior chain & mobility",
+              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -131,7 +138,7 @@
             {
               "c": "run-easy",
               "n": "Steady/tempo run",
-              "det": "6km easy &middot; Middle 2km slightly quicker &middot; Comfortable",
+              "det": "6km easy &middot; Middle 2km slightly quicker &middot; Comfortable — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 6
             }
           ],
@@ -179,7 +186,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "7km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "7km easy &middot; 6:00–6:30/km &middot; Conversational — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 7
             }
           ],
@@ -212,7 +219,7 @@
             {
               "c": "run-long",
               "n": "Long run",
-              "det": "10km easy &middot; 6:10–6:30/km &middot; This is the session that matters most this week",
+              "det": "10km easy &middot; 6:10–6:30/km &middot; This is the session that matters most this week — A shorter long run this week — still builds time on feet and aerobic base without adding to accumulated fatigue.",
               "km": 10
             }
           ],
@@ -273,7 +280,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "7km easy",
+              "det": "7km easy — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 7
             }
           ],
@@ -297,7 +304,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-a",
+              "n": "Strength A — Lower body",
+              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -321,7 +335,7 @@
             {
               "c": "run-easy",
               "n": "Steady/tempo run",
-              "det": "6km steady &middot; 5:45–6:00/km for middle 3km",
+              "det": "6km steady &middot; 5:45–6:00/km for middle 3km — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 6
             }
           ],
@@ -369,7 +383,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -463,7 +477,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy",
+              "det": "8km easy — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -487,7 +501,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-b",
+              "n": "Strength B — Upper body",
+              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -511,7 +532,7 @@
             {
               "c": "run-easy",
               "n": "Steady/tempo run",
-              "det": "7km &middot; Middle 3km at steady effort",
+              "det": "7km &middot; Middle 3km at steady effort — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 7
             }
           ],
@@ -559,7 +580,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -592,7 +613,7 @@
             {
               "c": "run-long",
               "n": "Long run",
-              "det": "13km easy &middot; 6:10–6:30/km",
+              "det": "13km easy &middot; 6:10–6:30/km — The long run is the cornerstone of endurance training. Run it easy enough to hold a conversation and you'll finish feeling like you could go further — that's the goal.",
               "km": 13
             }
           ],
@@ -653,7 +674,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "5km easy",
+              "det": "5km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 5
             }
           ],
@@ -677,7 +698,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-c",
+              "n": "Posterior chain & mobility",
+              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -701,7 +729,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "5km easy",
+              "det": "5km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 5
             }
           ],
@@ -749,7 +777,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "6km easy",
+              "det": "6km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 6
             }
           ],
@@ -782,7 +810,7 @@
             {
               "c": "run-long",
               "n": "Easy long run",
-              "det": "9km easy &middot; Comfortable and relaxed",
+              "det": "9km easy &middot; Comfortable and relaxed — A shorter long run this week — still builds time on feet and aerobic base without adding to accumulated fatigue.",
               "km": 9
             }
           ],
@@ -843,7 +871,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy",
+              "det": "8km easy — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -867,7 +895,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-b",
+              "n": "Strength B — Upper body",
+              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -891,7 +926,7 @@
             {
               "c": "run-easy",
               "n": "Steady/tempo run",
-              "det": "7km steady &middot; Middle 3km at comfortable effort",
+              "det": "7km steady &middot; Middle 3km at comfortable effort — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 7
             }
           ],
@@ -939,7 +974,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -972,7 +1007,7 @@
             {
               "c": "run-long",
               "n": "Long run",
-              "det": "14km easy &middot; 6:10–6:30/km",
+              "det": "14km easy &middot; 6:10–6:30/km — The long run is the cornerstone of endurance training. Run it easy enough to hold a conversation and you'll finish feeling like you could go further — that's the goal.",
               "km": 14
             }
           ],
@@ -1033,7 +1068,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy",
+              "det": "8km easy — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -1057,7 +1092,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-a",
+              "n": "Strength A — Lower body",
+              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -1081,7 +1123,7 @@
             {
               "c": "run-tempo",
               "n": "Steady/tempo run",
-              "det": "8km &middot; Middle 4km at 5:45–6:00/km",
+              "det": "8km &middot; Middle 4km at 5:45–6:00/km — Threshold pace is 'comfortably hard' — you could speak in short phrases but not hold a conversation. It builds your ability to sustain faster paces for longer.",
               "km": 8
             }
           ],
@@ -1129,7 +1171,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -1162,7 +1204,7 @@
             {
               "c": "run-long",
               "n": "Long run",
-              "det": "15km easy &middot; 6:10–6:30/km &middot; Walk/jog mix is acceptable if needed",
+              "det": "15km easy &middot; 6:10–6:30/km &middot; Walk/jog mix is acceptable if needed — The long run is the cornerstone of endurance training. Run it easy enough to hold a conversation and you'll finish feeling like you could go further — that's the goal.",
               "km": 15
             }
           ],
@@ -1223,7 +1265,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "9km easy",
+              "det": "9km easy — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 9
             }
           ],
@@ -1247,7 +1289,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-b",
+              "n": "Strength B — Upper body",
+              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -1271,7 +1320,7 @@
             {
               "c": "run-easy",
               "n": "Steady/tempo run",
-              "det": "8km steady",
+              "det": "8km steady — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -1319,7 +1368,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "9km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "9km easy &middot; 6:00–6:30/km &middot; Conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 9
             }
           ],
@@ -1352,7 +1401,7 @@
             {
               "c": "run-long",
               "n": "Long run",
-              "det": "16km easy &middot; 6:10–6:30/km",
+              "det": "16km easy &middot; 6:10–6:30/km — The long run is the cornerstone of endurance training. Run it easy enough to hold a conversation and you'll finish feeling like you could go further — that's the goal.",
               "km": 16
             }
           ],
@@ -1413,7 +1462,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "6km easy",
+              "det": "6km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 6
             }
           ],
@@ -1437,7 +1486,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-c",
+              "n": "Posterior chain & mobility",
+              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -1461,7 +1517,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "6km easy",
+              "det": "6km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 6
             }
           ],
@@ -1509,7 +1565,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "6km easy",
+              "det": "6km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 6
             }
           ],
@@ -1542,7 +1598,7 @@
             {
               "c": "run-long",
               "n": "Easy long run",
-              "det": "10km easy &middot; Relaxed",
+              "det": "10km easy &middot; Relaxed — A shorter long run this week — still builds time on feet and aerobic base without adding to accumulated fatigue.",
               "km": 10
             }
           ],
@@ -1603,7 +1659,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy",
+              "det": "8km easy — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -1627,7 +1683,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-b",
+              "n": "Strength B — Upper body",
+              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -1651,7 +1714,7 @@
             {
               "c": "run-tempo",
               "n": "Steady/tempo run",
-              "det": "8km &middot; Middle 4km at race pace (6:00–6:15/km) &middot; This is what race day will feel like",
+              "det": "8km &middot; Middle 4km at race pace (6:00–6:15/km) &middot; This is what race day will feel like — Threshold pace is 'comfortably hard' — you could speak in short phrases but not hold a conversation. It builds your ability to sustain faster paces for longer.",
               "km": 8
             }
           ],
@@ -1699,7 +1762,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -1732,7 +1795,7 @@
             {
               "c": "run-long",
               "n": "Long run",
-              "det": "17km easy &middot; 6:10–6:30/km",
+              "det": "17km easy &middot; 6:10–6:30/km — The long run is the cornerstone of endurance training. Run it easy enough to hold a conversation and you'll finish feeling like you could go further — that's the goal.",
               "km": 17
             }
           ],
@@ -1793,7 +1856,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "9km easy",
+              "det": "9km easy — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 9
             }
           ],
@@ -1817,7 +1880,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-a",
+              "n": "Strength A — Lower body",
+              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -1841,7 +1911,7 @@
             {
               "c": "run-tempo",
               "n": "Steady/tempo run",
-              "det": "8km &middot; Middle 4km at race pace",
+              "det": "8km &middot; Middle 4km at race pace — Threshold pace is 'comfortably hard' — you could speak in short phrases but not hold a conversation. It builds your ability to sustain faster paces for longer.",
               "km": 8
             }
           ],
@@ -1889,7 +1959,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "9km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "9km easy &middot; 6:00–6:30/km &middot; Conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 9
             }
           ],
@@ -1922,7 +1992,7 @@
             {
               "c": "run-long",
               "n": "Long run",
-              "det": "18km easy &middot; 6:10–6:30/km &middot; Optional: gel at 12km to practise race nutrition",
+              "det": "18km easy &middot; 6:10–6:30/km &middot; Optional: gel at 12km to practise race nutrition — The long run is the cornerstone of endurance training. Run it easy enough to hold a conversation and you'll finish feeling like you could go further — that's the goal.",
               "km": 18
             }
           ],
@@ -1983,7 +2053,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "9km easy",
+              "det": "9km easy — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 9
             }
           ],
@@ -2007,7 +2077,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-b",
+              "n": "Strength B — Upper body",
+              "det": "Pull-ups 4x5 · DB row 4x5 · Overhead press 4x5 · Face pulls 3x15 · Core circuit 2x45s — Upper body work while your legs taper — good timing. Pull movements build the postural strength that holds your form together at race pace.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -2031,7 +2108,7 @@
             {
               "c": "run-tempo",
               "n": "Steady/tempo run",
-              "det": "8km &middot; 5km at race pace within run",
+              "det": "8km &middot; 5km at race pace within run — Threshold work at peak phase. Your lactate threshold determines the pace you can sustain for an hour. These sessions push that ceiling up.",
               "km": 8
             }
           ],
@@ -2079,7 +2156,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "9km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "9km easy &middot; 6:00–6:30/km &middot; Conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 9
             }
           ],
@@ -2112,7 +2189,7 @@
             {
               "c": "run-long",
               "n": "Long run",
-              "det": "19km easy &middot; Practise gel at 12km &middot; This is your confidence-building run",
+              "det": "19km easy &middot; Practise gel at 12km &middot; This is your confidence-building run — The long run is the cornerstone of endurance training. Run it easy enough to hold a conversation and you'll finish feeling like you could go further — that's the goal.",
               "km": 19
             }
           ],
@@ -2173,7 +2250,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy",
+              "det": "8km easy — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -2197,7 +2274,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-a",
+              "n": "Strength A — Lower body",
+              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -2221,7 +2305,7 @@
             {
               "c": "run-tempo",
               "n": "Steady/tempo run",
-              "det": "7km &middot; 4km at race pace",
+              "det": "7km &middot; 4km at race pace — Threshold pace is 'comfortably hard' — you could speak in short phrases but not hold a conversation. It builds your ability to sustain faster paces for longer.",
               "km": 7
             }
           ],
@@ -2269,7 +2353,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational",
+              "det": "8km easy &middot; 6:00–6:30/km &middot; Conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 8
             }
           ],
@@ -2302,7 +2386,7 @@
             {
               "c": "run-long",
               "n": "Long run",
-              "det": "15km easy &middot; 6:10–6:30/km",
+              "det": "15km easy &middot; 6:10–6:30/km — The long run is the cornerstone of endurance training. Run it easy enough to hold a conversation and you'll finish feeling like you could go further — that's the goal.",
               "km": 15
             }
           ],
@@ -2363,7 +2447,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "7km easy",
+              "det": "7km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 7
             }
           ],
@@ -2387,7 +2471,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-c",
+              "n": "Posterior chain & mobility",
+              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -2411,7 +2502,7 @@
             {
               "c": "run-easy",
               "n": "Steady run",
-              "det": "6km &middot; Middle 3km at race pace",
+              "det": "6km &middot; Middle 3km at race pace — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 6
             }
           ],
@@ -2459,7 +2550,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "6km easy",
+              "det": "6km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 6
             }
           ],
@@ -2492,7 +2583,7 @@
             {
               "c": "run-long",
               "n": "Easy long run",
-              "det": "12km easy &middot; Comfortable and relaxed",
+              "det": "12km easy &middot; Comfortable and relaxed — A shorter long run this week — still builds time on feet and aerobic base without adding to accumulated fatigue.",
               "km": 12
             }
           ],
@@ -2553,7 +2644,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "6km easy &middot; With 4x100m strides",
+              "det": "6km easy &middot; With 4x100m strides — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 6
             }
           ],
@@ -2577,7 +2668,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-c",
+              "n": "Posterior chain & mobility",
+              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -2601,7 +2699,7 @@
             {
               "c": "run-easy",
               "n": "Steady run",
-              "det": "5km &middot; 2km at race pace",
+              "det": "5km &middot; 2km at race pace — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 5
             }
           ],
@@ -2649,7 +2747,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "5km easy",
+              "det": "5km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 5
             }
           ],
@@ -2682,7 +2780,7 @@
             {
               "c": "run-long",
               "n": "Easy run",
-              "det": "9km easy &middot; Stay fresh",
+              "det": "9km easy &middot; Stay fresh — A shorter long run this week — still builds time on feet and aerobic base without adding to accumulated fatigue.",
               "km": 9
             }
           ],
@@ -2743,7 +2841,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "4km easy",
+              "det": "4km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 4
             }
           ],
@@ -2767,7 +2865,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-c",
+              "n": "Posterior chain & mobility",
+              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -2791,7 +2896,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "4km easy &middot; 2x100m strides",
+              "det": "4km easy &middot; 2x100m strides — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 4
             }
           ],
@@ -2839,7 +2944,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "3km easy",
+              "det": "3km easy — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 3
             }
           ],
@@ -2872,7 +2977,7 @@
             {
               "c": "run-easy",
               "n": "Easy run",
-              "det": "4km easy &middot; Arrive at race week feeling great",
+              "det": "4km easy &middot; Arrive at race week feeling great — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 4
             }
           ],
@@ -2933,7 +3038,7 @@
             {
               "c": "run-easy",
               "n": "Shakeout with strides",
-              "det": "3km easy &middot; 4x100m strides",
+              "det": "3km easy &middot; 4x100m strides — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 3
             }
           ],
@@ -2981,7 +3086,7 @@
             {
               "c": "run-easy",
               "n": "Final shakeout",
-              "det": "3km easy &middot; Very light",
+              "det": "3km easy &middot; Very light — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 3
             }
           ],
@@ -3029,7 +3134,7 @@
             {
               "c": "run-easy",
               "n": "Easy walk/jog",
-              "det": "2km easy &middot; Stay loose",
+              "det": "2km easy &middot; Stay loose — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 2
             }
           ],
@@ -3062,7 +3167,7 @@
             {
               "c": "run-race",
               "n": "Half marathon — first race",
-              "det": "10min walk warm-up &middot; 4x100m strides &middot; Race: first 5km at 6:15/km, settle to goal pace, walk through stations &middot; Walk/run mix is completely acceptable &middot; Finish is all that matters",
+              "det": "10min walk warm-up &middot; 4x100m strides &middot; Race: first 5km at 6:15/km, settle to goal pace, walk through stations &middot; Walk/run mix is completely acceptable &middot; Finish is all that matters — Race day. Trust your training. Start conservatively — most races are won or lost in the second half.",
               "km": 21
             }
           ],

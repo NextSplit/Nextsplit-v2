@@ -87,7 +87,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total",
+              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 2.5
             }
           ],
@@ -117,7 +117,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-c",
+              "n": "Posterior chain & mobility",
+              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -141,7 +148,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total",
+              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 2.5
             }
           ],
@@ -189,7 +196,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total",
+              "det": "5min brisk walk warm-up &middot; 8x(60s jog / 90s walk) &middot; 5min walk cool-down &middot; Total ~25min &middot; 2.5km total — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 2.5
             }
           ],
@@ -265,7 +272,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 6x(90s jog / 2min walk) &middot; 5min walk cool-down &middot; Total ~27min &middot; 3km total",
+              "det": "5min walk warm-up &middot; 6x(90s jog / 2min walk) &middot; 5min walk cool-down &middot; Total ~27min &middot; 3km total — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 3
             }
           ],
@@ -289,7 +296,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-c",
+              "n": "Posterior chain & mobility",
+              "det": "Hip thrust 3x12 · Nordic curl 3x5 · Lateral band walk 3x20 · Calf raise 2x20 · Stretching circuit 10min — A gentle posterior chain session and mobility work. During taper this is about keeping the body feeling loose and activated, not adding load.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -313,7 +327,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 6x(90s jog / 2min walk) &middot; 5min walk cool-down &middot; Total ~27min &middot; 3km total",
+              "det": "5min walk warm-up &middot; 6x(90s jog / 2min walk) &middot; 5min walk cool-down &middot; Total ~27min &middot; 3km total — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 3
             }
           ],
@@ -361,7 +375,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 6x(90s jog / 2min walk) &middot; 5min walk cool-down &middot; Total ~27min &middot; 3km total",
+              "det": "5min walk warm-up &middot; 6x(90s jog / 2min walk) &middot; 5min walk cool-down &middot; Total ~27min &middot; 3km total — Easy effort means conversational pace. This is recovery — your body adapts to training during rest, not during hard sessions.",
               "km": 3
             }
           ],
@@ -437,7 +451,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 2x(90s jog, 90s walk, 3min jog, 3min walk) &middot; 5min walk cool-down &middot; Total ~28min &middot; 3.5km total",
+              "det": "5min walk warm-up &middot; 2x(90s jog, 90s walk, 3min jog, 3min walk) &middot; 5min walk cool-down &middot; Total ~28min &middot; 3.5km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 3.5
             }
           ],
@@ -461,7 +475,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-b",
+              "n": "Strength B — Upper body",
+              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -485,7 +506,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 2x(90s jog, 90s walk, 3min jog, 3min walk) &middot; 5min walk cool-down &middot; Total ~28min &middot; 3.5km total",
+              "det": "5min walk warm-up &middot; 2x(90s jog, 90s walk, 3min jog, 3min walk) &middot; 5min walk cool-down &middot; Total ~28min &middot; 3.5km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 3.5
             }
           ],
@@ -533,7 +554,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 2x(90s jog, 90s walk, 3min jog, 3min walk) &middot; 5min walk cool-down &middot; Total ~28min &middot; 3.5km total",
+              "det": "5min walk warm-up &middot; 2x(90s jog, 90s walk, 3min jog, 3min walk) &middot; 5min walk cool-down &middot; Total ~28min &middot; 3.5km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 3.5
             }
           ],
@@ -609,7 +630,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 3min jog / 90s walk / 5min jog / 2.5min walk / 3min jog / 90s walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total",
+              "det": "5min walk warm-up &middot; 3min jog / 90s walk / 5min jog / 2.5min walk / 3min jog / 90s walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 4
             }
           ],
@@ -633,7 +654,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-a",
+              "n": "Strength A — Lower body",
+              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -657,7 +685,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 3min jog / 90s walk / 5min jog / 2.5min walk / 3min jog / 90s walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total",
+              "det": "5min walk warm-up &middot; 3min jog / 90s walk / 5min jog / 2.5min walk / 3min jog / 90s walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 4
             }
           ],
@@ -705,7 +733,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 3min jog / 90s walk / 5min jog / 2.5min walk / 3min jog / 90s walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total",
+              "det": "5min walk warm-up &middot; 3min jog / 90s walk / 5min jog / 2.5min walk / 3min jog / 90s walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 4
             }
           ],
@@ -781,7 +809,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 5min jog / 3min walk / 5min jog / 3min walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total",
+              "det": "5min walk warm-up &middot; 5min jog / 3min walk / 5min jog / 3min walk / 5min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 4
             }
           ],
@@ -805,7 +833,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-b",
+              "n": "Strength B — Upper body",
+              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -829,7 +864,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 8min jog / 5min walk / 8min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4.5km total",
+              "det": "5min walk warm-up &middot; 8min jog / 5min walk / 8min jog &middot; 5min walk cool-down &middot; Total ~31min &middot; 4.5km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 4.5
             }
           ],
@@ -953,7 +988,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 5min jog / 3min walk / 8min jog / 3min walk / 5min jog &middot; 5min walk cool-down &middot; Total ~34min &middot; 4.5km total",
+              "det": "5min walk warm-up &middot; 5min jog / 3min walk / 8min jog / 3min walk / 5min jog &middot; 5min walk cool-down &middot; Total ~34min &middot; 4.5km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 4.5
             }
           ],
@@ -977,7 +1012,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-a",
+              "n": "Strength A — Lower body",
+              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -1001,7 +1043,7 @@
             {
               "c": "run-easy",
               "n": "Run-walk",
-              "det": "5min walk warm-up &middot; 10min jog / 3min walk / 10min jog &middot; 5min walk cool-down &middot; Total ~33min &middot; 5km total",
+              "det": "5min walk warm-up &middot; 10min jog / 3min walk / 10min jog &middot; 5min walk cool-down &middot; Total ~33min &middot; 5km total — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 5
             }
           ],
@@ -1125,7 +1167,7 @@
             {
               "c": "run-easy",
               "n": "Continuous run — 25 minutes",
-              "det": "5min walk warm-up &middot; 25min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Fully conversational",
+              "det": "5min walk warm-up &middot; 25min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Fully conversational — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 3.5
             }
           ],
@@ -1149,7 +1191,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-b",
+              "n": "Strength B — Upper body",
+              "det": "Pull-ups 3x10 · DB row 3x10 · Overhead press 3x10 · Face pulls 3x15 · Core circuit 2x45s — Strong upper body and core keeps your posture tall when you tire. These sessions directly improve arm drive efficiency and reduce the slumping that costs you energy late in a race.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -1173,7 +1222,7 @@
             {
               "c": "run-easy",
               "n": "Continuous run — 25 minutes",
-              "det": "5min walk warm-up &middot; 25min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Same pace as Tuesday",
+              "det": "5min walk warm-up &middot; 25min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Same pace as Tuesday — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 3.5
             }
           ],
@@ -1221,7 +1270,7 @@
             {
               "c": "run-easy",
               "n": "Continuous run — 25 minutes",
-              "det": "5min walk warm-up &middot; 25min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Comfortable and relaxed",
+              "det": "5min walk warm-up &middot; 25min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Comfortable and relaxed — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 3.5
             }
           ],
@@ -1297,7 +1346,7 @@
             {
               "c": "run-easy",
               "n": "Continuous run — 28 minutes",
-              "det": "5min walk warm-up &middot; 28min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Easy and controlled",
+              "det": "5min walk warm-up &middot; 28min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Easy and controlled — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 4
             }
           ],
@@ -1321,7 +1370,14 @@
           "dt": "",
           "sleep": null,
           "times": [],
-          "sessions": [],
+          "sessions": [
+            {
+              "c": "gym-a",
+              "n": "Strength A — Lower body",
+              "det": "Back squat 3x10 · Romanian deadlift 3x10 · Bulgarian split squat 3x10 · Calf raise 3x15 · Core circuit 2x45s — Lower body strength is the engine of your running economy. These compound lifts build the hip and quad strength that keeps your form together in the final miles.",
+              "km": 0
+            }
+          ],
           "nut": [
             {
               "t": "On wake",
@@ -1345,7 +1401,7 @@
             {
               "c": "run-easy",
               "n": "Continuous run — 28 minutes",
-              "det": "5min walk warm-up &middot; 28min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km",
+              "det": "5min walk warm-up &middot; 28min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 4
             }
           ],
@@ -1393,7 +1449,7 @@
             {
               "c": "run-easy",
               "n": "Continuous run — 28 minutes",
-              "det": "5min walk warm-up &middot; 28min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Your last prep run",
+              "det": "5min walk warm-up &middot; 28min continuous jog &middot; 5min walk cool-down &middot; 6:45&ndash;7:30/km &middot; Your last prep run — Keep this genuinely easy. The bulk of your aerobic development happens at low intensity and these runs build the engine that powers your quality sessions.",
               "km": 4
             }
           ],

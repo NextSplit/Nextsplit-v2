@@ -6,6 +6,13 @@ import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useMealPlan } from '@/hooks/useMealPlan'
 import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
+
+function parseDet(det: string): { technical: string; rationale: string | null } {
+  const decoded = decodeHtml(det)
+  const idx = decoded.indexOf(' — ')
+  if (idx === -1) return { technical: decoded, rationale: null }
+  return { technical: decoded.slice(0, idx), rationale: decoded.slice(idx + 3) }
+}
 import AdaptiveSuggestions from '@/components/AdaptiveSuggestions'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import { useToast } from '@/components/Toast'
@@ -85,7 +92,20 @@ function LogModal({ session, dayIndex, sessionIndex, weekN, existingLog, onClose
             <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
           </div>
           <h2 className="text-lg font-bold text-gray-900 mb-1">{session.n}</h2>
-          {session.det && <p className="text-sm text-gray-500 mb-5 leading-relaxed">{decodeHtml(session.det)}</p>}
+          {session.det && (() => {
+            const { technical, rationale } = parseDet(session.det)
+            return (
+              <>
+                <p className="text-sm text-gray-600 font-medium mb-2 leading-relaxed">{technical}</p>
+                {rationale && (
+                  <div className="flex items-start gap-2 bg-teal-50 border border-teal-100 rounded-xl px-3 py-2.5 mb-4">
+                    <span className="text-sm mt-0.5 flex-shrink-0">🧠</span>
+                    <p className="text-xs text-teal-700 leading-relaxed">{rationale}</p>
+                  </div>
+                )}
+              </>
+            )
+          })()}
 
           {/* Effort */}
           <div className="mb-5">
@@ -299,7 +319,20 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, isToday, isPast, onC
                             <span className={`text-sm font-semibold ${isDone ? 'text-emerald-700 line-through' : 'text-gray-900'}`}>{name}</span>
                             {session.km > 0 && <span className="text-[10px] text-gray-400">{fmtKm(session.km)}</span>}
                           </div>
-                          {detail && <p className="text-[11px] text-gray-500 mt-0.5 leading-relaxed">{detail}</p>}
+                          {detail && (() => {
+                            const { technical, rationale } = parseDet(session.det!)
+                            return (
+                              <>
+                                <p className="text-[11px] text-gray-600 mt-0.5 leading-relaxed font-medium">{technical}</p>
+                                {rationale && (
+                                  <div className="flex items-start gap-1.5 mt-1.5 bg-teal-50 rounded-lg px-2 py-1.5">
+                                    <span className="text-[10px] flex-shrink-0 mt-px">🧠</span>
+                                    <p className="text-[10px] text-teal-700 leading-relaxed">{rationale}</p>
+                                  </div>
+                                )}
+                              </>
+                            )
+                          })()}
                         </div>
                         {!isPast && (
                           <button
