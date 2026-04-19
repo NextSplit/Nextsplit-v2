@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import BottomNavWrapper from '@/components/BottomNavWrapper'
+import { ToastProvider } from '@/components/Toast'
+import ThemeWrapper from '@/components/ThemeWrapper'
 
 export const metadata: Metadata = {
   title: 'NextSplit — Intelligent Running Training',
@@ -33,9 +35,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: 'system-ui, -apple-system, sans-serif', margin: 0, background: '#f8f8f6' }}>
-        {children}
-        <BottomNavWrapper />
+      <body style={{ fontFamily: 'system-ui, -apple-system, sans-serif', margin: 0 }}>
+        <ThemeWrapper>
+          <ToastProvider>
+            {children}
+            <BottomNavWrapper />
+          </ToastProvider>
+        </ThemeWrapper>
       </body>
     </html>
   )

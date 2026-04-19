@@ -1,14 +1,68 @@
 @import "tailwindcss";
 
+/* ─── Design tokens ──────────────────────────────────────────────────────────
+   All colours flow through these variables.
+   Dark mode swaps the values — no class-level changes needed.
+   ──────────────────────────────────────────────────────────────────────────── */
 :root {
-  --background: #f8f8f6;
-  --foreground: #111827;
+  /* Brand */
+  --color-brand:        #0D9488;  /* teal-600 */
+  --color-brand-light:  #CCFBF1;  /* teal-100 */
+  --color-brand-text:   #0F766E;  /* teal-700 */
+
+  /* Page backgrounds */
+  --color-bg:           #f8f8f6;  /* warm off-white */
+  --color-surface:      #ffffff;  /* card surface */
+  --color-surface-2:    #f9fafb;  /* secondary surface (gray-50) */
+  --color-surface-3:    #f3f4f6;  /* tertiary surface (gray-100) */
+
+  /* Borders */
+  --color-border:       #f3f4f6;  /* gray-100 */
+  --color-border-2:     #e5e7eb;  /* gray-200 */
+
+  /* Text */
+  --color-text-primary:   #111827;  /* gray-900 */
+  --color-text-secondary: #6b7280;  /* gray-500 */
+  --color-text-tertiary:  #9ca3af;  /* gray-400 */
+  --color-text-disabled:  #d1d5db;  /* gray-300 */
+
+  /* Foreground (body default) */
+  --background: var(--color-bg);
+  --foreground: var(--color-text-primary);
+
+  /* Font size multiplier — changed by text size setting */
+  --font-scale: 1;
 }
+
+/* ─── Dim dark mode (zinc palette) ─────────────────────────────────────────── */
+.dark {
+  --color-bg:           #18181b;  /* zinc-900 */
+  --color-surface:      #27272a;  /* zinc-800 */
+  --color-surface-2:    #3f3f46;  /* zinc-700 */
+  --color-surface-3:    #52525b;  /* zinc-600 */
+
+  --color-border:       #3f3f46;  /* zinc-700 */
+  --color-border-2:     #52525b;  /* zinc-600 */
+
+  --color-text-primary:   #f4f4f5;  /* zinc-100 */
+  --color-text-secondary: #a1a1aa;  /* zinc-400 */
+  --color-text-tertiary:  #71717a;  /* zinc-500 */
+  --color-text-disabled:  #52525b;  /* zinc-600 */
+
+  --background: var(--color-bg);
+  --foreground: var(--color-text-primary);
+}
+
+/* ─── Text size scales ────────────────────────────────────────────────────── */
+.text-size-default { --font-scale: 1; }
+.text-size-large   { --font-scale: 1.1; }
+.text-size-xl      { --font-scale: 1.2; }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, sans-serif;
+  font-size: calc(16px * var(--font-scale));
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }

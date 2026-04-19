@@ -778,7 +778,7 @@ export default function NutritionClient() {
   const { profile } = useProfile()
   const { recipes, createRecipe, updateRecipe, deleteRecipe, duplicateRecipe } = useRecipes()
 
-  const { start, end } = useMemo(() => weekStartEnd(plan as any), [plan])
+  const { start, end } = useMemo(() => weekStartEnd(plan), [plan])
   const dates = useMemo(() => weekDates(start), [start])
   const todayDate = todayStr()
 

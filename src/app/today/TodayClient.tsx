@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml } from '@/lib/sessionUtils'
-import type { PlanDay, PlanSession, TrainingLog } from '@/types/database'
+import type { PlanDay, PlanSession, PlanWeek, TrainingLog } from '@/types/database'
 
 import { getSessionXP } from '@/lib/rpg'
 import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
@@ -989,7 +989,7 @@ export default function TodayClient() {
               const isLastDayOfWeek = planDayIndex === 6
               const nextWeekN = weekN + 1
               const nextWeekData = currentWeek && isLastDayOfWeek
-                ? (plan as any).weeks_data?.find?.((w: any) => w.n === nextWeekN) ?? null
+                ? (plan.weeks_data as PlanWeek[] | null)?.find(w => w.n === nextWeekN) ?? null
                 : null
               const tomorrowSessions = isLastDayOfWeek
                 ? (nextWeekData?.days?.[0]?.sessions ?? [])
@@ -1004,7 +1004,7 @@ export default function TodayClient() {
                     )}
                   </div>
                   <div className="px-4 py-3 space-y-1.5">
-                    {tomorrowSessions.map((s: any, i: number) => {
+                    {(tomorrowSessions as PlanSession[]).map((s, i) => {
                       const cfg = getSessionType(s.c)
                       return (
                         <div key={i} className="flex items-center gap-2.5">

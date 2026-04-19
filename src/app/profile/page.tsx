@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { PageErrorBoundary } from '@/components/ErrorBoundary'
 import ProfileClient from './ProfileClient'
 import type { Profile } from '@/types/database'
 
@@ -26,11 +27,13 @@ export default async function ProfilePage({
   const { strava } = await searchParams
 
   return (
-    <ProfileClient
-      email={user.email ?? ''}
-      displayName={displayName}
-      isStravaConnected={!!stravaConn}
-      stravaStatus={strava}
-    />
+    <PageErrorBoundary name="profile">
+      <ProfileClient
+        email={user.email ?? ''}
+        displayName={displayName}
+        isStravaConnected={!!stravaConn}
+        stravaStatus={strava}
+      />
+    </PageErrorBoundary>
   )
 }

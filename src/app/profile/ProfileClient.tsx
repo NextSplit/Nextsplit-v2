@@ -710,7 +710,7 @@ function AthleteProfileSection() {
   useEffect(() => {
     if (profile && !loaded) {
       setWeightKg(profile.weight_kg?.toString() ?? '')
-      setInjuryNotes((profile as any).injury_notes ?? '')
+      setInjuryNotes(profile.injury_notes ?? '')
       setLoaded(true)
     }
   }, [profile, loaded])
