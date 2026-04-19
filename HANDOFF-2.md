@@ -679,6 +679,215 @@ ALTER TABLE profiles
   ADD COLUMN IF NOT EXISTS coach_applied_at timestamptz;
 ```
 
+
+## THREE-TIER USER MODEL — FULLY LOCKED
+
+This is the complete tier structure for NextSplit. Every product decision should reference this.
+
+---
+
+### TIER 1 — Athlete
+**Who:** Everyone. Default account type.
+**Cost:** Free (3 AI calls/day) or Pro (£7.99/mo, unlimited AI + advanced features)
+**What they can do:**
+- Follow training plans (NextSplit Official, coach plans, marketplace)
+- Log sessions, gym, wellness, cross-training
+- Be coached by a Split Leader or Professional Coach
+- Join clubs, compete in challenges, earn XP/badges
+- View personalised pace zones, ACWR, all analytics
+**Cannot do:** Coach others, create plans for others, appear in marketplace
+
+---
+
+### TIER 2 — Split Leader
+**Who:** Runners who want to informally coach friends, share their plans, or grow a small following. Strava influencers, running club pacers, experienced runners with a social following.
+**Access:** Unlocked automatically with Pro subscription — no extra cost.
+**No accreditation required.** Apply via Settings → "Become a Split Leader" — approved instantly (no review, just toggle on).
+
+**What they get:**
+- Squad view — see all their runners at a glance (simplified version)
+- Session annotations — leave notes on any runner's completed sessions
+- Basic messaging — text only (no voice)
+- Shared squad leaderboard — their runners compete together
+- Pre-built plan sharing — share their own plan with their squad (runners follow it for free)
+- Cap: **5 runners maximum**
+
+**What they cannot do (Pro Coach only):**
+- Full squad dashboard + deep analytics
+- AI automation rules
+- Voice messages
+- Plan builder (create custom structured plans)
+- Sell plans on the public marketplace
+- Verified badge
+- Unlimited athletes
+
+**Cost to their runners:** Free to follow a Split Leader — same as joining a public club. Runners don't pay the Split Leader anything. The value is the community and informal guidance.
+
+**Plan sharing:** Split Leaders can share their plans within their squad only — not on the public marketplace. Plans are free, not sold. This keeps the tier informal and community-driven.
+
+**The upgrade trigger:** Split Leader hits 5 runners and wants more → must upgrade to Professional Coach. Or wants to sell plans, use the plan builder, send voice messages → upgrade. The cap and feature limits are the natural sales funnel.
+
+---
+
+### TIER 3 — Professional Coach
+**Who:** Accredited coaches, serious running coaches, PTs who coach runners, coaches building a business on NextSplit.
+**Access:** Apply via Settings → "Become a Professional Coach" — requires NextSplit review (48hr target turnaround for professionals with credentials).
+**Cost:** £29/month platform fee (freemium: free up to 5 athletes for new coaches to experiment, paid beyond)
+
+**Verification:** Two sub-tiers:
+- **Unverified Pro Coach** — applied and approved, profile live, can manage athletes, no badge yet
+- **Verified Pro Coach** ✅ — credentials reviewed by NextSplit, green verification badge, priority marketplace placement
+
+**Credentials accepted:**
+- Recognised coaching qualification (UESCA, UK Athletics Level 2+, RPTG, similar)
+- OR demonstrable professional experience (years coaching, competitive background, professional social presence)
+
+**What they get (everything):**
+- Full squad dashboard + athlete deep-dive analytics
+- All Split Leader features
+- **Unlimited athletes**
+- **Full squad dashboard** — 🟢🟡🔴 status per athlete, ACWR, wellness, session completion
+- **AI automation rules** — set triggers, coach writes templates, AI acts autonomously within them
+- **Voice messages** — 60-second voice notes, stored in Supabase Storage
+- **Plan builder** — create custom structured plans in-app, paces as zone references
+- **Public marketplace listing** — sell plans to any NextSplit user
+- **Bespoke athlete plans** — create custom plans per athlete (not from a template)
+- **Verified badge** — if credentials approved
+- **Coach-led public club** — grows their audience, client acquisition channel
+- **Private squad community** — their athletes form a mini-community with each other
+
+**Cost to their runners:**
+- Runners pay the coach directly via NextSplit (coach sets price, e.g. £80/mo)
+- NextSplit takes **20%** of ongoing coaching subscriptions via Stripe Connect
+- Plan purchases: **70% coach / 30% NextSplit**
+- NextSplit recommended pricing bands shown to coach:
+  - Beginner athletes: £40–£80/month
+  - Intermediate: £60–£120/month
+  - Performance: £100–£200/month
+  - Coach sets their own price within or outside these bands
+
+---
+
+### Feature Comparison Matrix
+
+| Feature | Athlete | Split Leader | Pro Coach |
+|---|---|---|---|
+| Follow plans | ✅ | ✅ | ✅ |
+| Log sessions + gym | ✅ | ✅ | ✅ |
+| AI coaching card | ✅ (limited) | ✅ (Pro) | ✅ (unlimited) |
+| Advanced analytics (ACWR etc.) | Pro only | ✅ | ✅ |
+| Be coached | ✅ | ✅ | ✅ |
+| Squad view (simplified) | ❌ | ✅ 5 max | ✅ unlimited |
+| Session annotations | ❌ | ✅ | ✅ |
+| Basic messaging (text) | ❌ | ✅ | ✅ |
+| Squad leaderboard | ❌ | ✅ | ✅ |
+| Share plans (squad only) | ❌ | ✅ free only | ✅ |
+| Full squad dashboard + analytics | ❌ | ❌ | ✅ |
+| AI automation rules | ❌ | ❌ | ✅ |
+| Voice messages | ❌ | ❌ | ✅ |
+| Plan builder | ❌ | ❌ | ✅ |
+| Sell plans (marketplace) | ❌ | ❌ | ✅ |
+| Bespoke athlete plans | ❌ | ❌ | ✅ |
+| Verified badge | ❌ | ❌ | ✅ (if approved) |
+| Public marketplace profile | ❌ | ❌ | ✅ |
+| Coach-led public club | ❌ | Limited | ✅ |
+| Unlimited athletes | ❌ | ❌ (5 max) | ✅ |
+| **Cost** | Free/£7.99mo | Included in Pro | £29/mo |
+
+---
+
+### Revenue Model Summary
+
+| Source | Who pays | Amount | NextSplit cut |
+|---|---|---|---|
+| Athlete Pro subscription | Athlete | £7.99/mo or £59/yr | 100% |
+| Pro Coach platform fee | Coach | £29/mo | 100% |
+| Ongoing coaching subscription | Athlete → Coach | Coach-set price | 20% |
+| Plan purchase (marketplace) | Athlete | Coach-set price | 30% |
+
+**Example: One Professional Coach with 15 athletes at £80/mo:**
+- Athlete Pro subs: 15 × £7.99 = £119.85/mo to NextSplit
+- Coach platform fee: £29/mo to NextSplit
+- Coaching revenue: 15 × £80 × 20% = £240/mo to NextSplit
+- **Total from one coach relationship: ~£389/mo recurring**
+
+**The Split Leader funnel:**
+- Split Leader with 5 runners → hits cap → upgrades to Pro Coach
+- NextSplit gains: £29/mo coach fee + potential 5 new Pro athlete subscriptions
+- Net new MRR from one Split Leader upgrade: ~£69–£169/mo
+
+---
+
+### DB Changes Needed for Three-Tier Model
+
+```sql
+-- profiles table additions
+ALTER TABLE profiles
+  ADD COLUMN IF NOT EXISTS is_coach boolean DEFAULT false,
+  ADD COLUMN IF NOT EXISTS coach_verified boolean DEFAULT false,
+  ADD COLUMN IF NOT EXISTS coach_applied_at timestamptz,
+  ADD COLUMN IF NOT EXISTS coach_tier text DEFAULT null
+    CHECK (coach_tier IN (null, 'split_leader', 'professional'));
+
+-- Split Leaders don't get a coach_profiles row — they use a lighter structure
+CREATE TABLE IF NOT EXISTS split_leader_profiles (
+  user_id       uuid REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  display_name  text NOT NULL,
+  bio           text,
+  photo_url     text,
+  max_athletes  integer DEFAULT 5,
+  created_at    timestamptz DEFAULT now() NOT NULL
+);
+ALTER TABLE split_leader_profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Split leader manages own profile"
+  ON split_leader_profiles FOR ALL USING (auth.uid() = user_id);
+
+-- Split leader athlete relationships (simplified version of coach_athletes)
+CREATE TABLE IF NOT EXISTS split_leader_athletes (
+  id              uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  leader_id       uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  athlete_id      uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  status          text DEFAULT 'active' CHECK (status IN ('active', 'ended')),
+  created_at      timestamptz DEFAULT now() NOT NULL,
+  UNIQUE(leader_id, athlete_id)
+);
+ALTER TABLE split_leader_athletes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Leader manages own athletes"
+  ON split_leader_athletes FOR ALL USING (auth.uid() = leader_id);
+CREATE POLICY "Athlete sees own leader relationships"
+  ON split_leader_athletes FOR SELECT USING (auth.uid() = athlete_id);
+```
+
+---
+
+### Application Flows
+
+**Becoming a Split Leader:**
+1. Settings → "Become a Split Leader"
+2. Simple form: display name, short bio, optional photo
+3. **Auto-approved instantly** — no review needed
+4. Squad tab appears in bottom nav (simplified version)
+5. Can immediately invite up to 5 runners
+
+**Becoming a Professional Coach:**
+1. Settings → "Become a Professional Coach"
+2. Full profile form: name, bio, credentials, specialities, photo, location, social links
+3. **Submitted for NextSplit review**
+4. If professional (credentials visible): **48-hour target review**
+5. If experienced amateur: standard review (2–5 days)
+6. Approved → full Squad tab unlocks, marketplace profile goes live
+7. Verification badge: separate review of submitted credentials
+
+**Split Leader → Professional Coach upgrade:**
+1. Settings → "Upgrade to Professional Coach"
+2. Fill in additional credential fields (already have basic profile from Split Leader)
+3. Same review process
+4. All existing runners migrate automatically to the coach_athletes relationship
+5. No interruption to their squad
+
+
+---
+
 ### Coach Dashboard Location
 Lives **inside the main app** as an extra tab in the bottom nav:
 - Standard user: Today / Plan / Fuel / Coach / Character

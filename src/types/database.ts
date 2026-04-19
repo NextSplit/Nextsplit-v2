@@ -23,6 +23,7 @@ export interface Database {
           is_coach: boolean
           coach_verified: boolean
           coach_applied_at: string | null
+          coach_tier: 'split_leader' | 'professional' | null
           created_at: string
           updated_at: string
         }
@@ -422,4 +423,35 @@ export interface CoachMessageV2 extends CoachMessage {
   auto_sent: boolean          // true if sent by AI automation
   rule_id: string | null      // which automation rule triggered it
 }
+
+export interface SplitLeaderProfile {
+  user_id: string
+  display_name: string
+  bio: string | null
+  photo_url: string | null
+  max_athletes: number
+  created_at: string
+}
+
+export interface SplitLeaderAthlete {
+  id: string
+  leader_id: string
+  athlete_id: string
+  status: 'active' | 'ended'
+  created_at: string
+}
+
+/** What a Split Leader sees for each of their runners (simplified AthleteSummary) */
+export interface SquadRunnerSummary {
+  athlete_id: string
+  display_name: string | null
+  plan_name: string | null
+  sessions_done_this_week: number
+  sessions_planned_this_week: number
+  last_active_at: string | null
+  streak: number
+}
+
+/** Full three-tier account type */
+export type AccountTier = 'athlete' | 'split_leader' | 'professional_coach'
 
