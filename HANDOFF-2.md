@@ -1,5 +1,5 @@
 # NextSplit v2 — Dev Session Handoff
-_Last updated: end of session 25 — StatsClient split complete_
+_Last updated: session 26 — full roadmap complete (excl. Stripe)_
 
 ## START OF SESSION CHECKLIST
 1. Reuse GitHub token from conversation history
@@ -18,113 +18,24 @@ _Last updated: end of session 25 — StatsClient split complete_
 
 ## Git log (latest)
 ```
-1d70f20  Refactor: split StatsClient 1373→510 lines into 10 chart components + statsUtils
-2784c8e  docs: HANDOFF-2 updated after session 24 refactor
-93dad1d  Refactor: extract LogModal/SessionCard/AdHocSessionModal/SplitsDisplay, db() helper
-3736492  docs: HANDOFF-2 after session 23 audit
-83f4d2e  Audit: null-guard all s.c checks, extract parseDet/secsToHMS to sessionUtils
-cc839f1  Fix crash: e.c.startsWith is not a function
+1c2b7c4  Fix: all supabase-as-any casts replaced with db(), TDEE localStorage persistence, activity logging
+39bf61e  Activity logging: dual-write cross-training, Fuel tab summary, AdHocModal TDEE badge
+bf61c83  Complete roadmap: PlanClient split, personalised pace zones, activity logging hook, migration SQL
+9003168  Fix crashes: getDayType filters null codes, getSessionType handles null, isRest treats null-c as rest
+c5b9929  Refactor: split ProfileClient 1517→555 lines into 13 RPG components
+f7fcc69  Refactor: split NutritionClient 1339→385 lines into 10 nutrition components
 ```
 
 ---
 
-## CODEBASE MAP (post-refactor)
+## SUPABASE SETUP (already done ✅)
+Both SQL migrations have been run in Supabase:
 
-### File sizes — all tabs and key files
-| File | Lines | Status |
-|---|---|---|
-| `src/app/today/TodayClient.tsx` | 940 | ✅ Split in session 24 |
-| `src/app/dashboard/StatsClient.tsx` | 510 | ✅ Split in session 25 |
-| `src/app/nutrition/NutritionClient.tsx` | 1339 | 🔲 Next candidate to split |
-| `src/app/profile/ProfileClient.tsx` | 1517 | 🔲 Next candidate to split |
-| `src/app/plan/PlanClient.tsx` | 907 | Acceptable |
-| `src/app/gym/live/GymLiveClient.tsx` | 591 | Fine |
-| `src/app/settings/SettingsClient.tsx` | 534 | Fine |
-| `src/app/history/HistoryClient.tsx` | 307 | Fine |
-
-### Extracted chart components (`src/components/charts/`)
-| File | Component | Props |
-|---|---|---|
-| `WeeklyVolumeChart.tsx` | Running volume bar chart | `logs, weeks` |
-| `ACWRChart.tsx` | Acute:Chronic workload ratio | `logs, weeks` |
-| `PaceTrend.tsx` | Pace over time trend | `logs` |
-| `SessionSummary.tsx` | Plan completion stats | `logs, weeks` |
-| `RaceCountdown.tsx` | Days to race ring | `raceDate, planName` |
-| `TrainingZones.tsx` | Pace zone distribution | `logs` |
-| `WellnessTrend.tsx` | Readiness/sleep/mood trend | self-contained (uses useWellness) |
-| `WeightTrend.tsx` | Weight over time | self-contained (uses useWellness) |
-| `PBCard.tsx` | Personal bests table | `logs` |
-| `PaceCalculator.tsx` | Race time calculator | self-contained |
-
-### Extracted UI components (`src/components/`)
-| File | Extracted from | Purpose |
-|---|---|---|
-| `LogModal.tsx` | TodayClient | Run logging modal |
-| `SessionCard.tsx` | TodayClient | Session tile + XP animation |
-| `AdHocSessionModal.tsx` | TodayClient | Add extra session modal |
-| `SplitsDisplay.tsx` | TodayClient/LogModal | Strava lap splits |
-
-### Shared libs (`src/lib/`)
-| File | Key exports |
-|---|---|
-| `sessionUtils.ts` | `getSessionType`, `parseDet`, `secsToHMS`, `secsToMMSS`, `fmtKm`, `decodeHtml` |
-| `statsUtils.ts` | `logsArray`, `weeklyKm`, `calcACWR`, `paceToSecs`, `daysUntil`, `dayLabel`, `hmsToSecs`, `paceMinsPerKm`, `fmtPaceForUnits` |
-| `nutrition.ts` | `getDayType` (incl. strength), `calcCalories`, `DAY_TYPE_CONFIG` |
-| `rpg.ts` | `computeRPGStats`, `getSessionXP`, badges, levels |
-| `streak.ts` | `computeStreak`, `predictRaceTime` |
-| `wellness.ts` | `readinessScore` |
-| `gymUtils.ts` | `parseDetToExercises`, `suggestWeight`, `getRestTime` |
-| `features.ts` | Rate limits: free=3, pro=25, coach=50 AI/day |
-| `supabase/db.ts` | `db(supabase)` — replaces all `(supabase as any)` casts |
-
----
-
-## CRITICAL PATTERNS
-
-### Null-safe session code access
-```typescript
-// CORRECT
-s?.c?.startsWith('gym')
-s.c != null && s.c !== 'rest'
-// CRASHES if c is null
-s.c.startsWith('gym')
-```
-
-### Supabase queries
-```typescript
-import { db } from '@/lib/supabase/db'
-// All queries use:
-const { data } = await db(supabase).from('training_logs').select('*')
-// Never use (supabase as any) — zero remaining in codebase
-```
-
-### Adding new features
-- **New session type**: `SESSION_XP` in `rpg.ts` → `SESSION_TYPES` in `sessionUtils.ts` → `getDayType()` in `nutrition.ts`
-- **New AI route**: copy `/api/ai/fuel/route.ts` pattern
-- **New tab**: `src/app/[name]/page.tsx` + `[Name]Client.tsx`, add to bottom nav in `layout.tsx`
-- **New chart component**: add to `src/components/charts/`, import in `StatsClient.tsx`
-- **New Supabase table**: add to `src/types/database.ts`, create hook, add to `TableName` in `supabase/db.ts`
-
----
-
-## DATABASE SCHEMA
-| Table | Purpose |
-|---|---|
-| `profiles` | User settings, display_name, weight, age |
-| `plan_templates` | 17 seeded plan templates |
-| `user_plans` | Active/archived plans with `weeks_data` JSONB |
-| `training_logs` | Session logs. `session_i=99` = ad-hoc |
-| `gym_logs` | Set/rep/weight logs from gym live tracker |
-| `wellness_logs` | Sleep, soreness, mood, weight |
-| `races` | Race calendar A/B/C priority |
-| `recipes` | Meal recipes |
-| `meal_plan_entries` | Daily meal assignments |
-| `strava_connections` | OAuth tokens |
-| `ai_usage` | Rate limiting per user per day |
-| `push_subscriptions` | Web push tokens |
-
-**Phase 11 SQL (run before Stripe):**
 ```sql
+-- activity_logs table (session 26) ✅
+CREATE TABLE activity_logs ( ... )
+
+-- Stripe columns on profiles (ready for Phase 11) ✅
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_pro boolean DEFAULT false;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS pro_expires_at timestamptz;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS stripe_customer_id text;
@@ -132,66 +43,142 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS stripe_customer_id text;
 
 ---
 
-## EXACT NEXT STEPS (priority order)
+## CODEBASE MAP
 
-### 1. Stripe / Pro tier (Phase 11)
-**Env vars needed in Vercel:**
+### File sizes (all tabs)
+| File | Lines |
+|---|---|
+| `src/app/today/TodayClient.tsx` | ~960 |
+| `src/app/plan/PlanClient.tsx` | 335 |
+| `src/app/dashboard/StatsClient.tsx` | 510 |
+| `src/app/nutrition/NutritionClient.tsx` | ~400 |
+| `src/app/profile/ProfileClient.tsx` | 555 |
+| `src/app/gym/live/GymLiveClient.tsx` | 591 |
+| `src/app/settings/SettingsClient.tsx` | 534 |
+| `src/app/history/HistoryClient.tsx` | 307 |
+
+### Component directories
+```
+src/components/
+  charts/          — 10 chart components (WeeklyVolumeChart, ACWRChart, PaceTrend, etc.)
+  nutrition/       — 10 nutrition components (RecipeFormModal, DayMealCard, AIFuelCoach, etc.)
+  plan/            — 3 plan components (DayDrawer, DayRow, WeekRow)
+  rpg/             — 13 RPG components (HeroCard, BadgeGrid, StravaSection, etc.)
+  LogModal.tsx     — Run logging modal
+  SessionCard.tsx  — Session tile with personalised pace zone display
+  AdHocSessionModal.tsx — Add extra session (dual-writes cross-training to activity_logs)
+  SplitsDisplay.tsx
+```
+
+### Shared libs
+| File | Key exports |
+|---|---|
+| `src/lib/sessionUtils.ts` | `getSessionType`, `parseDet`, `secsToHMS`, `secsToMMSS`, `fmtKm` |
+| `src/lib/statsUtils.ts` | `logsArray`, `weeklyKm`, `calcACWR`, `paceToSecs`, `daysUntil` |
+| `src/lib/nutrition.ts` | `getDayType` (null-safe), `calcCalories`, `DAY_TYPE_CONFIG` |
+| `src/lib/nutritionUtils.ts` | `fmtDate`, `perPortion`, `formatQty`, `inferCategory` |
+| `src/lib/paceZones.ts` | `derivePaceZones`, `getPersonalisedPace` — Riegel-based personalised zones |
+| `src/lib/rpg.ts` | `computeRPGStats`, `getSessionXP`, badges, levels |
+| `src/lib/wellness.ts` | `readinessScore` |
+| `src/lib/statsUtils.ts` | Chart data helpers |
+| `src/lib/supabase/db.ts` | `db(supabase)` — zero `(supabase as any)` casts in codebase |
+
+### Hooks
+| Hook | Purpose |
+|---|---|
+| `useActivePlan` | Active plan, weeks, advance/archive |
+| `useTrainingLog` | Session logs for current plan |
+| `useAllTrainingLogs` | Cross-plan logs for RPG XP + pace zones |
+| `useGymLog` | Set/rep/weight logs |
+| `useActivityLog` | Cross-training logs (swim/cycle/walk) → TDEE |
+| `useProfile` | User profile |
+| `useWellness` | Readiness logs |
+| `useRaces` | Race calendar |
+| `useRecipes` | Meal recipes |
+| `useMealPlan` | Daily meal assignments |
+| `usePlanHistory` | Archived plan stats |
+| `usePlanTemplates` | All 17 plan templates |
+
+---
+
+## CRITICAL PATTERNS
+
+### Null-safe session codes
+```typescript
+// ALWAYS — session.c can be null from DB
+s?.c?.startsWith('gym')
+s.c != null && s.c !== 'rest'
+getDayType(sessions)  // already null-safe internally
+
+// NEVER
+s.c.startsWith('gym')
+```
+
+### Supabase queries
+```typescript
+import { db } from '@/lib/supabase/db'
+await db(supabase).from('training_logs').select('*')
+// Zero (supabase as any) casts remain in the codebase
+```
+
+---
+
+## FEATURE STATE
+
+### ✅ Complete
+- Auth (email + Google), PWA, dark mode, km/miles units
+- Today: sessions, logging, FocusMode, GymLive, undo, date nav, ad-hoc
+- Plan: week view, day drawer, gym summary, week advance, phase filter
+- Coach: AI coaching (3 modes), ACWR, predictions, pace trend, wellness, PBs
+- Character: RPG, XP/levels, 30+ badges, character select, kit colours
+- Fuel: TDEE (localStorage persistent), meal plan, recipes, AI tip, supplement tracker
+- Fuel: cross-training activities shown + TDEE boost when logged
+- Gym: live tracker, rest timer, weight progression, celebration
+- All 4 onboarding flows with gym preference toggle
+- Ad-hoc logging: dual-writes to training_logs + activity_logs for cross-training
+- Personalised pace zones: Riegel formula from logged runs, shown on session cards
+- Strava sync, push notifications, public profile, share cards
+- Plan history with ad-hoc sessions separated
+- Settings: all preferences, re-seed button
+- Codebase: all files <600 lines, zero TS errors, zero supabase-as-any casts
+
+### 🔲 Next: Stripe / Pro tier (Phase 11)
+Supabase columns already exist. Env vars needed in Vercel:
 ```
 STRIPE_SECRET_KEY
-STRIPE_PRICE_MONTHLY   (price ID from Stripe dashboard, ~£7.99/mo)
-STRIPE_PRICE_ANNUAL    (price ID, ~£59/yr)
+STRIPE_PRICE_MONTHLY   (~£7.99/mo price ID from Stripe dashboard)
+STRIPE_PRICE_ANNUAL    (~£59/yr price ID)
 STRIPE_WEBHOOK_SECRET
 ```
 
-**Files to create:**
+Files to create:
 ```
 src/app/api/stripe/checkout/route.ts
-  POST { priceId } → create Checkout session → return { url }
+  POST { priceId } → Stripe Checkout session → return { url }
 
 src/app/api/stripe/webhook/route.ts
   checkout.session.completed → profiles.is_pro=true, pro_expires_at
   customer.subscription.deleted → profiles.is_pro=false
 ```
 
-**Files to update:**
+Files to update:
 ```
-src/types/database.ts        — ProfileWithStripe already exists, promote to Profile type
-src/components/ProGate.tsx   — check profiles.is_pro (currently bypassed/returns true always)
-src/app/profile/ProfileClient.tsx — add Pro upgrade card in Account section
-src/lib/features.ts          — already has free=3, pro=25, coach=50 AI/day limits
+src/types/database.ts        — ProfileWithStripe type already exists, add is_pro to Profile
+src/components/ProGate.tsx   — check profiles.is_pro (currently always returns true)
+src/app/profile/ProfileClient.tsx — add Pro upgrade card
 ```
-
-### 2. Split NutritionClient.tsx (1339 lines)
-Natural split points:
-- `RecipeModal` (~200 lines) → `src/components/RecipeModal.tsx`
-- `MealSlotCard` (~100 lines) → `src/components/MealSlotCard.tsx`
-- `MacroRing` + `MacroBar` (~60 lines) → `src/components/MacroDisplay.tsx`
-- `SupplementTracker` (~100 lines) → `src/components/SupplementTracker.tsx`
-After split NutritionClient should be ~400 lines.
-
-### 3. Split ProfileClient.tsx (1517 lines)
-Natural split points:
-- `CharacterDisplay` + `StatBars` (~200 lines) → `src/components/rpg/CharacterCard.tsx`
-- `BadgeGrid` (~150 lines) → `src/components/rpg/BadgeGrid.tsx`
-- `LevelProgressBar` (~80 lines) → `src/components/rpg/LevelProgress.tsx`
-- `KitColourPicker` (~100 lines) → `src/components/rpg/KitPicker.tsx`
-After split ProfileClient should be ~400 lines.
-
-### 4. Activity logging (Phase 12 stub)
-`ActivityLog` type already in `database.ts`. Wire swimming/cycling/walking into TDEE.
-New Supabase table: `activity_logs`. New hook: `useActivityLog.ts`.
 
 ---
 
 ## ALL API ROUTES
 ```
 POST /api/ai/coach          — Coaching (gym + ad-hoc context)
-POST /api/ai/fuel           — Nutrition tip (strength/easy/quality/long/race day types)
-POST /api/ai/suggestions    — Adaptive suggestions (gym data included)
+POST /api/ai/fuel           — Nutrition tip
+POST /api/ai/suggestions    — Adaptive suggestions (gym data)
 POST /api/ai/pre-race-brief — Pre-race brief
-POST /api/ai/recommend      — Plan recommendation (gym pref aware)
-POST /api/plans/activate    — Activate plan (include_gym, race date validation)
-POST /api/plans/reset       — Reset plan to week 1
+POST /api/ai/recommend      — Plan recommendation
+POST /api/plans/activate    — Activate plan (include_gym, race date)
+POST /api/plans/reset       — Reset to week 1
 GET  /api/strava/sync       — Fetch Strava activities
 POST /api/strava/disconnect — Remove Strava
 POST /api/notifications/subscribe — Push sub
@@ -200,23 +187,12 @@ GET  /api/cron/notify       — Daily reminder cron
 POST /api/admin/seed-plans  — Re-seed templates
 ```
 
-## ENVIRONMENT VARIABLES
-```
-NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY
-NEXT_PUBLIC_SITE_URL
-ANTHROPIC_API_KEY
-NEXT_PUBLIC_STRAVA_CLIENT_ID / STRAVA_CLIENT_ID / STRAVA_CLIENT_SECRET
-NEXT_PUBLIC_VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY / VAPID_EMAIL
-CRON_SECRET
-NEXT_PUBLIC_PREMIUM_ENFORCED=false
-```
-
 ## BUILD + DEPLOY
 ```bash
 cd nextsplit-v2 && git pull && npm install
-node_modules/.bin/next build      # must pass
-node_modules/.bin/tsc --noEmit    # must be zero errors
+node_modules/.bin/next build
+node_modules/.bin/tsc --noEmit
 git add -A && git commit -m "..." && git push origin main
-# Open deploy hook in browser
+# Open deploy hook in browser (100/day limit — use sparingly)
 # If plan JSON changed: Settings → Developer → Run
 ```
