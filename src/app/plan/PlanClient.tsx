@@ -7,6 +7,7 @@ import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useMealPlan } from '@/hooks/useMealPlan'
 import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
 import AdaptiveSuggestions from '@/components/AdaptiveSuggestions'
+import DarkModeToggle from '@/components/DarkModeToggle'
 import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
@@ -467,7 +468,10 @@ export default function PlanClient() {
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
-          <h1 className="text-lg font-bold text-gray-900 truncate">{decodeHtml(plan.name)}</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-bold text-gray-900 truncate">{decodeHtml(plan.name)}</h1>
+            <DarkModeToggle />
+          </div>
           <p className="text-[11px] text-gray-400 mt-0.5">
             Week {plan.current_week} of {plan.total_weeks}
             {plan.race_date && ` · Race: ${new Date(plan.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}

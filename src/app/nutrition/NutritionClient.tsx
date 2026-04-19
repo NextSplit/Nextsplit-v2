@@ -8,6 +8,7 @@ import { useMealPlan } from '@/hooks/useMealPlan'
 import { getDayType, DAY_TYPE_CONFIG, calcCalories } from '@/lib/nutrition'
 import { MEAL_SLOTS, type MealSlotId } from '@/types/database'
 import type { Recipe, RecipeIngredient, MealPlanEntryWithRecipe } from '@/types/database'
+import DarkModeToggle from '@/components/DarkModeToggle'
 
 // ─── Supplement Tracker ───────────────────────────────────────────────────────
 
@@ -821,7 +822,10 @@ export default function NutritionClient() {
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
-          <h1 className="text-[15px] font-bold text-[#1a1a1a] mb-3">Fuel</h1>
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-[15px] font-bold text-[#1a1a1a]">Fuel</h1>
+            <DarkModeToggle />
+          </div>
           <div className="flex border-b border-gray-100">
             {(['today', 'week', 'recipes'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}

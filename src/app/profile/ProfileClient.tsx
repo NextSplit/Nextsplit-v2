@@ -10,6 +10,7 @@ import { useProfile } from '@/hooks/useProfile'
 import { useWellness } from '@/hooks/useWellness'
 import { useMealPlan } from '@/hooks/useMealPlan'
 import { signout } from '@/app/auth/actions'
+import DarkModeToggle from '@/components/DarkModeToggle'
 import { computePersonalBests } from '@/lib/personalBests'
 import { computeStreak, computeConsistency } from '@/lib/streak'
 import {
@@ -997,6 +998,7 @@ export default function ProfileClient({
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </a>
+          <DarkModeToggle />
         </div>
       </div>
 

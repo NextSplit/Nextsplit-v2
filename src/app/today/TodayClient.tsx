@@ -16,6 +16,7 @@ import FocusMode from '@/components/FocusMode'
 import ShareSessionCard from '@/components/ShareSessionCard'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import StravaSyncButton from '@/components/StravaSyncButton'
+import DarkModeToggle from '@/components/DarkModeToggle'
 import { useRouter } from 'next/navigation'
 
 /** Decode HTML entities like &middot; &ndash; &amp; */
@@ -608,6 +609,7 @@ export default function TodayClient() {
                   {doneTodayCount}/{todaySessions.length} done
                 </span>
               )}
+              <DarkModeToggle />
             </div>
           </div>
 

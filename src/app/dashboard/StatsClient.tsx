@@ -9,6 +9,7 @@ import { computeStreak, computeConsistency, predictRaceTime } from '@/lib/streak
 import { computePersonalBests } from '@/lib/personalBests'
 import CoachingCard from '@/components/CoachingCard'
 import PreRaceBrief from '@/components/PreRaceBrief'
+import DarkModeToggle from '@/components/DarkModeToggle'
 import type { PlanWeek, TrainingLog, Race } from '@/types/database'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -944,7 +945,10 @@ export default function StatsClient() {
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-lg font-bold text-gray-900">Stats</h1>
-            {plan && <span className="text-xs text-gray-400">{plan.name}</span>}
+            <div className="flex items-center gap-2">
+              {plan && <span className="text-xs text-gray-400">{plan.name}</span>}
+              <DarkModeToggle />
+            </div>
           </div>
           <div className="flex gap-1">
             {([['stats','📊 Stats'],['races','🏁 Races'],['pace','⏱ Pace']] as const).map(([id, label]) => (
