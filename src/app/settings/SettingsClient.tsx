@@ -492,6 +492,30 @@ export default function SettingsClient({ email, initialProfile }: Props) {
             danger />
         </Section>
 
+        {/* ── Dev tools ── */}
+        {(() => {
+          const [seeding, setSeeding] = useState(false)
+          async function seedPlans() {
+            setSeeding(true)
+            try {
+              const res = await fetch('/api/admin/seed-plans', { method: 'POST' })
+              const data = await res.json()
+              if (res.ok) success(`✓ ${data.seeded} plans seeded`)
+              else toastError(data.error ?? 'Seed failed')
+            } catch {
+              toastError('Seed failed — check connection')
+            } finally {
+              setSeeding(false)
+            }
+          }
+          return (
+            <Section title="Developer">
+              <ButtonRow label="Re-seed plan templates" sublabel="Updates all 17 plans in Supabase with latest content"
+                buttonLabel={seeding ? 'Seeding…' : 'Run'} onClick={seedPlans} disabled={seeding} />
+            </Section>
+          )
+        })()}
+
         {/* Version */}
         <div className="text-center pb-4">
           <p className="text-[10px] text-gray-300">NextSplit v2 · Built with ❤️ for runners</p>
