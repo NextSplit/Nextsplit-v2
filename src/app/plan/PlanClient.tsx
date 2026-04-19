@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useMealPlan } from '@/hooks/useMealPlan'
@@ -337,9 +338,13 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, isToday, isPast, onC
                         {!isPast && (
                           <button
                             onClick={() => onLogSession(weekN, dayIndex, sessI)}
-                            className={`flex-shrink-0 text-[10px] font-bold px-2.5 py-1.5 rounded-lg ${isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-[#0D9488] text-white'}`}
+                            className={`flex-shrink-0 text-[10px] font-bold px-2.5 py-1.5 rounded-lg ${
+                              isDone ? 'bg-emerald-100 text-emerald-700' :
+                              session.c.startsWith('gym') ? 'bg-amber-500 text-white' :
+                              'bg-[#0D9488] text-white'
+                            }`}
                           >
-                            {isDone ? '✓ Done' : 'Log'}
+                            {isDone ? '✓ Done' : session.c.startsWith('gym') ? 'Start →' : 'Log'}
                           </button>
                         )}
                       </div>
@@ -612,6 +617,7 @@ function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDa
 // ─── Main ────────────────────────────────────────────────────────────────────────
 
 export default function PlanClient() {
+  const router = useRouter()
   const { plan, weeks, currentWeek, loading, advanceWeek } = useActivePlan()
   const { logs, logSession } = useTrainingLog(plan?.id ?? null)
   const { gymLogs } = useGymLog(plan?.id ?? null)
@@ -701,6 +707,11 @@ export default function PlanClient() {
     const week = weeks.find(w => w.n === weekN)
     const session = week?.days[dayI]?.sessions[sessI]
     if (!session) return
+    // Gym sessions go to live tracker, not the log modal
+    if (session.c.startsWith('gym')) {
+      router.push(`/gym/live/${weekN}/${dayI}/${sessI}`)
+      return
+    }
     setLogModal({ session, dayIndex: dayI, sessI, weekN })
   }
 
