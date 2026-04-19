@@ -20,6 +20,7 @@ import StravaSyncButton from '@/components/StravaSyncButton'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 /** Decode HTML entities like &middot; &ndash; &amp; */
 // ─── Session Log Modal ────────────────────────────────────────────────────────
@@ -501,8 +502,20 @@ export default function TodayClient() {
   const [ceremonyDismissed, setCeremonyDismissed] = useState(false)
 
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { success: toastSuccess, error: toastError, warning: toastWarning } = useToast()
   const viewDate = offsetDate(dateOffset)
+
+  // Show notice toasts from query params (e.g. after plan activation)
+  useEffect(() => {
+    const notice = searchParams.get('notice')
+    if (notice === 'race_soon') {
+      toastWarning("Race is sooner than the full plan length — we've started from today. Make the most of the time you have!", 6000)
+      // Clean the URL without reloading
+      router.replace('/today', { scroll: false })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const isToday = dateOffset === 0
 
   const dayOfWeek = viewDate.getDay()

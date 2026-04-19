@@ -921,35 +921,14 @@ function AIFuelCoach({
     setError(false)
     try {
       const kcalGap = targets.kcal > 0 ? targets.kcal - Math.round(totals.kcal) : null
-      const prompt = `You are a sports nutrition coach for a runner. Give ONE specific, practical nutrition tip for today.
-
-Context:
-- Training day type: ${dayType}
-- Plan: ${planName || 'Running plan'}
-- Calorie target: ${targets.kcal > 0 ? targets.kcal + ' kcal' : 'not set'}
-- Protein target: ${targets.protein > 0 ? targets.protein + 'g' : 'not set'}
-- Carbs target: ${targets.carbs > 0 ? targets.carbs + 'g' : 'not set'}
-${kcalGap !== null && kcalGap > 0 ? `- Still ${kcalGap} kcal to eat today` : ''}
-${kcalGap !== null && kcalGap < 0 ? `- Already ${Math.abs(kcalGap)} kcal over target` : ''}
-
-Rules:
-- One tip only, 1-2 sentences max
-- Be specific (mention actual foods or timings)
-- Tailor to the day type (rest day vs long run vs intervals etc)
-- No preamble, no "Great question!", just the tip
-- Start with an action verb`
-
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/ai/fuel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 120,
-          messages: [{ role: 'user', content: prompt }],
-        }),
+        body: JSON.stringify({ dayType, planName, targets, totals: { ...totals, kcalGap } }),
       })
       const data = await res.json()
-      const text = data.content?.[0]?.text?.trim()
+      if (!res.ok) throw new Error(data.error || 'Failed')
+      const text = data.tip
       if (text) {
         setTip(text)
         sessionStorage.setItem(cacheKey, text)

@@ -38,13 +38,16 @@ export async function POST(req: Request) {
 
   // Calculate start date — today, or worked back from race_date
   let startDate = new Date().toISOString().split('T')[0]
+  let raceTooSoon = false
   if (race_date) {
     const raceMs = new Date(race_date).getTime()
     const weeksMs = t.weeks_min * 7 * 24 * 60 * 60 * 1000
     const calcStart = new Date(raceMs - weeksMs)
-    // If calculated start is in the past, use today
     if (calcStart > new Date()) {
       startDate = calcStart.toISOString().split('T')[0]
+    } else {
+      // Race is sooner than the plan length — start today but flag it
+      raceTooSoon = true
     }
   }
 
@@ -76,5 +79,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: insertErr.message }, { status: 500 })
   }
 
-  return NextResponse.json({ plan: newPlan }, { status: 201 })
+  return NextResponse.json({ plan: newPlan, raceTooSoon }, { status: 201 })
 }

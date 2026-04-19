@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     const webpush = (await import('web-push')).default
     webpush.setVapidDetails(
       `mailto:${process.env.VAPID_EMAIL ?? 'hello@nextsplit.app'}`,
-      process.env.VAPID_PUBLIC_KEY!,
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? process.env.VAPID_PUBLIC_KEY!,
       process.env.VAPID_PRIVATE_KEY!
     )
 

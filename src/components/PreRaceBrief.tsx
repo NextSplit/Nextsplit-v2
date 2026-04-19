@@ -93,38 +93,15 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
         total_sessions_logged: logArr.length,
       }
 
-      const prompt = `You are an expert running coach. Generate a concise pre-race brief for this athlete.
-
-Race context:
-${JSON.stringify(context, null, 2)}
-
-Respond with ONLY a JSON object (no markdown, no extra text):
-{
-  "pacing": "2-3 sentence pacing strategy specific to their goal and recent training",
-  "fuelling": "2-3 sentence race-day nutrition plan based on distance and timing",
-  "taper": "1-2 sentence taper advice based on days remaining",
-  "mindset": "1-2 sentence confidence-building message based on their training"
-}
-
-Be specific, practical and encouraging. Reference their actual data where possible.`
-
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/ai/pre-race-brief', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: prompt }],
-        }),
+        body: JSON.stringify({ context }),
       })
 
       if (!res.ok) throw new Error('API error')
       const data = await res.json()
-      const text = data.content?.[0]?.text ?? ''
-
-      // Strip any markdown fences
-      const clean = text.replace(/```json|```/g, '').trim()
-      const parsed = JSON.parse(clean) as Omit<Brief, 'generatedAt'>
+      const parsed = data.brief as Omit<Brief, 'generatedAt'>
       const result: Brief = { ...parsed, generatedAt: new Date().toISOString() }
 
       // Cache it
@@ -141,8 +118,8 @@ Be specific, practical and encouraging. Reference their actual data where possib
   const sections = [
     { icon: '⏱️', label: 'Pacing strategy', key: 'pacing' as const, colour: 'text-blue-800 bg-blue-50 border-blue-100' },
     { icon: '⚡', label: 'Race fuelling',    key: 'fuelling' as const, colour: 'text-amber-800 bg-amber-50 border-amber-100' },
-    { icon: '😴', label: 'Taper notes',     key: 'taper' as const,    colour: 'text-purple-800 bg-purple-50 border-purple-100' },
-    { icon: '🧠', label: 'Race mindset',    key: 'mindset' as const,  colour: 'text-teal-800 bg-teal-50 border-teal-100' },
+    { icon: '😴', label: 'Taper notes',     key: 'taper' as const,    colour: 'text-teal-800 bg-teal-50 border-teal-100' },
+    { icon: '🧠', label: 'Race mindset',    key: 'mindset' as const,  colour: 'text-emerald-800 bg-emerald-50 border-emerald-100' },
   ]
 
   return (

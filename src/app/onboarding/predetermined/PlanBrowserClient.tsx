@@ -188,7 +188,13 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
         const body = await res.json()
         throw new Error(body.error ?? 'Failed to activate plan')
       }
-      window.location.href = '/today'
+      const result = await res.json()
+      if (result.raceTooSoon) {
+        // Still navigate but carry a warning
+        window.location.href = '/today?notice=race_soon'
+      } else {
+        window.location.href = '/today'
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
       setActivating(false)
