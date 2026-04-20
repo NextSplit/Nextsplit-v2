@@ -1681,3 +1681,43 @@ File: supabase/phase3-migration.sql
 - Weekly club km reset: call reset_weekly_club_km() every Monday (set up cron)
 - Season reset: call reset_season() at end of each 30-day season, then insert new season
 - Supabase Edge Functions or a cron job needed for automation
+
+---
+
+## SESSION 34-35 COMPLETED
+
+### Analytics & Insights
+- Today progress strip (TodayProgressStrip.tsx): weekly km, sessions, streak 🔥, ACWR load bar, effort dots — appears below sessions, taps to /dashboard
+- ACWR computed in TodayClient from statsUtils.calcACWR and passed to strip
+- Character tab restructured with 3 sub-tabs:
+  - 🏃 Character: hero card, XP, badges, streak (unchanged)
+  - 📊 Stats: WeeklyCoachingSummary (AI), WeeklyVolumeChart, ACWRChart, PaceTrend, WellnessTrend, WeightTrend, TrainingZones, PaceCalculator
+  - 🏆 Records: RaceDaySimulation, PBCard, TrainingSummary, links to race/session history
+
+### New Features
+- Race day simulation: Riegel formula, 5K/10K/Half/Marathon predictions, ±5% band, confidence rating
+- Weekly AI coaching summary: 4-week debrief, generate on demand, structured sections
+- Adaptive plan: appears when 2+ sessions missed mid-week, AI restructures remaining days
+
+### Nav finalised
+- Athletes: Today | Plan | Community | Character (4 tabs)
+- Coaches: Today | Plan | Athletes | Community | Character (5 tabs)
+- Fuel moved into Plan as subtab (Plan page has Plan | Fuel toggle)
+
+### Go-live checklist (DO NOT DO UNTIL READY FOR REAL USERS)
+- ☐ Test Stripe checkout with real card (verify is_pro writes correctly)
+- ☐ Re-enable email confirmation in Supabase
+- ☐ Flip NEXT_PUBLIC_PREMIUM_ENFORCED=true in Vercel
+- ☐ Custom domain
+
+### PHASE STATUS
+| Phase | Status |
+|---|---|
+| Phase 0 — Stabilise | ✅ |
+| Phase 1 — Monetise | ✅ |
+| Phase 2 — Coach Soft Launch | ✅ |
+| Phase 3 — Full Coach Platform | ✅ |
+| Community | ✅ |
+| Analytics & insights | ✅ |
+| Phase 4 — Wearables + Native | 🔲 Next |
+| Phase 5 — Scale + Exit-Ready | 🔲 |
