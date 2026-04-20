@@ -1227,7 +1227,7 @@ _Things that must be done before opening to real users_
 - [ ] Push notifications verified on Android
 - [ ] PWA install prompt tested on iOS and Android
 - [ ] All 4 onboarding paths tested end-to-end on mobile
-- [ ] `NEXT_PUBLIC_PREMIUM_ENFORCED` set to `true` in Vercel
+- [ ] `NEXT_PUBLIC_PREMIUM_ENFORCED` set to `true` in Vercel (currently false — all features free for testing)
 
 ---
 
@@ -1387,3 +1387,51 @@ STRIPE_PRICE_STANDARD_MONTHLY=price_1TOKuLDD4FjAWTScI3XcaEUK
 STRIPE_PRICE_STANDARD_ANNUAL=price_1TOL1IDD4FjAWTSc5TxMPEre
 STRIPE_FOUNDING_MEMBER_LIMIT=500
 ```
+
+---
+
+## GO-LIVE ACTION LOG
+_Things to do in order before opening to real users_
+
+### 🔴 Must do before any real users
+- [ ] Run full checkout test with real card — verify is_pro=true written to profiles
+- [ ] Verify ProGate works — set NEXT_PUBLIC_PREMIUM_ENFORCED=true, test free vs pro features
+- [ ] Re-enable email confirmation in Supabase (Auth → Providers → Supabase Auth → Confirm email ON)
+- [ ] Run supabase/feedback-and-gdpr.sql (feedback table + export/delete RPC functions)
+- [ ] Verify account deletion cascade works end-to-end
+- [ ] Verify data export downloads correct JSON
+
+### 🟠 Must do before public launch
+- [ ] Custom domain (nextsplit.com or similar) — update NEXT_PUBLIC_SITE_URL + Strava callback
+- [ ] Privacy policy reviewed by someone with legal knowledge
+- [ ] Terms of service reviewed
+- [ ] Stripe billing portal fully configured (cancellation policy, refund policy shown)
+- [ ] Test onboarding flow end-to-end on fresh account (all 12 steps)
+- [ ] Push notifications tested on Android + iOS (PWA)
+- [ ] PostHog confirmed receiving events (check eu.posthog.com dashboard)
+
+### 🟡 Strongly recommended before public launch
+- [ ] Sentry confirmed receiving errors (trigger a test error)
+- [ ] At least 1 real coach onboarded manually (Phase 2 soft launch)
+- [ ] App Store / Play Store submission started (Phase 4 — long lead time)
+- [ ] Support email (support@nextsplit.com) set up and monitored
+- [ ] Social media presence created (@nextsplit)
+
+### 🟢 Nice to have
+- [ ] Landing page (nextsplit.com) with waitlist/signup CTA
+- [ ] SEO — blog post "best marathon training plan 2026"
+- [ ] Referral code system
+- [ ] Founding member count shown publicly ("Join 47 founding members")
+
+---
+
+## PHASE STATUS
+
+| Phase | Status | Notes |
+|---|---|---|
+| Phase 0 — Stabilise | ✅ Complete | CI/CD, Sentry, error boundaries, null safety |
+| Phase 1 — Monetise | 🟡 95% done | Stripe built, ProGate enforcement + testing remaining |
+| Phase 2 — AI Depth + Coach soft launch | 🔲 Next | Start after go-live checklist cleared |
+| Phase 3 — Full Coach Platform + Community | 🔲 | Months 3-5 |
+| Phase 4 — Wearables + Native | 🔲 | Months 5-9 |
+| Phase 5 — Scale + Exit-Ready | 🔲 | Month 9+ |
