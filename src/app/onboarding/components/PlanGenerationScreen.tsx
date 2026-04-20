@@ -137,26 +137,72 @@ export function PlanGenerationScreen() {
             start_date:   new Date().toISOString().split('T')[0],
           })
         } else if (data.trainingPath === 'predetermined') {
-          // Find best matching template (will be replaced with proper matching later)
+          // Smart template matching based on goal + experience + race date
+          const primaryGoal = data.goals.find(g => g.priority === 'A') ?? data.goals[0]
+          const raceDate    = primaryGoal?.race_date ?? null
+          const weeksOut    = raceDate
+            ? Math.round((new Date(raceDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 7))
+            : null
+
+          // Map experience to level
+          const levelMap: Record<string, string> = {
+            lt_6mo:   'beginner',
+            '6_12mo': 'beginner',
+            '1_3yr':  'intermediate',
+            '3yr_plus': 'advanced',
+          }
+          const level = levelMap[data.runningExperience ?? ''] ?? 'beginner'
+
+          // Match distance from goal
+          const distLabel = primaryGoal?.race_distance_label ?? ''
+          let distFilter = '5k'
+          if (distLabel.toLowerCase().includes('marathon') && !distLabel.toLowerCase().includes('half')) distFilter = 'marathon'
+          else if (distLabel.toLowerCase().includes('half')) distFilter = 'half'
+          else if (distLabel.toLowerCase().includes('10')) distFilter = '10k'
+
+          // Fetch templates filtered by level and distance
           const { data: templates } = await db(supabase)
             .from('plan_templates')
-            .select('id, name, weeks_min, weeks_max, runs_per_week, level')
-            .limit(1)
+            .select('id, slug, name, weeks_min, weeks_max, runs_per_week, level, distance')
+            .ilike('level', `%${level}%`)
+            .ilike('distance', `%${distFilter}%`)
+            .limit(5)
 
-          if (templates && templates.length > 0) {
-            const t = templates[0]
-            await db(supabase).from('user_plans').insert({
-              user_id:      user.id,
-              template_id:  t.id,
-              plan_type:    'predetermined',
-              status:       'active',
-              name:         t.name,
-              total_weeks:  t.weeks_min ?? 12,
-              current_week: 1,
-              weeks_data:   [],
-              meta:         { path: 'predetermined' },
-              start_date:   new Date().toISOString().split('T')[0],
+          // Pick the best fit by weeks — closest to weeksOut without going over
+          let best = templates?.[0]
+          if (templates && templates.length > 1 && weeksOut) {
+            best = templates.reduce((acc: typeof templates[0], t: typeof templates[0]) => {
+              const tWeeks = t.weeks_max ?? t.weeks_min ?? 12
+              const accWeeks = acc.weeks_max ?? acc.weeks_min ?? 12
+              return Math.abs(tWeeks - weeksOut) < Math.abs(accWeeks - weeksOut) ? t : acc
             })
+          }
+
+          // Fall back to any template if no match
+          if (!best) {
+            const { data: fallback } = await db(supabase)
+              .from('plan_templates')
+              .select('id, slug, name, weeks_min')
+              .limit(1)
+            best = fallback?.[0]
+          }
+
+          if (best) {
+            // Use the activate route to get proper weeks_data
+            const activateRes = await fetch('/api/plans/activate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                template_id:  best.id,
+                name:         best.name,
+                race_date:    raceDate,
+                plan_type:    'predetermined',
+                include_gym:  data.gymEnabled,
+              }),
+            })
+            if (!activateRes.ok) {
+              console.error('Activate failed:', await activateRes.text())
+            }
           }
         } else if (data.trainingPath === 'lifestyle') {
           await db(supabase).from('user_plans').insert({

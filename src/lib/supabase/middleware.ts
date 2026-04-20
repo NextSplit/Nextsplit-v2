@@ -29,19 +29,51 @@ export async function updateSession(request: NextRequest) {
   // Refresh session — do not remove this
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protect app routes
   const url = request.nextUrl.clone()
-  const isAuthRoute = url.pathname.startsWith('/auth')
-  const isPublicRoute = url.pathname === '/' || isAuthRoute || url.pathname.startsWith('/u/')
+  const isAuthRoute      = url.pathname.startsWith('/auth')
+  const isOnboarding     = url.pathname.startsWith('/onboarding')
+  const isPublicRoute    = url.pathname === '/' || isAuthRoute || url.pathname.startsWith('/u/')
+  const isApiRoute       = url.pathname.startsWith('/api')
+  const isStaticRoute    = url.pathname.startsWith('/_next') || url.pathname.startsWith('/icons') || url.pathname === '/manifest.json'
 
-  if (!user && !isPublicRoute) {
+  // Not logged in → send to login
+  if (!user && !isPublicRoute && !isApiRoute && !isStaticRoute) {
     url.pathname = '/auth/login'
     return NextResponse.redirect(url)
   }
 
+  // Logged in + hitting auth pages → redirect away
   if (user && isAuthRoute && !url.pathname.startsWith('/auth/callback')) {
-    url.pathname = '/today'
+    // Check onboarding status
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: profile } = await (supabase as any)
+      .from('profiles')
+      .select('onboarding_complete')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    url.pathname = profile?.onboarding_complete ? '/today' : '/onboarding'
     return NextResponse.redirect(url)
+  }
+
+  // Logged in + going to today/plan/etc but onboarding not done → send to onboarding
+  if (user && !isOnboarding && !isPublicRoute && !isApiRoute && !isStaticRoute) {
+    const appRoutes = ['/today', '/plan', '/nutrition', '/profile', '/settings', '/dashboard', '/gym', '/history', '/races', '/character']
+    const isAppRoute = appRoutes.some(r => url.pathname.startsWith(r))
+
+    if (isAppRoute) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: profile } = await (supabase as any)
+        .from('profiles')
+        .select('onboarding_complete')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (profile && !profile.onboarding_complete) {
+        url.pathname = '/onboarding'
+        return NextResponse.redirect(url)
+      }
+    }
   }
 
   return supabaseResponse
