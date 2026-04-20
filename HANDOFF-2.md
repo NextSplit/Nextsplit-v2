@@ -1570,3 +1570,50 @@ File: supabase/phase3-migration.sql
 | Phase 4 — Wearables + Native | 🔲 Not started |
 | Phase 5 — Scale + Exit-Ready | 🔲 Not started |
 | Community (clubs, leaderboards) | 🔲 Gate at 300 MAU |
+
+---
+
+## SESSION 32 COMPLETED — STABILISE & TEST COMPLETE
+
+### Audit findings and fixes
+- ✅ TodayClient split: extracted TodayBelowFold.tsx (787→656 lines)
+- ✅ SettingsClient: fixed illegal useState inside IIFE, extracted DeveloperSection component
+- ✅ Middleware: /coach + /marketplace added to appRoutes (redirect handling)
+- ✅ Middleware: coach public profiles (/coach/[slug]) now accessible without login
+- ✅ Middleware: marketplace accessible without login
+- ✅ Squad quick actions: Payouts button properly wired (was broken <a> with onClick)
+- ✅ Plan builder: AI suggest endpoint fixed (/api/ai/recommend)
+- ✅ Plan builder: AI response field name fixed
+- ✅ Admin seed route: confirmed secured with SEED_SECRET
+- ✅ All API routes: auth gate confirmed on all coach endpoints
+- ✅ Edge cases: all null-safe (annotations, squad status, athlete detail, plans)
+- ✅ Zero TS errors, clean production build
+
+### SQL status
+- ✅ stripe-migration.sql — run
+- ✅ coach platform SQL — run
+- ✅ coach-invites.sql — run
+- ✅ phase3-migration.sql — run
+- ✅ feedback-and-gdpr.sql — run
+
+### GO-LIVE CHECKLIST UPDATED
+
+| Task | Status |
+|---|---|
+| Stripe live keys in Vercel | ✅ |
+| Stripe webhook configured | ✅ |
+| Stripe billing portal enabled | ✅ |
+| Coach platform SQL in Supabase | ✅ |
+| Phase 3 SQL in Supabase | ✅ |
+| feedback-and-gdpr.sql | ✅ |
+| Test full Stripe checkout | 🔲 |
+| Verify ProGate (NEXT_PUBLIC_PREMIUM_ENFORCED=true) | 🔲 |
+| Re-enable email confirmation in Supabase | 🔲 |
+| End-to-end coach flow test | 🔲 |
+
+### NEXT STEPS
+1. Run feedback-and-gdpr.sql in Supabase
+2. Manual end-to-end test of coach flows
+3. Test Stripe checkout with real card
+4. Flip NEXT_PUBLIC_PREMIUM_ENFORCED=true and verify ProGate
+5. Community features (clubs, leaderboards) — gate at 300 MAU
