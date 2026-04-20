@@ -395,7 +395,7 @@ _1–2 weeks_
 | Vercel Analytics | ✅ |
 | Manual test all 4 onboarding flows | ✅ |
 | Proper error boundary with recovery | ✅ |
-| Verify push notifications on Android | 🔲 |
+| Verify push notifications on Android | 🔲 (deferred) |
 
 ---
 
@@ -409,7 +409,7 @@ _Weeks 2–5_
 | 7-day free trial | 🔲 |
 | Upgrade card in Profile tab | 🔲 |
 | Subscription management | 🔲 |
-| PostHog analytics | 🔲 |
+| PostHog analytics | ✅ |
 | Race event API (search real races) | 🔲 |
 
 **Free vs Pro:**
@@ -1275,7 +1275,34 @@ All screens built and wired:
 
 ---
 
-## SESSION 27-28 COMPLETED
+## IMMEDIATE NEXT ACTIONS (Session 29+)
+
+### 🔴 Phase 1 — Monetise (start now)
+1. **Stripe checkout + webhook** — full spec in Phase 1 section below
+2. **ProGate enforced** — gate AI/analytics features behind is_pro flag
+3. **7-day free trial** — built into checkout flow
+4. **Upgrade card in Profile tab**
+
+### 🟠 Pending SQL (run in Supabase before next session)
+File: `supabase/feedback-and-gdpr.sql`
+Creates: feedback table, export_user_data(), delete_user_account()
+
+### 🟡 Code debt remaining
+- TodayClient.tsx still 783 lines (target <600) — extract TodaySessionList next
+- Push notification testing on Android
+
+### 🟡 Vercel env vars needed for Stripe (Phase 1)
+```
+STRIPE_SECRET_KEY
+STRIPE_PUBLISHABLE_KEY  
+STRIPE_PRICE_MONTHLY
+STRIPE_PRICE_ANNUAL
+STRIPE_WEBHOOK_SECRET
+```
+
+---
+
+## SESSION 27-28-29 COMPLETED
 
 ### Audit fixes
 - ✅ /api/ai/recommend: auth gate added
@@ -1302,3 +1329,49 @@ supabase/feedback-and-gdpr.sql — feedback table + export_user_data + delete_us
 
 ### TodayClient still 783 lines (target <600)
 Next split: extract TodaySessionList (the main session rendering block, ~300 lines)
+
+### Onboarding (Sessions 27-28)
+- ✅ 12-step onboarding flow — Welcome → Character → Strava → Sport → Profile → Goals → Life → Gym → Path → Generate → Preview
+- ✅ Character builder with @handle system (body/skin/hair/face/kit/accessories/title + randomise)
+- ✅ Progress bar with animated character runner sprite
+- ✅ Strava connect at step 3 — auto-prefills weekly km, race times, training days, surfaces
+- ✅ Smart time inputs (H:MM:SS auto-format — type digits only)
+- ✅ Smart distance inputs with validation
+- ✅ 5-path training selection (Predetermined / AI / Manual / Lifestyle / Coach marketplace)
+- ✅ Plan generation screen (animated, saves full profile + goals to Supabase)
+- ✅ Plan preview with adjust links and XP reward
+
+### Auth fixes (Session 27)
+- ✅ Signup/login redirect hang fixed (server action redirect pattern)
+- ✅ Middleware handles missing profile rows (new users redirect to onboarding)
+- ✅ Profile trigger SQL — auto-creates profile row on signup
+
+### Security audit (Session 29)
+- ✅ /api/ai/recommend — auth gate added
+- ✅ Admin seed route — SEED_SECRET always required
+- ✅ generate-plan — usage metered to ai_usage table
+- ✅ Error boundaries on history + settings pages
+
+### Analytics + feedback (Session 29)
+- ✅ PostHog installed — eu.posthog.com project 163005
+- ✅ Page view tracking on every route change
+- ✅ User identify on profile load (display_name, experience, is_pro)
+- ✅ PostHog reset on signout
+- ✅ src/lib/analytics.ts — central event registry (all key events defined)
+- ✅ FeedbackWidget — floating 💬 on every page (bug/feature/general + 1-5 rating)
+
+### GDPR (Session 29)
+- ✅ Data export in Settings — JSON download via export_user_data() RPC
+- ✅ Account deletion with double confirm via delete_user_account() RPC
+- ✅ Privacy policy live at /privacy
+- ✅ Terms of service live at /terms
+- ✅ Signup page links to real policy pages
+
+### Code quality (Session 29)
+- ✅ secsToMMSS deduplicated (removed from SplitsDisplay + coach route)
+- ✅ TodayClient split: TodayHeader.tsx + TodayModals.tsx extracted (946→783 lines)
+
+### Pre-launch checklist updates
+- ✅ Privacy policy /privacy
+- ✅ Terms of service /terms
+- Still needed: confirm email re-enable, Stripe live keys, NEXT_PUBLIC_PREMIUM_ENFORCED=true
