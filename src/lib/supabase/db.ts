@@ -39,3 +39,7 @@ export type TableName =
   | 'push_subscriptions'
   | 'user_goals'
   | 'sport_interest_waitlist'
+  | 'coach_invites'
+  | 'coach_reviews'
+  | 'featured_plans'
+  | 'app_config'

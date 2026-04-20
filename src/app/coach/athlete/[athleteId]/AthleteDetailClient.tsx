@@ -47,6 +47,8 @@ export default function AthleteDetailClient({
 }: Props) {
   const [activeTab, setActiveTab] = useState<'overview' | 'sessions' | 'wellness' | 'message'>('overview')
   const [showAnnotate, setShowAnnotate]   = useState(false)
+  const [digest, setDigest]               = useState('')
+  const [digestLoading, setDigestLoading] = useState(false)
   const [annotateNote, setAnnotateNote]   = useState('')
   const [annotateReaction, setAnnotateReaction] = useState<string>('')
   const [annotating, setAnnotating]       = useState(false)
@@ -61,6 +63,18 @@ export default function AthleteDetailClient({
   const avgSoreness = wellness.length > 0
     ? Math.round(wellness.reduce((a, w) => a + (w.soreness ?? 0), 0) / wellness.filter(w => w.soreness).length * 10) / 10
     : null
+
+  const fetchDigest = async () => {
+    setDigestLoading(true)
+    try {
+      const res  = await fetch('/api/ai/coach-digest', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ athlete_id: athleteId }),
+      })
+      const data = await res.json()
+      setDigest(data.digest ?? 'Unable to generate digest')
+    } finally { setDigestLoading(false) }
+  }
 
   const sendAnnotation = async () => {
     if (!annotateNote.trim()) return
@@ -146,6 +160,22 @@ export default function AthleteDetailClient({
                   <p className="text-[10px] text-slate-400">{s.sub}</p>
                 </div>
               ))}
+            </div>
+
+            {/* AI Digest */}
+            <div className="bg-gradient-to-br from-teal-50 to-teal-50 border border-teal-200 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold text-teal-700 uppercase tracking-wider">🤖 AI Weekly Digest</p>
+                <button onClick={fetchDigest} disabled={digestLoading}
+                  className="text-xs bg-teal-500 text-white px-3 py-1.5 rounded-lg font-bold disabled:opacity-50 active:scale-95">
+                  {digestLoading ? 'Generating…' : digest ? 'Refresh' : 'Generate'}
+                </button>
+              </div>
+              {digest ? (
+                <p className="text-sm text-slate-700 leading-relaxed">{digest}</p>
+              ) : (
+                <p className="text-xs text-teal-600">Get an AI-generated summary of this athlete's training, wellness and coaching recommendations.</p>
+              )}
             </div>
 
             {/* Profile */}

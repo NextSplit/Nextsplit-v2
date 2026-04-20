@@ -1,0 +1,142 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRecord = Record<string, any>
+
+interface AthleteStatus {
+  athlete_id:          string
+  display_name:        string | null
+  handle:              string | null
+  status:              'green' | 'amber' | 'red'
+  flags:               string[]
+  acwr:                number | null
+  sessions_done_week:  number
+  sessions_total_week: number
+  last_active:         string | null
+  avg_wellness:        number | null
+  current_week:        number | null
+  total_weeks:         number | null
+  plan_name:           string | null
+}
+
+function calcACWR(logs: { done: boolean; km: number | null; logged_at: string }[]): number | null {
+  const now        = Date.now()
+  const oneWeekMs  = 7 * 24 * 3600 * 1000
+  const fourWkMs   = 28 * 24 * 3600 * 1000
+
+  const acuteLogs  = logs.filter(l => l.done && now - new Date(l.logged_at).getTime() < oneWeekMs)
+  const chronicLogs = logs.filter(l => l.done && now - new Date(l.logged_at).getTime() < fourWkMs)
+
+  const acuteKm   = acuteLogs.reduce((a, l) => a + (l.km ?? 3), 0)
+  const chronicKm = chronicLogs.reduce((a, l) => a + (l.km ?? 3), 0) / 4
+
+  if (chronicKm === 0) return null
+  return Math.round((acuteKm / chronicKm) * 100) / 100
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
+    // Get all active athletes for this coach
+    const { data: relationships } = await db(supabase)
+      .from('coach_athletes')
+      .select('athlete_id')
+      .eq('coach_id', user.id)
+      .eq('status', 'active')
+
+    if (!relationships?.length) return NextResponse.json({ athletes: [] })
+
+    const athleteIds = relationships.map((r: AnyRecord) => r.athlete_id)
+    const fourWeeksAgo = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString()
+    const oneWeekAgo   = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString()
+
+    // Batch fetch all data
+    const [profilesRes, logsRes, wellnessRes, plansRes] = await Promise.all([
+      db(supabase).from('profiles').select('id, display_name, handle').in('id', athleteIds),
+      db(supabase).from('training_logs').select('user_id, done, km, logged_at, week_n').in('user_id', athleteIds).gte('logged_at', fourWeeksAgo),
+      db(supabase).from('wellness_logs').select('user_id, sleep, energy, mood, soreness, log_date').in('user_id', athleteIds).gte('log_date', oneWeekAgo),
+      db(supabase).from('user_plans').select('user_id, name, current_week, total_weeks, status').in('user_id', athleteIds).eq('status', 'active'),
+    ])
+
+    const profiles = profilesRes.data ?? []
+    const allLogs  = logsRes.data ?? []
+    const wellness = wellnessRes.data ?? []
+    const plans    = plansRes.data ?? []
+
+    const athletes: AthleteStatus[] = athleteIds.map((athleteId: string) => {
+      const profile = profiles.find((p: AnyRecord) => p.id === athleteId)
+      const athleteLogs = allLogs.filter((l: AnyRecord) => l.user_id === athleteId)
+      const athleteWellness = wellness.filter((w: AnyRecord) => w.user_id === athleteId)
+      const plan    = plans.find((p: AnyRecord) => p.user_id === athleteId)
+
+      // ACWR
+      const acwr = calcACWR(athleteLogs as { done: boolean; km: number | null; logged_at: string }[])
+
+      // This week sessions
+      const thisWeekLogs    = athleteLogs.filter((l: AnyRecord) => new Date(l.logged_at) >= new Date(oneWeekAgo))
+      const sessionsDoneWk  = thisWeekLogs.filter((l: AnyRecord) => l.done).length
+      const sessionsTotalWk = thisWeekLogs.length
+
+      // Last active
+      const doneLogs = athleteLogs.filter((l: AnyRecord) => l.done).sort((a: AnyRecord, b: AnyRecord) => new Date(b.logged_at).getTime() - new Date(a.logged_at).getTime())
+      const lastActive = doneLogs[0]?.logged_at ?? null
+
+      // Avg wellness this week
+      const wellnessScores = athleteWellness.map((w: AnyRecord) => ((w.sleep ?? 0) / 8 + (w.energy ?? 0) / 10 + (w.mood ?? 0) / 10) / 3 * 10)
+      const avgWellness = wellnessScores.length > 0
+        ? Math.round(wellnessScores.reduce((a: number, b: number) => a + b, 0) / wellnessScores.length * 10) / 10
+        : null
+
+      // Determine status + flags
+      const flags: string[] = []
+      let status: 'green' | 'amber' | 'red' = 'green'
+
+      if (acwr !== null && acwr > 1.5) { flags.push('⚠️ ACWR very high — injury risk'); status = 'red' }
+      else if (acwr !== null && acwr > 1.3) { flags.push('ACWR elevated'); if (status === 'green') status = 'amber' }
+
+      const daysSinceActive = lastActive
+        ? Math.floor((Date.now() - new Date(lastActive).getTime()) / (24 * 3600 * 1000))
+        : 999
+
+      if (daysSinceActive >= 7) { flags.push('🚩 No activity in 7+ days'); status = 'red' }
+      else if (daysSinceActive >= 4) { flags.push('Inactive 4+ days'); if (status === 'green') status = 'amber' }
+
+      if (avgWellness !== null && avgWellness < 5) { flags.push('Low wellness scores'); if (status === 'green') status = 'amber' }
+
+      if (sessionsDoneWk === 0 && sessionsTotalWk > 0) { flags.push('No sessions done this week'); if (status === 'green') status = 'amber' }
+
+      return {
+        athlete_id:          athleteId,
+        display_name:        profile?.display_name ?? null,
+        handle:              profile?.handle ?? null,
+        status,
+        flags,
+        acwr,
+        sessions_done_week:  sessionsDoneWk,
+        sessions_total_week: sessionsTotalWk,
+        last_active:         lastActive,
+        avg_wellness:        avgWellness,
+        current_week:        plan?.current_week ?? null,
+        total_weeks:         plan?.total_weeks ?? null,
+        plan_name:           plan?.name ?? null,
+      }
+    })
+
+    // Sort: red first, then amber, then green
+    athletes.sort((a, b) => {
+      const order = { red: 0, amber: 1, green: 2 }
+      return order[a.status] - order[b.status]
+    })
+
+    return NextResponse.json({ athletes })
+
+  } catch (err) {
+    console.error('Squad status error:', err)
+    return NextResponse.json({ error: 'Failed to compute squad status' }, { status: 500 })
+  }
+}
