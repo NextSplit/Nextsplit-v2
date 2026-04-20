@@ -6,45 +6,41 @@ import { canAccess, PREMIUM_ENFORCED, type Tier, type FeatureKey } from '@/lib/f
 import { db } from '@/lib/supabase/db'
 
 export interface Subscription {
-  tier: Tier
-  status: 'active' | 'trialing' | 'cancelled' | 'expired' | 'none'
-  currentPeriodEnd: string | null
-  trialEnd: string | null
-  stripeCustomerId: string | null
+  tier:              Tier
+  status:            'active' | 'trialing' | 'founding' | 'cancelled' | 'expired' | 'none' | 'free'
+  currentPeriodEnd:  string | null
+  trialEnd:          string | null
+  stripeCustomerId:  string | null
+  isFounding:        boolean
+  foundingLeft:      number   // spots remaining for founding pricing
 }
 
 const DEFAULT_SUB: Subscription = {
-  tier: 'free',
-  status: 'none',
+  tier:             'free',
+  status:           'none',
   currentPeriodEnd: null,
-  trialEnd: null,
+  trialEnd:         null,
   stripeCustomerId: null,
+  isFounding:       false,
+  foundingLeft:     500,
 }
 
 export interface UseSubscriptionReturn {
-  subscription: Subscription
-  loading: boolean
-  /** True if user has pro or above */
-  isPro: boolean
-  /** True if premium is not yet enforced (dev/test mode) */
-  isDevMode: boolean
-  /** Check if user can access a specific feature */
-  canUseFeature: (feature: FeatureKey) => boolean
-  refresh: () => void
+  subscription:   Subscription
+  loading:        boolean
+  isPro:          boolean
+  isFounding:     boolean
+  foundingLeft:   number
+  isDevMode:      boolean
+  canUseFeature:  (feature: FeatureKey) => boolean
+  refresh:        () => void
 }
 
-/**
- * Reads the user's subscription tier from Supabase.
- * Returns free tier by default until subscriptions table exists and is populated.
- *
- * When NEXT_PUBLIC_PREMIUM_ENFORCED=false (default), canUseFeature always
- * returns true regardless of tier — safe for dev/testing.
- */
 export function useSubscription(): UseSubscriptionReturn {
   const supabase = useSupabase()
   const [subscription, setSubscription] = useState<Subscription>(DEFAULT_SUB)
-  const [loading, setLoading] = useState(true)
-  const [tick, setTick] = useState(0)
+  const [loading, setLoading]           = useState(true)
+  const [tick, setTick]                 = useState(0)
 
   const refresh = useCallback(() => setTick(t => t + 1), [])
 
@@ -60,31 +56,40 @@ export function useSubscription(): UseSubscriptionReturn {
           return
         }
 
-        // Try to read from subscriptions table (may not exist yet — that's fine)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data, error } = await db(supabase)
-          .from('subscriptions')
-          .select('tier, status, current_period_end, trial_end, stripe_customer_id')
-          .eq('user_id', user.id)
+        // Read from profiles (is_pro + subscription_status)
+        const { data: profile } = await db(supabase)
+          .from('profiles')
+          .select('is_pro, subscription_status, stripe_customer_id, pro_expires_at')
+          .eq('id', user.id)
           .maybeSingle()
 
+        // Read founding member count
+        const { data: config } = await db(supabase)
+          .from('app_config')
+          .select('value')
+          .eq('key', 'founding_member_count')
+          .maybeSingle()
+
+        const foundingCount = parseInt(config?.value ?? '0', 10)
+        const foundingLeft  = Math.max(0, 500 - foundingCount)
+
         if (!cancelled) {
-          if (error || !data) {
-            // Table doesn't exist yet or no row — default to free
-            setSubscription(DEFAULT_SUB)
-          } else {
-            setSubscription({
-              tier: (data.tier as Tier) ?? 'free',
-              status: data.status ?? 'none',
-              currentPeriodEnd: data.current_period_end ?? null,
-              trialEnd: data.trial_end ?? null,
-              stripeCustomerId: data.stripe_customer_id ?? null,
-            })
-          }
+          const isPro      = profile?.is_pro ?? false
+          const status     = profile?.subscription_status ?? 'free'
+          const isFounding = status === 'founding'
+
+          setSubscription({
+            tier:             isPro ? 'pro' : 'free',
+            status:           status as Subscription['status'],
+            currentPeriodEnd: profile?.pro_expires_at ?? null,
+            trialEnd:         null,
+            stripeCustomerId: profile?.stripe_customer_id ?? null,
+            isFounding,
+            foundingLeft,
+          })
           setLoading(false)
         }
       } catch {
-        // Any error → default to free, don't block the UI
         if (!cancelled) { setSubscription(DEFAULT_SUB); setLoading(false) }
       }
     }
@@ -104,7 +109,9 @@ export function useSubscription(): UseSubscriptionReturn {
     subscription,
     loading,
     isPro,
-    isDevMode: !PREMIUM_ENFORCED,
+    isFounding:   subscription.isFounding,
+    foundingLeft: subscription.foundingLeft,
+    isDevMode:    !PREMIUM_ENFORCED,
     canUseFeature,
     refresh,
   }

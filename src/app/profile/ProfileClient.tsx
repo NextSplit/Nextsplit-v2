@@ -6,6 +6,8 @@ import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
 import { useProfile } from '@/hooks/useProfile'
+import { useSubscription } from '@/hooks/useSubscription'
+import { UpgradeModal } from '@/components/UpgradeModal'
 import { useWellness } from '@/hooks/useWellness'
 import { useMealPlan } from '@/hooks/useMealPlan'
 import { signout } from '@/app/auth/actions'
@@ -61,6 +63,8 @@ export default function ProfileClient({
   const { logs: allPlanLogs, loading: allLogsLoading } = useAllTrainingLogs()         // cross-plan: for RPG XP (persists across plan switches)
   const { profile } = useProfile()
   const { recent: wellnessLogs } = useWellness()
+  const { isPro, isFounding, foundingLeft, subscription } = useSubscription()
+  const [showUpgrade, setShowUpgrade] = useState(false)
 
   // Meal plan — current week for mealDays count
   const mealWeekStart = useMemo(() => {
@@ -465,6 +469,58 @@ export default function ProfileClient({
           </div>
         )}
 
+        {/* Upgrade card — shown to free users */}
+        {!isPro && (
+          <button
+            onClick={() => setShowUpgrade(true)}
+            className="w-full bg-gradient-to-r from-teal-500 to-teal-400 rounded-2xl p-4 text-left"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-white text-sm font-black">NextSplit Elite</span>
+                  {foundingLeft > 0 && (
+                    <span className="bg-amber-400 text-amber-900 text-[9px] font-black px-1.5 py-0.5 rounded-full">
+                      ⭐ {foundingLeft} founding spots left
+                    </span>
+                  )}
+                </div>
+                <p className="text-teal-100 text-xs">
+                  {foundingLeft > 0 ? 'Lock in £7.99/mo forever · ' : ''}7-day free trial
+                </p>
+              </div>
+              <div className="bg-white/20 rounded-xl px-3 py-1.5">
+                <span className="text-white text-xs font-bold">Upgrade →</span>
+              </div>
+            </div>
+          </button>
+        )}
+
+        {/* Pro badge — shown to pro users */}
+        {isPro && (
+          <div className="bg-gradient-to-r from-teal-500 to-teal-400 rounded-2xl p-4 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-white text-sm font-black">NextSplit Elite</span>
+                {isFounding && <span className="text-amber-300 text-xs font-bold">⭐ Founding Member</span>}
+              </div>
+              <p className="text-teal-100 text-xs mt-0.5">
+                {subscription.status === 'trialing' ? 'Free trial active' : 'Active subscription'}
+              </p>
+            </div>
+            <button
+              onClick={async () => {
+                const res = await fetch('/api/stripe/portal', { method: 'POST' })
+                const d = await res.json()
+                if (d.url) window.location.href = d.url
+              }}
+              className="bg-white/20 rounded-xl px-3 py-1.5"
+            >
+              <span className="text-white text-xs font-bold">Manage</span>
+            </button>
+          </div>
+        )}
+
         {/* Strava */}
         <StravaSection clientId={stravaClientId} isConnected={isStravaConnected} />
 
@@ -549,6 +605,13 @@ export default function ProfileClient({
             {stravaToast.msg}
           </div>
         </div>
+      )}
+      {/* Upgrade modal */}
+      {showUpgrade && (
+        <UpgradeModal
+          onClose={() => setShowUpgrade(false)}
+          foundingLeft={foundingLeft}
+        />
       )}
     </div>
   )

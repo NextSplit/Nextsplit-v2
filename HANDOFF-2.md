@@ -1375,3 +1375,15 @@ Next split: extract TodaySessionList (the main session rendering block, ~300 lin
 - ✅ Privacy policy /privacy
 - ✅ Terms of service /terms
 - Still needed: confirm email re-enable, Stripe live keys, NEXT_PUBLIC_PREMIUM_ENFORCED=true
+
+## STRIPE ENV VARS (add to Vercel)
+```
+STRIPE_SECRET_KEY=sk_live_*** (set in Vercel env vars)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_*** (set in Vercel env vars)
+STRIPE_WEBHOOK_SECRET=whsec_*** (set in Vercel env vars)
+STRIPE_PRICE_FOUNDING_MONTHLY=price_1TOL1IDD4FjAWTScvzPNVNh6
+STRIPE_PRICE_FOUNDING_ANNUAL=price_1TOL1IDD4FjAWTScSEBHOefs
+STRIPE_PRICE_STANDARD_MONTHLY=price_1TOKuLDD4FjAWTScI3XcaEUK
+STRIPE_PRICE_STANDARD_ANNUAL=price_1TOL1IDD4FjAWTSc5TxMPEre
+STRIPE_FOUNDING_MEMBER_LIMIT=500
+```
