@@ -317,9 +317,9 @@ export function StravaConnectScreen() {
         </button>
         <button
           onClick={handleSkip}
-          className="w-full text-slate-400 py-2 text-sm hover:text-slate-600 transition-colors"
+          className="w-full bg-slate-100 text-slate-600 font-semibold py-3 rounded-xl text-sm hover:bg-slate-200 transition-colors active:scale-95"
         >
-          Skip — I&apos;ll fill it in manually
+          Skip for now →
         </button>
       </div>
     </div>

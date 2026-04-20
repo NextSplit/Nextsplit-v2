@@ -184,7 +184,7 @@ export function PlanPreviewScreen() {
         {/* Adjust option */}
         <div className="text-center">
           <button
-            onClick={back}
+            onClick={() => setStep(10)}
             className="text-sm text-slate-400 hover:text-slate-600 transition-colors underline"
           >
             Something not right? Go back and adjust

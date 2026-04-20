@@ -4,6 +4,23 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
+
+function friendlyError(msg: string): string {
+  if (msg.includes('already registered') || msg.includes('User already exists'))
+    return 'An account with this email already exists. Try signing in instead.'
+  if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials'))
+    return 'Incorrect email or password. Please try again.'
+  if (msg.includes('Email not confirmed'))
+    return 'Please check your email and confirm your account first.'
+  if (msg.includes('Password should be'))
+    return 'Password must be at least 8 characters.'
+  if (msg.includes('rate limit') || msg.includes('too many'))
+    return 'Too many attempts — please wait a minute and try again.'
+  if (msg.includes('network') || msg.includes('fetch'))
+    return 'Connection error — please check your internet and try again.'
+  return msg
+}
+
 export async function login(formData: FormData) {
   const supabase = await createClient()
 
@@ -15,7 +32,7 @@ export async function login(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    return { error: error.message }
+    return { error: friendlyError(error.message) }
   }
 
   revalidatePath('/', 'layout')
@@ -38,7 +55,7 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data)
 
   if (error) {
-    return { error: error.message }
+    return { error: friendlyError(error.message) }
   }
 
   revalidatePath('/', 'layout')

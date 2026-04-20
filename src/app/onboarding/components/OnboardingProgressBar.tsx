@@ -65,19 +65,20 @@ const SKIN_TONES = {
 }
 
 // Step labels shown below progress bar on desktop (hidden on mobile)
-const STEP_LABELS = [
-  '', // 1 — Welcome (no label)
-  'Character',
-  'Sport',
-  'About You',
-  'Running',
-  'Goals',
-  'Your Life',
-  'Gym',
-  'Your Path',
-  'Building',
-  'Preview',
-]
+const STEP_LABELS: Record<number, string> = {
+  1:  '',           // Welcome — no label needed
+  2:  'Character',
+  3:  'Connect',
+  4:  'Sport',
+  5:  'About You',
+  6:  'Running',
+  7:  'Goals',
+  8:  'Your Life',
+  9:  'Gym',
+  10: 'Your Path',
+  11: 'Building…',
+  12: 'Preview',
+}
 
 export function OnboardingProgressBar({ step, character, showFinishLine = false }: Props) {
   // Progress 0→1 (step 1 = just started, step 11 = done)
@@ -127,7 +128,7 @@ export function OnboardingProgressBar({ step, character, showFinishLine = false 
       {/* Step counter */}
       <div className="flex justify-between mt-2">
         <span className="text-[11px] text-slate-400 font-medium">
-          {STEP_LABELS[step - 1] || `Step ${step}`}
+          {STEP_LABELS[step] || `Step ${step}`}
         </span>
         <span className="text-[11px] text-slate-400">
           {step} / {TOTAL_STEPS}

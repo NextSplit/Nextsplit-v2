@@ -6,6 +6,7 @@ import { OnboardingProgressBar } from './OnboardingProgressBar'
 import { STARTING_TITLES } from '@/types/database'
 import type { CharacterConfig } from '@/types/database'
 import { createClient } from '@/lib/supabase/client'
+import { useRef } from 'react'
 
 // ── Options ───────────────────────────────────────────────────────────────────
 
@@ -144,6 +145,7 @@ export function CharacterCreationScreen() {
   const [config, setConfig]         = useState<CharacterConfig>(data.characterConfig)
   const [handle, setHandle]         = useState(data.handle)
   const [handleError, setHandleError] = useState('')
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [checkingHandle, setCheckingHandle] = useState(false)
   const [saving, setSaving]         = useState(false)
 

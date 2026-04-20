@@ -37,6 +37,10 @@ export default function TodayClient() {
   const [undoLabel, setUndoLabel] = useState('')
   const [undoXP, setUndoXP] = useState(0)
   const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
+  const [showWelcome, setShowWelcome] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return !localStorage.getItem('nextsplit_welcome_dismissed')
+  })
   const [undoSecsLeft, setUndoSecsLeft] = useState(8)
   const [shareSession, setShareSession] = useState<{ session: PlanSession; log: TrainingLog } | null>(null)
   const [showWeeklyShare, setShowWeeklyShare] = useState(false)
@@ -285,6 +289,45 @@ export default function TodayClient() {
       />
 
       <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
+
+        {/* Manual/empty plan — no sessions yet */}
+        {!loading && plan && currentWeek && currentWeek.days.every(d => d.sessions.length === 0) && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center space-y-3">
+            <div className="text-4xl">✏️</div>
+            <h2 className="text-sm font-bold text-gray-900">No sessions scheduled yet</h2>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              {plan.plan_type === 'manual'
+                ? "Head to the Plan tab to add sessions to your week."
+                : "Your plan is building — check the Plan tab for your full schedule."}
+            </p>
+            <a href="/plan"
+              className="inline-block bg-teal-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl">
+              Go to Plan →
+            </a>
+          </div>
+        )}
+
+        {/* Welcome banner — shown once after onboarding */}
+        {showWelcome && !loading && plan && (
+          <div className="bg-gradient-to-r from-teal-500 to-teal-400 rounded-2xl p-4 flex items-start gap-3">
+            <span className="text-2xl shrink-0">👋</span>
+            <div className="flex-1">
+              <p className="text-sm font-black text-white">Welcome to NextSplit!</p>
+              <p className="text-xs text-teal-100 mt-0.5 leading-relaxed">
+                Your plan is ready. Tap any session to log it — swipe left or right to move between days.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setShowWelcome(false)
+                try { localStorage.setItem('nextsplit_welcome_dismissed', '1') } catch {}
+              }}
+              className="text-teal-200 text-lg shrink-0 leading-none"
+            >
+              ×
+            </button>
+          </div>
+        )}
 
         {/* No plan state */}
         {!loading && !plan && (() => {

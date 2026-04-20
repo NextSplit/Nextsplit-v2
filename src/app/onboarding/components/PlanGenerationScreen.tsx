@@ -250,14 +250,33 @@ export function PlanGenerationScreen() {
             meta:         { path: 'lifestyle', difficulty: 0 },
             start_date:   new Date().toISOString().split('T')[0],
           })
+        } else if (data.trainingPath === 'coach_marketplace') {
+          // Create a placeholder "browsing" plan so Today tab isn't empty
+          await db(supabase).from('user_plans').insert({
+            user_id:      user.id,
+            plan_type:    'manual',
+            status:       'active',
+            name:         'My Training Plan',
+            total_weeks:  12,
+            current_week: 1,
+            weeks_data:   [],
+            meta:         { path: 'coach_marketplace', placeholder: true },
+            start_date:   new Date().toISOString().split('T')[0],
+          })
         }
-        // manual & coach_marketplace — no plan created here
+        // manual — no plan created here
 
         // 4. Mark onboarding complete
         await db(supabase).from('profiles').update({
           onboarding_complete: true,
           onboarding_step:     11,
         }).eq('id', user.id)
+
+        // Clear onboarding localStorage — prevents stale state on next visit
+        try {
+          localStorage.removeItem('nextsplit_onboarding_step')
+          localStorage.removeItem('nextsplit_onboarding_data')
+        } catch { /* ignore */ }
 
         // 5. Auto-accept coach invite if token stored from invite link
         try {

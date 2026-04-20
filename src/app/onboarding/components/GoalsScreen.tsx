@@ -277,14 +277,25 @@ export function GoalsScreen() {
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 flex gap-3">
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600">←</button>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 space-y-2">
+        <div className="flex gap-3">
+          <button onClick={back} className="px-5 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600">←</button>
+          <button
+            onClick={handleContinue}
+            disabled={!canContinue || saving}
+            className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-teal-600 active:scale-95"
+          >
+            {saving ? 'Saving…' : 'Continue →'}
+          </button>
+        </div>
         <button
-          onClick={handleContinue}
-          disabled={!canContinue || saving}
-          className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-teal-600 active:scale-95"
+          onClick={() => {
+            update({ goals: [{ goal_type: 'general_fitness', priority: 'A' }] })
+            next()
+          }}
+          className="w-full text-slate-400 text-xs py-1.5 hover:text-slate-600 transition-colors"
         >
-          {saving ? 'Saving…' : 'Continue →'}
+          Skip — I&apos;ll set a goal later
         </button>
       </div>
     </div>
