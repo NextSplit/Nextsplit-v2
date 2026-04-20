@@ -1,28 +1,62 @@
 'use client'
 
 import posthog from 'posthog-js'
-import { PostHogProvider as PHProvider } from 'posthog-js/react'
-import { useEffect } from 'react'
+import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react'
+import { useEffect, Suspense } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
 
-export function PostHogProvider({ children }: { children: React.ReactNode }) {
+// ── Page view tracker — fires on every route change ───────────────────────────
+function PageViewTracker() {
+  const pathname    = usePathname()
+  const searchParams = useSearchParams()
+  const ph          = usePostHog()
+
   useEffect(() => {
-    const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
+    if (!ph) return
+    // Build full URL for tracking
+    const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
+    ph.capture('$pageview', { $current_url: url })
+  }, [pathname, searchParams, ph])
+
+  return null
+}
+
+// ── Main provider ─────────────────────────────────────────────────────────────
+export function PostHogProvider({ children }: { children: React.ReactNode }) {
+  const key  = process.env.NEXT_PUBLIC_POSTHOG_KEY
+  const host = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com'
+
+  useEffect(() => {
     if (!key) return
 
     posthog.init(key, {
-      api_host:             process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com',
-      person_profiles:      'identified_only',
-      capture_pageview:     false, // We handle this manually per route
-      capture_pageleave:    true,
-      autocapture:          false, // Manual events only — keeps data clean
-      disable_session_recording: process.env.NODE_ENV !== 'production',
+      api_host:                  host,
+      ui_host:                   'https://eu.posthog.com',
+      person_profiles:           'identified_only',
+      capture_pageview:          false, // handled by PageViewTracker above
+      capture_pageleave:         true,
+      autocapture:               false, // manual events only — keeps data clean
+      session_recording: {
+        maskAllInputs:           true,  // never record passwords/sensitive fields
+        maskInputOptions:        { password: true },
+      },
       loaded: (ph) => {
-        if (process.env.NODE_ENV !== 'production') ph.opt_out_capturing()
+        // Disable in dev so local usage doesn't pollute analytics
+        if (process.env.NODE_ENV !== 'production') {
+          ph.opt_out_capturing()
+        }
       },
     })
-  }, [])
+  }, [key, host])
 
-  if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return <>{children}</>
+  if (!key) return <>{children}</>
 
-  return <PHProvider client={posthog}>{children}</PHProvider>
+  return (
+    <PHProvider client={posthog}>
+      <Suspense fallback={null}>
+        <PageViewTracker />
+      </Suspense>
+      {children}
+    </PHProvider>
+  )
 }

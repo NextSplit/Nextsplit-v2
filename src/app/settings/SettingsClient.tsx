@@ -10,6 +10,7 @@ import { setUnits } from '@/lib/units'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
 import type { Profile } from '@/types/database'
 import { createClient } from '@/lib/supabase/client'
+import posthog from 'posthog-js'
 
 interface Props {
   email: string
@@ -352,6 +353,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
   }
 
   async function handleSignOut() {
+    try { posthog.reset() } catch { /* not loaded */ }
     setSigningOut(true)
     try {
       const { createClient } = await import('@/lib/supabase/client')

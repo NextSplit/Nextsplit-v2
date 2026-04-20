@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
 import type { Profile } from '@/types/database'
 import { db } from '@/lib/supabase/db'
+import posthog from 'posthog-js'
 
 interface UseProfileReturn {
   profile: Profile | null
@@ -57,6 +58,17 @@ export function useProfile(): UseProfileReturn {
           const p = data as Profile
           setProfile(p)
           syncPrefsToStorage(p)
+          // Identify user in PostHog for funnel analysis
+          try {
+            const ext = p as Record<string, unknown>
+            posthog.identify(user.id, {
+              display_name:        p.display_name,
+              running_experience:  ext.running_experience,
+              onboarding_complete: ext.onboarding_complete,
+              is_pro:              ext.is_pro ?? false,
+              sport_focus:         ext.sport_focus,
+            })
+          } catch { /* PostHog not loaded */ }
         }
         setLoading(false)
       }
