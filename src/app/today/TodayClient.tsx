@@ -14,6 +14,7 @@ import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/st
 import { calcACWR } from '@/lib/statsUtils'
 import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import TodayBelowFold from './TodayBelowFold'
+import AdaptPlanCard from '@/components/AdaptPlanCard'
 import StravaSyncButton from '@/components/StravaSyncButton'
 import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation'
@@ -202,6 +203,22 @@ export default function TodayClient() {
   // Count done sessions today
   const todaySessions = planDay?.sessions ?? []
   const doneTodayCount = todaySessions.filter((_, i) => logs[`${weekN}_${planDayIndex}_${i}`]?.done).length
+
+  // Missed sessions — sessions that were planned for past days this week but not done
+  const missedSessionsCount = useMemo(() => {
+    if (!currentWeek || !plan) return 0
+    const today = new Date().getDay()
+    const todayPlanIdx = today === 0 ? 6 : today - 1
+    let missed = 0
+    currentWeek.days.forEach((day, dayI) => {
+      if (dayI >= todayPlanIdx) return // only past days
+      day.sessions.forEach((_: unknown, sessI: number) => {
+        const key = `${weekN}_${dayI}_${sessI}`
+        if (!logs[key]?.done) missed++
+      })
+    })
+    return missed
+  }, [currentWeek, logs, weekN, plan])
 
   // Streak + consistency
   const allLogsArray = Object.values(logs)
@@ -624,6 +641,16 @@ export default function TodayClient() {
                 </div>
               )
             })()}
+
+            {/* Adapt plan — shown when sessions missed mid-week */}
+            {isToday && plan && missedSessionsCount >= 2 && (
+              <AdaptPlanCard
+                planId={plan.id}
+                weekN={weekN}
+                missedCount={missedSessionsCount}
+                onAdapted={() => {}}
+              />
+            )}
 
             {/* Below fold — coach card, wellness, weather, weekly report, week advance */}
             <TodayBelowFold

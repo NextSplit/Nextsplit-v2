@@ -23,6 +23,8 @@ import { useSupabase } from '@/hooks/useSupabase'
 import type { TrainingLog, PlanWeek } from '@/types/database'
 import LevelUpScreen from '@/components/rpg/LevelUpScreen'
 import WeeklyVolumeChart from '@/components/charts/WeeklyVolumeChart'
+import RaceDaySimulation from '@/components/charts/RaceDaySimulation'
+import WeeklyCoachingSummary from '@/components/charts/WeeklyCoachingSummary'
 import PBCard from '@/components/charts/PBCard'
 import ACWRChart from '@/components/charts/ACWRChart'
 import PaceTrend from '@/components/charts/PaceTrend'
@@ -520,6 +522,7 @@ export default function ProfileClient({
               </div>
             ) : (
               <>
+                <WeeklyCoachingSummary />
                 <WeeklyVolumeChart logs={allPlanLogsKeyed} weeks={weeks} />
                 <ACWRChart logs={allPlanLogsKeyed} weeks={weeks} />
                 <PaceTrend logs={allPlanLogsKeyed} />
@@ -535,6 +538,11 @@ export default function ProfileClient({
         {/* ── RECORDS TAB ── */}
         {profileTab === 'records' && (
           <div className="space-y-4">
+            <RaceDaySimulation
+              logs={allPlanLogsKeyed}
+              targetDistanceKm={undefined}
+              raceDate={plan?.race_date ?? undefined}
+            />
             <PBCard logs={allPlanLogsKeyed} />
             <TrainingSummary logs={allPlanLogsKeyed} />
             {/* Race history */}
