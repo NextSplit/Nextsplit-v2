@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useOnboarding } from '../context/OnboardingContext'
 import { OnboardingProgressBar } from './OnboardingProgressBar'
 import { createClient } from '@/lib/supabase/client'
@@ -84,9 +85,21 @@ function analyseActivities(activities: StravaActivity[]): StravaPrefill {
 
 export function StravaConnectScreen() {
   const { step, data, update, next } = useOnboarding()
+  const searchParams = useSearchParams()
   const [status, setStatus]   = useState<'idle' | 'checking' | 'connected' | 'importing' | 'done' | 'skipped'>('checking')
   const [prefill, setPrefill] = useState<StravaPrefill | null>(null)
   const [error, setError]     = useState('')
+
+  // On mount — check if Strava already connected or just returned from OAuth
+  useEffect(() => {
+    // If just returned from Strava OAuth redirect
+    if (searchParams.get('strava') === 'denied') {
+      setError("Strava connection was cancelled — you can fill in manually.")
+      setStatus('idle')
+      return
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // On mount — check if Strava already connected
   useEffect(() => {
@@ -137,7 +150,7 @@ export function StravaConnectScreen() {
 
   const handleConnectStrava = () => {
     const clientId   = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID
-    const redirectUri = `${window.location.origin}/auth/callback/strava?onboarding=1`
+    const redirectUri = `${window.location.origin}/auth/strava/callback?onboarding=1`
     const scope      = 'read,activity:read'
     window.location.href = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}`
   }

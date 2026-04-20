@@ -4,6 +4,7 @@ import { OnboardingProvider, useOnboarding } from './context/OnboardingContext'
 import { WelcomeScreen }           from './components/WelcomeScreen'
 import { CharacterCreationScreen }  from './components/CharacterCreationScreen'
 import { StravaConnectScreen }      from './components/StravaConnectScreen'
+import { Suspense }                  from 'react'
 import { SportSelectScreen }        from './components/SportSelectScreen'
 import { AboutYouScreen }           from './components/AboutYouScreen'
 import { YourRunningScreen }        from './components/YourRunningScreen'
@@ -34,7 +35,7 @@ function OnboardingFlow() {
   switch (step) {
     case 1:  return <WelcomeScreen />
     case 2:  return <CharacterCreationScreen />
-    case 3:  return <StravaConnectScreen />
+    case 3:  return <Suspense fallback={null}><StravaConnectScreen /></Suspense>
     case 4:  return <SportSelectScreen />
     case 5:  return <AboutYouScreen />
     case 6:  return <YourRunningScreen />
