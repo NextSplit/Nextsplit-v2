@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useCoach } from '@/hooks/useCoach'
+import { useState, useEffect, useCallback } from 'react'
 import type { CoachProfile } from '@/types/database'
 
 interface AthleteStatus {
@@ -20,10 +19,10 @@ interface AthleteStatus {
   plan_name:           string | null
 }
 
-const STATUS_CONFIG = {
-  green: { dot: 'bg-emerald-400', label: 'On track',  bg: 'border-slate-200' },
-  amber: { dot: 'bg-amber-400',   label: 'Attention', bg: 'border-amber-300' },
-  red:   { dot: 'bg-red-400',     label: 'Flag',      bg: 'border-red-300' },
+const STATUS = {
+  green: { dot: 'bg-emerald-400', ring: 'border-slate-200',  badge: 'bg-emerald-100 text-emerald-700', label: 'On track'  },
+  amber: { dot: 'bg-amber-400',   ring: 'border-amber-300',  badge: 'bg-amber-100 text-amber-700',    label: 'Check in'  },
+  red:   { dot: 'bg-red-400',     ring: 'border-red-300',    badge: 'bg-red-100 text-red-700',        label: 'Needs you' },
 }
 
 function InviteModal({ onClose }: { onClose: () => void }) {
@@ -52,21 +51,19 @@ function InviteModal({ onClose }: { onClose: () => void }) {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 space-y-4 max-w-lg mx-auto">
         <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto" />
         <h2 className="text-base font-black text-slate-900">Invite an athlete</h2>
-        <p className="text-sm text-slate-500">Generate a unique invite link. Each link is single-use and expires in 7 days.</p>
+        <p className="text-sm text-slate-500">Each link is single-use and expires in 7 days. Generate a new one for each athlete.</p>
         {!inviteUrl ? (
           <button onClick={generate} disabled={loading}
-            className="w-full bg-teal-500 text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-50">
+            className="w-full bg-teal-500 text-white py-4 rounded-2xl text-sm font-bold disabled:opacity-50 active:scale-95">
             {loading ? 'Generating…' : 'Generate invite link →'}
           </button>
         ) : (
           <div className="space-y-3">
             <div className="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 font-mono break-all border border-slate-200">{inviteUrl}</div>
-            <button onClick={copy} className={`w-full py-3.5 rounded-2xl text-sm font-bold ${copied ? 'bg-emerald-500 text-white' : 'bg-teal-500 text-white'}`}>
-              {copied ? '✓ Copied!' : 'Copy invite link'}
+            <button onClick={copy} className={`w-full py-4 rounded-2xl text-sm font-bold transition-all ${copied ? 'bg-emerald-500 text-white' : 'bg-teal-500 text-white'}`}>
+              {copied ? '✓ Copied to clipboard!' : 'Copy invite link'}
             </button>
-            <button onClick={generate} className="w-full py-2 text-xs text-slate-400">
-              Generate another link
-            </button>
+            <button onClick={generate} className="w-full py-2 text-xs text-slate-400">Generate another link</button>
           </div>
         )}
         <button onClick={onClose} className="w-full text-slate-400 text-sm py-2">Close</button>
@@ -75,205 +72,275 @@ function InviteModal({ onClose }: { onClose: () => void }) {
   )
 }
 
-function AthleteStatusCard({ athlete }: { athlete: AthleteStatus }) {
-  const cfg  = STATUS_CONFIG[athlete.status]
-  const name = athlete.display_name ?? (athlete.handle ? `@${athlete.handle}` : 'Athlete')
-
+function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage: (id: string) => void }) {
+  const cfg       = STATUS[athlete.status]
+  const name      = athlete.display_name ?? (athlete.handle ? `@${athlete.handle}` : 'Athlete')
   const daysSince = athlete.last_active
     ? Math.floor((Date.now() - new Date(athlete.last_active).getTime()) / (24 * 3600 * 1000))
     : null
 
   return (
-    <a href={`/coach/athlete/${athlete.athlete_id}`}
-      className={`block bg-white rounded-2xl border-2 p-4 space-y-3 active:bg-slate-50 transition-all ${cfg.bg}`}>
-      {/* Top row */}
-      <div className="flex items-center gap-3">
-        <div className={`w-3 h-3 rounded-full shrink-0 ${cfg.dot}`} />
+    <div className={`bg-white rounded-2xl border-2 overflow-hidden ${cfg.ring}`}>
+      {/* Main row */}
+      <a href={`/coach/athlete/${athlete.athlete_id}`} className="flex items-center gap-3 px-4 py-3.5 active:bg-slate-50">
+        {/* Status dot + avatar */}
+        <div className="relative shrink-0">
+          <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-lg">🏃</div>
+          <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ${cfg.dot}`} />
+        </div>
+
+        {/* Info */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-slate-900 truncate">{name}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-bold text-slate-900 truncate">{name}</p>
+            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${cfg.badge}`}>
+              {cfg.label}
+            </span>
+          </div>
           {athlete.plan_name && (
-            <p className="text-xs text-slate-400 truncate">
+            <p className="text-xs text-slate-400 truncate mt-0.5">
               {athlete.plan_name} · W{athlete.current_week}/{athlete.total_weeks}
             </p>
           )}
         </div>
-        <span className="text-slate-300 text-sm shrink-0">›</span>
-      </div>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="bg-slate-50 rounded-xl py-2">
-          <p className="text-sm font-black text-slate-800">
+        <span className="text-slate-300 text-lg shrink-0">›</span>
+      </a>
+
+      {/* Stats strip */}
+      <div className="grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100">
+        <div className="px-3 py-2 text-center">
+          <p className="text-xs font-black text-slate-800">
             {athlete.sessions_done_week}/{athlete.sessions_total_week || '?'}
           </p>
-          <p className="text-[10px] text-slate-400">sessions</p>
+          <p className="text-[9px] text-slate-400">sessions</p>
         </div>
-        <div className={`rounded-xl py-2 ${
-          athlete.acwr === null ? 'bg-slate-50' :
+        <div className={`px-3 py-2 text-center ${
+          athlete.acwr === null ? '' :
           athlete.acwr > 1.3 ? 'bg-red-50' :
           athlete.acwr < 0.8 ? 'bg-amber-50' : 'bg-emerald-50'
         }`}>
-          <p className={`text-sm font-black ${
+          <p className={`text-xs font-black ${
             athlete.acwr === null ? 'text-slate-400' :
             athlete.acwr > 1.3 ? 'text-red-700' :
             athlete.acwr < 0.8 ? 'text-amber-700' : 'text-emerald-700'
           }`}>
             {athlete.acwr?.toFixed(2) ?? '—'}
           </p>
-          <p className="text-[10px] text-slate-400">ACWR</p>
+          <p className="text-[9px] text-slate-400">ACWR</p>
         </div>
-        <div className="bg-slate-50 rounded-xl py-2">
-          <p className="text-sm font-black text-slate-800">
+        <div className="px-3 py-2 text-center">
+          <p className="text-xs font-black text-slate-800">
             {daysSince === null ? '—' : daysSince === 0 ? 'Today' : `${daysSince}d`}
           </p>
-          <p className="text-[10px] text-slate-400">last run</p>
+          <p className="text-[9px] text-slate-400">last active</p>
         </div>
       </div>
 
-      {/* Flags */}
+      {/* Flags — only if red/amber */}
       {athlete.flags.length > 0 && (
-        <div className="space-y-1">
+        <div className="px-4 pb-3 pt-1 space-y-1">
           {athlete.flags.map(f => (
-            <p key={f} className="text-xs text-amber-700 bg-amber-50 rounded-lg px-2.5 py-1.5">{f}</p>
+            <div key={f} className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 rounded-lg px-2.5 py-1.5">
+              <span>{f}</span>
+            </div>
           ))}
         </div>
       )}
-    </a>
+
+      {/* Quick actions — message */}
+      <div className="px-4 pb-3 flex gap-2">
+        <button
+          onClick={() => onMessage(athlete.athlete_id)}
+          className="flex-1 bg-slate-100 text-slate-700 text-xs font-semibold py-2 rounded-xl active:bg-slate-200"
+        >
+          💬 Message
+        </button>
+        <a
+          href={`/coach/athlete/${athlete.athlete_id}`}
+          className="flex-1 bg-teal-50 text-teal-700 text-xs font-semibold py-2 rounded-xl text-center active:bg-teal-100"
+        >
+          📊 View data
+        </a>
+      </div>
+    </div>
   )
 }
 
 export default function SquadClient({ coachProfile }: { coachProfile: CoachProfile }) {
-  const { loading: coachLoading }           = useCoach()
-  const [athletes, setAthletes]             = useState<AthleteStatus[]>([])
-  const [loadingStatus, setLoadingStatus]   = useState(true)
-  const [showInvite, setShowInvite]         = useState(false)
+  const [athletes, setAthletes]       = useState<AthleteStatus[]>([])
+  const [loading, setLoading]         = useState(true)
+  const [showInvite, setShowInvite]   = useState(false)
+  const [filter, setFilter]           = useState<'all' | 'red' | 'amber' | 'green'>('all')
 
-  const fetchStatus = async () => {
-    setLoadingStatus(true)
+  const fetchStatus = useCallback(async () => {
+    setLoading(true)
     try {
       const res  = await fetch('/api/coach/squad-status')
       const data = await res.json()
       setAthletes(data.athletes ?? [])
-    } finally {
-      setLoadingStatus(false)
-    }
+    } finally { setLoading(false) }
+  }, [])
+
+  useEffect(() => { fetchStatus() }, [fetchStatus])
+
+  const filtered = filter === 'all' ? athletes : athletes.filter(a => a.status === filter)
+  const red      = athletes.filter(a => a.status === 'red')
+  const amber    = athletes.filter(a => a.status === 'amber')
+  const green    = athletes.filter(a => a.status === 'green')
+
+  const handleMessage = (athleteId: string) => {
+    window.location.href = `/coach/athlete/${athleteId}?tab=message`
   }
 
-  useEffect(() => { fetchStatus() }, [])
-
-  const green  = athletes.filter(a => a.status === 'green')
-  const amber  = athletes.filter(a => a.status === 'amber')
-  const red    = athletes.filter(a => a.status === 'red')
-
   return (
-    <div className="min-h-screen bg-slate-50 pb-24">
+    <div className="min-h-screen bg-slate-50 pb-28">
+
       {/* Header */}
       <div className="bg-white border-b border-slate-100 px-4 pt-12 pb-4 sticky top-0 z-40">
-        <div className="max-w-lg mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-black text-slate-900">Squad</h1>
-            <p className="text-xs text-slate-400">{coachProfile.display_name}</p>
+        <div className="max-w-lg mx-auto space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-lg font-black text-slate-900">Athletes</h1>
+              <p className="text-xs text-slate-400">
+                {coachProfile.display_name}
+                {coachProfile.verified && ' · ✅ Verified'}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button onClick={fetchStatus} className="text-slate-400 text-lg px-1.5">↻</button>
+              <button
+                onClick={() => setShowInvite(true)}
+                className="bg-teal-500 text-white text-sm font-bold px-4 py-2 rounded-xl active:scale-95"
+              >
+                + Invite
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            {coachProfile.verified && (
-              <span className="text-xs bg-teal-50 text-teal-700 border border-teal-200 px-2 py-1 rounded-full font-bold">✅ Verified</span>
-            )}
-            <button onClick={fetchStatus} className="text-slate-400 text-lg px-2">↻</button>
-            <button onClick={() => setShowInvite(true)}
-              className="bg-teal-500 text-white text-xs font-bold px-3 py-2 rounded-xl active:scale-95">
-              + Invite
-            </button>
-          </div>
+
+          {/* Status summary pills */}
+          {athletes.length > 0 && (
+            <div className="flex gap-2">
+              {[
+                { key: 'all',   label: `All (${athletes.length})`,  colour: filter === 'all'   ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600' },
+                { key: 'red',   label: `🔴 ${red.length}`,          colour: filter === 'red'   ? 'bg-red-500 text-white'   : 'bg-red-50 text-red-700' },
+                { key: 'amber', label: `🟡 ${amber.length}`,        colour: filter === 'amber' ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-700' },
+                { key: 'green', label: `🟢 ${green.length}`,        colour: filter === 'green' ? 'bg-emerald-500 text-white' : 'bg-emerald-50 text-emerald-700' },
+              ].map(f => (
+                <button
+                  key={f.key}
+                  onClick={() => setFilter(f.key as typeof filter)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${f.colour}`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-5 space-y-5">
+      <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
 
-        {/* Status summary */}
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: '🟢 On track', value: green.length, colour: 'text-emerald-600' },
-            { label: '🟡 Attention', value: amber.length, colour: 'text-amber-600' },
-            { label: '🔴 Flag',      value: red.length,   colour: 'text-red-600' },
-          ].map(s => (
-            <div key={s.label} className="bg-white rounded-2xl border border-slate-200 p-3 text-center">
-              <p className={`text-2xl font-black ${s.colour}`}>{s.value}</p>
-              <p className="text-[10px] text-slate-400 mt-0.5">{s.label}</p>
+        {/* Empty state — no athletes */}
+        {!loading && athletes.length === 0 && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center space-y-4">
+            <div className="text-5xl">👥</div>
+            <div>
+              <h2 className="text-base font-bold text-slate-800">No athletes yet</h2>
+              <p className="text-sm text-slate-500 mt-1">
+                Invite your first athlete — they&apos;ll get a personalised welcome page with your profile and coaching offer.
+              </p>
             </div>
-          ))}
-        </div>
-
-        {/* Quick actions */}
-        <div className="grid grid-cols-3 gap-2">
-          <a href="/coach/plan-builder"
-            className="bg-white rounded-xl border border-slate-200 p-2.5 text-center text-xs font-semibold text-slate-700 active:bg-slate-50">
-            📋 Plan Builder
-          </a>
-          <a href="/community"
-            className="bg-white rounded-xl border border-slate-200 p-2.5 text-center text-xs font-semibold text-slate-700 active:bg-slate-50">
-            👥 Community
-          </a>
-          <button
-            onClick={async () => {
-              const res = await fetch('/api/stripe/connect', { method: 'POST' })
-              const d   = await res.json()
-              if (d.url) window.location.href = d.url
-            }}
-            className="bg-white rounded-xl border border-slate-200 p-2.5 text-center text-xs font-semibold text-slate-700 active:bg-slate-50">
-            💳 Payouts
-          </button>
-        </div>
-
-        {/* Empty state */}
-        {!loadingStatus && athletes.length === 0 && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-3">
-            <div className="text-4xl">👥</div>
-            <h2 className="text-base font-bold text-slate-800">No athletes yet</h2>
-            <p className="text-sm text-slate-500">Generate an invite link to get started.</p>
-            <button onClick={() => setShowInvite(true)}
-              className="bg-teal-500 text-white text-sm font-bold px-6 py-3 rounded-xl mt-2 active:scale-95">
+            <button
+              onClick={() => setShowInvite(true)}
+              className="bg-teal-500 text-white text-sm font-bold px-8 py-3 rounded-xl active:scale-95"
+            >
               Invite first athlete →
             </button>
           </div>
         )}
 
-        {/* Red flags first */}
-        {red.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-xs font-bold text-red-500 uppercase tracking-wider">🔴 Needs attention ({red.length})</p>
-            {red.map(a => <AthleteStatusCard key={a.athlete_id} athlete={a} />)}
+        {/* Loading skeleton */}
+        {loading && [1,2,3].map(i => (
+          <div key={i} className="bg-white rounded-2xl border border-slate-200 animate-pulse">
+            <div className="flex items-center gap-3 px-4 py-4">
+              <div className="w-10 h-10 rounded-full bg-slate-100 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-3 w-28 bg-slate-100 rounded" />
+                <div className="h-2 w-20 bg-slate-100 rounded" />
+              </div>
+            </div>
+            <div className="grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100">
+              {[1,2,3].map(j => <div key={j} className="px-3 py-3 flex flex-col items-center gap-1"><div className="h-3 w-8 bg-slate-100 rounded" /><div className="h-2 w-10 bg-slate-100 rounded" /></div>)}
+            </div>
+          </div>
+        ))}
+
+        {/* Athlete cards — red first then amber then green */}
+        {!loading && filtered.map(a => (
+          <AthleteCard key={a.athlete_id} athlete={a} onMessage={handleMessage} />
+        ))}
+
+        {/* Coach tools row */}
+        {athletes.length > 0 && (
+          <div className="pt-2">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Coach tools</p>
+            <div className="grid grid-cols-2 gap-3">
+              <a href="/coach/plan-builder"
+                className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 active:bg-slate-50">
+                <span className="text-xl">📋</span>
+                <p className="text-sm font-bold text-slate-800">Plan Builder</p>
+                <p className="text-xs text-slate-400">Build plans for your athletes</p>
+              </a>
+              <a href="/marketplace"
+                className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 active:bg-slate-50">
+                <span className="text-xl">🏪</span>
+                <p className="text-sm font-bold text-slate-800">Marketplace</p>
+                <p className="text-xs text-slate-400">Browse and publish plans</p>
+              </a>
+              <a href="/community"
+                className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 active:bg-slate-50">
+                <span className="text-xl">👥</span>
+                <p className="text-sm font-bold text-slate-800">Community</p>
+                <p className="text-xs text-slate-400">Clubs, challenges, races</p>
+              </a>
+              <button
+                onClick={async () => {
+                  const res = await fetch('/api/stripe/connect', { method: 'POST' })
+                  const d   = await res.json()
+                  if (d.url) window.location.href = d.url
+                }}
+                className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 text-left active:bg-slate-50">
+                <span className="text-xl">💳</span>
+                <p className="text-sm font-bold text-slate-800">Payouts</p>
+                <p className="text-xs text-slate-400">Set up Stripe payments</p>
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Amber */}
-        {amber.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-xs font-bold text-amber-500 uppercase tracking-wider">🟡 Check in ({amber.length})</p>
-            {amber.map(a => <AthleteStatusCard key={a.athlete_id} athlete={a} />)}
-          </div>
-        )}
-
-        {/* Green */}
-        {green.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-xs font-bold text-emerald-500 uppercase tracking-wider">🟢 On track ({green.length})</p>
-            {green.map(a => <AthleteStatusCard key={a.athlete_id} athlete={a} />)}
-          </div>
-        )}
-
-        {/* Coach profile card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
+        {/* Profile card */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Your profile</p>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Your coach profile</p>
             <a href={`/coach/${coachProfile.slug}`} className="text-xs text-teal-600 font-semibold">
               View public →
             </a>
           </div>
-          {coachProfile.bio && <p className="text-sm text-slate-600">{coachProfile.bio}</p>}
+          {coachProfile.bio && (
+            <p className="text-sm text-slate-600 leading-relaxed">{coachProfile.bio}</p>
+          )}
+          {coachProfile.specialities && coachProfile.specialities.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {coachProfile.specialities.map(s => (
+                <span key={s} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{s}</span>
+              ))}
+            </div>
+          )}
           {!coachProfile.verified && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-              <p className="text-xs text-amber-700 font-semibold">🔓 Unverified — apply for ✅ verification</p>
-              <p className="text-xs text-amber-600 mt-0.5">Verified coaches get marketplace featuring eligibility.</p>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mt-1">
+              <p className="text-xs text-amber-700 font-semibold">🔓 Apply for ✅ verification to unlock marketplace featuring</p>
             </div>
           )}
         </div>
