@@ -209,9 +209,9 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
             className="bg-white rounded-xl border border-slate-200 p-2.5 text-center text-xs font-semibold text-slate-700 active:bg-slate-50">
             📋 Plan Builder
           </a>
-          <a href="/marketplace"
+          <a href="/community"
             className="bg-white rounded-xl border border-slate-200 p-2.5 text-center text-xs font-semibold text-slate-700 active:bg-slate-50">
-            🏪 Marketplace
+            👥 Community
           </a>
           <button
             onClick={async () => {
