@@ -5,6 +5,7 @@ import { ToastProvider } from '@/components/Toast'
 import ThemeWrapper from '@/components/ThemeWrapper'
 import PWAInstallPrompt from '@/components/PWAInstallPrompt'
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
   title: 'NextSplit — Intelligent Running Training',
@@ -53,6 +54,7 @@ export default function RootLayout({
             <BottomNavWrapper />
             <PWAInstallPrompt />
             <ServiceWorkerRegistrar />
+            <Analytics />
           </ToastProvider>
         </ThemeWrapper>
       </body>

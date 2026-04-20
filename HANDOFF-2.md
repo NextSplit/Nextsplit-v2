@@ -392,7 +392,7 @@ _1–2 weeks_
 | Deploy crash fixes | ✅ |
 | GitHub Actions CI/CD | ✅ |
 | Sentry error monitoring | ✅ |
-| Vercel Analytics | 🔲 |
+| Vercel Analytics | ✅ |
 | Manual test all 4 onboarding flows | 🔲 |
 | Proper error boundary with recovery | ✅ |
 | Verify push notifications on Android | 🔲 |
