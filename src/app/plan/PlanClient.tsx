@@ -73,6 +73,7 @@ export default function PlanClient() {
   }, [loading, plan])
 
   const todayDayIndex = (() => { const d = new Date().getDay(); return d === 0 ? 6 : d - 1 })()
+  const [planTab, setPlanTab] = useState<'plan' | 'fuel'>('plan')
 
   const { completedWeeks, currentWeekObj, upcomingWeeks, availablePhases } = useMemo(() => {
     if (!plan) return { completedWeeks: [] as PlanWeek[], currentWeekObj: null, upcomingWeeks: [] as PlanWeek[], availablePhases: [] as string[] }
@@ -190,8 +191,22 @@ export default function PlanClient() {
         </div>
       </div>
 
+      {/* Plan | Fuel tab switcher */}
+      <div className="bg-white border-b border-gray-100 px-4 pt-2 pb-0">
+        <div className="max-w-lg mx-auto flex">
+          {(['plan', 'fuel'] as const).map(t => (
+            <button key={t} onClick={() => setPlanTab(t)}
+              className={`flex-1 py-2.5 text-xs font-bold capitalize border-b-2 transition-all ${
+                planTab === t ? 'border-teal-500 text-teal-600' : 'border-transparent text-slate-400'
+              }`}>
+              {t === 'plan' ? '📋 Training Plan' : '🥗 Fuel'}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Controls */}
-      <div className="bg-white border-b border-gray-100 px-4 py-2.5">
+      <div className={`bg-white border-b border-gray-100 px-4 py-2.5 ${planTab === 'fuel' ? 'hidden' : ''}`}>
         <div className="max-w-lg mx-auto flex items-center gap-2">
           {/* View toggle */}
           <div className="flex bg-gray-100 rounded-xl p-0.5 flex-shrink-0">

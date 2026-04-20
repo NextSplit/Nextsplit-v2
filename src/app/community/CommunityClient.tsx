@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useCommunity } from '@/hooks/useCommunity'
+import { useCoach } from '@/hooks/useCoach'
 
 const LEAGUE_CONFIG = {
   bronze:   { label: 'Bronze',   emoji: '🥉', colour: 'text-amber-700 bg-amber-50 border-amber-200' },
@@ -121,6 +122,7 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
 
 export default function CommunityClient({ userId, profile }: { userId: string; profile: Profile | null }) {
   const { myClubs, challenges, races, leaderboard, season, loading, refresh } = useCommunity()
+  const { isCoach, coachProfile } = useCoach()
   const [tab, setTab]             = useState<'clubs' | 'challenges' | 'races' | 'leaderboard'>('clubs')
   const [showJoin, setShowJoin]   = useState(false)
   const [showCreate, setShowCreate] = useState(false)
@@ -205,6 +207,20 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         {/* CLUBS TAB */}
         {tab === 'clubs' && (
           <>
+            {/* Coach squad entry point */}
+            {isCoach && (
+              <a href="/coach/squad"
+                className="flex items-center justify-between bg-gradient-to-r from-teal-600 to-teal-500 rounded-2xl p-4 active:scale-95 transition-all">
+                <div>
+                  <p className="text-sm font-black text-white">Your Squad</p>
+                  <p className="text-xs text-teal-100 mt-0.5">
+                    {coachProfile?.display_name ?? 'Coach dashboard'} · manage athletes
+                  </p>
+                </div>
+                <span className="text-white text-xl">›</span>
+              </a>
+            )}
+
             <div className="flex gap-2">
               <button onClick={() => setShowJoin(true)}
                 className="flex-1 bg-white border border-slate-200 rounded-2xl py-3 text-sm font-bold text-slate-700 active:bg-slate-50">
