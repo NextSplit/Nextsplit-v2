@@ -389,12 +389,12 @@ _1–2 weeks_
 
 | Task | Status |
 |---|---|
-| Deploy crash fixes | ⏳ rate limit |
-| GitHub Actions CI/CD | 🔲 |
-| Sentry error monitoring | 🔲 |
+| Deploy crash fixes | ✅ |
+| GitHub Actions CI/CD | ✅ |
+| Sentry error monitoring | ✅ |
 | Vercel Analytics | 🔲 |
 | Manual test all 4 onboarding flows | 🔲 |
-| Proper error boundary with recovery | 🔲 |
+| Proper error boundary with recovery | ✅ |
 | Verify push notifications on Android | 🔲 |
 
 ---
