@@ -1435,3 +1435,62 @@ _Things to do in order before opening to real users_
 | Phase 3 — Full Coach Platform + Community | 🔲 | Months 3-5 |
 | Phase 4 — Wearables + Native | 🔲 | Months 5-9 |
 | Phase 5 — Scale + Exit-Ready | 🔲 | Month 9+ |
+
+---
+
+## SESSION 30 COMPLETED
+
+### Phase 1 — Stripe (Complete ✅)
+- Stripe checkout with founding vs standard pricing auto-selection
+- Webhook handler — writes is_pro + subscription_status to profiles
+- Billing portal (manage/cancel from Profile tab)
+- UpgradeModal — founding member badge, monthly/annual toggle, 7-day trial
+- useSubscription hook reads from profiles + app_config
+- Profile tab: upgrade card (free users) + Pro badge + Manage (subscribers)
+- Founding member count tracked in app_config table
+- Live keys in Vercel, webhook registered
+
+### Phase 2 — Coach Platform (In progress 🟡)
+
+#### Built this session
+- /coach/setup — 3-step coach signup (tier → profile → specialities)
+- /coach/squad — dashboard with athlete cards, invite modal, stats row
+- /coach/accept — athlete invite acceptance with data sharing toggles
+- /invite/[token] — coach welcome landing page (bio, Elite offer, signup CTA)
+- useCoach + useMyCoach hooks
+- BottomNav: Squad tab appears automatically for coaches
+- /api/coach/apply — become a coach (split_leader or professional)
+- /api/coach/invite — generates unique invite token (coach_invites table)
+- /api/coach/accept — athlete accepts invite, creates coach_athletes row
+- OnboardingContext: localStorage persistence (survives refresh/crash)
+- PlanGenerationScreen: auto-accepts coach invite at end of onboarding
+- Invite token stored in localStorage — survives signup flow
+- Invite landing page auto-redirects logged-in users to accept page
+
+#### SQL run in Supabase ✅
+- coach_profiles table
+- coach_athletes table
+- session_annotations table
+- coach_messages table
+- coach_invites table
+- is_coach, coach_verified, coach_applied_at, coach_tier on profiles
+- RLS policies for coach data access on training_logs, wellness_logs, user_plans
+
+#### Remaining Phase 2 items
+- [ ] Session annotations (coach leaves note on athlete session, athlete notified)
+- [ ] Coach card in athlete Today tab (shows unread messages/annotations)
+- [ ] Athlete data view for coach (training, wellness, ACWR dashboard)
+- [ ] In-app messaging (coach ↔ athlete text)
+- [ ] Athlete privacy controls in Settings → Coach Access
+- [ ] Coach verification application flow
+
+### Go-live checklist updates
+- [x] Stripe live keys in Vercel
+- [x] Stripe webhook configured + working
+- [x] Stripe billing portal enabled
+- [x] Coach platform SQL in Supabase
+- [x] coach_invites SQL in Supabase
+- [ ] Test full checkout with real card (verify is_pro=true written)
+- [ ] Verify ProGate enforcement (flip NEXT_PUBLIC_PREMIUM_ENFORCED=true)
+- [ ] Re-enable email confirmation in Supabase
+- [ ] Run supabase/feedback-and-gdpr.sql
