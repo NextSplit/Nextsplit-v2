@@ -3,14 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 import { db } from '@/lib/supabase/db'
+import { secsToMMSS } from '@/lib/sessionUtils'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-function secsToMMSS(secs: number): string {
-  const m = Math.floor(secs / 60)
-  const s = Math.round(secs % 60)
-  return `${m}:${s.toString().padStart(2, '0')}`
-}
 
 function paceToSecs(pace: string): number {
   const parts = pace.split(':')

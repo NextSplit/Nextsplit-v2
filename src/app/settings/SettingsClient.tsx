@@ -9,6 +9,7 @@ import { setThemePreference } from '@/components/ThemeWrapper'
 import { setUnits } from '@/lib/units'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
 import type { Profile } from '@/types/database'
+import { createClient } from '@/lib/supabase/client'
 
 interface Props {
   email: string
@@ -310,6 +311,46 @@ export default function SettingsClient({ email, initialProfile }: Props) {
     }
   }
 
+  async function handleDataExport() {
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any).rpc('export_user_data', { p_user_id: user.id })
+      if (error) throw error
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      const url  = URL.createObjectURL(blob)
+      const a    = document.createElement('a')
+      a.href     = url
+      a.download = `nextsplit-data-${new Date().toISOString().split('T')[0]}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+      success('Data exported successfully')
+    } catch {
+      toastError('Export failed — please try again')
+    }
+  }
+
+  async function handleDeleteAccount() {
+    const confirmed = window.confirm(
+      'Are you sure? This permanently deletes all your data and cannot be undone.'
+    )
+    if (!confirmed) return
+    const doubleConfirm = window.confirm('Final confirmation — delete everything?')
+    if (!doubleConfirm) return
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).rpc('delete_user_account', { p_user_id: user.id })
+      router.push('/')
+    } catch {
+      toastError('Deletion failed — contact support@nextsplit.com')
+    }
+  }
+
   async function handleSignOut() {
     setSigningOut(true)
     try {
@@ -483,12 +524,12 @@ export default function SettingsClient({ email, initialProfile }: Props) {
         <Section title="Account">
           <ButtonRow label="Plan history" sublabel="View your completed and archived plans"
             buttonLabel="View" onClick={() => router.push('/history')} />
-          <ButtonRow label="Export my data" sublabel="Download all your training logs as CSV"
-            buttonLabel="Export" onClick={() => router.push('/profile')} />
+          <ButtonRow label="Export my data" sublabel="Download a copy of all your data (GDPR)"
+            buttonLabel="Export" onClick={handleDataExport} />
           <ButtonRow label="Sign out" buttonLabel="Sign out"
             onClick={handleSignOut} disabled={signingOut} />
-          <ButtonRow label="Delete account" sublabel="Permanently removes all your data"
-            buttonLabel="Delete" onClick={() => toastError('To delete your account, email support@nextsplit.com')}
+          <ButtonRow label="Delete account" sublabel="Permanently removes all your data — cannot be undone"
+            buttonLabel="Delete" onClick={handleDeleteAccount}
             danger />
         </Section>
 

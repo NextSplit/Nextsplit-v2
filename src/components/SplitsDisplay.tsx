@@ -1,12 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { secsToMMSS } from '@/lib/sessionUtils'
 
-function secsToMMSS(secs: number): string {
-  const m = Math.floor(secs / 60)
-  const s = Math.round(secs % 60)
-  return `${m}:${String(s).padStart(2, '0')}`
-}
 
 export default function SplitsDisplay({ splits }: {
   splits: Array<{ distance: number; elapsed_time: number; moving_time: number; pace?: string }>

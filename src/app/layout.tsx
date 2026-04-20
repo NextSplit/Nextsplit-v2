@@ -5,6 +5,8 @@ import { ToastProvider } from '@/components/Toast'
 import ThemeWrapper from '@/components/ThemeWrapper'
 import PWAInstallPrompt from '@/components/PWAInstallPrompt'
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
+import { PostHogProvider } from '@/components/analytics/PostHogProvider'
+import { FeedbackWidget } from '@/components/FeedbackWidget'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {

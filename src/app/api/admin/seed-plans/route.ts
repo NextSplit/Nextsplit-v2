@@ -6,12 +6,11 @@ import { db } from '@/lib/supabase/db'
 
 export async function POST(req: Request) {
   // Require a secret header to prevent accidental/unauthorised seeding
+  // Always require secret in production
   const secret = process.env.SEED_SECRET
-  if (secret) {
-    const provided = req.headers.get('x-seed-secret')
-    if (provided !== secret) {
-      return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
-    }
+  const provided = req.headers.get('x-seed-secret')
+  if (!secret || provided !== secret) {
+    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
   }
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

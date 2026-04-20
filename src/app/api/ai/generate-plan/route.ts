@@ -12,19 +12,15 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    // Rate limit — check ai_usage
-    const today = new Date().toISOString().split('T')[0]
-    const { data: usage } = await db(supabase)
-      .from('ai_usage')
-      .select('count')
-      .eq('user_id', user.id)
-      .eq('date', today)
-      .maybeSingle()
-
-    // Plan generation doesn't count against daily AI calls — it's a one-time onboarding action
+    // Plan generation is metered separately — write to ai_usage for observability
     const { prompt } = await req.json()
     if (!prompt) return NextResponse.json({ error: 'No prompt provided' }, { status: 400 })
 
+    const today = new Date().toISOString().split('T')[0]
+    await db(supabase).from('ai_usage').upsert(
+      { user_id: user.id, date: today, feature: 'generate_plan', count: 1 },
+      { onConflict: 'user_id,date,feature', ignoreDuplicates: false }
+    ).catch(() => {}) // Non-blocking
     const message = await anthropic.messages.create({
       model:      'claude-sonnet-4-20250514',
       max_tokens: 8000,

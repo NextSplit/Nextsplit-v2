@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import SettingsClient from './SettingsClient'
+import { PageErrorBoundary } from '@/components/ErrorBoundary'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -10,9 +11,11 @@ export default async function SettingsPage() {
   const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
 
   return (
-    <SettingsClient
-      email={user.email ?? ''}
-      initialProfile={profile}
-    />
+    <PageErrorBoundary name="settings">
+      <SettingsClient
+        email={user.email ?? ''}
+        initialProfile={profile}
+      />
+    </PageErrorBoundary>
   )
 }
