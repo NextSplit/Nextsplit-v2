@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
+import { useGymLog } from '@/hooks/useGymLog'
 import { derivePaceZones } from '@/lib/paceZones'
 import type { PaceZones } from '@/lib/paceZones'
 import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml, parseDet } from '@/lib/sessionUtils'
@@ -28,6 +29,7 @@ export default function TodayClient() {
   const { plan, weeks, currentWeek, loading: planLoading, advanceWeek } = useActivePlan()
   const { logs, logSession, undoSession, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
   const { logs: allPlanLogs } = useAllTrainingLogs()
+  const { gymLogs } = useGymLog(plan?.id ?? null)
 
   const [dateOffset, setDateOffset] = useState(0)
   const [readinessScore, setReadinessScore] = useState<number | null>(null)
@@ -701,11 +703,13 @@ export default function TodayClient() {
               hasRunSessions={todaySessions.some(s => s?.c?.startsWith('run'))}
               weeklyReport={weeklyReport}
               planDay={viewDate.getDay() === 0 ? 6 : viewDate.getDay() - 1}
-              isWeekDone={currentWeek ? currentWeek.days.every((day, dayI) =>
-                day.sessions.length === 0 || day.sessions.every((_, sessI) =>
-                  logs[`${weekN}_${dayI}_${sessI}`]?.done
-                )
-              ) : false}
+              isWeekDone={currentWeek ? currentWeek.days.every((day, dayI) => {
+                const realSessions = day.sessions.filter(s => s.c != null && s.c !== 'rest')
+                return realSessions.length === 0 || realSessions.every((_, sessI) => {
+                  const key = `${weekN}_${dayI}_${sessI}`
+                  return logs[key]?.done || !!gymLogs[key]
+                })
+              }) : false}
               weekN={weekN}
               hasPlanNextWeek={!!(plan && plan.current_week < plan.total_weeks)}
               onReadiness={setReadinessScore}
