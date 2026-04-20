@@ -19,9 +19,10 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { AI_RATE_LIMIT_DEV, AI_RATE_LIMITS, PREMIUM_ENFORCED, type Tier } from './features'
+import { config, serverConfig } from '@/lib/config'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const SUPABASE_URL = config.supabaseUrl
+const SUPABASE_SERVICE_KEY = serverConfig.supabaseServiceRoleKey || config.supabaseAnonKey
 
 function getAdminClient() {
   return createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)

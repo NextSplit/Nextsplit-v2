@@ -1,11 +1,12 @@
 import Stripe from 'stripe'
+import { serverConfig, config } from '@/lib/config'
 
 // Lazy singleton — only initialises when first called (not at build time)
 let _stripe: Stripe | null = null
 
 export function getStripe(): Stripe {
   if (!_stripe) {
-    const key = process.env.STRIPE_SECRET_KEY
+    const key = serverConfig.stripeSecretKey
     if (!key) throw new Error('STRIPE_SECRET_KEY not set')
     _stripe = new Stripe(key, { apiVersion: '2026-03-25.dahlia' })
   }
@@ -14,13 +15,13 @@ export function getStripe(): Stripe {
 
 // Price IDs
 export const PRICES = {
-  founding_monthly: process.env.STRIPE_PRICE_FOUNDING_MONTHLY ?? '',
-  founding_annual:  process.env.STRIPE_PRICE_FOUNDING_ANNUAL  ?? '',
-  standard_monthly: process.env.STRIPE_PRICE_STANDARD_MONTHLY ?? '',
-  standard_annual:  process.env.STRIPE_PRICE_STANDARD_ANNUAL  ?? '',
+  founding_monthly: config.stripe.foundingMonthly,
+  founding_annual:  config.stripe.foundingAnnual,
+  standard_monthly: config.stripe.standardMonthly,
+  standard_annual:  config.stripe.standardAnnual,
 } as const
 
-export const FOUNDING_LIMIT = parseInt(process.env.STRIPE_FOUNDING_MEMBER_LIMIT ?? '500', 10)
+export const FOUNDING_LIMIT = config.stripe.foundingLimit
 
 type SupabaseClient = Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>
 

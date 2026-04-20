@@ -1,3 +1,4 @@
+import { config } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getStripe, PRICES, isFoundingAvailable } from '@/lib/stripe'
@@ -62,8 +63,8 @@ export async function POST(req: NextRequest) {
           is_founding:      String(isFoundingPrice),
         },
       },
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/today?upgrade=success`,
-      cancel_url:  `${process.env.NEXT_PUBLIC_SITE_URL}/profile?upgrade=cancelled`,
+      success_url: `${config.siteUrl}/today?upgrade=success`,
+      cancel_url:  `${config.siteUrl}/profile?upgrade=cancelled`,
       metadata: {
         supabase_user_id: user.id,
         is_founding:      String(isFoundingPrice),

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -114,7 +115,7 @@ export default function PWAInstallPrompt() {
         <div style={{ padding: '12px 24px 24px' }}>
           {/* Header row */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-            <img src="/icon-192.png" alt="NextSplit" style={{ width: 48, height: 48, borderRadius: 11 }} />
+            <Image src="/icon-192.png" alt="NextSplit" width={48} height={48} style={{ borderRadius: 11 }} />
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--color-text-primary, #111827)' }}>
                 Install NextSplit

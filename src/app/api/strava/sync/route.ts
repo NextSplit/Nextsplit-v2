@@ -1,3 +1,4 @@
+import { serverConfig, config } from '@/lib/config'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
@@ -26,8 +27,8 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  const clientSecret = process.env.STRAVA_CLIENT_SECRET
-  const clientId = process.env.STRAVA_CLIENT_ID
+  const clientSecret = serverConfig.stravaClientSecret
+  const clientId = config.stravaClientId
   if (!clientSecret || !clientId) {
     return NextResponse.json({ error: 'Strava not configured' }, { status: 400 })
   }

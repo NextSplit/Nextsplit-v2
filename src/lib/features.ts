@@ -17,6 +17,8 @@
  *  coach   — future coach/team tier
  */
 
+import { config } from '@/lib/config'
+
 export type Tier = 'free' | 'pro' | 'coach'
 
 export type FeatureKey =
@@ -86,8 +88,7 @@ export const FEATURE_TIERS: Record<FeatureKey, Tier> = {
  * false = all features available to everyone (dev/test mode)
  * true  = tiers are enforced (production monetisation)
  */
-export const PREMIUM_ENFORCED =
-  process.env.NEXT_PUBLIC_PREMIUM_ENFORCED === 'true'
+export const PREMIUM_ENFORCED = config.premiumEnforced
 
 /**
  * Tier hierarchy — higher index = higher access

@@ -4,6 +4,7 @@ import posthog from 'posthog-js'
 import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react'
 import { useEffect, Suspense } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
+import { config } from '@/lib/config'
 
 // ── Page view tracker — fires on every route change ───────────────────────────
 function PageViewTracker() {
@@ -23,8 +24,8 @@ function PageViewTracker() {
 
 // ── Main provider ─────────────────────────────────────────────────────────────
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  const key  = process.env.NEXT_PUBLIC_POSTHOG_KEY
-  const host = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com'
+  const key  = config.posthogKey
+  const host = config.posthogHost
 
   useEffect(() => {
     if (!key) return

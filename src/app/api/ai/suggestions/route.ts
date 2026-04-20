@@ -1,12 +1,13 @@
+import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
 export async function POST(req: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!serverConfig.anthropicApiKey) {
     return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
   }
 

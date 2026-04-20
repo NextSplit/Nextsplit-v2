@@ -1,3 +1,4 @@
+import { config, serverConfig } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
@@ -6,9 +7,9 @@ export async function POST(req: NextRequest) {
   try {
     const webpush = (await import('web-push')).default
     webpush.setVapidDetails(
-      `mailto:${process.env.VAPID_EMAIL ?? 'hello@nextsplit.app'}`,
-      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? process.env.VAPID_PUBLIC_KEY!,
-      process.env.VAPID_PRIVATE_KEY!
+      `mailto:${serverConfig.vapidEmail || 'hello@nextsplit.app'}`,
+      config.vapidPublicKey,
+      serverConfig.vapidPrivateKey
     )
 
     const supabase = await createClient()

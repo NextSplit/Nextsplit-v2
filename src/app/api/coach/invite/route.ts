@@ -1,3 +1,4 @@
+import { config } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest) {
         expires_at:   expiresAt,
       })
 
-    const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/invite/${token}`
+    const inviteUrl = `${config.siteUrl}/invite/${token}`
     return NextResponse.json({ token, inviteUrl })
 
   } catch (err) {

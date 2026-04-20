@@ -1,3 +1,4 @@
+import { config } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getStripe } from '@/lib/stripe'
@@ -48,8 +49,8 @@ export async function POST(req: NextRequest) {
     // Create account link for onboarding
     const accountLink = await stripe.accountLinks.create({
       account:     accountId,
-      refresh_url: `${process.env.NEXT_PUBLIC_SITE_URL}/coach/squad?stripe=refresh`,
-      return_url:  `${process.env.NEXT_PUBLIC_SITE_URL}/coach/squad?stripe=connected`,
+      refresh_url: `${config.siteUrl}/coach/squad?stripe=refresh`,
+      return_url:  `${config.siteUrl}/coach/squad?stripe=connected`,
       type:        'account_onboarding',
     })
 

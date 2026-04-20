@@ -1,3 +1,4 @@
+import { config } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getStripe } from '@/lib/stripe'
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     const session = await getStripe().billingPortal.sessions.create({
       customer:   profile.stripe_customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/profile`,
+      return_url: `${config.siteUrl}/profile`,
     })
 
     return NextResponse.json({ url: session.url })

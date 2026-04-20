@@ -1,3 +1,4 @@
+import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
@@ -5,7 +6,7 @@ import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 import { db } from '@/lib/supabase/db'
 import { secsToMMSS } from '@/lib/sessionUtils'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
 
 function paceToSecs(pace: string): number {
@@ -15,7 +16,7 @@ function paceToSecs(pace: string): number {
 }
 
 export async function POST(req: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!serverConfig.anthropicApiKey) {
     return NextResponse.json({ error: 'AI coaching not configured' }, { status: 503 })
   }
 
