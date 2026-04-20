@@ -13,6 +13,7 @@ import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/streak'
 import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import WeatherWidget from '@/components/WeatherWidget'
+import { CoachCard } from '@/components/coach/CoachCard'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
 import StravaSyncButton from '@/components/StravaSyncButton'
 import { useToast } from '@/components/Toast'
@@ -598,6 +599,9 @@ export default function TodayClient() {
                 </div>
               )
             })()}
+
+            {/* Coach card — shown to athletes with an active coach */}
+            {isToday && <CoachCard />}
 
             {/* Wellness check-in — below the fold */}
             {isToday && <WellnessCheckIn onReadiness={setReadinessScore} />}

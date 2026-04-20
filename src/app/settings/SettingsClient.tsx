@@ -19,7 +19,7 @@ interface Props {
 
 // ─── Section wrapper ─────────────────────────────────────────────────────────
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children, id }: { title: string; children: React.ReactNode; id?: string }) {
   return (
     <div>
       <div className="px-4 py-2">
@@ -164,6 +164,82 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
+
+function CoachAccessSection() {
+  const [rel, setRel]         = useState<{ coach_id: string; share_logs: boolean; share_wellness: boolean; share_nutrition: boolean; share_body_weight: boolean } | null>(null)
+  const [coachName, setCoachName] = useState('')
+  const [saving, setSaving]   = useState(false)
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase as any).from('coach_athletes').select('*').eq('athlete_id', user.id).eq('status', 'active').maybeSingle()
+      if (data) {
+        setRel(data)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: coach } = await (supabase as any).from('coach_profiles').select('display_name').eq('user_id', data.coach_id).single()
+        setCoachName(coach?.display_name ?? 'Your coach')
+      }
+    }
+    load()
+  }, [])
+
+  if (!rel) {
+    return <p className="text-sm text-gray-400 px-1">No active coach connected. <a href="/coach/setup" className="text-teal-600 hover:underline">Become a coach</a> or accept an invite to connect.</p>
+  }
+
+  const toggle = async (field: 'share_logs' | 'share_wellness' | 'share_nutrition' | 'share_body_weight') => {
+    if (!rel) return
+    setSaving(true)
+    const updated = { ...rel, [field]: !rel[field] }
+    setRel(updated)
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('coach_athletes').update({ [field]: updated[field] }).eq('coach_id', rel.coach_id).eq('athlete_id', user.id)
+    }
+    setSaving(false)
+  }
+
+  const disconnect = async () => {
+    if (!rel) return
+    const confirmed = window.confirm(`Disconnect from ${coachName}? They will no longer see your training data.`)
+    if (!confirmed) return
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (user) await (supabase as any).from('coach_athletes').update({ status: 'ended' }).eq('coach_id', rel.coach_id).eq('athlete_id', user.id)
+    setRel(null)
+  }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-gray-600 px-1">Connected to <span className="font-semibold">{coachName}</span>. Control what they can see.</p>
+      {[
+        { field: 'share_logs' as const,         label: 'Training logs',    sublabel: 'Runs and gym sessions' },
+        { field: 'share_wellness' as const,      label: 'Wellness scores',  sublabel: 'Sleep, energy, soreness' },
+        { field: 'share_nutrition' as const,     label: 'Nutrition diary',  sublabel: 'Daily food logs' },
+        { field: 'share_body_weight' as const,   label: 'Body weight',      sublabel: 'Weight from wellness logs' },
+      ].map(item => (
+        <SettingRow key={item.field} label={item.label} sublabel={item.sublabel}>
+          <button
+            onClick={() => toggle(item.field)}
+            disabled={saving}
+            className={`w-11 h-6 rounded-full transition-all relative ${rel[item.field] ? 'bg-teal-500' : 'bg-gray-200'}`}
+          >
+            <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${rel[item.field] ? 'left-5' : 'left-0.5'}`} />
+          </button>
+        </SettingRow>
+      ))}
+      <button onClick={disconnect} className="text-xs text-red-500 hover:text-red-700 px-1 pt-1">
+        Disconnect from {coachName}
+      </button>
+    </div>
+  )
+}
 
 export default function SettingsClient({ email, initialProfile }: Props) {
   const router = useRouter()
@@ -520,6 +596,11 @@ export default function SettingsClient({ email, initialProfile }: Props) {
               </div>
             </div>
           )}
+        </Section>
+
+        {/* ── Coach Access ── */}
+        <Section title="Coach Access" id="coach-access">
+          <CoachAccessSection />
         </Section>
 
         {/* ── Account ── */}

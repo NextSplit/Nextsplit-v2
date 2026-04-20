@@ -62,9 +62,9 @@ function InviteModal({ onClose }: { onClose: () => void }) {
   )
 }
 
-function AthleteCard({ athlete }: { athlete: { athlete_id: string; status: string; accepted_at: string | null } }) {
+function AthleteCard({ athlete }: { athlete: { id: string; athlete_id: string; status: string; accepted_at: string | null } }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-3">
+    <a href={`/coach/athlete/${athlete.athlete_id}`} className="block bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-3 active:bg-slate-50">
       <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-lg shrink-0">🏃</div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-bold text-slate-800 truncate">Athlete</p>
@@ -81,7 +81,7 @@ function AthleteCard({ athlete }: { athlete: { athlete_id: string; status: strin
       }`}>
         {athlete.status}
       </span>
-    </div>
+    </a>
   )
 }
 
