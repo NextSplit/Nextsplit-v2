@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useOnboarding } from '../context/OnboardingContext'
 import { OnboardingProgressBar } from './OnboardingProgressBar'
+import { SmartTimeInput } from '@/components/inputs/SmartInputs'
 import { createClient } from '@/lib/supabase/client'
 import { db } from '@/lib/supabase/db'
 
@@ -178,10 +179,10 @@ export function YourRunningScreen() {
             <p className="text-xs text-slate-400 mt-1">Optional but powerful — we use this to set your pace zones precisely. Fill in what you know.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <RaceTimeInput label="5K" value={raceTimes['5k']} onChange={v => setRaceTimes(p => ({ ...p, '5k': v }))} />
-            <RaceTimeInput label="10K" value={raceTimes['10k']} onChange={v => setRaceTimes(p => ({ ...p, '10k': v }))} />
-            <RaceTimeInput label="Half Marathon" value={raceTimes['half']} onChange={v => setRaceTimes(p => ({ ...p, half: v }))} />
-            <RaceTimeInput label="Marathon" value={raceTimes['marathon']} onChange={v => setRaceTimes(p => ({ ...p, marathon: v }))} />
+            <SmartTimeInput label="5K" value={raceTimes['5k'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, '5k': v ?? undefined }))} hint="e.g. 02000 → 0:20:00" />
+            <SmartTimeInput label="10K" value={raceTimes['10k'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, '10k': v ?? undefined }))} hint="e.g. 04500 → 0:45:00" />
+            <SmartTimeInput label="Half Marathon" value={raceTimes['half'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, half: v ?? undefined }))} hint="e.g. 13000 → 1:30:00" />
+            <SmartTimeInput label="Marathon" value={raceTimes['marathon'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, marathon: v ?? undefined }))} hint="e.g. 34500 → 3:45:00" />
           </div>
         </div>
 

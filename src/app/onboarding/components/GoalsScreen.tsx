@@ -6,6 +6,7 @@ import { OnboardingProgressBar } from './OnboardingProgressBar'
 import { createClient } from '@/lib/supabase/client'
 import { db } from '@/lib/supabase/db'
 import type { UserGoal } from '@/types/database'
+import { SmartTimeInput, secsToDisplay } from '@/components/inputs/SmartInputs'
 
 const GOAL_TYPES = [
   { id: 'race',               emoji: '🎯', label: 'Specific race',        desc: 'Target event with a date and finish time' },
@@ -17,22 +18,6 @@ const GOAL_TYPES = [
 
 const DISTANCES = ['5K', '10K', 'Half Marathon', 'Marathon', '50K', '100K', 'Ultra', 'Other']
 
-function secsToHHMMSS(s: number) {
-  const h = Math.floor(s / 3600)
-  const m = Math.floor((s % 3600) / 60)
-  const sec = s % 60
-  if (h > 0) return `${h}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`
-  return `${m}:${sec.toString().padStart(2,'0')}`
-}
-
-function parseTime(val: string): number | null {
-  const parts = val.split(':').map(Number)
-  if (parts.some(isNaN)) return null
-  if (parts.length === 2) return parts[0] * 60 + parts[1]
-  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
-  return null
-}
-
 interface GoalCardProps {
   goal: Partial<UserGoal>
   index: number
@@ -42,13 +27,6 @@ interface GoalCardProps {
 }
 
 function GoalCard({ goal, index, onUpdate, onRemove, canRemove }: GoalCardProps) {
-  const [timeRaw, setTimeRaw] = useState(goal.target_time_secs ? secsToHHMMSS(goal.target_time_secs) : '')
-
-  const handleTimeBlur = () => {
-    const secs = parseTime(timeRaw)
-    if (secs) onUpdate({ ...goal, target_time_secs: secs })
-  }
-
   return (
     <div className={`bg-white rounded-2xl border shadow-sm p-4 space-y-4 ${
       goal.priority === 'A' ? 'border-teal-400' : 'border-slate-200'
@@ -140,19 +118,12 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove }: GoalCardProps)
               </select>
             </div>
           </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Target finish time</label>
-            <input
-              value={timeRaw}
-              onChange={e => setTimeRaw(e.target.value)}
-              onBlur={handleTimeBlur}
-              placeholder="e.g. 3:45:00 or 25:30"
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100"
-            />
-            {goal.target_time_secs && (
-              <p className="text-xs text-teal-600">✓ Target: {secsToHHMMSS(goal.target_time_secs)}</p>
-            )}
-          </div>
+          <SmartTimeInput
+            label="Target finish time"
+            value={goal.target_time_secs ?? null}
+            onChange={secs => onUpdate({ ...goal, target_time_secs: secs ?? undefined })}
+            hint="Type digits e.g. 34500 → 3:45:00"
+          />
         </div>
       )}
 
@@ -171,16 +142,12 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove }: GoalCardProps)
                 {DISTANCES.map(d => <option key={d} value={d}>{d}</option>)}
               </select>
             </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Target time</label>
-              <input
-                value={timeRaw}
-                onChange={e => setTimeRaw(e.target.value)}
-                onBlur={handleTimeBlur}
-                placeholder="e.g. 19:59"
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm outline-none focus:border-teal-400"
-              />
-            </div>
+            <SmartTimeInput
+              label="Target time"
+              value={goal.target_time_secs ?? null}
+              onChange={secs => onUpdate({ ...goal, target_time_secs: secs ?? undefined })}
+              hint="e.g. 1930 → 0:19:30"
+            />
           </div>
         </div>
       )}

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useCallback } from 'react'
 import type { CharacterConfig, UserGoal, SportId } from '@/types/database'
 
 // ── Total steps in the flow ───────────────────────────────────────────────────
-export const TOTAL_STEPS = 11
+export const TOTAL_STEPS = 12
 
 export type TrainingPath = 'predetermined' | 'ai_bespoke' | 'manual' | 'lifestyle' | 'coach_marketplace'
 
