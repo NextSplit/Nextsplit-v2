@@ -24,7 +24,9 @@ export default function SignupPage() {
       }
     } catch {
       // Server actions throw on redirect() — this is expected on success
-      router.push('/onboarding')
+      // Preserve invite token if present
+      const invite = typeof window !== 'undefined' ? localStorage.getItem('nextsplit_coach_invite_token') : null
+      router.push(invite ? `/onboarding?invite=${invite}` : '/onboarding')
     }
   }
 

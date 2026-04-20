@@ -11,19 +11,27 @@ export async function POST(req: NextRequest) {
     const { token, share_nutrition = false, share_body_weight = false } = await req.json()
     if (!token) return NextResponse.json({ error: 'Token required' }, { status: 400 })
 
-    // Find the invite
-    const { data: invite } = await db(supabase)
-      .from('coach_athletes')
-      .select('id, coach_id, status')
-      .eq('invite_token', token)
-      .eq('status', 'pending')
+    // Find the invite from coach_invites
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: invite } = await (supabase as any)
+      .from('coach_invites')
+      .select('id, coach_id, athlete_goal, coach_notes, expires_at, used_at')
+      .eq('token', token)
       .maybeSingle()
 
     if (!invite) {
-      return NextResponse.json({ error: 'Invalid or expired invite link' }, { status: 404 })
+      return NextResponse.json({ error: 'Invalid invite link' }, { status: 404 })
     }
 
-    // Make sure they're not already connected to this coach
+    if (invite.used_at) {
+      return NextResponse.json({ error: 'This invite has already been used' }, { status: 409 })
+    }
+
+    if (new Date(invite.expires_at) < new Date()) {
+      return NextResponse.json({ error: 'This invite has expired' }, { status: 410 })
+    }
+
+    // Check not already connected
     const { data: existing } = await db(supabase)
       .from('coach_athletes')
       .select('id, status')
@@ -31,36 +39,50 @@ export async function POST(req: NextRequest) {
       .eq('athlete_id', user.id)
       .maybeSingle()
 
-    if (existing && existing.status === 'active') {
+    if (existing?.status === 'active') {
       return NextResponse.json({ error: 'Already connected to this coach' }, { status: 409 })
     }
 
-    // Accept the invite — update the pending row
-    await db(supabase)
-      .from('coach_athletes')
-      .update({
-        athlete_id:       user.id,
-        status:           'active',
-        accepted_at:      new Date().toISOString(),
-        share_logs:       true,
-        share_wellness:   true,
-        share_nutrition,
-        share_body_weight,
-      })
+    // Create the coach-athlete relationship
+    if (existing) {
+      // Reactivate paused/ended relationship
+      await db(supabase)
+        .from('coach_athletes')
+        .update({ status: 'active', accepted_at: new Date().toISOString(), share_nutrition, share_body_weight })
+        .eq('id', existing.id)
+    } else {
+      await db(supabase)
+        .from('coach_athletes')
+        .insert({
+          coach_id:         invite.coach_id,
+          athlete_id:       user.id,
+          status:           'active',
+          accepted_at:      new Date().toISOString(),
+          share_logs:       true,
+          share_wellness:   true,
+          share_nutrition,
+          share_body_weight,
+          athlete_goal:     invite.athlete_goal ?? null,
+          coach_notes:      invite.coach_notes ?? null,
+        })
+    }
+
+    // Mark invite as used
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any)
+      .from('coach_invites')
+      .update({ used_at: new Date().toISOString(), used_by: user.id })
       .eq('id', invite.id)
 
-    // Get coach display name for confirmation
-    const { data: coach } = await db(supabase)
+    // Get coach info for confirmation
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: coach } = await (supabase as any)
       .from('coach_profiles')
       .select('display_name, slug')
       .eq('user_id', invite.coach_id)
       .single()
 
-    return NextResponse.json({
-      success:      true,
-      coach_name:   coach?.display_name,
-      coach_slug:   coach?.slug,
-    })
+    return NextResponse.json({ success: true, coach_name: coach?.display_name, coach_slug: coach?.slug })
 
   } catch (err) {
     console.error('Coach accept error:', err)

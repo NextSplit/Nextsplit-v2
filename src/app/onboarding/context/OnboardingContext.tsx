@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useCallback } from 'react'
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import type { CharacterConfig, UserGoal, SportId } from '@/types/database'
 
 // ── Total steps in the flow ───────────────────────────────────────────────────
@@ -104,17 +104,43 @@ export function OnboardingProvider({ children, initialStep = 1 }: {
   children: React.ReactNode
   initialStep?: number
 }) {
-  const [step, setStep] = useState(initialStep)
-  const [data, setData] = useState<OnboardingData>(defaultData)
+  // Load from localStorage on mount (survives page refresh/crash)
+  const [step, setStep] = useState(() => {
+    if (typeof window === 'undefined') return initialStep
+    try {
+      const saved = localStorage.getItem('nextsplit_onboarding_step')
+      return saved ? Math.max(initialStep, parseInt(saved, 10)) : initialStep
+    } catch { return initialStep }
+  })
 
-  const next = useCallback(() => setStep(s => Math.min(s + 1, TOTAL_STEPS)), [])
+  const [data, setData] = useState<OnboardingData>(() => {
+    if (typeof window === 'undefined') return defaultData
+    try {
+      const saved = localStorage.getItem('nextsplit_onboarding_data')
+      return saved ? { ...defaultData, ...JSON.parse(saved) } : defaultData
+    } catch { return defaultData }
+  })
+
+  const next = useCallback(() => setStep(s => {
+    const n = Math.min(s + 1, TOTAL_STEPS)
+    try { localStorage.setItem('nextsplit_onboarding_step', String(n)) } catch { /* ignore */ }
+    return n
+  }), [])
   const back = useCallback(() => setStep(s => Math.max(s - 1, 1)), [])
   const update = useCallback((partial: Partial<OnboardingData>) => {
-    setData(prev => ({ ...prev, ...partial }))
+    setData(prev => {
+      const next = { ...prev, ...partial }
+      try { localStorage.setItem('nextsplit_onboarding_data', JSON.stringify(next)) } catch { /* ignore */ }
+      return next
+    })
   }, [])
   const reset = useCallback(() => {
     setData(defaultData)
     setStep(1)
+    try {
+      localStorage.removeItem('nextsplit_onboarding_data')
+      localStorage.removeItem('nextsplit_onboarding_step')
+    } catch { /* ignore */ }
   }, [])
 
   return (

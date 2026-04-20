@@ -17,7 +17,9 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (!coachProfile) return NextResponse.json({ error: 'Not a coach' }, { status: 403 })
-    if (!coachProfile.accepting_athletes) return NextResponse.json({ error: 'Not currently accepting athletes' }, { status: 400 })
+    if (!coachProfile.accepting_athletes) {
+      return NextResponse.json({ error: 'Not currently accepting athletes' }, { status: 400 })
+    }
 
     // Check active athlete count
     const { count } = await db(supabase)
@@ -32,30 +34,22 @@ export async function POST(req: NextRequest) {
 
     const { athlete_goal, coach_notes } = await req.json().catch(() => ({}))
 
-    // Generate unique invite token — store without athlete_id until accepted
+    // Generate unique token — stored in coach_invites table (no athlete_id yet)
     const token = randomBytes(16).toString('hex')
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days
 
-    // Use a pending_invites pattern — no athlete_id yet
-    // We store in coach_athletes with a NULL athlete_id placeholder
-    // athlete_id gets set when they accept
-    const { error } = await db(supabase)
-      .from('coach_athletes')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any)
+      .from('coach_invites')
       .insert({
         coach_id:     user.id,
-        athlete_id:   user.id,  // temporary — overwritten on accept
-        status:       'pending',
-        invite_token: token,
-        invited_at:   new Date().toISOString(),
+        token,
         athlete_goal: athlete_goal ?? null,
         coach_notes:  coach_notes ?? null,
+        expires_at:   expiresAt,
       })
 
-    if (error) {
-      console.error('Invite insert error:', error)
-      return NextResponse.json({ error: 'Failed to create invite' }, { status: 500 })
-    }
-
-    const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/coach/accept?token=${token}`
+    const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/invite/${token}`
     return NextResponse.json({ token, inviteUrl })
 
   } catch (err) {

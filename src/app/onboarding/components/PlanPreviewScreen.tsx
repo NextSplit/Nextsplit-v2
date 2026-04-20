@@ -81,6 +81,11 @@ export function PlanPreviewScreen() {
     setEntering(true)
     // Award onboarding XP — small delay for feel
     await new Promise(r => setTimeout(r, 400))
+    // Clear onboarding state from localStorage
+    try {
+      localStorage.removeItem('nextsplit_onboarding_data')
+      localStorage.removeItem('nextsplit_onboarding_step')
+    } catch { /* ignore */ }
     router.push('/today')
   }
 

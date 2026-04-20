@@ -259,6 +259,19 @@ export function PlanGenerationScreen() {
           onboarding_step:     11,
         }).eq('id', user.id)
 
+        // 5. Auto-accept coach invite if token stored from invite link
+        try {
+          const inviteToken = localStorage.getItem('nextsplit_coach_invite_token')
+          if (inviteToken) {
+            await fetch('/api/coach/accept', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ token: inviteToken }),
+            })
+            localStorage.removeItem('nextsplit_coach_invite_token')
+          }
+        } catch { /* non-blocking */ }
+
         setProgress(100)
         await new Promise(r => setTimeout(r, 600))
         setDone(true)
