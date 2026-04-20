@@ -1,0 +1,155 @@
+'use client'
+
+import { useState } from 'react'
+import { useOnboarding } from '../context/OnboardingContext'
+import { OnboardingProgressBar } from './OnboardingProgressBar'
+import { SPORTS } from '@/types/database'
+import type { SportId } from '@/types/database'
+import { createClient } from '@/lib/supabase/client'
+import { db } from '@/lib/supabase/db'
+
+export function SportSelectScreen() {
+  const { step, data, update, next, back } = useOnboarding()
+  const [selected, setSelected]   = useState<SportId[]>(data.sportFocus)
+  const [notified, setNotified]   = useState<string[]>([])
+  const [saving, setSaving]       = useState(false)
+
+  const toggle = (id: SportId) => {
+    // Running always required if active
+    if (id === 'running') return
+    setSelected(prev =>
+      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
+    )
+  }
+
+  const handleNotify = async (sport: string) => {
+    if (notified.includes(sport)) return
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    await db(supabase).from('sport_interest_waitlist').upsert({ user_id: user.id, sport })
+    setNotified(prev => [...prev, sport])
+  }
+
+  const handleContinue = async () => {
+    setSaving(true)
+    update({ sportFocus: selected })
+    // Persist to Supabase incrementally
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      await db(supabase).from('profiles').update({ sport_focus: selected, onboarding_step: 3 }).eq('id', user.id)
+    }
+    setSaving(false)
+    next()
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
+
+      <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6">
+        <div className="mb-6">
+          <h1 className="text-xl font-black text-slate-900">What are you training for?</h1>
+          <p className="text-sm text-slate-500 mt-1">Running is your foundation. Add more anytime.</p>
+        </div>
+
+        <div className="space-y-3">
+          {SPORTS.map(sport => {
+            const isSelected = selected.includes(sport.id)
+            const isNotified = notified.includes(sport.id)
+
+            return (
+              <div
+                key={sport.id}
+                className={`rounded-2xl border p-4 transition-all ${
+                  sport.active
+                    ? isSelected
+                      ? 'bg-teal-50 border-teal-400 shadow-sm'
+                      : 'bg-white border-slate-200 hover:border-teal-200'
+                    : 'bg-slate-100 border-slate-200 opacity-70'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  {/* Emoji */}
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${
+                    isSelected ? 'bg-teal-100' : 'bg-slate-100'
+                  }`}>
+                    {sport.emoji}
+                  </div>
+
+                  {/* Label */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-bold text-slate-800">{sport.label}</p>
+                      {sport.id === 'running' && (
+                        <span className="text-[9px] font-bold text-white bg-teal-500 px-1.5 py-0.5 rounded-full">
+                          Core
+                        </span>
+                      )}
+                      {!sport.active && (
+                        <span className="text-[9px] font-bold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded-full">
+                          Coming soon
+                        </span>
+                      )}
+                    </div>
+                    {sport.id === 'gym' && (
+                      <p className="text-xs text-slate-400 mt-0.5">Included in all plans by default</p>
+                    )}
+                    {sport.id === 'running' && (
+                      <p className="text-xs text-slate-400 mt-0.5">Always included as your primary sport</p>
+                    )}
+                  </div>
+
+                  {/* Action */}
+                  {sport.active ? (
+                    <button
+                      onClick={() => toggle(sport.id)}
+                      disabled={sport.id === 'running'}
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                        isSelected
+                          ? 'bg-teal-500 border-teal-500'
+                          : 'border-slate-300'
+                      }`}
+                    >
+                      {isSelected && <span className="text-white text-xs font-bold">✓</span>}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleNotify(sport.id)}
+                      className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all flex-shrink-0 ${
+                        isNotified
+                          ? 'bg-teal-50 border-teal-300 text-teal-600'
+                          : 'bg-white border-slate-200 text-slate-500 hover:border-teal-200'
+                      }`}
+                    >
+                      {isNotified ? '✓ Notify me' : 'Notify me'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        <p className="text-xs text-slate-400 mt-4 text-center">
+          You can add more sports to your profile at any time
+        </p>
+      </div>
+
+      {/* Nav */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 flex gap-3">
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600">
+          ←
+        </button>
+        <button
+          onClick={handleContinue}
+          disabled={saving}
+          className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-teal-600 active:scale-95"
+        >
+          {saving ? 'Saving…' : 'Continue →'}
+        </button>
+      </div>
+    </div>
+  )
+}

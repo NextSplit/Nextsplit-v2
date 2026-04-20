@@ -1,10 +1,16 @@
 'use client'
 
 import { OnboardingProvider, useOnboarding } from './context/OnboardingContext'
-import { WelcomeScreen } from './components/WelcomeScreen'
+import { WelcomeScreen }          from './components/WelcomeScreen'
 import { CharacterCreationScreen } from './components/CharacterCreationScreen'
+import { SportSelectScreen }       from './components/SportSelectScreen'
+import { AboutYouScreen }          from './components/AboutYouScreen'
+import { YourRunningScreen }       from './components/YourRunningScreen'
+import { GoalsScreen }             from './components/GoalsScreen'
+import { YourLifeScreen }          from './components/YourLifeScreen'
+import { GymConfigScreen }         from './components/GymConfigScreen'
 
-// Placeholder screens for steps we build next session
+// Placeholder for steps 9–11 (Sprint 3)
 function ComingSoonScreen({ title }: { title: string }) {
   const { next, back, step } = useOnboarding()
   return (
@@ -26,12 +32,12 @@ function OnboardingFlow() {
   switch (step) {
     case 1:  return <WelcomeScreen />
     case 2:  return <CharacterCreationScreen />
-    case 3:  return <ComingSoonScreen title="Select your sport" />
-    case 4:  return <ComingSoonScreen title="About You" />
-    case 5:  return <ComingSoonScreen title="Your Running" />
-    case 6:  return <ComingSoonScreen title="Your Goals" />
-    case 7:  return <ComingSoonScreen title="Your Life" />
-    case 8:  return <ComingSoonScreen title="Gym Configuration" />
+    case 3:  return <SportSelectScreen />
+    case 4:  return <AboutYouScreen />
+    case 5:  return <YourRunningScreen />
+    case 6:  return <GoalsScreen />
+    case 7:  return <YourLifeScreen />
+    case 8:  return <GymConfigScreen />
     case 9:  return <ComingSoonScreen title="Choose your training path" />
     case 10: return <ComingSoonScreen title="Building your plan…" />
     case 11: return <ComingSoonScreen title="Your plan preview" />
