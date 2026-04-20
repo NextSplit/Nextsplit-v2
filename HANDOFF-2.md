@@ -1195,3 +1195,36 @@ STRIPE_COACH_PLATFORM_FEE_PRICE_ID   # coach monthly subscription
 ---
 _NextSplit Master Document v3 — April 2026_
 _Always commit this file at the end of every dev session_
+
+---
+
+## PRE-LAUNCH CHECKLIST
+_Things that must be done before opening to real users_
+
+### Supabase Auth
+- [ ] Re-enable **Confirm email** (turned off during dev for easy testing — Supabase → Authentication → Providers → Supabase Auth)
+- [ ] Verify email confirmation redirect URL is correct for production domain
+- [ ] Review RLS policies on all tables
+
+### Stripe
+- [ ] Switch from test keys (`sk_test_`) to live keys (`sk_live_`)
+- [ ] Update all `STRIPE_*` env vars in Vercel to live values
+- [ ] Test live checkout with a real card before announcing
+
+### Monitoring
+- [ ] Confirm Sentry is receiving events (trigger a test error)
+- [ ] Verify Vercel Analytics showing data
+- [ ] PostHog funnel configured and tracking
+
+### Legal
+- [ ] Privacy policy live at /privacy
+- [ ] Terms of service live at /terms
+- [ ] Cookie notice if needed (Stripe/PostHog set cookies)
+- [ ] GDPR: account deletion removes ALL user data (verify cascade works)
+
+### General
+- [ ] Manual test matrix completed (all 4 onboarding flows)
+- [ ] Push notifications verified on Android
+- [ ] PWA install prompt tested on iOS and Android
+- [ ] All 4 onboarding paths tested end-to-end on mobile
+- [ ] `NEXT_PUBLIC_PREMIUM_ENFORCED` set to `true` in Vercel
