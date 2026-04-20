@@ -147,6 +147,24 @@ export default function TodayClient() {
       }
     }
 
+    // Fire-and-forget community progress update
+    if (params.done) {
+      const session = planDay?.sessions[params.session_i]
+      fetch('/api/community/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          km:           params.km ?? 0,
+          done:         true,
+          session_type: session?.c ?? 'run',
+          session_name: session?.n ?? 'Session',
+          duration_secs: params.duration_secs,
+          pace:         params.pace,
+          effort:       params.effort,
+        }),
+      }).catch(() => {}) // non-blocking
+    }
+
     if (undoInfo) clearTimeout(undoInfo.timer)
     const session = planDay?.sessions[params.session_i]
     setUndoLabel(session?.n ?? 'session')

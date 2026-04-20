@@ -52,7 +52,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Logged in + hitting app routes + onboarding not done → onboarding
-  const appRoutes = ['/today', '/plan', '/nutrition', '/profile', '/settings', '/dashboard', '/gym', '/history', '/races', '/character', '/coach', '/marketplace']
+  const appRoutes = ['/today', '/plan', '/nutrition', '/profile', '/settings', '/dashboard', '/gym', '/history', '/races', '/character', '/coach', '/marketplace', '/community']
   const isAppRoute = appRoutes.some(r => url.pathname.startsWith(r))
 
   if (user && isAppRoute && !isOnboarding) {
