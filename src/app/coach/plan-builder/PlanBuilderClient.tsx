@@ -127,17 +127,17 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
   const aiSuggestWeek = async () => {
     setAiSuggesting(true)
     try {
-      const res = await fetch('/api/ai/coach', {
+      const res = await fetch('/api/ai/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `Suggest a week of training for a ${level.toLowerCase()} ${distance} runner. Week ${activeWeek + 1} of ${weeks.length}. Phase: ${weeks[activeWeek]?.phase}. Target: ${weeks[activeWeek]?.targetKm}km. Reply with a JSON array of 7 days, each with: {day: "Mon", sessions: [{c: "run-easy|run-tempo|run-interval|run-long|gym|rest", n: "name", det: "brief instruction", km: number|null}]}. No text, just JSON.`
+          prompt: `You are a running coach. Suggest a training week for a ${level.toLowerCase()} ${distance} runner. Week ${activeWeek + 1} of ${weeks.length}. Training phase: ${weeks[activeWeek]?.phase}. Target weekly volume: ${weeks[activeWeek]?.targetKm}km. Return ONLY a JSON array of 7 objects (Mon-Sun), each with: {day: string, sessions: [{c: "run-easy|run-tempo|run-interval|run-long|gym|rest|cross", n: string, det: string, km: number|null}]}. Rest days have empty sessions array. No markdown, no explanation, just the JSON array.`
         }),
       })
       const data = await res.json()
       // Try to parse AI response as week structure
       try {
-        const content = data.response ?? data.message ?? ''
+        const content = data.recommendation ?? data.response ?? data.message ?? ''
         const cleaned = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
         const parsed  = JSON.parse(cleaned)
         if (Array.isArray(parsed)) {

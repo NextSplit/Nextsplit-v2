@@ -165,6 +165,31 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
+function DeveloperSection({ onError, onSuccess }: { onError: (m: string) => void; onSuccess: (m: string) => void }) {
+  const [seeding, setSeeding] = useState(false)
+  async function seedPlans() {
+    setSeeding(true)
+    try {
+      const res  = await fetch('/api/admin/seed-plans', { method: 'POST' })
+      const data = await res.json()
+      if (res.ok) {
+        const results = data.results ?? []
+        const ok   = results.filter((r: { status: string }) => r.status === 'ok').length
+        const fail = results.filter((r: { status: string }) => r.status === 'fail').length
+        if (fail > 0) onError(`${ok} seeded, ${fail} failed`)
+        else onSuccess(`✓ ${ok} plans seeded`)
+      } else { onError(data.error ?? 'Seed failed') }
+    } catch { onError('Seed failed — check connection') }
+    finally { setSeeding(false) }
+  }
+  return (
+    <Section title="Developer">
+      <ButtonRow label="Re-seed plan templates" sublabel="Updates all 17 plans in Supabase with latest content"
+        buttonLabel={seeding ? 'Seeding…' : 'Run'} onClick={seedPlans} disabled={seeding} />
+    </Section>
+  )
+}
+
 function CoachAccessSection() {
   const [rel, setRel]         = useState<{ coach_id: string; share_logs: boolean; share_wellness: boolean; share_nutrition: boolean; share_body_weight: boolean } | null>(null)
   const [coachName, setCoachName] = useState('')
@@ -617,35 +642,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
         </Section>
 
         {/* ── Dev tools ── */}
-        {(() => {
-          const [seeding, setSeeding] = useState(false)
-          async function seedPlans() {
-            setSeeding(true)
-            try {
-              const res = await fetch('/api/admin/seed-plans', { method: 'POST' })
-              const data = await res.json()
-              if (res.ok) {
-                const results = data.results ?? []
-                const ok = results.filter((r: { status: string }) => r.status === 'ok').length
-                const fail = results.filter((r: { status: string }) => r.status === 'fail').length
-                if (fail > 0) toastError(`${ok} seeded, ${fail} failed`)
-                else success(`✓ ${ok} plans seeded`)
-              } else {
-                toastError(data.error ?? 'Seed failed')
-              }
-            } catch {
-              toastError('Seed failed — check connection')
-            } finally {
-              setSeeding(false)
-            }
-          }
-          return (
-            <Section title="Developer">
-              <ButtonRow label="Re-seed plan templates" sublabel="Updates all 17 plans in Supabase with latest content"
-                buttonLabel={seeding ? 'Seeding…' : 'Run'} onClick={seedPlans} disabled={seeding} />
-            </Section>
-          )
-        })()}
+        <DeveloperSection onError={toastError} onSuccess={success} />
 
         {/* Version */}
         <div className="text-center pb-4">

@@ -205,20 +205,23 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
 
         {/* Quick actions */}
         <div className="grid grid-cols-3 gap-2">
-          {[
-            { label: '📋 Plan Builder', href: '/coach/plan-builder' },
-            { label: '🏪 Marketplace',  href: '/marketplace' },
-            { label: '💳 Payouts',      href: '#', onClick: async () => {
+          <a href="/coach/plan-builder"
+            className="bg-white rounded-xl border border-slate-200 p-2.5 text-center text-xs font-semibold text-slate-700 active:bg-slate-50">
+            📋 Plan Builder
+          </a>
+          <a href="/marketplace"
+            className="bg-white rounded-xl border border-slate-200 p-2.5 text-center text-xs font-semibold text-slate-700 active:bg-slate-50">
+            🏪 Marketplace
+          </a>
+          <button
+            onClick={async () => {
               const res = await fetch('/api/stripe/connect', { method: 'POST' })
               const d   = await res.json()
               if (d.url) window.location.href = d.url
-            }},
-          ].map(action => (
-            <a key={action.label} href={action.href}
-              className="bg-white rounded-xl border border-slate-200 p-2.5 text-center text-xs font-semibold text-slate-700 active:bg-slate-50">
-              {action.label}
-            </a>
-          ))}
+            }}
+            className="bg-white rounded-xl border border-slate-200 p-2.5 text-center text-xs font-semibold text-slate-700 active:bg-slate-50">
+            💳 Payouts
+          </button>
         </div>
 
         {/* Empty state */}

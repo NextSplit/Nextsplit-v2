@@ -27,7 +27,7 @@ export async function updateSession(request: NextRequest) {
   const url           = request.nextUrl.clone()
   const isAuthRoute   = url.pathname.startsWith('/auth')
   const isOnboarding  = url.pathname.startsWith('/onboarding')
-  const isPublic      = url.pathname === '/' || isAuthRoute || url.pathname.startsWith('/u/') || url.pathname === '/privacy' || url.pathname === '/terms' || url.pathname.startsWith('/invite/')
+  const isPublic      = url.pathname === '/' || isAuthRoute || url.pathname.startsWith('/u/') || url.pathname === '/privacy' || url.pathname === '/terms' || url.pathname.startsWith('/invite/') || url.pathname.startsWith('/marketplace') || (url.pathname.startsWith('/coach/') && !url.pathname.startsWith('/coach/setup') && !url.pathname.startsWith('/coach/squad') && !url.pathname.startsWith('/coach/athlete') && !url.pathname.startsWith('/coach/plan-builder') && !url.pathname.startsWith('/coach/accept'))
   const isApi         = url.pathname.startsWith('/api')
   const isStatic      = url.pathname.startsWith('/_next') || url.pathname.startsWith('/icons') || url.pathname === '/manifest.json'
 
@@ -52,7 +52,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Logged in + hitting app routes + onboarding not done → onboarding
-  const appRoutes = ['/today', '/plan', '/nutrition', '/profile', '/settings', '/dashboard', '/gym', '/history', '/races', '/character']
+  const appRoutes = ['/today', '/plan', '/nutrition', '/profile', '/settings', '/dashboard', '/gym', '/history', '/races', '/character', '/coach', '/marketplace']
   const isAppRoute = appRoutes.some(r => url.pathname.startsWith(r))
 
   if (user && isAppRoute && !isOnboarding) {

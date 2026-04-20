@@ -12,9 +12,7 @@ import { getSessionXP } from '@/lib/rpg'
 import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/streak'
 import { hapticLight, hapticSuccess } from '@/lib/haptics'
-import WeatherWidget from '@/components/WeatherWidget'
-import { CoachCard } from '@/components/coach/CoachCard'
-import WellnessCheckIn from '@/components/WellnessCheckIn'
+import TodayBelowFold from './TodayBelowFold'
 import StravaSyncButton from '@/components/StravaSyncButton'
 import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation'
@@ -600,154 +598,25 @@ export default function TodayClient() {
               )
             })()}
 
-            {/* Coach card — shown to athletes with an active coach */}
-            {isToday && <CoachCard />}
-
-            {/* Wellness check-in — below the fold */}
-            {isToday && <WellnessCheckIn onReadiness={setReadinessScore} />}
-
-            {/* Weather — below the fold, running sessions only */}
-            {isToday && todaySessions.some(s => s?.c?.startsWith('run')) && (
-              <WeatherWidget />
-            )}
-
-            {/* Monday weekly report — below the fold */}
-            {isToday && weeklyReport && (() => {
-              const r = weeklyReport
-              const vsArrow = r.vsLastWeek === 'up' ? '↑' : r.vsLastWeek === 'down' ? '↓' : '→'
-              const vsColour = r.vsLastWeek === 'up' ? 'text-emerald-600' : r.vsLastWeek === 'down' ? 'text-red-500' : 'text-gray-500'
-              return (
-                <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl border border-teal-100 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-teal-100/50">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-[11px] font-bold text-teal-800 uppercase tracking-wide">Week {r.weekN} · {r.weekTitle}</p>
-                        <p className="text-xs text-teal-600 mt-0.5">Your weekly report</p>
-                      </div>
-                      <span className="text-2xl">{r.completionPct >= 90 ? '🌟' : r.completionPct >= 60 ? '✅' : '💪'}</span>
-                    </div>
-                  </div>
-                  <div className="px-4 py-3 grid grid-cols-3 gap-3 border-b border-teal-100/30">
-                    <div className="text-center">
-                      <div className="text-lg font-black text-teal-900">{r.completionPct}%</div>
-                      <div className="text-[10px] text-teal-500">sessions done</div>
-                      <div className="text-[9px] text-teal-400">{r.sessionsDone}/{r.sessionsPlanned}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-black text-teal-900">{r.kmLogged}</div>
-                      <div className="text-[10px] text-teal-500">km logged</div>
-                      <div className="text-[9px] text-teal-400">of {r.kmPlanned} planned</div>
-                    </div>
-                    <div className="text-center">
-                      <div className={`text-lg font-black ${vsColour}`}>{vsArrow} {r.lastWeekKm > 0 ? Math.abs(Math.round((r.kmLogged - r.lastWeekKm) * 10) / 10) : '—'}</div>
-                      <div className="text-[10px] text-teal-500">vs prev week</div>
-                      {r.avgEffort && <div className="text-[9px] text-teal-400">RPE {r.avgEffort} avg</div>}
-                    </div>
-                  </div>
-                  {(r.bestSession || r.lookAheadNote) && (
-                    <div className="px-4 py-3 space-y-1.5">
-                      {r.bestSession && (
-                        <p className="text-xs text-teal-700">
-                          <span className="font-semibold">Best session:</span> {r.bestSession}
-                        </p>
-                      )}
-                      {r.lookAheadNote && (
-                        <p className="text-xs text-teal-600 leading-relaxed line-clamp-2">
-                          <span className="font-semibold">This week:</span> {r.lookAheadNote}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )
-            })()}
-
-            {/* Sunday coach banner — below the fold */}
-            {isToday && viewDate.getDay() === 0 && plan && plan.current_week < plan.total_weeks && (
-              <div className="bg-teal-50 rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-base mt-0.5">🗓️</span>
-                <div>
-                  <p className="text-[11px] font-bold text-teal-800 mb-0.5">Week {weekN} complete!</p>
-                  <p className="text-xs text-teal-700 leading-relaxed">
-                    Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what&apos;s ahead.
-                  </p>
-                </div>
-              </div>
-            )}
-            {/* Tomorrow's sessions preview — shown when today is all done */}
-            {isToday && todaySessions.length > 0 && doneTodayCount === todaySessions.length && (() => {
-              const tomorrowDayIndex = (planDayIndex + 1) % 7
-              // On Sunday (planDayIndex=6), tomorrow wraps to next week's Monday
-              const isLastDayOfWeek = planDayIndex === 6
-              const nextWeekN = weekN + 1
-              const nextWeekData = currentWeek && isLastDayOfWeek
-                ? (plan.weeks_data as PlanWeek[] | null)?.find(w => w.n === nextWeekN) ?? null
-                : null
-              const tomorrowSessions = isLastDayOfWeek
-                ? (nextWeekData?.days?.[0]?.sessions ?? [])
-                : (currentWeek?.days[tomorrowDayIndex]?.sessions ?? [])
-              if (tomorrowSessions.length === 0) return null
-              return (
-                <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                  <div className="px-4 py-2.5 border-b border-gray-50 flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Tomorrow</span>
-                    {isLastDayOfWeek && nextWeekData && (
-                      <span className="text-[10px] text-gray-400">· Week {nextWeekN}</span>
-                    )}
-                  </div>
-                  <div className="px-4 py-3 space-y-1.5">
-                    {(tomorrowSessions as PlanSession[]).map((s, i) => {
-                      const cfg = getSessionType(s.c)
-                      return (
-                        <div key={i} className="flex items-center gap-2.5">
-                          <span className={`w-7 h-7 rounded-lg ${cfg.colour} flex items-center justify-center text-sm flex-shrink-0`}>
-                            {cfg.emoji}
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <span className="text-xs font-semibold text-gray-800">{s.n}</span>
-                            {s.km > 0 && <span className="text-[10px] text-gray-400 ml-1.5">{fmtKm(s.km)}</span>}
-                          </div>
-                          <span className={`text-[10px] font-semibold ${cfg.textColour}`}>{cfg.label}</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            })()}
-            {/* Week complete → advance prompt */}
-            {isToday && plan && plan.current_week < plan.total_weeks && (() => {
-              // Check if the entire current week is done
-              const weekDone = currentWeek ? currentWeek.days.every((day, dayI) =>
+            {/* Below fold — coach card, wellness, weather, weekly report, week advance */}
+            <TodayBelowFold
+              isToday={isToday}
+              hasRunSessions={todaySessions.some(s => s?.c?.startsWith('run'))}
+              weeklyReport={weeklyReport}
+              planDay={viewDate.getDay() === 0 ? 6 : viewDate.getDay() - 1}
+              isWeekDone={currentWeek ? currentWeek.days.every((day, dayI) =>
                 day.sessions.length === 0 || day.sessions.every((_, sessI) =>
                   logs[`${weekN}_${dayI}_${sessI}`]?.done
                 )
-              ) : false
-              if (!weekDone) return null
-              return (
-                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-bold text-emerald-700">Week {weekN} complete! 🎉</p>
-                      <p className="text-xs text-emerald-600 mt-0.5">Ready to move to Week {weekN + 1}?</p>
-                    </div>
-                    <button
-                      onClick={async () => {
-                        try {
-                          await advanceWeek()
-                          toastSuccess(`Week ${weekN + 1} started!`)
-                        } catch {
-                          toastError('Failed to advance week — try again')
-                        }
-                      }}
-                      className="px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold flex-shrink-0"
-                    >
-                      Next week →
-                    </button>
-                  </div>
-                </div>
-              )
-            })()}
+              ) : false}
+              weekN={weekN}
+              hasPlanNextWeek={!!(plan && plan.current_week < plan.total_weeks)}
+              onReadiness={setReadinessScore}
+              onAdvanceWeek={async () => {
+                try { await advanceWeek(); toastSuccess(`Week ${weekN + 1} started!`) }
+                catch { toastError('Failed to advance week — try again') }
+              }}
+            />
           </>
         )}
       </div>
