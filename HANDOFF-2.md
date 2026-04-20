@@ -1617,3 +1617,67 @@ File: supabase/phase3-migration.sql
 3. Test Stripe checkout with real card
 4. Flip NEXT_PUBLIC_PREMIUM_ENFORCED=true and verify ProGate
 5. Community features (clubs, leaderboards) — gate at 300 MAU
+
+---
+
+## SESSION 33 COMPLETED — COMMUNITY COMPLETE
+
+### Community features built ✅
+
+#### Database (supabase/community-migration.sql — run this)
+- seasons table (Season 1 seeded, 30 days)
+- clubs table (name, slug, emoji, join_code, is_public, member_count, weekly_km)
+- club_members table (role, share_feed, weekly_km, season_xp)
+- club_feed table (shared sessions from members)
+- challenges table (distance/sessions/streak/time types, reward XP/badge/title)
+- challenge_entries table (progress tracking per user)
+- virtual_races table (distance, entry fee, max entries, finisher cert)
+- virtual_race_entries table (finish time, pace, auto-position)
+- profiles: current_league, season_xp, total_club_km columns
+- Helper RPCs: increment_season_xp, increment_profile_xp, reset_weekly_club_km, reset_season
+
+#### API routes
+- /api/community/clubs: create + list clubs (mine/discover)
+- /api/community/join: join by 6-char code or leave
+- /api/community/challenges: list active global challenges + join
+- /api/community/races: list, enter, submit finish times + auto-positions
+- /api/community/progress: fires after every session (non-blocking)
+  → updates challenge progress, club feed, club km, season XP
+  → triggers league auto-promotion
+
+#### Pages + UI
+- /community: full hub with 4 tabs
+  - Clubs: my clubs with weekly km, join code modal, create club modal
+  - Challenges: active challenges with progress bars, join button
+  - Races: upcoming virtual races, enter + submit flow
+  - Leaderboard: global season XP ranking with league badges, season countdown
+- /community/club/[clubId]: leaderboard + session feed + join code share + leave
+- Community tab added to BottomNav (between Coach and Character)
+
+#### Integration
+- Session logging in TodayClient fires /api/community/progress non-blocking
+- Challenge progress auto-tracks on every logged session
+- Club feed auto-populates when member logs a session (if share_feed=true)
+- League auto-promotes: bronze→silver@500, silver→gold@1500, gold→platinum@3000, platinum→elite@6000
+
+### FULL ROADMAP STATUS
+
+| Phase | Status |
+|---|---|
+| Phase 0 — Stabilise | ✅ Complete |
+| Phase 1 — Monetise (Stripe) | ✅ Complete |
+| Phase 2 — Coach Soft Launch | ✅ Complete |
+| Phase 3 — Full Coach Platform | ✅ Complete |
+| Community (clubs, leaderboards, challenges, races) | ✅ Complete |
+| Phase 4 — Wearables + Native | 🔲 Next |
+| Phase 5 — Scale + Exit-Ready | 🔲 |
+
+### PENDING BEFORE NEXT SESSION
+- [ ] Run supabase/community-migration.sql in Supabase
+- [ ] Add more global challenges in Supabase (distance challenges, streaks)
+- [ ] Seed a virtual race in Supabase to test the flow
+
+### OPERATIONAL REMINDERS
+- Weekly club km reset: call reset_weekly_club_km() every Monday (set up cron)
+- Season reset: call reset_season() at end of each 30-day season, then insert new season
+- Supabase Edge Functions or a cron job needed for automation
