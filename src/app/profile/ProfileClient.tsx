@@ -176,8 +176,10 @@ export default function ProfileClient({
   const allPlanLogsArr = useMemo(() => allPlanLogs, [allPlanLogs])
 
   // Keyed version of allPlanLogs for charts (which expect Record<string, TrainingLog>)
+  // Key includes plan_id to prevent collision when a user has completed multiple plans
+  // (same week_n/day_i/session_i can appear in different plans)
   const allPlanLogsKeyed = useMemo(() =>
-    Object.fromEntries(allPlanLogs.map(l => [`${l.week_n}_${l.day_i}_${l.session_i}`, l])),
+    Object.fromEntries(allPlanLogs.map(l => [`${l.plan_id}_${l.week_n}_${l.day_i}_${l.session_i}`, l])),
   [allPlanLogs])
 
   const rpgStats: RPGStats = useMemo(() => {
