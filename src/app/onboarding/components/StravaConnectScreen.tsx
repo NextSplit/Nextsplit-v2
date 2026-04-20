@@ -6,6 +6,7 @@ import { useOnboarding } from '../context/OnboardingContext'
 import { OnboardingProgressBar } from './OnboardingProgressBar'
 import { createClient } from '@/lib/supabase/client'
 import { db } from '@/lib/supabase/db'
+import { config } from '@/lib/config'
 
 interface StravaActivity {
   distance:       number
@@ -149,7 +150,7 @@ export function StravaConnectScreen() {
   }
 
   const handleConnectStrava = () => {
-    const clientId   = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID
+    const clientId   = config.stravaClientId
     const redirectUri = `${window.location.origin}/auth/strava/callback?onboarding=1`
     const scope      = 'read,activity:read'
     window.location.href = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}`

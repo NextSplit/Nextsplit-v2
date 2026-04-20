@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react'
 import { useSupabase } from '@/hooks/useSupabase'
 import { db } from '@/lib/supabase/db'
 import { useToast } from '@/components/Toast'
+import { config } from '@/lib/config'
 
 function StravaSection({ isConnected, clientId }: { clientId: string | null; isConnected: boolean }) {
-  const STRAVA_CLIENT_ID = clientId ?? process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID
+  const STRAVA_CLIENT_ID = clientId ?? config.stravaClientId
   const redirectUri = typeof window !== 'undefined' ? window.location.origin + '/auth/strava/callback' : ''
   const [disconnecting, setDisconnecting] = useState(false)
   const [syncing, setSyncing] = useState(false)

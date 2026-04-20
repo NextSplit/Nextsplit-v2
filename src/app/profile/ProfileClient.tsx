@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { config } from '@/lib/config'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
@@ -110,7 +111,7 @@ export default function ProfileClient({
   const [showCustomiser, setShowCustomiser] = useState(false)
 
   useEffect(() => {
-    setStravaClientId(process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID ?? null)
+    setStravaClientId(config.stravaClientId || null)
     // Load RPG char selection from localStorage
     const saved = localStorage.getItem('nextsplit_rpg_char')
     if (saved) setCharId(saved)
