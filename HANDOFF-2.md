@@ -1494,3 +1494,79 @@ _Things to do in order before opening to real users_
 - [ ] Verify ProGate enforcement (flip NEXT_PUBLIC_PREMIUM_ENFORCED=true)
 - [ ] Re-enable email confirmation in Supabase
 - [ ] Run supabase/feedback-and-gdpr.sql
+
+
+---
+
+## SESSION 31 COMPLETED — COACH PLATFORM ROADMAP COMPLETE
+
+### Phase 3 — Full Coach Platform ✅ COMPLETE
+
+#### Squad & Athlete Management
+- ✅ /api/coach/squad-status: ACWR, sessions, wellness, 🟢🟡🔴 per athlete
+- ✅ SquadClient rebuilt: status dashboard sorted by urgency (red → amber → green)
+- ✅ Quick actions: Plan Builder, Marketplace, Payouts from squad
+- ✅ /coach/athlete/[athleteId]: 4-tab drill-down (overview/sessions/wellness/message)
+- ✅ AI weekly digest per athlete (generate button in athlete detail)
+
+#### Coach Public Profile
+- ✅ /coach/[slug]: public profile (bio, credentials, plans, enquiry form, links)
+- ✅ Enquiry modal for logged-in athletes
+- ✅ Plan cards shown on profile
+
+#### Plan Marketplace
+- ✅ /marketplace: browse all plans with distance/level filters
+- ✅ NextSplit Official vs Coach Plans sections
+- ✅ Rating, starts, completion rate shown per plan
+- ✅ Activate plan directly from marketplace
+
+#### Plan Builder
+- ✅ /coach/plan-builder: week-by-week session builder
+- ✅ AI suggest week (fills entire week via AI)
+- ✅ 8 session types (easy/tempo/intervals/long/recovery/gym/rest/cross)
+- ✅ Save as draft or publish to marketplace
+- ✅ /api/coach/save-plan: creates/updates plan_templates
+
+#### Reviews & Featured Plans
+- ✅ /api/coach/review: submit reviews, visible at 5+ reviews
+- ✅ Coach reply to reviews
+- ✅ /api/coach/featured-plans: get/set weekly featured plans
+- ✅ Falls back to top-rated plans if no editorial picks set
+
+#### Stripe Connect (Coach Payouts)
+- ✅ /api/stripe/connect: Express account creation + onboarding link
+- ✅ Payouts button in squad quick actions
+- ✅ Status check endpoint (charges_enabled, payouts_enabled)
+
+### SQL to run in Supabase
+File: supabase/phase3-migration.sql
+- coach_reviews table
+- featured_plans table
+- plan_templates new columns (author_type, author_id, price_gbp, is_public, avg_rating etc)
+
+### NEXT SESSION — Stabilise, Test & Refine
+1. Run supabase/phase3-migration.sql
+2. Run supabase/feedback-and-gdpr.sql (still pending)
+3. End-to-end test all coach flows:
+   - Coach setup → squad → invite → athlete accepts
+   - Squad status indicators (🟢🟡🔴) correct
+   - Athlete detail view loads correctly
+   - Annotations appear in athlete Today tab
+   - Messaging works both directions
+   - AI digest generates correctly
+   - Plan builder → save → appears in marketplace
+   - Stripe Connect onboarding completes
+4. Fix any bugs found
+5. Then begin community features (clubs, leaderboards) — gate at 300 MAU
+
+### FULL ROADMAP STATUS
+
+| Phase | Status |
+|---|---|
+| Phase 0 — Stabilise | ✅ Complete |
+| Phase 1 — Monetise (Stripe) | ✅ Complete (test end-to-end) |
+| Phase 2 — Coach Soft Launch | ✅ Complete |
+| Phase 3 — Full Coach Platform | ✅ Complete |
+| Phase 4 — Wearables + Native | 🔲 Not started |
+| Phase 5 — Scale + Exit-Ready | 🔲 Not started |
+| Community (clubs, leaderboards) | 🔲 Gate at 300 MAU |
