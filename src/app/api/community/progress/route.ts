@@ -54,24 +54,40 @@ export async function POST(req: NextRequest) {
       .select('club_id, weekly_km, share_feed')
       .eq('user_id', user.id)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await Promise.all((memberships ?? []).map(async (m: any) => {
-      const newKm = (m.weekly_km ?? 0) + (km ?? 0)
+    if ((memberships ?? []).length > 0) {
+      // Batch-fetch all clubs in one query instead of N individual fetches
+      const clubIds = (memberships ?? []).map((m: { club_id: string }) => m.club_id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const s = supabase as any
+      const { data: clubs } = await (supabase as any)
+        .from('clubs')
+        .select('id, weekly_km, total_km')
+        .in('id', clubIds)
 
-      await Promise.all([
-        s.from('club_members').update({ weekly_km: newKm }).eq('club_id', m.club_id).eq('user_id', user.id),
-        s.from('clubs').select('weekly_km, total_km').eq('id', m.club_id).single().then(
-          ({ data: club }: { data: { weekly_km: number; total_km: number } | null }) => club
-            ? s.from('clubs').update({ weekly_km: (club.weekly_km ?? 0) + (km ?? 0), total_km: (club.total_km ?? 0) + (km ?? 0) }).eq('id', m.club_id)
-            : null
-        ),
-        m.share_feed && session_name
-          ? s.from('club_feed').insert({ club_id: m.club_id, user_id: user.id, session_type: session_type ?? 'run', session_name, km: km ?? null, duration_secs: duration_secs ?? null, pace: pace ?? null, effort: effort ?? null })
-          : null,
-      ])
-    }))
+      const clubMap = Object.fromEntries(
+        (clubs ?? []).map((c: { id: string; weekly_km: number; total_km: number }) => [c.id, c])
+      )
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await Promise.all((memberships ?? []).map(async (m: any) => {
+        const newKm  = (m.weekly_km ?? 0) + (km ?? 0)
+        const club   = clubMap[m.club_id]
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const s = supabase as any
+
+        await Promise.all([
+          s.from('club_members').update({ weekly_km: newKm }).eq('club_id', m.club_id).eq('user_id', user.id),
+          club
+            ? s.from('clubs').update({
+                weekly_km: (club.weekly_km ?? 0) + (km ?? 0),
+                total_km:  (club.total_km  ?? 0) + (km ?? 0),
+              }).eq('id', m.club_id)
+            : null,
+          m.share_feed && session_name
+            ? s.from('club_feed').insert({ club_id: m.club_id, user_id: user.id, session_type: session_type ?? 'run', session_name, km: km ?? null, duration_secs: duration_secs ?? null, pace: pace ?? null, effort: effort ?? null })
+            : null,
+        ])
+      }))
+    }
 
     // 3. Award base session XP to season_xp
     const sessionXP = Math.round((km ?? 0) * 10) + 50 // 50 base + 10 per km

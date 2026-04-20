@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
         .update({ finish_time_secs, pace: paceStr, submitted_at: new Date().toISOString() })
         .eq('race_id', race_id).eq('user_id', user.id)
 
-      // Recalculate positions
+      // Recalculate positions — bulk upsert instead of N individual updates
       const { data: allEntries } = await supabase
         .from('virtual_race_entries')
         .select('id, finish_time_secs')
@@ -95,16 +95,17 @@ export async function POST(req: NextRequest) {
         .not('finish_time_secs', 'is', null)
         .order('finish_time_secs', { ascending: true })
 
-      // Update positions — use Promise.all to batch instead of serial N+1
-      await Promise.all(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (allEntries ?? []).map((entry: any, i: number) =>
-          supabase
-            .from('virtual_race_entries')
-            .update({ position: i + 1 })
-            .eq('id', entry.id)
-        )
-      )
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const positionUpdates = (allEntries ?? []).map((entry: any, i: number) => ({
+        id:       entry.id,
+        position: i + 1,
+      }))
+
+      if (positionUpdates.length > 0) {
+        await supabase
+          .from('virtual_race_entries')
+          .upsert(positionUpdates, { onConflict: 'id' })
+      }
 
       return NextResponse.json({ success: true, pace: paceStr })
     }

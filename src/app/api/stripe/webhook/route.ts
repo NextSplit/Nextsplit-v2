@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getStripe, incrementFoundingCount, PRICES } from '@/lib/stripe'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
+import { config, serverConfig } from '@/lib/config'
 
-// Use service role for webhook — bypasses RLS
+// Use service role for webhook — bypasses RLS (only place in the codebase that uses service role)
 function getServiceClient() {
   return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    config.supabaseUrl,
+    serverConfig.supabaseServiceRoleKey
   )
 }
 
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
     event = getStripe().webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      serverConfig.stripeWebhookSecret
     )
   } catch (err) {
     console.error('Webhook signature verification failed:', err)
