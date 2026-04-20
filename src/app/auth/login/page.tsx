@@ -1,20 +1,29 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { login, signInWithGoogle } from '../actions'
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
     setError(null)
-    const result = await login(formData)
-    if (result?.error) {
-      setError(result.error)
-      setLoading(false)
+    try {
+      const result = await login(formData)
+      if (result?.error) {
+        setError(result.error)
+        setLoading(false)
+      } else {
+        router.push('/today')
+      }
+    } catch {
+      // Server actions throw on redirect() — expected on success
+      router.push('/today')
     }
   }
 

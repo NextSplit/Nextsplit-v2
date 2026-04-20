@@ -1,20 +1,30 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signup, signInWithGoogle } from '../actions'
 
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
     setError(null)
-    const result = await signup(formData)
-    if (result?.error) {
-      setError(result.error)
-      setLoading(false)
+    try {
+      const result = await signup(formData)
+      if (result?.error) {
+        setError(result.error)
+        setLoading(false)
+      } else {
+        // Signup succeeded — server action redirects, but push as fallback
+        router.push('/onboarding')
+      }
+    } catch {
+      // Server actions throw on redirect() — this is expected on success
+      router.push('/onboarding')
     }
   }
 
