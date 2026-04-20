@@ -97,7 +97,7 @@ export default function SignupPage() {
           </form>
 
           <p className="text-xs text-gray-400 text-center">
-            By signing up you agree to our terms and privacy policy.
+            By signing up you agree to our <a href="/terms" className="underline">Terms</a> &amp; <a href="/privacy" className="underline">Privacy Policy</a>.
           </p>
         </div>
 

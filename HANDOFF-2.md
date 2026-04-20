@@ -1217,8 +1217,8 @@ _Things that must be done before opening to real users_
 - [ ] PostHog funnel configured and tracking
 
 ### Legal
-- [ ] Privacy policy live at /privacy
-- [ ] Terms of service live at /terms
+- [x] Privacy policy live at /privacy
+- [x] Terms of service live at /terms
 - [ ] Cookie notice if needed (Stripe/PostHog set cookies)
 - [ ] GDPR: account deletion removes ALL user data (verify cascade works)
 
@@ -1272,3 +1272,33 @@ All screens built and wired:
 - Verify onboarding flow end-to-end on live app
 - Fix any UX issues found in testing
 - Begin Phase 1: Stripe checkout
+
+---
+
+## SESSION 27-28 COMPLETED
+
+### Audit fixes
+- ✅ /api/ai/recommend: auth gate added
+- ✅ Admin seed: SEED_SECRET always required
+- ✅ generate-plan: usage metered to ai_usage
+- ✅ Error boundaries: history + settings
+- ✅ PostHog installed + PostHogProvider in layout
+- ✅ Analytics: src/lib/analytics.ts central event registry
+- ✅ FeedbackWidget: floating 💬 in layout (bug/feature/general + rating)
+- ✅ GDPR: data export in Settings (JSON via export_user_data RPC)
+- ✅ GDPR: account deletion with double confirm (delete_user_account RPC)
+- ✅ secsToMMSS deduplicated — SplitsDisplay + coach route import from sessionUtils
+- ✅ TodayClient split: TodayHeader + TodayModals extracted (783 lines, down from 946)
+- ✅ Privacy policy at /privacy
+- ✅ Terms of service at /terms
+- ✅ Signup page links to real policy pages
+
+### SQL still to run in Supabase
+supabase/feedback-and-gdpr.sql — feedback table + export_user_data + delete_user_account functions
+
+### Vercel env vars still to add
+- NEXT_PUBLIC_POSTHOG_KEY (from posthog.com → project settings)
+- NEXT_PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com
+
+### TodayClient still 783 lines (target <600)
+Next split: extract TodaySessionList (the main session rendering block, ~300 lines)

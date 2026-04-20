@@ -27,7 +27,7 @@ export async function updateSession(request: NextRequest) {
   const url           = request.nextUrl.clone()
   const isAuthRoute   = url.pathname.startsWith('/auth')
   const isOnboarding  = url.pathname.startsWith('/onboarding')
-  const isPublic      = url.pathname === '/' || isAuthRoute || url.pathname.startsWith('/u/')
+  const isPublic      = url.pathname === '/' || isAuthRoute || url.pathname.startsWith('/u/') || url.pathname === '/privacy' || url.pathname === '/terms'
   const isApi         = url.pathname.startsWith('/api')
   const isStatic      = url.pathname.startsWith('/_next') || url.pathname.startsWith('/icons') || url.pathname === '/manifest.json'
 

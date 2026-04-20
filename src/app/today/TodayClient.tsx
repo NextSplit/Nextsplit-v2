@@ -14,18 +14,13 @@ import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/st
 import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import WeatherWidget from '@/components/WeatherWidget'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
-import FocusMode from '@/components/FocusMode'
-import ShareSessionCard from '@/components/ShareSessionCard'
-import WeeklyShareCard from '@/components/WeeklyShareCard'
-import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import StravaSyncButton from '@/components/StravaSyncButton'
-import DarkModeToggle from '@/components/DarkModeToggle'
 import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
-import LogModal from '@/components/LogModal'
+import { TodayHeader } from './TodayHeader'
+import { TodayModals } from './TodayModals'
 import SessionCard from '@/components/SessionCard'
-import AdHocSessionModal from '@/components/AdHocSessionModal'
 
 
 export default function TodayClient() {
@@ -234,66 +229,17 @@ export default function TodayClient() {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
-        <div className="max-w-lg mx-auto">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-lg font-bold text-gray-900">NextSplit</span>
-            <div className="flex items-center gap-2">
-              {/* Streak pill */}
-              {streak.current > 0 && (
-                <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 ${
-                  streak.current >= 7 ? 'bg-amber-100 text-amber-700' :
-                  streak.current >= 3 ? 'bg-orange-50 text-orange-600' :
-                  'bg-gray-100 text-gray-500'
-                }`}>
-                  🔥 {streak.current}
-                </span>
-              )}
-              {plan && (
-                <div className="flex flex-col items-end gap-0.5">
-                  <span className="text-[11px] text-gray-500 font-semibold">
-                    W{weekN}/{plan.total_weeks}
-                  </span>
-                  <div className="w-16 h-1 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        (weekN / plan.total_weeks) >= 0.8 ? 'bg-emerald-400' : 'bg-teal-500'
-                      }`}
-                      style={{ width: `${(weekN / plan.total_weeks) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-              {plan && todaySessions.length > 0 && isToday && (
-                <span className={`text-xs font-semibold ${doneTodayCount === todaySessions.length ? 'text-emerald-500' : 'text-gray-400'}`}>
-                  {doneTodayCount}/{todaySessions.length} done
-                </span>
-              )}
-              <DarkModeToggle />
-            </div>
-          </div>
-
-          {/* Date navigation */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setDateOffset(o => o - 1)}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 text-lg font-light"
-            >‹</button>
-            <div className="flex-1 text-center">
-              <div className="text-sm font-semibold text-gray-900">
-                {isToday ? 'Today' : dateOffset === -1 ? 'Yesterday' : dateOffset === 1 ? 'Tomorrow' : formatDate(viewDate)}
-              </div>
-              <div className="text-[11px] text-gray-400">{formatDate(viewDate)}</div>
-            </div>
-            <button
-              onClick={() => setDateOffset(o => o + 1)}
-              disabled={dateOffset >= 0}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 text-lg font-light disabled:opacity-30"
-            >›</button>
-          </div>
-        </div>
-      </div>
+      <TodayHeader
+        plan={plan}
+        weekN={weekN}
+        streak={streak}
+        dateOffset={dateOffset}
+        setDateOffset={setDateOffset}
+        viewDate={viewDate}
+        isToday={isToday}
+        todaySessions={todaySessions}
+        doneTodayCount={doneTodayCount}
+      />
 
       <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
 
@@ -802,146 +748,36 @@ export default function TodayClient() {
         )}
       </div>
 
-      {/* Undo toast with countdown */}
-      {undoInfo && (
-        <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 animate-slide-up" role="status" aria-live="polite" aria-atomic="true">
-          <div className="bg-gray-900 text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-xl">
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className="text-sm">✓ <span className="font-medium">{undoLabel}</span></span>
-                <span className="text-xs font-bold text-[#34D399] bg-[#34D399]/10 px-2 py-0.5 rounded-full">
-                  +{undoXP} XP
-                </span>
-              </div>
-              <div className="h-0.5 bg-white/20 rounded-full mt-2 overflow-hidden">
-                <div
-                  className="h-full bg-emerald-400 rounded-full transition-all duration-1000"
-                  style={{ width: `${(undoSecsLeft / 8) * 100}%` }}
-                />
-              </div>
-            </div>
-            <div className="flex items-center gap-3 ml-5 shrink-0">
-              <button
-                onClick={() => shareSession && setShareSession(shareSession)}
-                className="text-sm font-bold text-blue-400"
-              >
-                Share
-              </button>
-              <button
-                onClick={handleUndo}
-                className="text-sm font-bold text-[#34D399]"
-              >
-                Undo
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* PB Toast */}
-      {newPB && (
-        <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 pointer-events-none">
-          <div className="relative animate-slide-up">
-            {/* Confetti particles */}
-            <span className="absolute top-0 left-1/2 w-2 h-2 rounded-sm bg-yellow-400 opacity-0" style={{ animation: 'confetti-fall-1 0.8s 0.1s ease-out forwards' }} />
-            <span className="absolute top-0 left-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 opacity-0" style={{ animation: 'confetti-fall-2 0.8s 0.15s ease-out forwards' }} />
-            <span className="absolute top-0 left-1/2 w-2 h-1 rounded-sm bg-teal-400 opacity-0" style={{ animation: 'confetti-fall-3 0.9s 0.05s ease-out forwards' }} />
-            <span className="absolute top-0 left-1/2 w-1.5 h-1.5 rounded-full bg-amber-300 opacity-0" style={{ animation: 'confetti-fall-4 0.85s 0.2s ease-out forwards' }} />
-            <span className="absolute top-0 left-1/2 w-1 h-2 rounded-sm bg-red-400 opacity-0" style={{ animation: 'confetti-fall-5 0.75s 0.1s ease-out forwards' }} />
-            <span className="absolute top-0 left-1/2 w-2 h-1 rounded-full bg-orange-400 opacity-0" style={{ animation: 'confetti-fall-6 0.9s 0.0s ease-out forwards' }} />
-
-            <div className="bg-gradient-to-r from-yellow-400 to-amber-400 text-white rounded-2xl px-4 py-3 shadow-2xl">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl animate-bounce">🏆</span>
-                <div>
-                  <div className="text-sm font-black tracking-wide">New Personal Best!</div>
-                  <div className="text-xs font-semibold opacity-90">{newPB.distance} · {newPB.timeStr}</div>
-                </div>
-                <div className="ml-auto text-xs font-bold bg-white/20 rounded-full px-2 py-0.5">PB ✓</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Focus mode */}
-      {focusSession && plan && (
-        <FocusMode
-          session={focusSession.session}
-          isLogged={!!logs[`${weekN}_${focusSession.dayI}_${focusSession.sessI}`]?.done}
-          onClose={() => setFocusSession(null)}
-          onLog={(elapsedSecs) => {
-            setFocusSession(null)
-            setModalSession({ ...focusSession, prefillDurationSecs: elapsedSecs })
-          }}
-        />
-      )}
-
-      {/* Log modal */}
-      {modalSession && plan && (
-        <LogModal
-          session={modalSession.session}
-          dayIndex={modalSession.dayI}
-          sessionIndex={modalSession.sessI}
-          weekN={weekN}
-          planId={plan.id}
-          existingLog={logs[`${weekN}_${modalSession.dayI}_${modalSession.sessI}`] ?? null}
-          prefillDurationSecs={modalSession.prefillDurationSecs}
-          onClose={() => setModalSession(null)}
-          onSave={handleLogSession}
-        />
-      )}
-
-      {/* Weekly share card modal */}
-      {showWeeklyShare && plan && (
-        <WeeklyShareCard
-          weekN={weekN}
-          totalWeeks={plan.total_weeks}
-          sessionsDone={doneTodayCount}
-          sessionsPlanned={todaySessions.length}
-          kmLogged={Object.values(logs).filter(l => l.done && l.week_n === weekN).reduce((a, l) => a + (l.km ?? 0), 0)}
-          streak={computeStreak(Object.values(logs)).current}
-          xpEarned={Object.values(logs).filter(l => l.done && l.week_n === weekN).reduce((a, l) => {
-            const w = weeks.find(wk => wk.n === l.week_n)
-            const s = w?.days[l.day_i]?.sessions[l.session_i]
-            return a + getSessionXP(s?.c ?? 'run-easy')
-          }, 0)}
-          planName={plan.name}
-          onClose={() => setShowWeeklyShare(false)}
-        />
-      )}
-
-      {/* Share session card modal */}
-      {shareSession && (
-        <ShareSessionCard
-          session={shareSession.session}
-          log={shareSession.log}
-          weekN={weekN}
-          onClose={() => setShareSession(null)}
-        />
-      )}
-
-      {/* Ad-hoc session modal */}
-      {showAdHocModal && plan && (
-        <AdHocSessionModal
-          planId={plan.id}
-          weekN={weekN}
-          dayIndex={planDayIndex}
-          onClose={() => setShowAdHocModal(false)}
-          onSaved={() => { setShowAdHocModal(false); toastSuccess('Session added ✓') }}
-        />
-      )}
-
-      {/* Plan completion ceremony */}
-      {plan?.status === 'completed' && !ceremonyDismissed && (
-        <PlanCompletionCeremony
-          plan={plan}
-          logs={logs}
-          onClose={() => setCeremonyDismissed(true)}
-        />
-      )}
+      <TodayModals
+        plan={plan}
+        weeks={weeks}
+        weekN={weekN}
+        planDayIndex={planDayIndex}
+        logs={logs}
+        modalSession={modalSession}
+        focusSession={focusSession}
+        shareSession={shareSession}
+        showWeeklyShare={showWeeklyShare}
+        showAdHocModal={showAdHocModal}
+        ceremonyDismissed={ceremonyDismissed}
+        undoInfo={undoInfo}
+        undoLabel={undoLabel}
+        undoXP={undoXP}
+        undoSecsLeft={undoSecsLeft}
+        newPB={newPB}
+        doneTodayCount={doneTodayCount}
+        todaySessions={todaySessions}
+        setModalSession={setModalSession}
+        setFocusSession={setFocusSession}
+        setShareSession={setShareSession}
+        setShowWeeklyShare={setShowWeeklyShare}
+        setShowAdHocModal={setShowAdHocModal}
+        setCeremonyDismissed={setCeremonyDismissed}
+        handleUndo={handleUndo}
+        handleLogSession={handleLogSession}
+        toastSuccess={toastSuccess}
+      />
     </div>
   )
 }
 
-// ─── Ad-hoc Session Modal ─────────────────────────────────────────────────────
