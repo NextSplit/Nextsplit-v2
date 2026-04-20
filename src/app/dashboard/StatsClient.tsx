@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import ProGate from '@/components/ProGate'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useRaces } from '@/hooks/useRaces'
@@ -482,10 +483,16 @@ export default function StatsClient() {
                 <CoachingCard />
                 <PBCard logs={logs} />
                 <WeeklyVolumeChart logs={logs} weeks={weeks} />
-                <ACWRChart logs={logs} weeks={weeks} />
-                <PaceTrend logs={logs} />
+                <ProGate feature="acwr_chart" preview>
+                  <ACWRChart logs={logs} weeks={weeks} />
+                </ProGate>
+                <ProGate feature="pace_trends" preview>
+                  <PaceTrend logs={logs} />
+                </ProGate>
                 <SessionSummary logs={logs} weeks={weeks} />
-                <WellnessTrend />
+                <ProGate feature="wellness_trends" preview>
+                  <WellnessTrend />
+                </ProGate>
                 <WeightTrend />
               </>
             )}

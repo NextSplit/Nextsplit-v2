@@ -1,7 +1,9 @@
 'use client'
 
 import { CoachCard } from '@/components/coach/CoachCard'
+import ProGate from '@/components/ProGate'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
+import CoachingCard from '@/components/CoachingCard'
 import WeatherWidget from '@/components/WeatherWidget'
 
 interface WeeklyReport {
@@ -42,7 +44,11 @@ export default function TodayBelowFold({
       <WellnessCheckIn onReadiness={onReadiness} />
 
       {/* Weather */}
-      {hasRunSessions && <WeatherWidget />}
+      {hasRunSessions && (
+        <ProGate feature="ai_adaptive_suggestions" fallback={null}>
+          <WeatherWidget />
+        </ProGate>
+      )}
 
       {/* Monday weekly report */}
       {weeklyReport && (

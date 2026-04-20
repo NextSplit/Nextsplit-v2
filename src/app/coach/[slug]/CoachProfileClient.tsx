@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 import { useState } from 'react'
 import type { CoachProfile } from '@/types/database'
 
@@ -38,7 +40,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
             {/* Avatar */}
             <div className="w-20 h-20 rounded-3xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-3xl shrink-0">
               {coach.photo_url ? (
-                <img src={coach.photo_url} alt={coach.display_name} className="w-full h-full object-cover rounded-3xl" />
+                <Image src={coach.photo_url} alt={coach.display_name ?? 'Coach'} fill className="object-cover rounded-3xl" />
               ) : '🏃'}
             </div>
             <div className="flex-1 min-w-0">

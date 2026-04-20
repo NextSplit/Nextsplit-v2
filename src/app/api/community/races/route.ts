@@ -95,13 +95,16 @@ export async function POST(req: NextRequest) {
         .not('finish_time_secs', 'is', null)
         .order('finish_time_secs', { ascending: true })
 
-      // Update positions
-      for (let i = 0; i < (allEntries ?? []).length; i++) {
-        await supabase
-          .from('virtual_race_entries')
-          .update({ position: i + 1 })
-          .eq('id', (allEntries ?? [])[i].id)
-      }
+      // Update positions — use Promise.all to batch instead of serial N+1
+      await Promise.all(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (allEntries ?? []).map((entry: any, i: number) =>
+          supabase
+            .from('virtual_race_entries')
+            .update({ position: i + 1 })
+            .eq('id', entry.id)
+        )
+      )
 
       return NextResponse.json({ success: true, pace: paceStr })
     }

@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -46,7 +48,7 @@ export default function InviteLandingClient({
         {/* Coach avatar */}
         <div className="flex justify-center">
           {photoUrl ? (
-            <img src={photoUrl} alt={coachName} className="w-20 h-20 rounded-3xl object-cover border-2 border-teal-500/30" />
+            <Image src={photoUrl} alt={coachName} width={80} height={80} className="rounded-3xl object-cover border-2 border-teal-500/30" />
           ) : (
             <div className="w-20 h-20 rounded-3xl bg-teal-500/20 border-2 border-teal-500/30 flex items-center justify-center text-4xl">
               🏃

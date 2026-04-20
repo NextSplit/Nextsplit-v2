@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
           await incrementFoundingCount(serverSupabase)
         }
 
-        console.log(`✅ Pro activated for user ${userId} (founding: ${isFounding})`)
+        console.log(`✅ Pro subscription activated (founding: ${isFounding})`)
         break
       }
 
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
           pro_expires_at:       new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
         }).eq('id', uid)
 
-        console.log(`✅ Subscription updated for user ${uid}: ${sub.status}`)
+        console.log(`✅ Subscription updated: ${sub.status}`)
         break
       }
 
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
             subscription_status: 'canceled',
             pro_expires_at:      new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
           }).eq('id', data.id)
-          console.log(`✅ Subscription cancelled for user ${data.id}`)
+          console.log(`✅ Subscription cancelled`)
         }
         break
       }

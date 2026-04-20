@@ -18,6 +18,7 @@ export function usePlanHistory() {
   const supabase = useSupabase()
   const [plans, setPlans] = useState<ArchivedPlanSummary[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError]   = useState<string | null>(null)
   const [tick, setTick] = useState(0)
   const refresh = useCallback(() => setTick(t => t + 1), [])
 
