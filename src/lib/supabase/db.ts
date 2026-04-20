@@ -37,3 +37,5 @@ export type TableName =
   | 'strava_connections'
   | 'ai_usage'
   | 'push_subscriptions'
+  | 'user_goals'
+  | 'sport_interest_waitlist'

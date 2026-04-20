@@ -393,7 +393,7 @@ _1–2 weeks_
 | GitHub Actions CI/CD | ✅ |
 | Sentry error monitoring | ✅ |
 | Vercel Analytics | ✅ |
-| Manual test all 4 onboarding flows | 🔲 |
+| Manual test all 4 onboarding flows | ⏳ in progress |
 | Proper error boundary with recovery | ✅ |
 | Verify push notifications on Android | 🔲 |
 
@@ -1228,3 +1228,28 @@ _Things that must be done before opening to real users_
 - [ ] PWA install prompt tested on iOS and Android
 - [ ] All 4 onboarding paths tested end-to-end on mobile
 - [ ] `NEXT_PUBLIC_PREMIUM_ENFORCED` set to `true` in Vercel
+
+---
+
+## SESSION 27 PROGRESS
+
+### Sprint 1 — Onboarding Foundation ✅
+- Onboarding context (11-step state machine) built
+- Welcome screen (Step 1) built
+- Character creation screen (Step 2) built — body type, skin tone, hair, face, kit, accessories, starting title, randomise
+- @handle system with real-time uniqueness check
+- Progress bar with character runner sprite
+- OnboardingEntry shell wired (steps 3–11 are placeholders)
+
+### Next session — Sprint 2
+Build steps 3–8 in order:
+- Step 3: Sport select (running active, others coming soon + notify me)
+- Step 4: About You
+- Step 5: Your Running (sliders, race times, surfaces)
+- Step 6: Goals (A/B/C priority, multiple goal types)
+- Step 7: Your Life (days, timing, surfaces)
+- Step 8: Gym config
+
+### SQL to run in Supabase before next session
+File: `supabase/onboarding-migration.sql` in repo root
+Must be run before onboarding save actions will work.

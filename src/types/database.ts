@@ -484,3 +484,107 @@ export interface PlanTemplateWithStats extends PlanTemplate {
   is_featured_this_week?: boolean
 }
 
+
+// ── Onboarding & Character Types (Sprint 1) ───────────────────────────────────
+
+export interface CharacterConfig {
+  // Appearance
+  bodyType:      'slim' | 'athletic' | 'stocky'
+  skinTone:      string   // hex or token e.g. 'tone-1' through 'tone-6'
+  hairStyle:     'short' | 'medium' | 'long' | 'ponytail' | 'bun' | 'none'
+  hairColour:    string   // hex or token
+  faceShape:     'oval' | 'round' | 'square' | 'heart'
+  // Kit
+  kitColour:     string   // primary kit hex
+  shoeColour:    string   // shoe hex
+  // Accessories (optional)
+  accessories:   Array<'cap' | 'sunglasses' | 'watch' | 'none'>
+  // Identity
+  startingTitle: string   // e.g. "The Newcomer", "The Determined"
+}
+
+export interface RecentRaceTimes {
+  '5k'?:       number   // seconds
+  '10k'?:      number
+  'half'?:     number
+  'marathon'?: number
+}
+
+export interface ProfileOnboarding extends Profile {
+  // Character
+  handle:                string | null
+  character_config:      CharacterConfig | null
+  // Sport
+  sport_focus:           string[]
+  // About You
+  biological_sex:        'male' | 'female' | 'prefer_not_to_say' | null
+  health_flags:          string[]
+  // Running
+  running_experience:    'lt_6mo' | '6_12mo' | '1_3yr' | '3yr_plus' | null
+  weekly_km_current:     number
+  recent_race_times:     RecentRaceTimes | null
+  longest_recent_run:    number | null
+  run_surfaces:          string[]
+  // Life
+  training_days:         number
+  preferred_long_run_day: string | null
+  preferred_run_time:    'morning' | 'lunchtime' | 'evening' | 'varies' | null
+  // Gym
+  gym_enabled:           boolean
+  gym_sessions_per_week: number
+  gym_equipment:         string[]
+  gym_focus:             'general' | 'runner_specific' | 'hypertrophy' | 'rehab' | null
+  // State
+  onboarding_complete:   boolean
+  onboarding_step:       number
+}
+
+export interface UserGoal {
+  id:                   string
+  user_id:              string
+  goal_type:            'race' | 'time_target' | 'distance_milestone' | 'general_fitness' | 'continuous'
+  priority:             'A' | 'B' | 'C'
+  status:               'active' | 'completed' | 'abandoned'
+  race_name:            string | null
+  race_date:            string | null
+  race_distance_km:     number | null
+  race_distance_label:  string | null
+  target_time_secs:     number | null
+  actual_time_secs:     number | null
+  notes:                string | null
+  created_at:           string
+  updated_at:           string
+}
+
+export interface SportInterestWaitlist {
+  id:         string
+  user_id:    string
+  sport:      string
+  created_at: string
+}
+
+// Starting titles shown at character creation
+export const STARTING_TITLES = [
+  'The Newcomer',
+  'The Determined',
+  'The Early Riser',
+  'The Weekend Warrior',
+  'The Comeback Kid',
+  'The Quiet Achiever',
+  'The Pacemaker',
+  'The Chaser',
+] as const
+
+export type StartingTitle = typeof STARTING_TITLES[number]
+
+// Sports for the sport select screen
+export const SPORTS = [
+  { id: 'running',   label: 'Running',          emoji: '🏃', active: true },
+  { id: 'gym',       label: 'Gym / Strength',   emoji: '🏋️', active: true },
+  { id: 'cycling',   label: 'Cycling',          emoji: '🚴', active: false },
+  { id: 'swimming',  label: 'Swimming',         emoji: '🏊', active: false },
+  { id: 'triathlon', label: 'Triathlon',        emoji: '🏅', active: false },
+  { id: 'hiking',    label: 'Hiking / Trails',  emoji: '🥾', active: false },
+] as const
+
+export type SportId = typeof SPORTS[number]['id']
