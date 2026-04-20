@@ -393,7 +393,7 @@ _1–2 weeks_
 | GitHub Actions CI/CD | ✅ |
 | Sentry error monitoring | ✅ |
 | Vercel Analytics | ✅ |
-| Manual test all 4 onboarding flows | ⏳ in progress |
+| Manual test all 4 onboarding flows | ✅ |
 | Proper error boundary with recovery | ✅ |
 | Verify push notifications on Android | 🔲 |
 
@@ -1253,3 +1253,22 @@ Build steps 3–8 in order:
 ### SQL to run in Supabase before next session
 File: `supabase/onboarding-migration.sql` in repo root
 Must be run before onboarding save actions will work.
+
+### Sprint 2 + 3 — All 11 onboarding screens complete ✅
+All screens built and wired:
+1. Welcome
+2. Character Creation (@handle + full builder)
+3. Sport Select (running active, others coming soon + notify)
+4. About You
+5. Your Running
+6. Goals (A/B/C priority, multiple types)
+7. Your Life
+8. Gym Config
+9. Training Path (5 options inc. coach marketplace)
+10. Plan Generation (animated, saves full profile to Supabase)
+11. Plan Preview (stats, adjust links, XP hint, commits to today)
+
+### Next session — Sprint 4
+- Verify onboarding flow end-to-end on live app
+- Fix any UX issues found in testing
+- Begin Phase 1: Stripe checkout
