@@ -1,6 +1,8 @@
 'use client'
 
 import { CoachCard } from '@/components/coach/CoachCard'
+import TodayProgressStrip from './TodayProgressStrip'
+import type { TrainingLog } from '@/types/database'
 import ProGate from '@/components/ProGate'
 import WellnessCheckIn from '@/components/WellnessCheckIn'
 import CoachingCard from '@/components/CoachingCard'
@@ -18,17 +20,22 @@ interface Props {
   isToday:         boolean
   hasRunSessions:  boolean
   weeklyReport:    WeeklyReport | null
-  planDay:         number   // 0-6 (plan day index)
+  planDay:         number
   isWeekDone:      boolean
   weekN:           number
   hasPlanNextWeek: boolean
   onReadiness:     (score: number) => void
   onAdvanceWeek:   () => Promise<void>
+  // Progress strip
+  logs:   Record<string, TrainingLog>
+  streak: number
+  acwr:   number | null
 }
 
 export default function TodayBelowFold({
   isToday, hasRunSessions, weeklyReport, planDay,
   isWeekDone, weekN, hasPlanNextWeek, onReadiness, onAdvanceWeek,
+  logs, streak, acwr,
 }: Props) {
   if (!isToday) return null
 
@@ -37,6 +44,9 @@ export default function TodayBelowFold({
 
   return (
     <>
+      {/* Progress strip — weekly stats at a glance */}
+      <TodayProgressStrip logs={logs} streak={streak} acwr={acwr} weekN={weekN} />
+
       {/* Coach card */}
       <CoachCard />
 

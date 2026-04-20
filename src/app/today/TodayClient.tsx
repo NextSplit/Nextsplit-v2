@@ -11,6 +11,7 @@ import type { PlanDay, PlanSession, PlanWeek, TrainingLog } from '@/types/databa
 import { getSessionXP } from '@/lib/rpg'
 import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/streak'
+import { calcACWR } from '@/lib/statsUtils'
 import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import TodayBelowFold from './TodayBelowFold'
 import StravaSyncButton from '@/components/StravaSyncButton'
@@ -207,6 +208,14 @@ export default function TodayClient() {
   const paceZones = useMemo(() => derivePaceZones(Object.values(allPlanLogs)), [allPlanLogs])
   const streak = computeStreak(allLogsArray)
   const consistency = plan ? computeConsistency(allLogsArray, weeks, weekN) : { thisWeekPct: 0, last4WeekPct: 0 }
+
+  // ACWR — current week's value for progress strip
+  const acwrCurrent = useMemo(() => {
+    if (!weeks.length || !allLogsArray.length) return null
+    const acwrData = calcACWR(allLogsArray, weeks)
+    const current  = acwrData.find(d => d.week === weekN)
+    return current?.acwr ?? null
+  }, [allLogsArray, weeks, weekN])
 
   // Monday weekly report — shown on Mondays when current week has just started
   const isMondayStart = new Date().getDay() === 1 && plan && weekN > 1
@@ -634,6 +643,9 @@ export default function TodayClient() {
                 try { await advanceWeek(); toastSuccess(`Week ${weekN + 1} started!`) }
                 catch { toastError('Failed to advance week — try again') }
               }}
+              logs={logs}
+              streak={streak.current}
+              acwr={acwrCurrent}
             />
           </>
         )}

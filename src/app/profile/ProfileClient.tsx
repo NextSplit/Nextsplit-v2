@@ -22,6 +22,14 @@ import { computeStreak, computeConsistency } from '@/lib/streak'
 import { useSupabase } from '@/hooks/useSupabase'
 import type { TrainingLog, PlanWeek } from '@/types/database'
 import LevelUpScreen from '@/components/rpg/LevelUpScreen'
+import WeeklyVolumeChart from '@/components/charts/WeeklyVolumeChart'
+import PBCard from '@/components/charts/PBCard'
+import ACWRChart from '@/components/charts/ACWRChart'
+import PaceTrend from '@/components/charts/PaceTrend'
+import PaceCalculator from '@/components/charts/PaceCalculator'
+import TrainingZones from '@/components/charts/TrainingZones'
+import WellnessTrend from '@/components/charts/WellnessTrend'
+import WeightTrend from '@/components/charts/WeightTrend'
 import CharSelectModal from '@/components/rpg/CharSelectModal'
 import BadgeToast from '@/components/rpg/BadgeToast'
 import NextRewardCard from '@/components/rpg/NextRewardCard'
@@ -93,6 +101,7 @@ export default function ProfileClient({
   // RPG state — persisted in localStorage, charId optionally in Supabase
   const [charId, setCharId] = useState('m1')
   const [showCharSelect, setShowCharSelect] = useState(false)
+  const [profileTab, setProfileTab] = useState<'character' | 'stats' | 'records'>('character')
   const [badgeToast, setBadgeToast] = useState<RPGBadge | null>(null)
   const [seenBadgeIds, setSeenBadgeIds] = useState<string[]>([])
   const [kitColour, setKitColour] = useState('#0D9488')
@@ -163,6 +172,11 @@ export default function ProfileClient({
   const allLogs = useMemo(() => Object.values(logs), [logs])
   // allPlanLogsArr = all plans ever (for cross-plan RPG XP)
   const allPlanLogsArr = useMemo(() => allPlanLogs, [allPlanLogs])
+
+  // Keyed version of allPlanLogs for charts (which expect Record<string, TrainingLog>)
+  const allPlanLogsKeyed = useMemo(() =>
+    Object.fromEntries(allPlanLogs.map(l => [`${l.week_n}_${l.day_i}_${l.session_i}`, l])),
+  [allPlanLogs])
 
   const rpgStats: RPGStats = useMemo(() => {
     // Real wellness count from Supabase (last 90 days)
@@ -311,9 +325,33 @@ export default function ProfileClient({
           </a>
           <DarkModeToggle />
         </div>
+
+        {/* Tab switcher */}
+        <div className="flex mt-3 border-b border-gray-100">
+          {([
+            { id: 'character', label: '🏃 Character' },
+            { id: 'stats',     label: '📊 Stats'     },
+            { id: 'records',   label: '🏆 Records'   },
+          ] as const).map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setProfileTab(tab.id)}
+              className={`flex-1 py-2.5 text-xs font-bold border-b-2 transition-all ${
+                profileTab === tab.id
+                  ? 'border-teal-500 text-teal-600'
+                  : 'border-transparent text-gray-400'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+
+        {/* ── CHARACTER TAB ── */}
+        {profileTab === 'character' && <>
 
         {/* Hero RPG Card — skeleton while XP data loads */}
         {allLogsLoading ? (
@@ -466,6 +504,70 @@ export default function ProfileClient({
             >
               <span id="profile-copy-confirm">Copy link</span>
             </button>
+          </div>
+        )}
+
+        </> /* end character tab */}
+
+        {/* ── STATS TAB ── */}
+        {profileTab === 'stats' && (
+          <div className="space-y-4">
+            {allPlanLogs.length < 4 ? (
+              <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center space-y-2">
+                <div className="text-3xl">📊</div>
+                <p className="text-sm font-bold text-gray-800">Stats unlock after 4 sessions</p>
+                <p className="text-xs text-gray-400">Log more sessions to see ACWR, pace trends and training zones.</p>
+              </div>
+            ) : (
+              <>
+                <WeeklyVolumeChart logs={allPlanLogsKeyed} weeks={weeks} />
+                <ACWRChart logs={allPlanLogsKeyed} weeks={weeks} />
+                <PaceTrend logs={allPlanLogsKeyed} />
+                <WellnessTrend />
+                <WeightTrend />
+                <TrainingZones logs={allPlanLogsKeyed} />
+                <PaceCalculator />
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ── RECORDS TAB ── */}
+        {profileTab === 'records' && (
+          <div className="space-y-4">
+            <PBCard logs={allPlanLogsKeyed} />
+            <TrainingSummary logs={allPlanLogsKeyed} />
+            {/* Race history */}
+            <a href="/races" className="flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3.5">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">🏁</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">Race history</p>
+                  <p className="text-xs text-gray-400">All your logged races and times</p>
+                </div>
+              </div>
+              <span className="text-gray-300 text-lg">›</span>
+            </a>
+            <a href="/history" className="flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3.5">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">📅</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">Session history</p>
+                  <p className="text-xs text-gray-400">Every session you&apos;ve logged</p>
+                </div>
+              </div>
+              <span className="text-gray-300 text-lg">›</span>
+            </a>
+            <a href="/dashboard" className="flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3.5">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">📈</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">Full analytics dashboard</p>
+                  <p className="text-xs text-gray-400">All charts, predictions, coaching summary</p>
+                </div>
+              </div>
+              <span className="text-gray-300 text-lg">›</span>
+            </a>
           </div>
         )}
 
