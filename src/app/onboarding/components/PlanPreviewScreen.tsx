@@ -181,26 +181,75 @@ export function PlanPreviewScreen() {
           </div>
         </div>
 
+        {/* Adapt section — paywall reveal moment (Product Pillar spec) */}
+        <div className="rounded-2xl border-2 overflow-hidden"
+          style={{ borderColor: 'var(--ns-forest)' }}>
+          {/* Header — always visible */}
+          <div className="px-4 py-3 flex items-center gap-2"
+            style={{ background: 'var(--ns-forest)', color: 'white' }}>
+            <span className="text-base">🧠</span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider opacity-70">NextSplit Pro</p>
+              <p className="text-sm font-bold">Plan adaptation</p>
+            </div>
+          </div>
+
+          {/* Preview — blurred for free users */}
+          <div className="relative bg-white">
+            <div className="px-4 py-4 space-y-2" style={{ filter: 'blur(3px)', userSelect: 'none' }}>
+              <div className="flex items-start gap-2 text-xs text-gray-600">
+                <span>↩️</span>
+                <span>Missed session detected — plan rebuilt around what actually happened</span>
+              </div>
+              <div className="flex items-start gap-2 text-xs text-gray-600">
+                <span>⚠️</span>
+                <span>ACWR at 1.4 — Thursday intervals moved to protect recovery</span>
+              </div>
+              <div className="flex items-start gap-2 text-xs text-gray-600">
+                <span>📅</span>
+                <span>4 weeks to race — taper begins next Monday</span>
+              </div>
+            </div>
+
+            {/* Unlock overlay */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center"
+              style={{ background: 'rgba(255,255,255,0.85)' }}>
+              <p className="text-sm font-bold text-gray-900 mb-1">
+                Your plan adapts around real life
+              </p>
+              <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+                Miss a session, get ill, change your race date — the plan rebuilds itself. This is what keeps runners training.
+              </p>
+              <a href="/profile?upgrade=1"
+                className="inline-block text-white text-xs font-bold px-4 py-2 rounded-xl"
+                style={{ background: 'var(--ns-forest)' }}>
+                Unlock with Pro — £4.99/mo →
+              </a>
+              <p className="text-[10px] text-gray-400 mt-2">Cancel any time. Free plan continues working without this.</p>
+            </div>
+          </div>
+        </div>
+
         {/* Adjust option */}
         <div className="text-center">
           <button
             onClick={() => setStep(10)}
-            className="text-sm text-slate-400 hover:text-slate-600 transition-colors underline"
+            className="text-sm text-gray-400 hover:text-gray-600 transition-colors underline"
           >
             Something not right? Go back and adjust
           </button>
         </div>
 
         {/* What happens next */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">What happens next</p>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">What happens next</p>
           {[
-            { emoji: '📅', text: 'Your Today tab shows today\'s sessions' },
-            { emoji: '📊', text: 'Log runs and gym sessions to earn XP' },
-            { emoji: '🤖', text: 'Your AI coach gives feedback as you train' },
-            { emoji: '🏆', text: 'Hit milestones to unlock badges and level up' },
+            { emoji: '📅', text: 'Your Today tab shows today\'s sessions — no setup needed' },
+            { emoji: '📊', text: 'Log runs and gym sessions to earn XP and level up' },
+            { emoji: '🌅', text: 'Your runner class reveals after 4 weeks of training data' },
+            { emoji: '🏆', text: 'Hit milestones to unlock character cosmetics and badges' },
           ].map(item => (
-            <div key={item.text} className="flex items-start gap-3 text-xs text-slate-600">
+            <div key={item.text} className="flex items-start gap-3 text-xs text-gray-600">
               <span>{item.emoji}</span>
               <span>{item.text}</span>
             </div>
@@ -210,11 +259,12 @@ export function PlanPreviewScreen() {
       </div>
 
       {/* Enter app CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4">
         <button
           onClick={handleEnter}
           disabled={entering}
-          className="w-full bg-teal-500 text-white py-4 rounded-2xl text-base font-black tracking-tight hover:bg-teal-600 transition-all active:scale-95 disabled:opacity-70"
+          className="w-full text-white py-4 rounded-2xl text-base font-black tracking-tight transition-all active:scale-95 disabled:opacity-70"
+          style={{ background: 'var(--ns-forest)' }}
         >
           {entering ? 'Let\'s go…' : 'Start training →'}
         </button>

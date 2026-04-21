@@ -328,6 +328,7 @@ export default function TodayClient() {
         todaySessions={todaySessions}
         doneTodayCount={doneTodayCount}
         displayName={profile?.display_name ?? null}
+        readiness={readinessScore}
       />
 
       <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
@@ -408,26 +409,41 @@ export default function TodayClient() {
           </div>
         )}
 
-        {/* No plan state */}
+        {/* No plan state — Product Pillar: "the gap between signing up and plan start is a high-churn moment that needs a designed experience" */}
         {!loading && !plan && (() => {
           const hadPlan = typeof window !== 'undefined' && !!localStorage.getItem('nextsplit_plan_completed')
           return (
-            <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
-              <div className="text-5xl mb-4">{hadPlan ? '🎉' : '🏃'}</div>
-              <h2 className="text-base font-bold text-gray-900 mb-2">
-                {hadPlan ? 'Plan complete — what\'s next?' : 'No active plan'}
-              </h2>
-              <p className="text-sm text-gray-500 mb-5">
-                {hadPlan
-                  ? 'Amazing work finishing your plan. Ready to pick your next challenge?'
-                  : 'Choose a training plan to get started.'}
-              </p>
-              <a href="/onboarding" className="inline-block bg-[var(--ns-forest)] text-white px-6 py-3 rounded-xl text-sm font-semibold">
-                {hadPlan ? 'Start next plan →' : 'Choose a plan →'}
-              </a>
-              {hadPlan && (
-                <div className="mt-3">
-                  <a href="/profile" className="text-xs text-gray-400 underline">View your history</a>
+            <div className="space-y-3">
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+                <div className="text-4xl mb-3">{hadPlan ? '🎉' : '🌅'}</div>
+                <h2 className="text-base font-bold text-gray-900 mb-2">
+                  {hadPlan ? 'Plan complete — what\'s next?' : 'Your plan is waiting'}
+                </h2>
+                <p className="text-sm text-gray-500 mb-5 leading-relaxed">
+                  {hadPlan
+                    ? 'Great work finishing your plan. Pick your next challenge whenever you\'re ready — no rush.'
+                    : 'Choose a training plan and it\'ll show up here. Your first session could be today.'}
+                </p>
+                <a href="/onboarding"
+                  className="inline-block text-white px-6 py-3 rounded-xl text-sm font-bold"
+                  style={{ background: 'var(--ns-forest)' }}>
+                  {hadPlan ? 'Start next plan →' : 'Choose a plan →'}
+                </a>
+                {hadPlan && (
+                  <div className="mt-3">
+                    <a href="/profile" className="text-xs text-gray-400 underline">View your history</a>
+                  </div>
+                )}
+              </div>
+
+              {/* Warm reassurance — reduces anxiety about "falling behind" */}
+              {!hadPlan && (
+                <div className="bg-[var(--ns-forest-light)] rounded-2xl px-4 py-3 flex items-start gap-2">
+                  <span className="text-base mt-0.5">💡</span>
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-forest)' }}>
+                    <span className="font-bold">No rush to start.</span>{' '}
+                    When you activate a plan, the clock starts from that day — not from when you signed up. No catch-up required.
+                  </p>
                 </div>
               )}
             </div>
@@ -510,6 +526,11 @@ export default function TodayClient() {
             )}
 
             {/* ── HERO: Session cards ─────────────────────────────────── */}
+            {todaySessions.length > 1 && isToday && (
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1">
+                {todaySessions.length} sessions today
+              </p>
+            )}
             {todaySessions.map((session, sessI) => {
               const key = `${weekN}_${planDayIndex}_${sessI}`
               const log = logs[key] ?? null

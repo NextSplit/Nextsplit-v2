@@ -62,8 +62,19 @@ export function YourLifeScreen() {
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
         <div className="mb-2">
-          <h1 className="text-xl font-black text-slate-900">Your life</h1>
-          <p className="text-sm text-slate-500 mt-1">We build your plan around your schedule — not the other way round.</p>
+          {data.trainingPath === 'lifestyle' ? (
+            <>
+              <h1 className="text-xl font-black text-gray-900">What works for your life?</h1>
+              <p className="text-sm text-gray-500 mt-1">
+                No race goals, no pressure — just tell us when you can run and we&apos;ll build around that.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-xl font-black text-gray-900">Your life</h1>
+              <p className="text-sm text-gray-500 mt-1">We build your plan around your schedule — not the other way round.</p>
+            </>
+          )}
         </div>
 
         {/* Training days */}
@@ -87,16 +98,49 @@ export function YourLifeScreen() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-teal-600 font-semibold text-center">
+          <p className="text-xs font-semibold text-center" style={{ color: 'var(--ns-forest)' }}>
             {trainingDays.length} training {trainingDays.length === 1 ? 'day' : 'days'} selected
           </p>
         </div>
 
+        {/* Enjoyment question — Lifestyle path only (Product Pillar spec) */}
+        {data.trainingPath === 'lifestyle' && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
+            <div>
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">What do you enjoy most?</label>
+              <p className="text-xs text-gray-400 mt-1">Shapes the type of sessions we suggest</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { id: 'easy_running',  label: '😌 Easy running',    desc: 'Comfortable, conversational' },
+                { id: 'variety',       label: '🔀 Variety',          desc: 'Mix of different sessions' },
+                { id: 'outdoors',      label: '🌿 Being outdoors',   desc: 'Nature over numbers' },
+                { id: 'structure',     label: '📋 Some structure',   desc: 'A plan to follow' },
+              ].map(opt => {
+                const isOn = (data as { runningEnjoyment?: string }).runningEnjoyment === opt.id
+                return (
+                  <button key={opt.id}
+                    onClick={() => update({ runningEnjoyment: opt.id } as never)}
+                    className="py-3 px-3 rounded-2xl border-2 text-left transition-all"
+                    style={isOn
+                      ? { background: 'var(--ns-forest-light)', borderColor: 'var(--ns-forest)' }
+                      : { background: 'white', borderColor: '#e5e7eb' }}>
+                    <p className="text-xs font-bold text-gray-800">{opt.label}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{opt.desc}</p>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Long run day */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
           <div>
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Preferred long run day</label>
-            <p className="text-xs text-slate-400 mt-1">Usually a weekend — when you have the most time</p>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              {data.trainingPath === 'lifestyle' ? 'Best day for a longer run?' : 'Preferred long run day'}
+            </label>
+            <p className="text-xs text-gray-400 mt-1">Usually a weekend — when you have the most time</p>
           </div>
           <div className="grid grid-cols-4 gap-2">
             {LONG_RUN_DAYS.map(day => (

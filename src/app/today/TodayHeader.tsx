@@ -15,11 +15,13 @@ interface Props {
   todaySessions:   PlanSession[]
   doneTodayCount:  number
   displayName:     string | null
+  readiness?:      number | null   // 1–5 from wellness log (5 = great, 1 = low)
 }
 
 export function TodayHeader({
   plan, weekN, streak, dateOffset, setDateOffset,
   viewDate, isToday, todaySessions, doneTodayCount, displayName,
+  readiness,
 }: Props) {
   const dateLabel =
     isToday       ? 'Today'
@@ -33,9 +35,15 @@ export function TodayHeader({
   const allDone      = todaySessions.length > 0 && doneTodayCount === todaySessions.length
   const primarySession = todaySessions[0]
 
+  // Readiness-adjusted session line — Product Pillar spec:
+  // "Low readiness (1-2): soften the session line, suggest but don't push"
+  const isLowReadiness = readiness !== null && readiness !== undefined && readiness <= 2
+
   // Plain-English session line — from Product & UX Pillar spec
   const sessionLine = primarySession
-    ? getSessionPlainEnglish(primarySession.c ?? '', primarySession.n ?? '')
+    ? isLowReadiness
+      ? `Easy option today — ${getSessionPlainEnglish(primarySession.c ?? '', primarySession.n ?? '')} if you feel up to it`
+      : getSessionPlainEnglish(primarySession.c ?? '', primarySession.n ?? '')
     : null
 
   // Race countdown — computed outside render via prop, stable reference
@@ -53,11 +61,18 @@ export function TodayHeader({
             <p className="text-xs font-semibold text-gray-400 mb-0.5">
               {greeting}{firstName ? `, ${firstName}` : ''} —
             </p>
-            <p className="text-sm font-semibold leading-snug" style={{ color: 'var(--ns-forest)' }}>
+            <p className={`text-sm font-semibold leading-snug ${isLowReadiness ? 'text-amber-600' : ''}`}
+              style={isLowReadiness ? {} : { color: 'var(--ns-forest)' }}>
               {allDone
                 ? `All done today. ${todaySessions.length === 1 ? 'One session' : `${todaySessions.length} sessions`} complete. ✓`
                 : sessionLine}
             </p>
+            {/* Low readiness note — coach voice, preserves autonomy */}
+            {isLowReadiness && !allDone && (
+              <p className="text-[10px] text-amber-500 mt-0.5">
+                Your readiness is low today — listen to how you feel.
+              </p>
+            )}
           </div>
         )}
 

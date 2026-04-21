@@ -126,23 +126,66 @@ export function YourRunningScreen() {
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
         <div className="mb-2">
-          <h1 className="text-xl font-black text-slate-900">Your running</h1>
-          <p className="text-sm text-slate-500 mt-1">Helps us set the right starting point for your plan.</p>
+          {data.trainingPath === 'ai_bespoke' ? (
+            <>
+              <h1 className="text-xl font-black text-gray-900">Tell us about your training</h1>
+              <p className="text-sm text-gray-500 mt-1">
+                The more specific you are, the better the plan. These questions are more detailed than other paths — because they need to be.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-xl font-black text-gray-900">Your running</h1>
+              <p className="text-sm text-gray-500 mt-1">Helps us set the right starting point for your plan.</p>
+            </>
+          )}
         </div>
 
+        {/* Deeper question for AI Bespoke — signals intelligence (Product Pillar spec) */}
+        {data.trainingPath === 'ai_bespoke' && (
+          <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest)]20 rounded-2xl p-4">
+            <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--ns-forest)' }}>
+              One important question first
+            </p>
+            <p className="text-sm font-semibold text-gray-900 mb-3 leading-snug">
+              What happened the last time you didn&apos;t complete a training plan?
+            </p>
+            <div className="space-y-2">
+              {[
+                { id: 'life_got_busy',  label: 'Life got in the way — work, family, travel' },
+                { id: 'too_hard',       label: 'The plan was too demanding to keep up with' },
+                { id: 'injury',         label: 'I picked up an injury' },
+                { id: 'lost_motivation',label: 'Lost motivation when progress felt slow' },
+                { id: 'first_plan',     label: 'This is my first structured training plan' },
+              ].map(opt => {
+                const isOn = (data as { prevPlanDropReason?: string }).prevPlanDropReason === opt.id
+                return (
+                  <button key={opt.id}
+                    onClick={() => update({ prevPlanDropReason: opt.id } as never)}
+                    className="w-full text-left px-3 py-2.5 rounded-xl border-2 text-xs font-semibold transition-all"
+                    style={isOn
+                      ? { background: 'var(--ns-forest)', color: 'white', borderColor: 'var(--ns-forest)' }
+                      : { background: 'white', color: '#374151', borderColor: '#e5e7eb' }}>
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Experience */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">How long have you been running?</label>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">How long have you been running?</label>
           <div className="space-y-2">
             {EXPERIENCE_OPTIONS.map(o => (
               <button
                 key={o.id}
                 onClick={() => setExperience(o.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                  experience === o.id
-                    ? 'bg-teal-50 border-teal-400'
-                    : 'bg-white border-slate-200 hover:border-teal-200'
-                }`}
+                className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all`}
+                style={experience === o.id
+                  ? { background: 'var(--ns-forest-light)', borderColor: 'var(--ns-forest)' }
+                  : { background: 'white', borderColor: '#e5e7eb' }}
               >
                 <p className={`text-sm font-bold ${experience === o.id ? 'text-teal-800' : 'text-slate-700'}`}>{o.label}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{o.desc}</p>

@@ -14,40 +14,44 @@ interface PathOption {
   tag?:        string
   tagColour?:  string
   proOnly?:    boolean
+  methodology?: string  // credibility layer — shown below description
 }
 
 const PATHS: PathOption[] = [
   {
     id:        'predetermined',
     emoji:     '📋',
-    label:     'Follow a plan',
-    desc:      'Expert-designed, tailored to you',
-    detail:    'We pick the best matching plan from our library and personalise the paces, volume and dates around your profile and goal.',
+    label:     'Follow a structured plan',
+    desc:      'Evidence-based methodology, tailored to you',
+    detail:    'Our plans are built on established training principles — progressive overload, polarised intensity, periodisation. We match you to the right plan based on your goal, current fitness, and time available, then personalise the paces and dates around you.',
     tag:       'Most popular',
-    tagColour: 'bg-teal-500',
+    tagColour: 'bg-[var(--ns-forest)]',
+    methodology: 'Based on Daniels\' Running Formula and polarised training principles used by club runners at every level.',
   },
   {
     id:        'ai_bespoke',
-    emoji:     '🤖',
-    label:     'AI coached plan',
+    emoji:     '🧠',
+    label:     'AI bespoke plan',
     desc:      'Built from scratch, just for you',
-    detail:    'Our AI coaches analyse everything you\'ve told us and generate a completely custom plan. Takes under 60 seconds.',
-    tag:       'Recommended',
-    tagColour: 'bg-teal-500',
+    detail:    'Our AI coach analyses your training history, goal, weekly availability, and running profile to generate a completely custom plan. The questions are more detailed — because a better plan comes from better information.',
+    tag:       'Recommended for experienced runners',
+    tagColour: 'bg-[var(--ns-ember)]',
+    methodology: 'Adapts week-by-week based on how your training is going. The plan responds to you, not the other way around.',
   },
   {
     id:        'manual',
     emoji:     '✏️',
     label:     'Build your own',
     desc:      'Your sessions, your structure',
-    detail:    'Design every session yourself. A silent AI suggestion panel sits next to each week — tap to populate, or ignore it. AI rationale is a Pro feature.',
+    detail:    'Design every session yourself. A silent AI suggestion panel sits next to each week — tap to populate, or ignore it. AI rationale generation on manual sessions is a Pro feature.',
   },
   {
     id:        'lifestyle',
     emoji:     '🌿',
     label:     'Lifestyle training',
-    desc:      'Continuous improvement, no end date',
-    detail:    'No race target — just consistent progress. A baseline plan is generated around your goals. Adjust the difficulty slider up or down any time.',
+    desc:      'Run for enjoyment, not a finish line',
+    detail:    'No race target, no end date — just consistent movement that fits your life. We ask about your availability and what you enjoy, not what pace you run.',
+    methodology: 'Ideal for runners returning after a break, or those who train for health and enjoyment rather than race performance.',
   },
   {
     id:        'coach_marketplace',
@@ -108,53 +112,63 @@ export function TrainingPathScreen() {
             return (
               <div
                 key={path.id}
-                className={`rounded-2xl border transition-all ${
+                className={`rounded-2xl border-2 transition-all ${
                   isSelected
-                    ? 'bg-teal-50 border-teal-400 shadow-sm'
-                    : 'bg-white border-slate-200'
+                    ? 'border-[var(--ns-forest)]'
+                    : 'bg-white border-gray-100'
                 }`}
+                style={isSelected ? { background: 'var(--ns-forest-light)' } : {}}
               >
                 {/* Main row */}
                 <button
                   className="w-full text-left p-4"
                   onClick={() => setSelected(path.id)}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${
-                      isSelected ? 'bg-teal-100' : 'bg-slate-100'
+                  <div className="flex items-start gap-3">
+                    <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl flex-shrink-0 mt-0.5 ${
+                      isSelected ? 'bg-white' : 'bg-gray-50'
                     }`}>
                       {path.emoji}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-bold text-slate-800">{path.label}</span>
+                      {/* Tags first — trust signals before name */}
+                      <div className="flex items-center gap-1.5 flex-wrap mb-1">
                         {path.tag && (
                           <span className={`text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full ${path.tagColour}`}>
                             {path.tag}
                           </span>
                         )}
                         {isRecommended && !isSelected && (
-                          <span className="text-[9px] font-bold text-teal-600 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded-full">
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                            style={{ color: 'var(--ns-forest)', background: 'var(--ns-forest-light)', border: '1px solid var(--ns-forest)30' }}>
                             ✦ For you
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-400 mt-0.5">{path.desc}</p>
+                      <span className="text-sm font-bold text-gray-900">{path.label}</span>
+                      <p className="text-xs text-gray-400 mt-0.5">{path.desc}</p>
+                      {/* Methodology — credibility layer visible without expansion */}
+                      {path.methodology && isSelected && (
+                        <p className="text-xs mt-1.5 leading-relaxed" style={{ color: 'var(--ns-forest)' }}>
+                          {path.methodology}
+                        </p>
+                      )}
                     </div>
 
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
                       {/* Info toggle */}
                       <button
                         onClick={e => { e.stopPropagation(); setExpanded(isExpanded ? null : path.id) }}
-                        className="text-slate-300 hover:text-slate-500 transition-colors text-sm font-bold w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center"
+                        className="text-gray-300 hover:text-gray-500 transition-colors text-sm font-bold w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
                       >
                         {isExpanded ? '−' : 'i'}
                       </button>
                       {/* Select indicator */}
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        isSelected ? 'bg-teal-500 border-teal-500' : 'border-slate-300'
-                      }`}>
+                        isSelected ? 'border-[var(--ns-forest)]' : 'border-gray-300'
+                      }`}
+                        style={isSelected ? { background: 'var(--ns-forest)' } : {}}>
                         {isSelected && <span className="text-white text-xs font-bold">✓</span>}
                       </div>
                     </div>
@@ -164,26 +178,26 @@ export function TrainingPathScreen() {
                 {/* Expanded detail */}
                 {isExpanded && (
                   <div className="px-4 pb-4">
-                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                      <p className="text-xs text-slate-600 leading-relaxed">{path.detail}</p>
+                    <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 space-y-2">
+                      <p className="text-xs text-gray-600 leading-relaxed">{path.detail}</p>
+                      {path.methodology && (
+                        <p className="text-xs leading-relaxed font-medium" style={{ color: 'var(--ns-forest)' }}>
+                          {path.methodology}
+                        </p>
+                      )}
                       {path.id === 'coach_marketplace' && (
-                        <div className="mt-3 space-y-1.5">
+                        <div className="mt-2 space-y-1.5">
                           {[
-                            { emoji: '🏪', label: 'Buy a plan — browse and purchase from our coach library' },
-                            { emoji: '👫', label: 'Follow a Split Leader — find friends or club leaders' },
-                            { emoji: '🎓', label: 'Pro Coach — apply for bespoke coaching and a managed plan' },
+                            { emoji: '🏪', label: 'Buy a plan — browse coach library' },
+                            { emoji: '👫', label: 'Follow a Split Leader — friends or club leaders' },
+                            { emoji: '🎓', label: 'Pro Coach — bespoke coaching and managed plan' },
                           ].map(item => (
-                            <div key={item.label} className="flex items-start gap-2 text-xs text-slate-500">
+                            <div key={item.label} className="flex items-start gap-2 text-xs text-gray-500">
                               <span>{item.emoji}</span>
                               <span>{item.label}</span>
                             </div>
                           ))}
                         </div>
-                      )}
-                      {path.id === 'manual' && (
-                        <p className="mt-2 text-xs text-amber-600 bg-amber-50 rounded-lg px-2 py-1.5">
-                          💡 AI rationale generation on manual sessions is a Pro feature
-                        </p>
                       )}
                     </div>
                   </div>
@@ -198,13 +212,13 @@ export function TrainingPathScreen() {
         </p>
       </div>
 
-      {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 flex gap-3">
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600">←</button>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
         <button
           onClick={handleContinue}
           disabled={!canContinue}
-          className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-teal-600 active:scale-95"
+          className="flex-1 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all active:scale-95"
+          style={{ background: canContinue ? 'var(--ns-forest)' : '#9ca3af' }}
         >
           {canContinue
             ? selected === 'coach_marketplace'
