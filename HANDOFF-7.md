@@ -258,7 +258,60 @@ ALTER TABLE profiles
 
 ---
 
-## What Needs Building Next — Phase A (Start Here)
+## Current Phase: B — Coach Dashboard Overhaul
+
+Phase A code complete (committed 6f07125). Founder actions pending: ICO, company formation, email DNS, PostHog dashboard config.
+
+## What Was Built in Phase A
+
+| Item | Commit | Status |
+|---|---|---|
+| A1a Supabase types | manual step | ⚠️ Run manually |
+| A1b Zod on all routes | e7daf56 | ✅ |
+| A2 Cookie consent | 58a2d6b | ✅ |
+| A2 Legal pages | 58a2d6b | ✅ |
+| A2 Medical disclaimer | 58a2d6b | ✅ |
+| A3 AI plan review tool | f41639e | ✅ |
+| A4 Onboarding funnel events | f41639e | ✅ |
+| A5 Adaptation E2E test | 6f07125 | ✅ |
+| A7 NPS prompt | 6f07125 | ✅ |
+
+## What Needs Building Next — Phase B (Coach Dashboard)
+
+**B1 — Squad Command Centre** ← START HERE
+Redesign /coach/squad to show actionable intel in 30 seconds:
+- Attention required strip (red/amber athletes, what's wrong, one-tap action)
+- Today's sessions per athlete (done/outstanding)
+- Load risk heatmap (ACWR per athlete, last 4 weeks)
+- Weekly completion bars
+- Quick actions (bulk voice note, weekly summary)
+
+**B2 — Athlete Drill-Down**
+Restructure /coach/athlete/[athleteId] around coach's questions:
+- 12-week load chart (ACWR over time)
+- This week session-by-session
+- Recent wellness trend (sparklines)
+- Upcoming 14-day sessions with pre-annotation
+- Unified communication thread (voice + text)
+- Quick reactions (🔥 💙 ⚡ 🧊)
+
+**B3 — Communication Layer**
+- Unified message thread (voice + text chronological)
+- Quick reactions per session
+- Broadcast message to all athletes
+- Response indicators (listened? read?)
+- Template messages (5-10 reusable)
+
+**B4 — Plan Build Handshake**
+Full coach-athlete plan build flow:
+1. Athlete intake form → coach sees before building
+2. Coach follow-up questions via thread
+3. Plan build progress stages (4 stages visible to athlete)
+4. Plan preview + one-round of changes
+5. Athlete accepts → payment confirms → plan activates
+
+**B5 — Marketplace Performance Dashboard**
+Per-plan: downloads, active users, completion rate, rating, revenue, geography
 
 **All of Phase A is pre-user. No exceptions. Build in parallel tracks.**
 
@@ -276,15 +329,17 @@ ALTER TABLE profiles
 - [ ] **A2c: GDPR data export** — ⚠️ Verify Settings "Export my data" works E2E
 
 ### Track 3 — Quality verification
-- [ ] **A3: AI plan quality review tool** — Admin page ← NEXT BUILD
-- [ ] **A4: Onboarding funnel PostHog events** — `onboarding_step_viewed` per screen
-- [ ] **A5: Adaptation E2E test matrix** — 5 scenarios verified
-- [ ] **A6: Email sender domain** — Add DNS records for mail.nextsplit.app
-- [ ] **A7: In-app NPS prompt** — Day 7 + Day 30 triggers
-- [ ] **A8: Monday PostHog dashboard** — Configure before first alpha invite
+- [x] **A3: AI plan quality review tool** — ✅ /admin/plan-review, 5 presets, quality checks
+- [x] **A4: Onboarding funnel PostHog events** — ✅ step_viewed, path_selected, abandoned
+- [x] **A5: Adaptation E2E test matrix** — ✅ /admin/adapt-test, 5 scenarios + Zod validation
+- [ ] **A6: Email sender domain** — ⚠️ Founder: add DNS records for mail.nextsplit.app in Resend
+- [x] **A7: In-app NPS prompt** — ✅ NPSPrompt component, Day 7+30 triggers, wired to TodayClient
+- [ ] **A8: Monday PostHog dashboard** — ⚠️ Non-code: configure funnel in PostHog UI before alpha
 
 ### Phase A gate
-All items complete before Phase B begins. A1 ✅ A2 code ✅ A2 non-code ⚠️ (founder) A3–A8 pending.
+A1 ✅ A2-code ✅ A3 ✅ A4 ✅ A5 ✅ A7 ✅
+Remaining (founder actions): ICO reg, company formation, A6 DNS, A8 PostHog config
+**Phase A code is COMPLETE. Starting Phase B (Coach Dashboard).**
 
 ---
 
