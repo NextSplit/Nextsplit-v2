@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useOnboarding } from '../context/OnboardingContext'
 import { OnboardingProgressBar } from './OnboardingProgressBar'
+import { Analytics } from '@/lib/analytics'
 import type { TrainingPath } from '../context/OnboardingContext'
 
 interface PathOption {
@@ -74,6 +75,7 @@ export function TrainingPathScreen() {
   const handleContinue = () => {
     if (!canContinue) return
     update({ trainingPath: selected! })
+    Analytics.onboardingPathSelected(selected!)
     next()
   }
 

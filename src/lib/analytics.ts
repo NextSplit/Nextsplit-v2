@@ -41,7 +41,13 @@ export const Analytics = {
 
   // ── Onboarding ────────────────────────────────────────────────────────────
   onboardingStarted:    ()                          => track('onboarding_started'),
-  onboardingStep:       (step: number, name: string) => track('onboarding_step_completed', { step, name }),
+  onboardingStep:       (step: number, name: string, path?: string) =>
+                          track('onboarding_step_completed', { step, name, training_path: path }),
+  onboardingStepViewed: (step: number, name: string) =>
+                          track('onboarding_step_viewed', { step, name }),
+  onboardingPathSelected: (path: string)            => track('onboarding_path_selected', { training_path: path }),
+  onboardingAbandoned:  (lastStep: number, stepName: string) =>
+                          track('onboarding_abandoned', { last_step: lastStep, step_name: stepName }),
   stravaConnected:      (source: 'onboarding' | 'settings') => track('strava_connected', { source }),
   onboardingCompleted:  (path: string)              => track('onboarding_completed', { training_path: path }),
 

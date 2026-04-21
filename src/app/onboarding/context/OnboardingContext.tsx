@@ -2,6 +2,14 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import type { CharacterConfig, UserGoal, SportId } from '@/types/database'
+import { Analytics } from '@/lib/analytics'
+
+// Human-readable step names for PostHog funnel
+const STEP_NAMES: Record<number, string> = {
+  1: 'welcome', 2: 'character_creation', 3: 'sport_select', 4: 'goals',
+  5: 'your_running', 6: 'your_life', 7: 'gym_config', 8: 'about_you',
+  9: 'training_path', 10: 'strava_connect', 11: 'plan_generation', 12: 'plan_preview',
+}
 
 // ── Total steps in the flow ───────────────────────────────────────────────────
 export const TOTAL_STEPS = 12
@@ -124,6 +132,8 @@ export function OnboardingProvider({ children, initialStep = 1 }: {
   const next = useCallback(() => setStep(s => {
     const n = Math.min(s + 1, TOTAL_STEPS)
     try { localStorage.setItem('nextsplit_onboarding_step', String(n)) } catch { /* ignore */ }
+    Analytics.onboardingStep(s, STEP_NAMES[s] ?? `step_${s}`)
+    Analytics.onboardingStepViewed(n, STEP_NAMES[n] ?? `step_${n}`)
     return n
   }), [])
   const back = useCallback(() => setStep(s => Math.max(s - 1, 1)), [])
