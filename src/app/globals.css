@@ -24,21 +24,21 @@
   --color-brand-light:  var(--ns-forest-light);
   --color-brand-text:   var(--ns-forest-mid);
 
-  /* ── Page backgrounds ── */
-  --color-bg:           #f8f8f6;
-  --color-surface:      #ffffff;
-  --color-surface-2:    #f9fafb;
-  --color-surface-3:    #f3f4f6;
+  /* ── Page backgrounds — Forest Dark ── */
+  --color-bg:           #0f1a14;   /* Deep forest night */
+  --color-surface:      #162a1e;   /* Card surface */
+  --color-surface-2:    #1e3829;   /* Elevated surface */
+  --color-surface-3:    #243f2f;   /* Highest surface */
 
   /* ── Borders ── */
-  --color-border:       #f3f4f6;
-  --color-border-2:     #e5e7eb;
+  --color-border:       #1e3829;
+  --color-border-2:     #2b5c3f;
 
   /* ── Text ── */
-  --color-text-primary:   #111827;
-  --color-text-secondary: #6b7280;
-  --color-text-tertiary:  #9ca3af;
-  --color-text-disabled:  #d1d5db;
+  --color-text-primary:   #e8f5ee;   /* Warm light green-white */
+  --color-text-secondary: #8db89a;   /* Muted green */
+  --color-text-tertiary:  #5a8a6a;   /* Subtle */
+  --color-text-disabled:  #3d6b4f;
 
   --background: var(--color-bg);
   --foreground: var(--color-text-primary);
@@ -72,13 +72,55 @@
 .text-size-xl      { --font-scale: 1.2; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
   font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   font-size: calc(16px * var(--font-scale));
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }
+
+/* ── Forest dark — global card/surface mapping ────────────────────────────────
+   Replace Tailwind's white/gray classes with dark equivalents globally.
+   This means all bg-white, bg-gray-50, bg-gray-100 map to dark surfaces.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.bg-white,
+[class*="bg-white"] {
+  background-color: var(--color-surface) !important;
+}
+
+.bg-gray-50,
+[class*="bg-gray-50"],
+[class*="bg-\[#f8f8f6\]"],
+[class*="bg-\[#f8f8f5\]"] {
+  background-color: var(--color-bg) !important;
+}
+
+.bg-gray-100,
+[class*="bg-gray-100"] {
+  background-color: var(--color-surface-2) !important;
+}
+
+.bg-gray-200,
+[class*="bg-gray-200"] {
+  background-color: var(--color-surface-3) !important;
+}
+
+/* Text colour mappings */
+.text-gray-900, [class*="text-gray-900"] { color: var(--color-text-primary) !important; }
+.text-gray-800, [class*="text-gray-800"] { color: var(--color-text-primary) !important; }
+.text-gray-700, [class*="text-gray-700"] { color: var(--color-text-secondary) !important; }
+.text-gray-600, [class*="text-gray-600"] { color: var(--color-text-secondary) !important; }
+.text-gray-500, [class*="text-gray-500"] { color: var(--color-text-tertiary) !important; }
+.text-gray-400, [class*="text-gray-400"] { color: var(--color-text-tertiary) !important; }
+
+/* Border mappings */
+.border-gray-100, [class*="border-gray-100"] { border-color: var(--color-border) !important; }
+.border-gray-200, [class*="border-gray-200"] { border-color: var(--color-border-2) !important; }
+
+/* Keep ember/forest/track colours as-is — they're branded */
+/* Keep white TEXT on dark buttons — don't override text-white */
 
 /* Safe area for notched phones and home indicator */
 .safe-area-pb {

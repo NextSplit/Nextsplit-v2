@@ -354,7 +354,7 @@ export default function ProfileClient({
         </div>
 
         {/* Tab switcher */}
-        <div className="flex mt-3 border-b border-gray-100">
+        <div className="flex gap-1 mt-3 rounded-xl p-1" style={{ background: 'var(--color-surface-2)' }}>
           {([
             { id: 'character', label: '🏃 Character' },
             { id: 'stats',     label: '📊 Stats'     },
@@ -363,11 +363,15 @@ export default function ProfileClient({
             <button
               key={tab.id}
               onClick={() => setProfileTab(tab.id)}
-              className={`flex-1 py-2.5 text-xs font-bold border-b-2 transition-all ${
+              className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                 profileTab === tab.id
-                  ? 'border-[var(--ns-forest)] text-[var(--ns-forest)]'
-                  : 'border-transparent text-gray-400'
+                  ? 'text-white'
+                  : ''
               }`}
+              style={profileTab === tab.id
+                ? { background: 'var(--ns-forest)', color: 'white' }
+                : { color: 'var(--color-text-tertiary)' }
+              }
             >
               {tab.label}
             </button>
