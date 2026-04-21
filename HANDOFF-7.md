@@ -258,9 +258,9 @@ ALTER TABLE profiles
 
 ---
 
-## Current Phase: G — Alpha (Closed Pool)
+## Current Phase: UI Hardening + Alpha Prep
 
-**Phases A–F complete. App is ready for human testing.**
+**Phases A–F complete + UI overhaul in progress. Core bugs fixed. Ready for alpha after seed + manual verification.**
 
 ## Phase D — Design Uplift ✅ COMPLETE
 
@@ -544,6 +544,70 @@ MASTER-DELIVERY-PLAN-V2.md            Full revised delivery plan (phases A→I)
 
 **Pending SQL:** Run `supabase/migrations/phase-12-referral.sql` in Supabase SQL editor.
 **Pending seed:** Run `npx tsx scripts/seed-plans.ts` to upload 36 plan templates.
+
+
+---
+
+## UI Overhaul — Session Work (Post Phase F)
+
+The following work was done after Phase F to address founder feedback on visual quality, correctness, and usability.
+
+### Critical Bug Fixes
+
+| Bug | Root Cause | Fix | Commit |
+|---|---|---|---|
+| VDOT paces had no effect | activate route read `recent_race_5k_secs` (never populated); onboarding saves to `recent_race_times` JSON | Fixed activate route to read from correct column | 12eaa3f |
+| Predetermined plan always generated same AI plan | `plan_templates` table was empty — seed script never run | Fixed seed API to use session auth (ADMIN_EMAILS), seed page now works | 8efe231 |
+| Fuel tab showed training plan content | No content guard on planTab — fuel tab existed in switcher but had no rendering | Added actual fuel guide content + nutrition dashboard link | 3ffa892 |
+| Hourly cron blocked deployment | Vercel Hobby plan only allows 1 cron/day | Removed hourly notify cron, kept daily lifecycle emails | 15fdf2e |
+| Notification guardrails wrong order | quiet_hours checked before rate_limit; tests expected reverse | Reordered: rate limits → at_risk → quiet_hours | bc750fb |
+| GitHub webhook broken | Vercel lost GitHub App connection | Added GitHub Actions deploy workflow (bypasses webhook) | 5d3d9ac |
+
+### UI Changes
+
+| Area | Change | Commit |
+|---|---|---|
+| Global theme | Forest-dark palette applied globally. CSS vars: --color-bg #0f1a14, --color-surface #162a1e, --color-surface-2 #1e3829. Global overrides for bg-white/gray-50/100 | 8efe231 |
+| Auth pages (login/signup) | Full dark theme rewrite. Forest-night header gradient, dark inputs, ember CTAs | ced8f89 |
+| BottomNav | Forest-night bg, ember active indicator, CSS var inactive | 3ffa892 |
+| Explore tab | New /explore route with Coaches/Plans/AI Coach tabs. Compass icon in athlete nav | 8efe231 |
+| Character creation | SVG avatar 100×130 → 180×220px, full mid-stride pose with hair/accessories/bib/shoes | bc750fb |
+| Character creation screen | Dark Forest theme throughout, kit-colour glow behind avatar | bc750fb |
+| Profile tabs | Stats tab: Forest green analytics header. Records tab: amber/gold header. Distinct per-tab identity | cd2af67 |
+| Plan browser | Dark level pills, ember week count, dark card surfaces, dark select dropdowns | 3ffa892 |
+| DayDrawer | Dark surface, rgba(0,0,0,0.6) backdrop, dark drag handle | bc750fb |
+| LogModal | Dark surface, rgba(0,0,0,0.7) backdrop | 3ffa892 |
+| Onboarding (10 screens) | All backgrounds dark themed. GoalsScreen inactive buttons dark | 12eaa3f |
+| Today tab | Sticky header dark, date nav buttons dark | ced8f89 |
+| Seed page | Updated count to 36 templates, fixed auth check | 3ffa892 |
+
+### Deployment Pipeline
+
+GitHub Webhook was broken. Fixed via GitHub Actions workflow:
+- `.github/workflows/vercel-deploy.yml` — deploys to Vercel on every push to main
+- Requires `VERCEL_TOKEN` secret in GitHub repo settings
+- Build takes ~2 minutes (real build, not 15s cached)
+- After build: go to Vercel → Deployments → promote to production
+
+### Pending Founder Actions (Before Alpha)
+
+1. **Seed plans** — Go to `nextsplit-v2.vercel.app/admin/seed` → tap "Seed Plans Now"
+   This loads 36 plan templates into Supabase. Required for predetermined plan browser to work.
+
+2. **Verify VDOT** — After seeding: fresh signup → enter 5K time → activate predetermined plan → check session paces are personalised (not generic)
+
+3. **ICO registration** — ico.org.uk — £40 (legal requirement for UK data collection)
+
+4. **Company formation** — Companies House — £12
+
+5. **RESEND_API_KEY** — Add to Vercel env vars for transactional email
+
+### Remaining UI Work (Next Session)
+
+- `SessionCard` done/pending states use `bg-emerald-50` etc — not caught by global override
+- Settings page needs dark theme
+- Community page explicit dark styling (global override handles bg-white but borders/text need CSS vars)
+- Final comprehensive grep for remaining conditional class strings with hardcoded white/gray
 
 ---
 
