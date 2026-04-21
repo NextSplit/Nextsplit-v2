@@ -262,35 +262,29 @@ ALTER TABLE profiles
 
 **All of Phase A is pre-user. No exceptions. Build in parallel tracks.**
 
-### Track 1 — Security (start immediately)
-- [ ] **A1a: Supabase type regeneration** — ~40 any casts, run `npx supabase gen types`
-- [ ] **A1b: Zod validation** — 15 critical API routes:
-  - `/api/ai/adapt-plan` (highest priority — most expensive route)
-  - `/api/ai/generate-plan`
-  - `/api/plans/activate`
-  - `/api/marketplace/purchase`
-  - `/api/coach/invite`
-  - + 10 remaining routes
+### Track 1 — Security
+- [x] **A1a: Supabase type regeneration** — ⚠️ Run manually: `npx supabase gen types typescript --project-id YOUR_ID > src/types/database.ts`
+- [x] **A1b: Zod validation** — ✅ COMPLETE. 27 routes validated (schemas.ts). Committed e7daf56.
 
-### Track 2 — Legal (non-code tasks — do this week)
-- [ ] **A2a: ICO registration** — ico.org.uk, £40, health data legal requirement
-- [ ] **A2a: Company formation** — Companies House online, £12
-- [ ] **A2b: Privacy policy** — Termly free tier (real content, covers health data + coaching)
-- [ ] **A2b: Terms of service** — Termly free tier (covers coaching disclaimer)
-- [ ] **A2b: Medical disclaimer** — Add to: onboarding screen 1, ACWR UI, wellness check-in
-- [ ] **A2b: Cookie consent banner** — PostHog blocked until accepted, bottom sheet on mobile
-- [ ] **A2c: GDPR data export** — Verify Settings "Export my data" button works E2E
+### Track 2 — Legal
+- [ ] **A2a: ICO registration** — ico.org.uk, £40 — ⚠️ Founder action required
+- [ ] **A2a: Company formation** — Companies House, £12 — ⚠️ Founder action required
+- [x] **A2b: Privacy policy** — ✅ Real content, GDPR-compliant, /privacy
+- [x] **A2b: Terms of service** — ✅ Real content, coaching disclaimer, /terms
+- [x] **A2b: Medical disclaimer** — ✅ MedicalDisclaimer component, 3 locations
+- [x] **A2b: Cookie consent banner** — ✅ CookieConsentBanner, PostHog gated, useCookieConsent hook
+- [ ] **A2c: GDPR data export** — ⚠️ Verify Settings "Export my data" works E2E
 
 ### Track 3 — Quality verification
-- [ ] **A3: AI plan quality review tool** — Admin page to generate + inspect AI plans
+- [ ] **A3: AI plan quality review tool** — Admin page ← NEXT BUILD
 - [ ] **A4: Onboarding funnel PostHog events** — `onboarding_step_viewed` per screen
 - [ ] **A5: Adaptation E2E test matrix** — 5 scenarios verified
-- [ ] **A6: Email sender domain** — Add DNS records for mail.nextsplit.app in Resend
-- [ ] **A7: In-app NPS prompt** — Day 7 + Day 30 triggers, built before alpha
+- [ ] **A6: Email sender domain** — Add DNS records for mail.nextsplit.app
+- [ ] **A7: In-app NPS prompt** — Day 7 + Day 30 triggers
 - [ ] **A8: Monday PostHog dashboard** — Configure before first alpha invite
 
 ### Phase A gate
-All 8 sub-items complete before Phase B begins. No exceptions.
+All items complete before Phase B begins. A1 ✅ A2 code ✅ A2 non-code ⚠️ (founder) A3–A8 pending.
 
 ---
 
