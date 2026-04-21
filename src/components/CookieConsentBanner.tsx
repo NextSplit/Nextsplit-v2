@@ -34,7 +34,7 @@ export default function CookieConsentBanner() {
       >
         <div className="bg-white rounded-t-3xl shadow-2xl px-5 pt-5 pb-8 md:rounded-2xl md:m-4 md:mb-4">
           {/* Drag handle — mobile affordance */}
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4 md:hidden" />
+          <div className="w-10 h-1 rounded-full mx-auto mb-4 md:hidden" style={{ background: '#e5e7eb' }} />
 
           {/* Icon + heading */}
           <div className="flex items-start gap-3 mb-3">

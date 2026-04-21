@@ -41,10 +41,10 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus, personalisedPa
 
   return (
     <div
-      className={`rounded-2xl border-l-4 border-t border-r border-b transition-all min-h-[88px] ${
+      className={`rounded-3xl border-l-4 transition-all min-h-[88px] ${
         done
           ? `${cfg.accent} border-emerald-200 bg-emerald-50`
-          : `${cfg.accent} border-gray-100 bg-white`
+          : `${cfg.accent} border-gray-100 bg-white shadow-sm`
       } overflow-hidden`}
     >
       <div className="flex items-start gap-3 p-5" onClick={onTap}>

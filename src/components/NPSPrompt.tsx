@@ -76,10 +76,10 @@ export default function NPSPrompt({ firstSessionAt }: Props) {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/40" onClick={handleDismiss} />
+      <div className="fixed inset-0 z-50" style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(2px)' }} onClick={handleDismiss} />
       <div className="fixed bottom-0 left-0 right-0 z-50 max-w-lg mx-auto">
         <div className="bg-white rounded-t-3xl px-5 pt-5 pb-8">
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+          <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: '#e5e7eb' }} />
 
           {submitted ? (
             <div className="text-center py-4">

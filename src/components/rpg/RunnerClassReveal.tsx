@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { getRunnerClass, RUNNER_CLASSES, CLASS_COACHING_INSIGHTS } from '@/lib/rpg'
 import type { RunnerClassId } from '@/lib/rpg'
 import { hapticSuccess } from '@/lib/haptics'
+import { RunnerClassAvatar } from '@/components/avatars/RunnerClassAvatars'
 
 interface Props {
   classId: RunnerClassId
@@ -95,15 +96,15 @@ export default function RunnerClassReveal({ classId, onDismiss }: Props) {
               Your runner class
             </p>
 
-            {/* Big emoji */}
+            {/* Class avatar — illustrated SVG */}
             <div
-              className="text-8xl mb-6 transition-all duration-500"
+              className="mb-6 transition-all duration-500"
               style={{
                 transform: phase === 'reveal' ? 'scale(1.15)' : 'scale(1)',
                 filter: `drop-shadow(0 0 32px ${glowColours[classId]})`,
               }}
             >
-              {cls.emoji}
+              <RunnerClassAvatar classId={classId} size={120} />
             </div>
 
             {/* Class name */}

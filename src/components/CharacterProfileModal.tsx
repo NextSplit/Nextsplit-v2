@@ -11,6 +11,7 @@
 import { useState, useEffect } from 'react'
 import { RUNNER_CLASSES, renderCharSVG } from '@/lib/rpg'
 import type { RunnerClassId } from '@/lib/rpg'
+import { RunnerClassAvatar } from '@/components/avatars/RunnerClassAvatars'
 interface AthleteCharacter {
   userId:      string
   displayName: string
@@ -70,11 +71,13 @@ export default function CharacterProfileModal({ userId, displayName, handle, onC
             <>
               {/* Character display — primary identity surface */}
               <div className="flex flex-col items-center text-center mb-5">
-                {/* Avatar SVG */}
-                <div
-                  className="w-24 h-24 mb-3"
-                  dangerouslySetInnerHTML={{ __html: avatarSvg }}
-                />
+                {/* Avatar SVG — class-specific illustrated avatar */}
+                <div className="w-24 h-24 mb-3">
+                  <RunnerClassAvatar
+                    classId={athlete?.runnerClass}
+                    size={96}
+                  />
+                </div>
 
                 {/* Class badge */}
                 <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2 ${cls.bg} ${cls.textColour}`}>

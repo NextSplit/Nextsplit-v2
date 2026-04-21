@@ -360,3 +360,22 @@ button.no-tap-scale:active { transform: none; }
   padding: 0.2rem 0.5rem;
   border-radius: 9999px;
 }
+
+/* ─── Modal sheet animations — Phase D5 ─────────────────────────────────────── */
+@keyframes sheet-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.animate-sheet-up {
+  animation: sheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ─── XP float animation ─────────────────────────────────────────────────────── */
+@keyframes xp-float {
+  0%   { opacity: 0; transform: translateY(0) translateX(-50%); }
+  20%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-32px) translateX(-50%); }
+}
+.animate-xp-float {
+  animation: xp-float 1.2s ease-out forwards;
+}
