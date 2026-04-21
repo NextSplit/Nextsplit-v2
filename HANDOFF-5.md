@@ -321,7 +321,13 @@ Phase 03     Legal + Revenue + Infrastructure          ← PARTIALLY DONE
              Stripe E2E test + PREMIUM_ENFORCED=true, Zod on API routes,
              Supabase type regen, Monday PostHog dashboard, GDPR data export
 
-Phase 06     Production Notifications + Lifecycle Emails  ← NEXT
+Phase 06 ✅  Production Notifications + Lifecycle Emails
+             8 push notification types with Growth Pillar copy + guardrails,
+             7-email lifecycle sequence (Resend, coach voice), per-type
+             notification prefs in Settings, vercel.json cron schedules,
+             RESEND_API_KEY in serverConfig
+
+Phase 07     Split Leader Mode Toggle                     ← NEXT
              8 push notification types with guardrails, 7-email lifecycle
              sequence (Resend), notification preferences in Settings
 
