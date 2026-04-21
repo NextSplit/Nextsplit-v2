@@ -40,7 +40,7 @@ export default function CoachAcceptClient({
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 flex flex-col">
+    <main className="min-h-screen bg-[#f8f8f6] flex flex-col">
       <div className="max-w-lg mx-auto w-full px-4 py-10 space-y-5">
 
         {/* Header */}
@@ -48,7 +48,7 @@ export default function CoachAcceptClient({
           <div className="w-16 h-16 rounded-3xl bg-[var(--ns-forest-light)] flex items-center justify-center text-3xl mx-auto">
             🏃
           </div>
-          <h1 className="text-xl font-black text-slate-900">
+          <h1 className="text-xl font-black text-gray-900">
             {coachName} wants to coach you
           </h1>
           {coachVerified && (
@@ -60,12 +60,12 @@ export default function CoachAcceptClient({
 
         {/* Coach info */}
         {(coachBio || specialities.length > 0) && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
-            {coachBio && <p className="text-sm text-slate-600">{coachBio}</p>}
+          <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
+            {coachBio && <p className="text-sm text-gray-600">{coachBio}</p>}
             {specialities.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {specialities.map(s => (
-                  <span key={s} className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">
+                  <span key={s} className="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">
                     {s}
                   </span>
                 ))}
@@ -75,8 +75,8 @@ export default function CoachAcceptClient({
         )}
 
         {/* What they'll see */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">What your coach will see</p>
+        <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">What your coach will see</p>
 
           {[
             { label: 'Training logs & sessions', desc: 'Every run and gym session you log', on: true, locked: true },
@@ -84,8 +84,8 @@ export default function CoachAcceptClient({
           ].map(item => (
             <div key={item.label} className="flex items-center justify-between py-1">
               <div>
-                <p className="text-sm font-semibold text-slate-800">{item.label}</p>
-                <p className="text-xs text-slate-400">{item.desc}</p>
+                <p className="text-sm font-semibold text-gray-800">{item.label}</p>
+                <p className="text-xs text-gray-400">{item.desc}</p>
               </div>
               <div className="w-8 h-5 bg-[var(--ns-forest)] rounded-full flex items-center justify-end pr-0.5">
                 <div className="w-4 h-4 bg-white rounded-full" />
@@ -100,12 +100,12 @@ export default function CoachAcceptClient({
           ].map(item => (
             <div key={item.label} className="flex items-center justify-between py-1 border-t border-slate-50">
               <div>
-                <p className="text-sm font-semibold text-slate-800">{item.label}</p>
-                <p className="text-xs text-slate-400">{item.desc} · <span className="text-slate-500">Off by default</span></p>
+                <p className="text-sm font-semibold text-gray-800">{item.label}</p>
+                <p className="text-xs text-gray-400">{item.desc} · <span className="text-gray-500">Off by default</span></p>
               </div>
               <button
                 onClick={() => item.set(!item.value)}
-                className={`w-8 h-5 rounded-full flex items-center transition-all ${item.value ? 'bg-[var(--ns-forest)] justify-end pr-0.5' : 'bg-slate-200 justify-start pl-0.5'}`}
+                className={`w-8 h-5 rounded-full flex items-center transition-all ${item.value ? 'bg-[var(--ns-forest)] justify-end pr-0.5' : 'bg-gray-200 justify-start pl-0.5'}`}
               >
                 <div className="w-4 h-4 bg-white rounded-full shadow" />
               </button>
@@ -113,7 +113,7 @@ export default function CoachAcceptClient({
           ))}
         </div>
 
-        <p className="text-xs text-slate-400 text-center px-4">
+        <p className="text-xs text-gray-400 text-center px-4">
           You can change these permissions anytime in Settings → Coach Access. You can disconnect from your coach at any time.
         </p>
 
@@ -129,7 +129,7 @@ export default function CoachAcceptClient({
 
         <button
           onClick={() => router.push('/today')}
-          className="w-full text-slate-400 text-sm py-2"
+          className="w-full text-gray-400 text-sm py-2"
         >
           Decline
         </button>

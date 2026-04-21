@@ -88,7 +88,7 @@ export function OnboardingProgressBar({ step, character, showFinishLine = false 
   return (
     <div className="w-full px-4 pt-4 pb-2 select-none">
       {/* Track container */}
-      <div className="relative h-2 bg-slate-200 rounded-full overflow-visible">
+      <div className="relative h-2 bg-gray-200 rounded-full overflow-visible">
         {/* Filled track */}
         <div
           className="absolute inset-y-0 left-0 bg-gradient-to-r from-teal-500 to-teal-400 rounded-full transition-all duration-500 ease-out"
@@ -108,7 +108,7 @@ export function OnboardingProgressBar({ step, character, showFinishLine = false 
         {showFinishLine && (
           <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col items-center">
             <div className="w-0.5 h-5 bg-slate-400" />
-            <span className="text-[8px] text-slate-400 mt-0.5">🏁</span>
+            <span className="text-[8px] text-gray-400 mt-0.5">🏁</span>
           </div>
         )}
 
@@ -127,10 +127,10 @@ export function OnboardingProgressBar({ step, character, showFinishLine = false 
 
       {/* Step counter */}
       <div className="flex justify-between mt-2">
-        <span className="text-[11px] text-slate-400 font-medium">
+        <span className="text-[11px] text-gray-400 font-medium">
           {STEP_LABELS[step] || `Step ${step}`}
         </span>
-        <span className="text-[11px] text-slate-400">
+        <span className="text-[11px] text-gray-400">
           {step} / {TOTAL_STEPS}
         </span>
       </div>

@@ -7,7 +7,7 @@ import CharacterProfileModal from '@/components/CharacterProfileModal'
 
 const LEAGUE_CONFIG = {
   bronze:   { label: 'Bronze',   emoji: '🥉', colour: 'text-amber-700 bg-amber-50 border-amber-200' },
-  silver:   { label: 'Silver',   emoji: '🥈', colour: 'text-slate-600 bg-slate-50 border-slate-200' },
+  silver:   { label: 'Silver',   emoji: '🥈', colour: 'text-gray-600 bg-[#f8f8f6] border-gray-200' },
   gold:     { label: 'Gold',     emoji: '🥇', colour: 'text-yellow-700 bg-yellow-50 border-yellow-200' },
   platinum: { label: 'Platinum', emoji: '💎', colour: 'text-blue-700 bg-blue-50 border-blue-200' },
   elite:    { label: 'Elite',    emoji: '👑', colour: 'text-purple-700 bg-purple-50 border-purple-200' },
@@ -43,12 +43,12 @@ function JoinClubModal({ onClose, onJoined }: { onClose: () => void; onJoined: (
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl px-4 pt-4 pb-8 space-y-4 max-w-lg mx-auto">
-        <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto" />
-        <h2 className="text-base font-black text-slate-900">Join a club</h2>
-        <p className="text-sm text-slate-500">Enter the 6-character join code from your club admin.</p>
+        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+        <h2 className="text-base font-black text-gray-900">Join a club</h2>
+        <p className="text-sm text-gray-500">Enter the 6-character join code from your club admin.</p>
         <input value={code} onChange={e => setCode(e.target.value.toUpperCase())}
           placeholder="e.g. A3F9C2" maxLength={6}
-          className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-lg font-mono text-center tracking-widest outline-none focus:border-[var(--ns-forest)]" />
+          className="w-full px-4 py-3 rounded-2xl border border-gray-200 text-lg font-mono text-center tracking-widest outline-none focus:border-[var(--ns-forest)]" />
         {error && <p className="text-xs text-red-500 text-center">{error}</p>}
         {success && <p className="text-xs text-emerald-600 text-center font-bold">{success}</p>}
         <button onClick={join} disabled={code.length < 6 || loading}
@@ -88,25 +88,25 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl px-4 pt-4 pb-8 max-h-[85dvh] overflow-y-auto space-y-4 max-w-lg mx-auto">
-        <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto" />
-        <h2 className="text-base font-black text-slate-900">Create a club</h2>
+        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+        <h2 className="text-base font-black text-gray-900">Create a club</h2>
 
         <div className="flex gap-2 flex-wrap">
           {EMOJIS.map(e => (
             <button key={e} onClick={() => setEmoji(e)}
-              className={`text-2xl w-10 h-10 rounded-xl border-2 transition-all ${emoji === e ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]' : 'border-slate-200'}`}>
+              className={`text-2xl w-10 h-10 rounded-xl border-2 transition-all ${emoji === e ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]' : 'border-gray-200'}`}>
               {e}
             </button>
           ))}
         </div>
 
         <input value={name} onChange={e => setName(e.target.value)} placeholder="Club name"
-          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)]" />
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)]" />
         <textarea value={desc} onChange={e => setDesc(e.target.value)} rows={2}
           placeholder="What's your club about? (optional)"
-          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none" />
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none" />
 
-        <label className="flex items-center gap-3 text-sm text-slate-700">
+        <label className="flex items-center gap-3 text-sm text-gray-700">
           <input type="checkbox" checked={isPublic} onChange={e => setPublic(e.target.checked)} className="rounded" />
           Public club (discoverable by anyone)
         </label>
@@ -158,15 +158,15 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24">
+    <div className="min-h-screen bg-[#f8f8f6] pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-slate-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
         <div className="max-w-lg mx-auto space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-black text-slate-900">Community</h1>
+              <h1 className="text-lg font-black text-gray-900">Community</h1>
               {season && (
-                <p className="text-xs text-slate-400">{season.name} · {daysLeft}d remaining</p>
+                <p className="text-xs text-gray-400">{season.name} · {daysLeft}d remaining</p>
               )}
             </div>
             <div className="flex items-center gap-2">
@@ -174,28 +174,28 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                 {leagueCfg.emoji} {leagueCfg.label}
               </span>
               {myRank > 0 && (
-                <span className="text-xs text-slate-400">#{myRank}</span>
+                <span className="text-xs text-gray-400">#{myRank}</span>
               )}
             </div>
           </div>
 
           {/* Season XP bar */}
           <div className="space-y-1">
-            <div className="flex justify-between text-[10px] text-slate-400">
+            <div className="flex justify-between text-[10px] text-gray-400">
               <span>{profile?.season_xp ?? 0} season XP</span>
               <span>Next league at {league === 'bronze' ? 500 : league === 'silver' ? 1500 : league === 'gold' ? 3000 : league === 'platinum' ? 6000 : '∞'} XP</span>
             </div>
-            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
               <div className="h-full bg-[var(--ns-forest)] rounded-full transition-all"
                 style={{ width: `${Math.min(100, ((profile?.season_xp ?? 0) / (league === 'bronze' ? 500 : 1500)) * 100)}%` }} />
             </div>
           </div>
 
           {/* Tab nav */}
-          <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
             {(['clubs','challenges','races','leaderboard'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold capitalize transition-all ${tab === t ? 'bg-white text-slate-900 shadow' : 'text-slate-500'}`}>
+                className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold capitalize transition-all ${tab === t ? 'bg-white text-gray-900 shadow' : 'text-gray-500'}`}>
                 {t === 'leaderboard' ? '🏆' : t === 'clubs' ? '👥' : t === 'challenges' ? '🎯' : '🏁'} {t}
               </button>
             ))}
@@ -210,7 +210,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
           <>
             <div className="flex gap-2">
               <button onClick={() => setShowJoin(true)}
-                className="flex-1 bg-white border border-slate-200 rounded-2xl py-3 text-sm font-bold text-slate-700 active:bg-slate-50">
+                className="flex-1 bg-white border border-gray-200 rounded-2xl py-3 text-sm font-bold text-gray-700 active:bg-[#f8f8f6]">
                 Enter code
               </button>
               <button onClick={() => setShowCreate(true)}
@@ -220,31 +220,31 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
             </div>
 
             {myClubs.length === 0 && !loading && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-3">
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-3">
                 <div className="text-4xl">👥</div>
-                <h2 className="text-base font-bold text-slate-800">No clubs yet</h2>
-                <p className="text-sm text-slate-500">Join a club with a code or create your own to start competing with others.</p>
+                <h2 className="text-base font-bold text-gray-800">No clubs yet</h2>
+                <p className="text-sm text-gray-500">Join a club with a code or create your own to start competing with others.</p>
               </div>
             )}
 
             {myClubs.map(({ clubs: club, role, weekly_km }) => (
               <a key={club.id} href={`/community/club/${club.id}`}
-                className="block bg-white rounded-2xl border border-slate-200 p-4 space-y-2 active:bg-slate-50">
+                className="block bg-white rounded-2xl border border-gray-200 p-4 space-y-2 active:bg-[#f8f8f6]">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{club.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold text-slate-900 truncate">{club.name}</p>
+                      <p className="text-sm font-bold text-gray-900 truncate">{club.name}</p>
                       {role === 'owner' && <span className="text-[10px] text-[var(--ns-forest)] font-bold">Owner</span>}
                     </div>
-                    <p className="text-xs text-slate-400">{club.member_count} members</p>
+                    <p className="text-xs text-gray-400">{club.member_count} members</p>
                   </div>
-                  <span className="text-slate-300 text-lg shrink-0">›</span>
+                  <span className="text-gray-300 text-lg shrink-0">›</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-center">
-                  <div className="bg-slate-50 rounded-xl py-2">
-                    <p className="text-sm font-black text-slate-800">{Math.round(club.weekly_km)}km</p>
-                    <p className="text-[10px] text-slate-400">club this week</p>
+                  <div className="bg-[#f8f8f6] rounded-xl py-2">
+                    <p className="text-sm font-black text-gray-800">{Math.round(club.weekly_km)}km</p>
+                    <p className="text-[10px] text-gray-400">club this week</p>
                   </div>
                   <div className="bg-[var(--ns-forest-light)] rounded-xl py-2">
                     <p className="text-sm font-black text-[var(--ns-forest)]">{Math.round(weekly_km ?? 0)}km</p>
@@ -260,29 +260,29 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         {tab === 'challenges' && (
           <>
             {challenges.length === 0 && !loading && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-2">
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-2">
                 <div className="text-4xl">🎯</div>
-                <h2 className="text-base font-bold text-slate-800">No active challenges</h2>
-                <p className="text-sm text-slate-500">Check back soon — challenges reset regularly.</p>
+                <h2 className="text-base font-bold text-gray-800">No active challenges</h2>
+                <p className="text-sm text-gray-500">Check back soon — challenges reset regularly.</p>
               </div>
             )}
             {challenges.map(c => {
               const daysLeft = Math.max(0, Math.ceil((new Date(c.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24)))
               const progress = c.my_entry ? Math.min(100, (c.my_entry.progress / c.target_value) * 100) : 0
               return (
-                <div key={c.id} className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
+                <div key={c.id} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-slate-900">{c.title}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{c.description}</p>
+                      <p className="text-sm font-bold text-gray-900">{c.title}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{c.description}</p>
                     </div>
                     <div className="text-right shrink-0 ml-3">
                       <p className="text-xs font-bold text-[var(--ns-forest)]">+{c.reward_xp} XP</p>
-                      <p className="text-[10px] text-slate-400">{daysLeft}d left</p>
+                      <p className="text-[10px] text-gray-400">{daysLeft}d left</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
                     <span>🎯 {c.target_value} {c.target_unit}</span>
                     <span>·</span>
                     <span>👥 {c.entry_count} entered</span>
@@ -291,11 +291,11 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
 
                   {c.my_entry ? (
                     <div className="space-y-1.5">
-                      <div className="flex justify-between text-[10px] text-slate-400">
+                      <div className="flex justify-between text-[10px] text-gray-400">
                         <span>{c.my_entry.completed ? '✓ Complete!' : `${Math.round(c.my_entry.progress)} / ${c.target_value} ${c.target_unit}`}</span>
                         <span>{Math.round(progress)}%</span>
                       </div>
-                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                         <div className={`h-full rounded-full transition-all ${c.my_entry.completed ? 'bg-emerald-500' : 'bg-[var(--ns-forest)]'}`}
                           style={{ width: `${progress}%` }} />
                       </div>
@@ -316,10 +316,10 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         {tab === 'races' && (
           <>
             {races.length === 0 && !loading && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-2">
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-2">
                 <div className="text-4xl">🏁</div>
-                <h2 className="text-base font-bold text-slate-800">No upcoming races</h2>
-                <p className="text-sm text-slate-500">Virtual races will appear here. Check back soon.</p>
+                <h2 className="text-base font-bold text-gray-800">No upcoming races</h2>
+                <p className="text-sm text-gray-500">Virtual races will appear here. Check back soon.</p>
               </div>
             )}
             {races.map(r => {
@@ -327,21 +327,21 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
               const daysLeft  = Math.max(0, Math.ceil((new Date(r.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24)))
               const isFull    = r.max_entries ? r.entry_count >= r.max_entries : false
               return (
-                <div key={r.id} className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
+                <div key={r.id} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-sm font-bold text-slate-900">{r.name}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{r.distance_km}km · {daysLeft}d left</p>
+                      <p className="text-sm font-bold text-gray-900">{r.name}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{r.distance_km}km · {daysLeft}d left</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-sm font-black text-slate-900">
+                      <p className="text-sm font-black text-gray-900">
                         {r.entry_fee_gbp > 0 ? `£${r.entry_fee_gbp}` : 'Free'}
                       </p>
-                      <p className="text-[10px] text-slate-400">{r.entry_count} entered</p>
+                      <p className="text-[10px] text-gray-400">{r.entry_count} entered</p>
                     </div>
                   </div>
 
-                  {r.description && <p className="text-xs text-slate-500">{r.description}</p>}
+                  {r.description && <p className="text-xs text-gray-500">{r.description}</p>}
 
                   {r.my_entry ? (
                     r.my_entry.finish_time_secs ? (
@@ -433,8 +433,8 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
             })}
 
             {leaderboard.length === 0 && !loading && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center">
-                <p className="text-slate-400 text-sm">No runners yet this season. Be the first!</p>
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
+                <p className="text-gray-400 text-sm">No runners yet this season. Be the first!</p>
               </div>
             )}
           </div>

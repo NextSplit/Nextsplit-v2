@@ -80,19 +80,19 @@ export function FeedbackWidget() {
         <div className="px-4 pt-4 pb-8 space-y-4 max-w-lg mx-auto">
 
           {/* Handle */}
-          <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto" />
+          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
 
           {sent ? (
             <div className="text-center py-8 space-y-2">
               <div className="text-4xl">✅</div>
-              <p className="text-base font-bold text-slate-800">Thanks for the feedback!</p>
-              <p className="text-sm text-slate-400">We read every message.</p>
+              <p className="text-base font-bold text-gray-800">Thanks for the feedback!</p>
+              <p className="text-sm text-gray-400">We read every message.</p>
             </div>
           ) : (
             <>
               <div>
-                <h2 className="text-base font-black text-slate-900">Send feedback</h2>
-                <p className="text-xs text-slate-400 mt-0.5">We read every message — good and bad.</p>
+                <h2 className="text-base font-black text-gray-900">Send feedback</h2>
+                <p className="text-xs text-gray-400 mt-0.5">We read every message — good and bad.</p>
               </div>
 
               {/* Type selector */}
@@ -104,7 +104,7 @@ export function FeedbackWidget() {
                     className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
                       type === t.id
                         ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
-                        : 'bg-white text-slate-600 border-slate-200'
+                        : 'bg-white text-gray-600 border-gray-200'
                     }`}
                   >
                     {t.emoji} {t.label}
@@ -115,7 +115,7 @@ export function FeedbackWidget() {
               {/* Rating (general only) */}
               {type === 'general' && (
                 <div className="space-y-1.5">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">How are we doing?</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">How are we doing?</p>
                   <div className="flex gap-2">
                     {[1, 2, 3, 4, 5].map(n => (
                       <button
@@ -124,7 +124,7 @@ export function FeedbackWidget() {
                         className={`flex-1 py-2 rounded-xl text-sm border transition-all ${
                           rating === n
                             ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
-                            : 'bg-slate-50 text-slate-500 border-slate-200'
+                            : 'bg-[#f8f8f6] text-gray-500 border-gray-200'
                         }`}
                       >
                         {['😤','😕','😐','🙂','😍'][n - 1]}
@@ -140,11 +140,11 @@ export function FeedbackWidget() {
                 onChange={e => setText(e.target.value)}
                 placeholder={placeholder}
                 rows={4}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 resize-none"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 resize-none"
               />
 
               {/* Page context shown to user for transparency */}
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-gray-300">
                 Sending from: {typeof window !== 'undefined' ? window.location.pathname : ''}
               </p>
 

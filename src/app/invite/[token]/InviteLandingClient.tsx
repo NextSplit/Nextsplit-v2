@@ -66,7 +66,7 @@ export default function InviteLandingClient({
             </span>
           )}
           {coachLocation && (
-            <p className="text-slate-400 text-sm">📍 {coachLocation}</p>
+            <p className="text-gray-400 text-sm">📍 {coachLocation}</p>
           )}
         </div>
       </div>
@@ -76,7 +76,7 @@ export default function InviteLandingClient({
         {/* Coach bio */}
         {coachBio && (
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-            <p className="text-sm text-slate-300 leading-relaxed">{coachBio}</p>
+            <p className="text-sm text-gray-300 leading-relaxed">{coachBio}</p>
           </div>
         )}
 
@@ -93,7 +93,7 @@ export default function InviteLandingClient({
 
         {/* What is NextSplit */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">What you&apos;re joining</p>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">What you&apos;re joining</p>
           {[
             { emoji: '🧠', text: 'AI coaching that adapts to your actual training data' },
             { emoji: '📋', text: 'Personalised training plan built around your goals' },
@@ -101,7 +101,7 @@ export default function InviteLandingClient({
             { emoji: '👥', text: `${coachName} sees your progress and coaches you directly` },
             { emoji: '🏆', text: 'Track PBs, earn XP, level up your runner character' },
           ].map(f => (
-            <div key={f.text} className="flex items-start gap-3 text-sm text-slate-300">
+            <div key={f.text} className="flex items-start gap-3 text-sm text-gray-300">
               <span className="shrink-0">{f.emoji}</span>
               <span>{f.text}</span>
             </div>
@@ -136,7 +136,7 @@ export default function InviteLandingClient({
           </button>
         </div>
 
-        <p className="text-center text-xs text-slate-500 px-4">
+        <p className="text-center text-xs text-gray-500 px-4">
           Free to join · No card required · 7-day Elite trial included
         </p>
       </div>

@@ -17,7 +17,7 @@ function calcWeeklyKm(logs: Record<string, TrainingLog>, weekN: number): number 
 }
 
 function acwrColour(acwr: number | null) {
-  if (acwr === null) return { text: 'text-slate-400', bg: 'bg-slate-100', label: '—' }
+  if (acwr === null) return { text: 'text-gray-400', bg: 'bg-gray-100', label: '—' }
   if (acwr > 1.5)   return { text: 'text-red-600',   bg: 'bg-red-100',   label: 'High risk' }
   if (acwr > 1.3)   return { text: 'text-amber-600', bg: 'bg-amber-100', label: 'Elevated' }
   if (acwr < 0.8)   return { text: 'text-blue-600',  bg: 'bg-blue-100',  label: 'Low' }

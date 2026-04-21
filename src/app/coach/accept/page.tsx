@@ -25,11 +25,11 @@ export default async function CoachAcceptPage({
 
   if (!invite) {
     return (
-      <main className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
+      <main className="min-h-screen bg-[#f8f8f6] flex items-center justify-center px-6">
         <div className="text-center space-y-3">
           <div className="text-4xl">❌</div>
-          <h1 className="text-lg font-bold text-slate-800">Invalid invite link</h1>
-          <p className="text-sm text-slate-500">This link has already been used or has expired.</p>
+          <h1 className="text-lg font-bold text-gray-800">Invalid invite link</h1>
+          <p className="text-sm text-gray-500">This link has already been used or has expired.</p>
           <a href="/today" className="text-[var(--ns-forest)] text-sm font-semibold hover:underline block mt-4">
             Go to dashboard →
           </a>

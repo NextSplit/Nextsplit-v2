@@ -57,7 +57,7 @@ export function YourLifeScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
@@ -78,10 +78,10 @@ export function YourLifeScreen() {
         </div>
 
         {/* Training days */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
           <div>
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Which days can you train?</label>
-            <p className="text-xs text-slate-400 mt-1">Tap to select — we&apos;ll place rest days on the others</p>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Which days can you train?</label>
+            <p className="text-xs text-gray-400 mt-1">Tap to select — we&apos;ll place rest days on the others</p>
           </div>
           <div className="grid grid-cols-7 gap-1.5">
             {DAYS.map(day => (
@@ -91,7 +91,7 @@ export function YourLifeScreen() {
                 className={`py-3 rounded-xl text-xs font-black transition-all ${
                   trainingDays.includes(day)
                     ? 'bg-[var(--ns-forest)] text-white'
-                    : 'bg-slate-100 text-slate-500'
+                    : 'bg-gray-100 text-gray-500'
                 }`}
               >
                 {day.charAt(0)}
@@ -148,7 +148,7 @@ export function YourLifeScreen() {
                 key={day}
                 onClick={() => setLongRunDay(day)}
                 className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
-                  longRunDay === day ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200'
+                  longRunDay === day ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-gray-600 border-gray-200'
                 }`}
               >
                 {day.slice(0, 3)}
@@ -158,23 +158,23 @@ export function YourLifeScreen() {
         </div>
 
         {/* Run time preference */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">When do you typically train?</label>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">When do you typically train?</label>
           <div className="space-y-2">
             {RUN_TIMES.map(t => (
               <button
                 key={t.id}
                 onClick={() => setRunTime(t.id)}
                 className={`w-full text-left px-4 py-3 rounded-xl border transition-all flex items-center gap-3 ${
-                  runTime === t.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-slate-200'
+                  runTime === t.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-gray-200'
                 }`}
               >
                 <span className="text-xl">{t.label.split(' ')[0]}</span>
                 <div>
-                  <p className={`text-sm font-bold ${runTime === t.id ? 'text-teal-800' : 'text-slate-700'}`}>
+                  <p className={`text-sm font-bold ${runTime === t.id ? 'text-teal-800' : 'text-gray-700'}`}>
                     {t.label.split(' ').slice(1).join(' ')}
                   </p>
-                  <p className="text-xs text-slate-400">{t.desc}</p>
+                  <p className="text-xs text-gray-400">{t.desc}</p>
                 </div>
                 {runTime === t.id && <span className="ml-auto text-[var(--ns-forest-mid)] font-bold">✓</span>}
               </button>
@@ -184,8 +184,8 @@ export function YourLifeScreen() {
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 flex gap-3">
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600">←</button>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}

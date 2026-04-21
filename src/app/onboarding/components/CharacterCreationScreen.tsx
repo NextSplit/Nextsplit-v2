@@ -82,7 +82,7 @@ function CharacterPreview({ config }: { config: CharacterConfig }) {
         )}
       </svg>
       <div className="text-center">
-        <div className="text-xs font-semibold text-slate-600 italic">&ldquo;{config.startingTitle}&rdquo;</div>
+        <div className="text-xs font-semibold text-gray-600 italic">&ldquo;{config.startingTitle}&rdquo;</div>
       </div>
     </div>
   )
@@ -119,7 +119,7 @@ function PillPicker<T extends string>({ options, value, onChange }: {
           className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
             value === o.id
               ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
-              : 'bg-white text-slate-600 border-slate-200 hover:border-teal-300'
+              : 'bg-white text-gray-600 border-gray-200 hover:border-teal-300'
           }`}
         >
           {o.label}
@@ -133,7 +133,7 @@ function PillPicker<T extends string>({ options, value, onChange }: {
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{label}</p>
+      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{label}</p>
       {children}
     </div>
   )
@@ -191,19 +191,19 @@ export function CharacterCreationScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
       <OnboardingProgressBar step={step} character={config} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32">
         {/* Header */}
         <div className="px-6 pt-4 pb-2 text-center">
-          <h1 className="text-xl font-black text-slate-900">Create your runner</h1>
-          <p className="text-sm text-slate-500 mt-1">This is how you&apos;ll appear across NextSplit</p>
+          <h1 className="text-xl font-black text-gray-900">Create your runner</h1>
+          <p className="text-sm text-gray-500 mt-1">This is how you&apos;ll appear across NextSplit</p>
         </div>
 
         {/* Character preview */}
         <div className="flex justify-center py-4">
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm px-10 py-6">
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm px-10 py-6">
             <CharacterPreview config={config} />
           </div>
         </div>
@@ -212,7 +212,7 @@ export function CharacterCreationScreen() {
         <div className="flex justify-center mb-4">
           <button
             onClick={handleRandomise}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-600 hover:border-teal-300 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:border-teal-300 transition-all"
           >
             🎲 Surprise me
           </button>
@@ -222,32 +222,32 @@ export function CharacterCreationScreen() {
         <div className="px-4 space-y-5">
 
           {/* Handle / runner name */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
             <Section label="Runner name & handle">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">@</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">@</span>
                 <input
                   value={handle}
                   onChange={e => validateHandle(e.target.value)}
                   maxLength={20}
                   placeholder="yourhandle"
-                  className="w-full pl-7 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
+                  className="w-full pl-7 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
                 />
               </div>
               {handle.length > 0 && handle.length < 3 && (
                 <p className="text-xs text-amber-600">Minimum 3 characters</p>
               )}
               {handleError && <p className="text-xs text-red-500">{handleError}</p>}
-              {checkingHandle && <p className="text-xs text-slate-400">Checking…</p>}
+              {checkingHandle && <p className="text-xs text-gray-400">Checking…</p>}
               {handle.length >= 3 && !handleError && !checkingHandle && (
                 <p className="text-xs text-[var(--ns-forest)]">✓ @{handle} is available</p>
               )}
-              <p className="text-xs text-slate-400">This is how other runners will find and follow you</p>
+              <p className="text-xs text-gray-400">This is how other runners will find and follow you</p>
             </Section>
           </div>
 
           {/* Appearance */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4">
             <Section label="Body type">
               <PillPicker options={BODY_TYPES} value={config.bodyType} onChange={v => patch({ bodyType: v })} />
             </Section>
@@ -269,7 +269,7 @@ export function CharacterCreationScreen() {
           </div>
 
           {/* Hair */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4">
             <Section label="Hair style">
               <PillPicker options={HAIR_STYLES} value={config.hairStyle} onChange={v => patch({ hairStyle: v })} />
             </Section>
@@ -279,7 +279,7 @@ export function CharacterCreationScreen() {
           </div>
 
           {/* Kit */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4">
             <Section label="Kit colour">
               <ColourPicker colours={KIT_COLOURS} value={config.kitColour} onChange={v => patch({ kitColour: v })} />
             </Section>
@@ -289,7 +289,7 @@ export function CharacterCreationScreen() {
           </div>
 
           {/* Accessories */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
             <Section label="Accessories">
               <div className="flex gap-2 flex-wrap">
                 {ACCESSORIES.map(a => (
@@ -299,7 +299,7 @@ export function CharacterCreationScreen() {
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                       config.accessories?.includes(a.id as 'cap' | 'sunglasses' | 'watch')
                         ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
-                        : 'bg-white text-slate-600 border-slate-200'
+                        : 'bg-white text-gray-600 border-gray-200'
                     }`}
                   >
                     {a.label}
@@ -310,7 +310,7 @@ export function CharacterCreationScreen() {
           </div>
 
           {/* Starting title */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
             <Section label="Starting title">
               <div className="grid grid-cols-2 gap-2">
                 {STARTING_TITLES.map(t => (
@@ -320,7 +320,7 @@ export function CharacterCreationScreen() {
                     className={`px-3 py-2 rounded-xl text-xs font-semibold border text-left transition-all ${
                       config.startingTitle === t
                         ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
-                        : 'bg-white text-slate-600 border-slate-200'
+                        : 'bg-white text-gray-600 border-gray-200'
                     }`}
                   >
                     {t}
@@ -334,7 +334,7 @@ export function CharacterCreationScreen() {
       </div>
 
       {/* Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 safe-area-pb">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 safe-area-pb">
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}

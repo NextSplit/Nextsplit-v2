@@ -114,7 +114,7 @@ export function SmartTimeInput({
   return (
     <div className={`space-y-1 ${className}`}>
       {label && (
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
           {label}
         </label>
       )}
@@ -122,9 +122,9 @@ export function SmartTimeInput({
         error   ? 'border-red-400 bg-red-50'
         : focused ? 'border-[var(--ns-forest)] bg-white ring-2 ring-[var(--ns-forest-light)]'
         : raw    ? 'border-slate-300 bg-white'
-        : 'border-slate-200 bg-slate-50'
+        : 'border-gray-200 bg-[#f8f8f6]'
       }`}>
-        <span className="pl-3 text-slate-400 text-sm select-none">⏱</span>
+        <span className="pl-3 text-gray-400 text-sm select-none">⏱</span>
         <input
           ref={inputRef}
           type="text"
@@ -135,12 +135,12 @@ export function SmartTimeInput({
           onBlur={handleBlur}
           placeholder={placeholder}
           disabled={disabled}
-          className="flex-1 px-2 py-2.5 text-sm font-mono font-bold text-slate-800 bg-transparent outline-none placeholder:text-slate-300 placeholder:font-normal"
+          className="flex-1 px-2 py-2.5 text-sm font-mono font-bold text-gray-800 bg-transparent outline-none placeholder:text-gray-300 placeholder:font-normal"
         />
         {raw && !error && (
           <button
             onClick={() => { setRaw(''); onChange(null) }}
-            className="pr-3 text-slate-300 hover:text-slate-500 text-lg leading-none"
+            className="pr-3 text-gray-300 hover:text-gray-500 text-lg leading-none"
           >×</button>
         )}
       </div>
@@ -148,7 +148,7 @@ export function SmartTimeInput({
         <p className="text-xs text-red-500">Invalid time — enter digits like 13045 for 1:30:45</p>
       )}
       {hint && !error && (
-        <p className="text-xs text-slate-400">{hint}</p>
+        <p className="text-xs text-gray-400">{hint}</p>
       )}
     </div>
   )
@@ -206,15 +206,15 @@ export function SmartDistanceInput({
   return (
     <div className={`space-y-1 ${className}`}>
       {label && (
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{label}</label>
+        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</label>
       )}
       <div className={`relative flex items-center rounded-xl border-2 transition-all ${
         error    ? 'border-red-400 bg-red-50'
         : focused ? 'border-[var(--ns-forest)] bg-white ring-2 ring-[var(--ns-forest-light)]'
         : raw     ? 'border-slate-300 bg-white'
-        : 'border-slate-200 bg-slate-50'
+        : 'border-gray-200 bg-[#f8f8f6]'
       }`}>
-        <span className="pl-3 text-slate-400 text-sm select-none">📏</span>
+        <span className="pl-3 text-gray-400 text-sm select-none">📏</span>
         <input
           type="text"
           inputMode="decimal"
@@ -223,15 +223,15 @@ export function SmartDistanceInput({
           onFocus={() => { setFocused(true); setError(false) }}
           onBlur={handleBlur}
           placeholder="0.0"
-          className="flex-1 px-2 py-2.5 text-sm font-mono font-bold text-slate-800 bg-transparent outline-none placeholder:text-slate-300 placeholder:font-normal"
+          className="flex-1 px-2 py-2.5 text-sm font-mono font-bold text-gray-800 bg-transparent outline-none placeholder:text-gray-300 placeholder:font-normal"
         />
-        <span className="pr-3 text-xs text-slate-400 font-semibold">{unit}</span>
+        <span className="pr-3 text-xs text-gray-400 font-semibold">{unit}</span>
       </div>
       {error && (
         <p className="text-xs text-red-500">Enter a valid distance (e.g. 42.2)</p>
       )}
       {hint && !error && (
-        <p className="text-xs text-slate-400">{hint}</p>
+        <p className="text-xs text-gray-400">{hint}</p>
       )}
     </div>
   )
@@ -288,15 +288,15 @@ export function SmartPaceInput({
   return (
     <div className={`space-y-1 ${className}`}>
       {label && (
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{label}</label>
+        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</label>
       )}
       <div className={`relative flex items-center rounded-xl border-2 transition-all ${
         error    ? 'border-red-400 bg-red-50'
         : focused ? 'border-[var(--ns-forest)] bg-white ring-2 ring-[var(--ns-forest-light)]'
         : raw     ? 'border-slate-300 bg-white'
-        : 'border-slate-200 bg-slate-50'
+        : 'border-gray-200 bg-[#f8f8f6]'
       }`}>
-        <span className="pl-3 text-slate-400 text-sm select-none">🏃</span>
+        <span className="pl-3 text-gray-400 text-sm select-none">🏃</span>
         <input
           type="text"
           inputMode="numeric"
@@ -305,12 +305,12 @@ export function SmartPaceInput({
           onFocus={() => { setFocused(true); setError(false) }}
           onBlur={handleBlur}
           placeholder="5:30"
-          className="flex-1 px-2 py-2.5 text-sm font-mono font-bold text-slate-800 bg-transparent outline-none placeholder:text-slate-300 placeholder:font-normal"
+          className="flex-1 px-2 py-2.5 text-sm font-mono font-bold text-gray-800 bg-transparent outline-none placeholder:text-gray-300 placeholder:font-normal"
         />
-        <span className="pr-3 text-xs text-slate-400 font-semibold">/km</span>
+        <span className="pr-3 text-xs text-gray-400 font-semibold">/km</span>
       </div>
       {error && <p className="text-xs text-red-500">Enter pace as M:SS (e.g. 5:30)</p>}
-      {hint && !error && <p className="text-xs text-slate-400">{hint}</p>}
+      {hint && !error && <p className="text-xs text-gray-400">{hint}</p>}
     </div>
   )
 }

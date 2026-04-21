@@ -91,17 +91,17 @@ export function PlanPreviewScreen() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#f8f8f6] flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-3 animate-pulse">📋</div>
-          <p className="text-sm text-slate-400">Loading your plan…</p>
+          <p className="text-sm text-gray-400">Loading your plan…</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
       {/* Header */}
       <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-12 pb-8 text-center">
         <div className="text-4xl mb-3">🎉</div>
@@ -115,12 +115,12 @@ export function PlanPreviewScreen() {
 
         {/* Plan card */}
         {plan && (
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Your plan</p>
-                <h2 className="text-lg font-black text-slate-900">{plan.name}</h2>
-                <p className="text-xs text-slate-400 mt-0.5 capitalize">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Your plan</p>
+                <h2 className="text-lg font-black text-gray-900">{plan.name}</h2>
+                <p className="text-xs text-gray-400 mt-0.5 capitalize">
                   {plan.planType.replace('_', ' ')} plan
                 </p>
               </div>
@@ -147,16 +147,16 @@ export function PlanPreviewScreen() {
 
         {/* Goal reminder */}
         {aGoal && (
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Your A goal</p>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Your A goal</p>
             <div className="flex items-center gap-3">
               <span className="text-2xl">🎯</span>
               <div>
-                <p className="text-sm font-bold text-slate-800">
+                <p className="text-sm font-bold text-gray-800">
                   {aGoal.race_name ?? aGoal.race_distance_label ?? aGoal.goal_type?.replace('_', ' ')}
                 </p>
                 {aGoal.race_date && (
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-gray-400 mt-0.5">
                     {new Date(aGoal.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                 )}

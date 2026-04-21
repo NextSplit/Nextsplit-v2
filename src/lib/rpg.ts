@@ -34,8 +34,8 @@ export const RUNNER_CLASSES: Record<RunnerClassId, RunnerClass> = {
     tagline: 'Every legend starts somewhere.',
     description: 'Your class reveals after four weeks of training data. Keep logging — your running style is taking shape.',
     colour: '#94a3b8',
-    bg: 'bg-slate-100',
-    textColour: 'text-slate-600',
+    bg: 'bg-gray-100',
+    textColour: 'text-gray-600',
     shareText: 'Just getting started with NextSplit. Watch this space. 🌅',
   },
   marathon_runner: {

@@ -63,14 +63,14 @@ function RaceTimeInput({ label, value, onChange }: {
 
   return (
     <div className="space-y-1">
-      <label className="text-xs font-semibold text-slate-500">{label}</label>
+      <label className="text-xs font-semibold text-gray-500">{label}</label>
       <input
         value={raw}
         onChange={e => setRaw(e.target.value)}
         onBlur={handleBlur}
         placeholder="e.g. 25:30"
         className={`w-full px-3 py-2 rounded-xl border text-sm outline-none focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors ${
-          error ? 'border-red-300' : 'border-slate-200 focus:border-[var(--ns-forest)]'
+          error ? 'border-red-300' : 'border-gray-200 focus:border-[var(--ns-forest)]'
         }`}
       />
       {error && <p className="text-xs text-red-500">{error}</p>}
@@ -121,7 +121,7 @@ export function YourRunningScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
@@ -187,16 +187,16 @@ export function YourRunningScreen() {
                   ? { background: 'var(--ns-forest-light)', borderColor: 'var(--ns-forest)' }
                   : { background: 'white', borderColor: '#e5e7eb' }}
               >
-                <p className={`text-sm font-bold ${experience === o.id ? 'text-teal-800' : 'text-slate-700'}`}>{o.label}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{o.desc}</p>
+                <p className={`text-sm font-bold ${experience === o.id ? 'text-teal-800' : 'text-gray-700'}`}>{o.label}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{o.desc}</p>
               </button>
             ))}
           </div>
         </div>
 
         {/* Weekly km */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Current weekly mileage</label>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Current weekly mileage</label>
           <div className="flex items-center gap-4">
             <input
               type="range"
@@ -207,19 +207,19 @@ export function YourRunningScreen() {
             />
             <span className="text-lg font-black text-[var(--ns-forest)] w-16 text-right">{weeklyKm}km</span>
           </div>
-          <div className="flex justify-between text-xs text-slate-400">
+          <div className="flex justify-between text-xs text-gray-400">
             <span>0km</span><span>60km</span><span>120km</span>
           </div>
           {weeklyKm === 0 && (
-            <p className="text-xs text-slate-400">No worries — we&apos;ll build you up from scratch</p>
+            <p className="text-xs text-gray-400">No worries — we&apos;ll build you up from scratch</p>
           )}
         </div>
 
         {/* Recent race times */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-4">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4">
           <div>
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Recent race times</label>
-            <p className="text-xs text-slate-400 mt-1">Optional but powerful — we use this to set your pace zones precisely. Fill in what you know.</p>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Recent race times</label>
+            <p className="text-xs text-gray-400 mt-1">Optional but powerful — we use this to set your pace zones precisely. Fill in what you know.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <SmartTimeInput label="5K" value={raceTimes['5k'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, '5k': v ?? undefined }))} hint="e.g. 02000 → 0:20:00" />
@@ -230,15 +230,15 @@ export function YourRunningScreen() {
         </div>
 
         {/* Longest recent run */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Longest run in last 4 weeks</label>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Longest run in last 4 weeks</label>
           <div className="grid grid-cols-3 gap-2">
             {LONGEST_RUN_OPTIONS.map(o => (
               <button
                 key={o}
                 onClick={() => setLongestRun(o)}
                 className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
-                  longestRun === o ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200'
+                  longestRun === o ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-gray-600 border-gray-200'
                 }`}
               >
                 {o}
@@ -248,15 +248,15 @@ export function YourRunningScreen() {
         </div>
 
         {/* Surfaces */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Where do you typically run?</label>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Where do you typically run?</label>
           <div className="grid grid-cols-2 gap-2">
             {SURFACE_OPTIONS.map(o => (
               <button
                 key={o.id}
                 onClick={() => toggleSurface(o.id)}
                 className={`py-2.5 px-3 rounded-xl text-sm font-semibold border transition-all text-left ${
-                  surfaces.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-teal-800' : 'bg-white border-slate-200 text-slate-700'
+                  surfaces.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-teal-800' : 'bg-white border-gray-200 text-gray-700'
                 }`}
               >
                 {o.label}
@@ -267,8 +267,8 @@ export function YourRunningScreen() {
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 flex gap-3">
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600">←</button>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}

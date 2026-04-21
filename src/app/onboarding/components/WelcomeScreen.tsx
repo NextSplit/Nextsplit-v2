@@ -43,14 +43,14 @@ export function WelcomeScreen() {
               <span className="text-xl mt-0.5">{v.icon}</span>
               <div>
                 <p className="text-white text-sm font-bold">{v.title}</p>
-                <p className="text-slate-400 text-xs mt-0.5">{v.desc}</p>
+                <p className="text-gray-400 text-xs mt-0.5">{v.desc}</p>
               </div>
             </div>
           ))}
         </div>
 
         {/* Social proof */}
-        <p className="text-slate-500 text-xs">
+        <p className="text-gray-500 text-xs">
           Takes about 3 minutes · Your data stays private
         </p>
       </div>
@@ -64,10 +64,10 @@ export function WelcomeScreen() {
         >
           Let&apos;s go →
         </button>
-        <p className="text-center text-xs text-slate-600 mt-3">
+        <p className="text-center text-xs text-gray-600 mt-3">
           By continuing you agree to our{' '}
-          <a href="/terms" className="text-slate-500 underline">Terms</a> &{' '}
-          <a href="/privacy" className="text-slate-500 underline">Privacy Policy</a>
+          <a href="/terms" className="text-gray-500 underline">Terms</a> &{' '}
+          <a href="/privacy" className="text-gray-500 underline">Privacy Policy</a>
         </p>
         <div className="mt-3">
           <MedicalDisclaimer variant="compact" />

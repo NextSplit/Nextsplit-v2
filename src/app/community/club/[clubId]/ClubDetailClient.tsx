@@ -78,18 +78,18 @@ export default function ClubDetailClient({ club, membership, members, feed, user
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24">
+    <div className="min-h-screen bg-[#f8f8f6] pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-slate-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
         <div className="max-w-lg mx-auto space-y-3">
           <div className="flex items-center gap-3">
-            <a href="/community" className="text-slate-400 text-xl">←</a>
+            <a href="/community" className="text-gray-400 text-xl">←</a>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-xl">{club.emoji}</span>
-                <h1 className="text-base font-black text-slate-900 truncate">{club.name}</h1>
+                <h1 className="text-base font-black text-gray-900 truncate">{club.name}</h1>
               </div>
-              <p className="text-xs text-slate-400">{club.member_count} members · {Math.round(club.weekly_km)}km this week</p>
+              <p className="text-xs text-gray-400">{club.member_count} members · {Math.round(club.weekly_km)}km this week</p>
             </div>
             {(isOwner || membership) && (
               <button onClick={() => setShowCode(!showCode)}
@@ -112,10 +112,10 @@ export default function ClubDetailClient({ club, membership, members, feed, user
             </div>
           )}
 
-          <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
             {(['leaderboard', 'feed'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${tab === t ? 'bg-white text-slate-900 shadow' : 'text-slate-500'}`}>
+                className={`flex-1 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${tab === t ? 'bg-white text-gray-900 shadow' : 'text-gray-500'}`}>
                 {t === 'leaderboard' ? '🏆 Leaderboard' : '📡 Feed'}
               </button>
             ))}
@@ -135,20 +135,20 @@ export default function ClubDetailClient({ club, membership, members, feed, user
               const medal  = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
               return (
                 <div key={m.user_id}
-                  className={`flex items-center gap-3 rounded-2xl p-3 ${isMe ? 'bg-[var(--ns-forest-light)] border-2 border-teal-300' : 'bg-white border border-slate-200'}`}>
+                  className={`flex items-center gap-3 rounded-2xl p-3 ${isMe ? 'bg-[var(--ns-forest-light)] border-2 border-teal-300' : 'bg-white border border-gray-200'}`}>
                   <div className="w-7 text-center shrink-0">
-                    {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-slate-400">#{i+1}</span>}
+                    {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-gray-400">#{i+1}</span>}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-bold truncate ${isMe ? 'text-teal-800' : 'text-slate-900'}`}>
+                    <p className={`text-sm font-bold truncate ${isMe ? 'text-teal-800' : 'text-gray-900'}`}>
                       {name} {isMe && '(you)'}
                       {m.role === 'owner' && <span className="ml-1 text-[10px] text-[var(--ns-forest-mid)]">Owner</span>}
                     </p>
-                    <p className="text-[10px] text-slate-400">{LEAGUE_CONFIG[league]?.emoji} {m.season_xp} XP this season</p>
+                    <p className="text-[10px] text-gray-400">{LEAGUE_CONFIG[league]?.emoji} {m.season_xp} XP this season</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className={`text-sm font-black ${isMe ? 'text-[var(--ns-forest)]' : 'text-slate-700'}`}>{Math.round(m.weekly_km)}km</p>
-                    <p className="text-[10px] text-slate-400">this week</p>
+                    <p className={`text-sm font-black ${isMe ? 'text-[var(--ns-forest)]' : 'text-gray-700'}`}>{Math.round(m.weekly_km)}km</p>
+                    <p className="text-[10px] text-gray-400">this week</p>
                   </div>
                 </div>
               )
@@ -160,31 +160,31 @@ export default function ClubDetailClient({ club, membership, members, feed, user
         {tab === 'feed' && (
           <>
             {feed.length === 0 && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-2">
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-2">
                 <div className="text-4xl">📡</div>
-                <p className="text-sm text-slate-500">No sessions shared yet. Be the first!</p>
+                <p className="text-sm text-gray-500">No sessions shared yet. Be the first!</p>
               </div>
             )}
             {feed.map(item => {
               const name = item.profiles?.display_name ?? item.profiles?.handle ?? 'Runner'
               return (
-                <div key={item.id} className="bg-white rounded-2xl border border-slate-200 p-4 space-y-2">
+                <div key={item.id} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-[var(--ns-forest-light)] flex items-center justify-center text-sm">🏃</div>
                     <div>
-                      <p className="text-xs font-bold text-slate-800">{name}</p>
-                      <p className="text-[10px] text-slate-400">{fmtDate(item.logged_at)}</p>
+                      <p className="text-xs font-bold text-gray-800">{name}</p>
+                      <p className="text-[10px] text-gray-400">{fmtDate(item.logged_at)}</p>
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-800">{item.session_name}</p>
-                    <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
+                    <p className="text-sm font-semibold text-gray-800">{item.session_name}</p>
+                    <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
                       {item.km && <span>{item.km}km</span>}
                       {item.duration_secs && <span>{fmtDuration(item.duration_secs)}</span>}
                       {item.pace && <span>{item.pace}/km</span>}
                     </div>
                   </div>
-                  {item.note && <p className="text-xs text-slate-500 italic">&quot;{item.note}&quot;</p>}
+                  {item.note && <p className="text-xs text-gray-500 italic">&quot;{item.note}&quot;</p>}
                 </div>
               )
             })}

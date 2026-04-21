@@ -13,7 +13,7 @@ interface Props {
 const CONFIDENCE_CONFIG = {
   high:   { label: 'High confidence',   colour: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
   medium: { label: 'Medium confidence', colour: 'text-amber-600 bg-amber-50 border-amber-200'       },
-  low:    { label: 'Low confidence',    colour: 'text-slate-500 bg-slate-50 border-slate-200'        },
+  low:    { label: 'Low confidence',    colour: 'text-gray-500 bg-[#f8f8f6] border-gray-200'        },
 }
 
 export default function RaceDaySimulation({ logs, targetDistanceKm, raceDate }: Props) {

@@ -111,7 +111,7 @@ export function CoachCard() {
           <div className={`mx-4 mb-3 px-3 py-2.5 rounded-xl border text-xs ${
             latestAnnotation.reaction
               ? REACTION_CONFIG[latestAnnotation.reaction].colour
-              : 'bg-slate-50 border-slate-200 text-slate-700'
+              : 'bg-[#f8f8f6] border-gray-200 text-gray-700'
           }`}>
             <div className="flex items-start gap-2">
               {latestAnnotation.reaction && (
@@ -130,11 +130,11 @@ export function CoachCard() {
           <div className="px-4 pb-4 space-y-2 border-t border-gray-50 pt-3">
             <button
               onClick={() => setShowMessages(true)}
-              className="w-full flex items-center justify-between bg-slate-50 rounded-xl px-3 py-2.5"
+              className="w-full flex items-center justify-between bg-[#f8f8f6] rounded-xl px-3 py-2.5"
             >
               <div className="flex items-center gap-2">
                 <span className="text-base">💬</span>
-                <span className="text-sm font-semibold text-slate-700">Message {coach.display_name}</span>
+                <span className="text-sm font-semibold text-gray-700">Message {coach.display_name}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 {unreadMessages > 0 && (
@@ -152,9 +152,9 @@ export function CoachCard() {
 
             {annotations.length > 1 && (
               <div className="space-y-1.5">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Recent notes</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Recent notes</p>
                 {annotations.slice(1).map(a => (
-                  <div key={a.id} className="text-xs text-slate-600 bg-slate-50 rounded-xl px-3 py-2">
+                  <div key={a.id} className="text-xs text-gray-600 bg-[#f8f8f6] rounded-xl px-3 py-2">
                     {a.reaction && <span className="mr-1">{REACTION_CONFIG[a.reaction]?.emoji}</span>}
                     {a.note}
                   </div>
@@ -164,7 +164,7 @@ export function CoachCard() {
 
             <a
               href="/settings#coach-access"
-              className="block text-center text-xs text-slate-400 hover:text-slate-600 py-1"
+              className="block text-center text-xs text-gray-400 hover:text-gray-600 py-1"
             >
               Manage coach access →
             </a>

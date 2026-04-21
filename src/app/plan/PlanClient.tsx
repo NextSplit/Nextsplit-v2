@@ -197,7 +197,7 @@ export default function PlanClient() {
           {(['plan', 'fuel'] as const).map(t => (
             <button key={t} onClick={() => setPlanTab(t)}
               className={`flex-1 py-2.5 text-xs font-bold capitalize border-b-2 transition-all ${
-                planTab === t ? 'border-[var(--ns-forest)] text-[var(--ns-forest)]' : 'border-transparent text-slate-400'
+                planTab === t ? 'border-[var(--ns-forest)] text-[var(--ns-forest)]' : 'border-transparent text-gray-400'
               }`}>
               {t === 'plan' ? '📋 Training Plan' : '🥗 Fuel'}
             </button>

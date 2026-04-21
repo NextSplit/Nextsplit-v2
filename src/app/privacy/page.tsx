@@ -13,20 +13,20 @@ export default function PrivacyPage() {
         {/* Header */}
         <div className="mb-10">
           <Link href="/" className="text-[var(--ns-forest)] text-sm font-semibold hover:underline">← NextSplit</Link>
-          <h1 className="text-3xl font-black text-slate-900 mt-4">Privacy Policy</h1>
-          <p className="text-slate-500 text-sm mt-2">Last updated: April 2026</p>
+          <h1 className="text-3xl font-black text-gray-900 mt-4">Privacy Policy</h1>
+          <p className="text-gray-500 text-sm mt-2">Last updated: April 2026</p>
         </div>
 
-        <div className="prose prose-slate max-w-none space-y-8 text-sm leading-relaxed text-slate-700">
+        <div className="prose prose-slate max-w-none space-y-8 text-sm leading-relaxed text-gray-700">
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Who we are</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Who we are</h2>
             <p>NextSplit (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) is a training platform for runners and endurance athletes. We are the data controller for personal data collected through nextsplit-v2.vercel.app and associated mobile applications.</p>
             <p className="mt-2">Contact: <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-forest)] hover:underline">privacy@nextsplit.com</a></p>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">What data we collect</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">What data we collect</h2>
             <div className="space-y-3">
               {[
                 { title: 'Account data', desc: 'Your name, email address and password (hashed — we never see it in plain text).' },
@@ -40,14 +40,14 @@ export default function PrivacyPage() {
               ].map(item => (
                 <div key={item.title} className="flex gap-3">
                   <span className="text-[var(--ns-forest)] font-bold shrink-0">→</span>
-                  <div><span className="font-semibold text-slate-800">{item.title}:</span> {item.desc}</div>
+                  <div><span className="font-semibold text-gray-800">{item.title}:</span> {item.desc}</div>
                 </div>
               ))}
             </div>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Why we collect it (legal basis)</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Why we collect it (legal basis)</h2>
             <div className="space-y-2">
               <p><strong>Contract performance:</strong> We need your account and training data to provide the NextSplit service — personalised plans, AI coaching, progress tracking.</p>
               <p><strong>Legitimate interests:</strong> We use usage analytics to improve the product and error monitoring to fix bugs.</p>
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">How we use your data</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">How we use your data</h2>
             <ul className="space-y-1 list-disc list-inside">
               <li>Generate and personalise your training plan</li>
               <li>Provide AI coaching feedback based on your actual training data</li>
@@ -69,13 +69,13 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">AI and your data</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">AI and your data</h2>
             <p>NextSplit uses the Anthropic Claude API to generate training plans and provide coaching feedback. Your training data, profile information and goals are sent to the Claude API to generate personalised responses.</p>
             <p className="mt-2">Anthropic&apos;s data processing is governed by their own privacy policy. We do not use your data to train AI models.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Who we share data with</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Who we share data with</h2>
             <div className="space-y-2">
               {[
                 { name: 'Supabase', purpose: 'Database and authentication (EU region)', link: 'https://supabase.com/privacy' },
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
               ].map(s => (
                 <div key={s.name} className="flex gap-3">
                   <span className="text-[var(--ns-forest)] font-bold shrink-0">→</span>
-                  <div><span className="font-semibold text-slate-800">{s.name}:</span> {s.purpose}. <a href={s.link} target="_blank" rel="noopener noreferrer" className="text-[var(--ns-forest)] hover:underline">Privacy policy</a></div>
+                  <div><span className="font-semibold text-gray-800">{s.name}:</span> {s.purpose}. <a href={s.link} target="_blank" rel="noopener noreferrer" className="text-[var(--ns-forest)] hover:underline">Privacy policy</a></div>
                 </div>
               ))}
             </div>
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Coach data sharing</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Coach data sharing</h2>
             <p>If you connect with a Professional Coach through NextSplit, the following data is shared with your coach when the relationship is active:</p>
             <ul className="mt-2 space-y-1 list-disc list-inside">
               <li>Training logs and session completion (on by default)</li>
@@ -108,12 +108,12 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Data retention</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Data retention</h2>
             <p>We keep your data for as long as your account is active. When you delete your account, all personal data is permanently deleted within 30 days, including training logs, wellness data, goals, and profile information.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Your rights (GDPR)</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Your rights (GDPR)</h2>
             <p>If you are in the UK or EU, you have the right to:</p>
             <ul className="mt-2 space-y-1 list-disc list-inside">
               <li><strong>Access</strong> — download all your data from Settings → Export my data</li>
@@ -127,30 +127,30 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Cookies and tracking</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Cookies and tracking</h2>
             <p>We use essential cookies for authentication (Supabase session cookies). We use PostHog for analytics, which sets a cookie to identify returning users for product improvement purposes. We do not use advertising cookies.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Security</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Security</h2>
             <p>All data is transmitted over HTTPS. Passwords are hashed using industry-standard bcrypt. Database access is protected by Row Level Security (RLS) — every user can only access their own data. We use Sentry to monitor and respond to security incidents.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Changes to this policy</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Changes to this policy</h2>
             <p>We will notify you of significant changes via email or in-app notification. The &ldquo;last updated&rdquo; date at the top of this page reflects the most recent revision.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Contact</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Contact</h2>
             <p>For privacy questions or to exercise your rights: <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-forest)] hover:underline">privacy@nextsplit.com</a></p>
           </section>
 
         </div>
 
-        <div className="mt-12 pt-6 border-t border-slate-100 flex gap-4 text-sm">
+        <div className="mt-12 pt-6 border-t border-gray-100 flex gap-4 text-sm">
           <Link href="/terms" className="text-[var(--ns-forest)] hover:underline">Terms of Service</Link>
-          <Link href="/" className="text-slate-400 hover:underline">Back to NextSplit</Link>
+          <Link href="/" className="text-gray-400 hover:underline">Back to NextSplit</Link>
         </div>
       </div>
     </main>

@@ -31,7 +31,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-20">
+    <main className="min-h-screen bg-[#f8f8f6] pb-20">
 
       {/* Hero header */}
       <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-4 pt-14 pb-8">
@@ -52,7 +52,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
                   </span>
                 )}
               </div>
-              {coach.location && <p className="text-slate-400 text-sm mt-0.5">📍 {coach.location}</p>}
+              {coach.location && <p className="text-gray-400 text-sm mt-0.5">📍 {coach.location}</p>}
               {coach.rate_monthly_gbp && (
                 <p className="text-[var(--ns-forest-light)] text-sm font-semibold mt-1">
                   From £{coach.rate_monthly_gbp}/month
@@ -65,7 +65,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
           {coach.specialities && coach.specialities.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {coach.specialities.map(s => (
-                <span key={s} className="text-xs bg-white/10 text-slate-300 px-2.5 py-1 rounded-full border border-white/10">
+                <span key={s} className="text-xs bg-white/10 text-gray-300 px-2.5 py-1 rounded-full border border-white/10">
                   {s}
                 </span>
               ))}
@@ -103,7 +103,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
           )}
 
           {isOwnProfile && (
-            <div className="bg-white/10 border border-white/20 rounded-2xl px-4 py-3 text-sm text-slate-300">
+            <div className="bg-white/10 border border-white/20 rounded-2xl px-4 py-3 text-sm text-gray-300">
               👆 This is your public profile — this is what athletes see
             </div>
           )}
@@ -114,30 +114,30 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
 
         {/* Bio */}
         {coach.bio && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-4">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">About</p>
-            <p className="text-sm text-slate-700 leading-relaxed">{coach.bio}</p>
+          <div className="bg-white rounded-2xl border border-gray-200 p-4">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">About</p>
+            <p className="text-sm text-gray-700 leading-relaxed">{coach.bio}</p>
           </div>
         )}
 
         {/* Credentials */}
         {coach.credentials && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-4">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Credentials</p>
-            <p className="text-sm text-slate-700 leading-relaxed">{coach.credentials}</p>
+          <div className="bg-white rounded-2xl border border-gray-200 p-4">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Credentials</p>
+            <p className="text-sm text-gray-700 leading-relaxed">{coach.credentials}</p>
           </div>
         )}
 
         {/* Plans */}
         {plans.length > 0 && (
           <div className="space-y-3">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Training Plans</p>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Training Plans</p>
             {plans.map(plan => (
-              <div key={plan.id} className="bg-white rounded-2xl border border-slate-200 p-4 space-y-2">
+              <div key={plan.id} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{plan.name}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-sm font-bold text-gray-900">{plan.name}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">
                       {plan.distance} · {plan.level} · {plan.weeks_min}–{plan.weeks_max} weeks
                     </p>
                   </div>
@@ -148,7 +148,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
                   )}
                 </div>
                 {plan.description && (
-                  <p className="text-xs text-slate-500 leading-relaxed">{plan.description}</p>
+                  <p className="text-xs text-gray-500 leading-relaxed">{plan.description}</p>
                 )}
                 {viewerLoggedIn && !isOwnProfile && (
                   <button className="w-full bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] text-[var(--ns-forest)] py-2 rounded-xl text-xs font-bold active:scale-95">
@@ -161,8 +161,8 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
         )}
 
         {/* Links */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-2">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Links</p>
+        <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Links</p>
           {coach.website_url && (
             <a href={coach.website_url} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-[var(--ns-forest)] hover:underline">
@@ -176,7 +176,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
             </a>
           )}
           {!coach.website_url && !coach.instagram_handle && (
-            <p className="text-sm text-slate-400">No links added</p>
+            <p className="text-sm text-gray-400">No links added</p>
           )}
         </div>
       </div>
@@ -186,15 +186,15 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
         <>
           <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setShowEnquiry(false)} />
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl px-4 pt-4 pb-8 space-y-4 max-w-lg mx-auto">
-            <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto" />
-            <h2 className="text-base font-black text-slate-900">Send enquiry to {coach.display_name}</h2>
-            <p className="text-xs text-slate-400">Tell them about your goals and what you&apos;re looking for in a coach.</p>
+            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+            <h2 className="text-base font-black text-gray-900">Send enquiry to {coach.display_name}</h2>
+            <p className="text-xs text-gray-400">Tell them about your goals and what you&apos;re looking for in a coach.</p>
             <textarea
               value={enquiryText}
               onChange={e => setEnquiryText(e.target.value)}
               placeholder="Hi, I'm training for my first marathon in October and looking for a coach…"
               rows={5}
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none"
             />
             {enquirySent ? (
               <div className="w-full bg-emerald-500 text-white py-3.5 rounded-2xl text-sm font-bold text-center">

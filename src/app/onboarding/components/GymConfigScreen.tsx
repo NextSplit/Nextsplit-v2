@@ -59,21 +59,21 @@ export function GymConfigScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
         <div className="mb-2">
-          <h1 className="text-xl font-black text-slate-900">Gym & strength</h1>
-          <p className="text-sm text-slate-500 mt-1">Strength training is built into every plan — it makes you a better, more resilient runner.</p>
+          <h1 className="text-xl font-black text-gray-900">Gym & strength</h1>
+          <p className="text-sm text-gray-500 mt-1">Strength training is built into every plan — it makes you a better, more resilient runner.</p>
         </div>
 
         {/* Toggle */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-bold text-slate-800">Include gym sessions?</p>
-              <p className="text-xs text-slate-400 mt-0.5">You can turn this on or off any time</p>
+              <p className="text-sm font-bold text-gray-800">Include gym sessions?</p>
+              <p className="text-xs text-gray-400 mt-0.5">You can turn this on or off any time</p>
             </div>
             <button
               onClick={() => setGymEnabled(!gymEnabled)}
@@ -92,22 +92,22 @@ export function GymConfigScreen() {
         {gymEnabled && (
           <>
             {/* Sessions per week */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Gym sessions per week</label>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Gym sessions per week</label>
               <div className="flex gap-3">
                 {[1, 2, 3].map(n => (
                   <button
                     key={n}
                     onClick={() => setSessionsPerWeek(n)}
                     className={`flex-1 py-3 rounded-xl text-sm font-black border transition-all ${
-                      sessionsPerWeek === n ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200'
+                      sessionsPerWeek === n ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-gray-600 border-gray-200'
                     }`}
                   >
                     {n}x
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-gray-400">
                 {sessionsPerWeek === 1 && 'One session covers the essentials without adding too much fatigue'}
                 {sessionsPerWeek === 2 && 'Two sessions is the sweet spot for most runners — recommended'}
                 {sessionsPerWeek === 3 && 'Three sessions for those who want to prioritise strength alongside running'}
@@ -115,10 +115,10 @@ export function GymConfigScreen() {
             </div>
 
             {/* Equipment */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">What equipment do you have?</label>
-                <p className="text-xs text-slate-400 mt-1">Select all that apply — we&apos;ll build sessions around what you have</p>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">What equipment do you have?</label>
+                <p className="text-xs text-gray-400 mt-1">Select all that apply — we&apos;ll build sessions around what you have</p>
               </div>
               <div className="space-y-2">
                 {EQUIPMENT_OPTIONS.map(o => (
@@ -126,32 +126,32 @@ export function GymConfigScreen() {
                     key={o.id}
                     onClick={() => toggleEquipment(o.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                      equipment.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-slate-200'
+                      equipment.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-gray-200'
                     }`}
                   >
-                    <p className={`text-sm font-bold ${equipment.includes(o.id) ? 'text-teal-800' : 'text-slate-700'}`}>
+                    <p className={`text-sm font-bold ${equipment.includes(o.id) ? 'text-teal-800' : 'text-gray-700'}`}>
                       {o.label}
                     </p>
-                    <p className="text-xs text-slate-400 mt-0.5">{o.desc}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{o.desc}</p>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Focus */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Training focus</label>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Training focus</label>
               <div className="space-y-2">
                 {FOCUS_OPTIONS.map(o => (
                   <button
                     key={o.id}
                     onClick={() => setFocus(o.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                      focus === o.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-slate-200'
+                      focus === o.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-gray-200'
                     }`}
                   >
-                    <p className={`text-sm font-bold ${focus === o.id ? 'text-teal-800' : 'text-slate-700'}`}>{o.label}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{o.desc}</p>
+                    <p className={`text-sm font-bold ${focus === o.id ? 'text-teal-800' : 'text-gray-700'}`}>{o.label}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{o.desc}</p>
                   </button>
                 ))}
               </div>
@@ -161,8 +161,8 @@ export function GymConfigScreen() {
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 flex gap-3">
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600">←</button>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}

@@ -342,7 +342,7 @@ export function PlanGenerationScreen() {
       <p className="text-[var(--ns-forest-light)] text-sm mb-8">Our coaches are working through your requirements</p>
 
       <div className="h-6 mb-6">
-        <p className="text-slate-400 text-sm">{MESSAGES[msgIndex]}</p>
+        <p className="text-gray-400 text-sm">{MESSAGES[msgIndex]}</p>
       </div>
 
       <div className="w-full max-w-xs bg-white/10 rounded-full h-1.5 overflow-hidden mb-4">
@@ -359,7 +359,7 @@ export function PlanGenerationScreen() {
       )}
 
       <div className="mt-8 text-left bg-white/5 rounded-2xl border border-white/10 p-4 w-full max-w-xs space-y-2">
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Your plan</p>
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Your plan</p>
         {[
           { label: 'Path',     value: ({ predetermined: 'Structured plan', ai_bespoke: 'AI coached', manual: 'Build your own', lifestyle: 'Lifestyle', coach_marketplace: 'Coach / marketplace' } as Record<string,string>)[data.trainingPath ?? ''] ?? '—' },
           { label: 'Wkly km', value: `${data.weeklyKmCurrent}km starting` },
@@ -367,7 +367,7 @@ export function PlanGenerationScreen() {
           { label: 'Gym',     value: data.gymEnabled ? `${data.gymSessionsPerWeek}x / week` : 'Not included' },
         ].map(item => (
           <div key={item.label} className="flex justify-between text-xs">
-            <span className="text-slate-500">{item.label}</span>
+            <span className="text-gray-500">{item.label}</span>
             <span className="text-white font-semibold">{item.value}</span>
           </div>
         ))}

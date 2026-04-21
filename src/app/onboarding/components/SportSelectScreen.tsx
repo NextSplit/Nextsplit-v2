@@ -45,13 +45,13 @@ export function SportSelectScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6">
         <div className="mb-6">
-          <h1 className="text-xl font-black text-slate-900">What are you training for?</h1>
-          <p className="text-sm text-slate-500 mt-1">Running is your foundation. Add more anytime.</p>
+          <h1 className="text-xl font-black text-gray-900">What are you training for?</h1>
+          <p className="text-sm text-gray-500 mt-1">Running is your foundation. Add more anytime.</p>
         </div>
 
         <div className="space-y-3">
@@ -66,14 +66,14 @@ export function SportSelectScreen() {
                   sport.active
                     ? isSelected
                       ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] shadow-sm'
-                      : 'bg-white border-slate-200 hover:border-[var(--ns-forest-light)]'
-                    : 'bg-slate-100 border-slate-200 opacity-70'
+                      : 'bg-white border-gray-200 hover:border-[var(--ns-forest-light)]'
+                    : 'bg-gray-100 border-gray-200 opacity-70'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   {/* Emoji */}
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${
-                    isSelected ? 'bg-[var(--ns-forest-light)]' : 'bg-slate-100'
+                    isSelected ? 'bg-[var(--ns-forest-light)]' : 'bg-gray-100'
                   }`}>
                     {sport.emoji}
                   </div>
@@ -81,23 +81,23 @@ export function SportSelectScreen() {
                   {/* Label */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold text-slate-800">{sport.label}</p>
+                      <p className="text-sm font-bold text-gray-800">{sport.label}</p>
                       {sport.id === 'running' && (
                         <span className="text-[9px] font-bold text-white bg-[var(--ns-forest)] px-1.5 py-0.5 rounded-full">
                           Core
                         </span>
                       )}
                       {!sport.active && (
-                        <span className="text-[9px] font-bold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded-full">
+                        <span className="text-[9px] font-bold text-gray-500 bg-gray-200 px-1.5 py-0.5 rounded-full">
                           Coming soon
                         </span>
                       )}
                     </div>
                     {sport.id === 'gym' && (
-                      <p className="text-xs text-slate-400 mt-0.5">Included in all plans by default</p>
+                      <p className="text-xs text-gray-400 mt-0.5">Included in all plans by default</p>
                     )}
                     {sport.id === 'running' && (
-                      <p className="text-xs text-slate-400 mt-0.5">Always included as your primary sport</p>
+                      <p className="text-xs text-gray-400 mt-0.5">Always included as your primary sport</p>
                     )}
                   </div>
 
@@ -120,7 +120,7 @@ export function SportSelectScreen() {
                       className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all flex-shrink-0 ${
                         isNotified
                           ? 'bg-[var(--ns-forest-light)] border-teal-300 text-[var(--ns-forest)]'
-                          : 'bg-white border-slate-200 text-slate-500 hover:border-[var(--ns-forest-light)]'
+                          : 'bg-white border-gray-200 text-gray-500 hover:border-[var(--ns-forest-light)]'
                       }`}
                     >
                       {isNotified ? '✓ Notify me' : 'Notify me'}
@@ -132,14 +132,14 @@ export function SportSelectScreen() {
           })}
         </div>
 
-        <p className="text-xs text-slate-400 mt-4 text-center">
+        <p className="text-xs text-gray-400 mt-4 text-center">
           You can add more sports to your profile at any time
         </p>
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 flex gap-3">
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">
           ←
         </button>
         <button

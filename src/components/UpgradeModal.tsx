@@ -64,7 +64,7 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
         <div className="px-4 pt-4 pb-10 max-w-lg mx-auto">
 
           {/* Handle */}
-          <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-4" />
+          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
 
           {/* Founding badge */}
           {isFounding && (
@@ -81,16 +81,16 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
 
           {/* Header */}
           <div className="text-center mb-5">
-            <h2 className="text-2xl font-black text-slate-900">NextSplit Elite</h2>
-            <p className="text-sm text-slate-500 mt-1">7-day free trial · Cancel anytime</p>
+            <h2 className="text-2xl font-black text-gray-900">NextSplit Elite</h2>
+            <p className="text-sm text-gray-500 mt-1">7-day free trial · Cancel anytime</p>
           </div>
 
           {/* Interval toggle */}
-          <div className="flex bg-slate-100 rounded-2xl p-1 mb-5">
+          <div className="flex bg-gray-100 rounded-2xl p-1 mb-5">
             <button
               onClick={() => setInterval('monthly')}
               className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                interval === 'monthly' ? 'bg-white shadow text-slate-900' : 'text-slate-500'
+                interval === 'monthly' ? 'bg-white shadow text-gray-900' : 'text-gray-500'
               }`}
             >
               Monthly
@@ -98,7 +98,7 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
             <button
               onClick={() => setInterval('annual')}
               className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all relative ${
-                interval === 'annual' ? 'bg-white shadow text-slate-900' : 'text-slate-500'
+                interval === 'annual' ? 'bg-white shadow text-gray-900' : 'text-gray-500'
               }`}
             >
               Annual
@@ -111,10 +111,10 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
           {/* Price display */}
           <div className="text-center mb-5">
             <div className="flex items-end justify-center gap-1">
-              <span className="text-4xl font-black text-slate-900">
+              <span className="text-4xl font-black text-gray-900">
                 {interval === 'monthly' ? monthlyPrice : annualPrice}
               </span>
-              <span className="text-slate-400 text-sm mb-1.5">
+              <span className="text-gray-400 text-sm mb-1.5">
                 /{interval === 'monthly' ? 'mo' : 'yr'}
               </span>
             </div>
@@ -123,15 +123,15 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
                 Just {annualMonthly}/mo · Billed annually
               </p>
             )}
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-gray-400 mt-1">
               7-day free trial · No card charged today
             </p>
           </div>
 
           {/* Features */}
-          <div className="bg-slate-50 rounded-2xl p-4 mb-5 space-y-2.5">
+          <div className="bg-[#f8f8f6] rounded-2xl p-4 mb-5 space-y-2.5">
             {FOUNDING_FEATURES.map(f => (
-              <div key={f.text} className="flex items-center gap-3 text-sm text-slate-700">
+              <div key={f.text} className="flex items-center gap-3 text-sm text-gray-700">
                 <span className="text-base shrink-0">{f.emoji}</span>
                 <span>{f.text}</span>
               </div>
@@ -149,11 +149,11 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
           >
             {loading ? 'Redirecting to checkout…' : 'Start free trial →'}
           </button>
-          <p className="text-center text-xs text-slate-400 mt-3">
+          <p className="text-center text-xs text-gray-400 mt-3">
             Secure payment via Stripe · Cancel anytime in Settings
           </p>
 
-          <button onClick={onClose} className="w-full text-slate-400 text-sm py-3 mt-1">
+          <button onClick={onClose} className="w-full text-gray-400 text-sm py-3 mt-1">
             Maybe later
           </button>
         </div>

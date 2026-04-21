@@ -24,7 +24,7 @@ export default async function InvitePage({
         <div className="text-center space-y-3">
           <div className="text-4xl">❌</div>
           <h1 className="text-lg font-bold text-white">Invalid invite link</h1>
-          <p className="text-sm text-slate-400">This link has expired or already been used.</p>
+          <p className="text-sm text-gray-400">This link has expired or already been used.</p>
           <a href="/" className="text-[var(--ns-forest-mid)] text-sm font-semibold hover:underline block mt-4">
             Learn about NextSplit →
           </a>

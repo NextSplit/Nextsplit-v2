@@ -20,7 +20,7 @@ function TogglePill({ label, selected, onToggle }: { label: string; selected: bo
     <button
       onClick={onToggle}
       className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
-        selected ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200 hover:border-teal-300'
+        selected ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-gray-600 border-gray-200 hover:border-teal-300'
       }`}
     >
       {label}
@@ -84,50 +84,50 @@ export function AboutYouScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
         <div className="mb-2">
-          <h1 className="text-xl font-black text-slate-900">About you</h1>
-          <p className="text-sm text-slate-500 mt-1">Helps us personalise your training load and recommendations.</p>
+          <h1 className="text-xl font-black text-gray-900">About you</h1>
+          <p className="text-sm text-gray-500 mt-1">Helps us personalise your training load and recommendations.</p>
         </div>
 
         {/* Name */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Your name</label>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Your name</label>
           <input
             value={displayName}
             onChange={e => setDisplayName(e.target.value)}
             placeholder="How should we address you?"
-            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
           />
         </div>
 
         {/* Age + Sex */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-4">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Age</label>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Age</label>
             <input
               type="number"
               value={age}
               onChange={e => setAge(e.target.value)}
               placeholder="e.g. 32"
               min={13} max={99}
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Biological sex</label>
-            <p className="text-xs text-slate-400">Used to calculate training load defaults — optional</p>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Biological sex</label>
+            <p className="text-xs text-gray-400">Used to calculate training load defaults — optional</p>
             <div className="flex gap-2">
               {(['male', 'female', 'prefer_not_to_say'] as const).map(s => (
                 <button
                   key={s}
                   onClick={() => setSex(s)}
                   className={`flex-1 py-2.5 rounded-xl text-xs font-semibold border transition-all ${
-                    sex === s ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200'
+                    sex === s ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-gray-600 border-gray-200'
                   }`}
                 >
                   {s === 'prefer_not_to_say' ? 'Prefer not to say' : s.charAt(0).toUpperCase() + s.slice(1)}
@@ -138,9 +138,9 @@ export function AboutYouScreen() {
         </div>
 
         {/* Injuries */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Current injuries or niggles</label>
-          <p className="text-xs text-slate-400">We&apos;ll factor these into your plan — be honest, it helps</p>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Current injuries or niggles</label>
+          <p className="text-xs text-gray-400">We&apos;ll factor these into your plan — be honest, it helps</p>
           <div className="flex flex-wrap gap-2">
             {INJURY_OPTIONS.map(o => (
               <TogglePill
@@ -156,15 +156,15 @@ export function AboutYouScreen() {
               value={injuryFreeText}
               onChange={e => setInjuryFreeText(e.target.value)}
               placeholder="Any more detail? (optional)"
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-[var(--ns-forest)] transition-colors"
+              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs outline-none focus:border-[var(--ns-forest)] transition-colors"
             />
           )}
         </div>
 
         {/* Health flags */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Health conditions</label>
-          <p className="text-xs text-slate-400">We never share this — it&apos;s just so your plan is appropriate</p>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Health conditions</label>
+          <p className="text-xs text-gray-400">We never share this — it&apos;s just so your plan is appropriate</p>
           <div className="space-y-2">
             {HEALTH_OPTIONS.map(o => (
               <button
@@ -173,7 +173,7 @@ export function AboutYouScreen() {
                 className={`w-full text-left px-3 py-2.5 rounded-xl text-sm border transition-all ${
                   healthFlags.includes(o.id)
                     ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-teal-800 font-semibold'
-                    : 'bg-white border-slate-200 text-slate-700'
+                    : 'bg-white border-gray-200 text-gray-700'
                 }`}
               >
                 {o.label}
@@ -184,8 +184,8 @@ export function AboutYouScreen() {
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 flex gap-3">
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-600">←</button>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}

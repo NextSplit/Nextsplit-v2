@@ -24,7 +24,7 @@ interface AthleteStatus {
 }
 
 const STATUS = {
-  green: { dot: 'bg-emerald-400', ring: 'border-slate-200',  badge: 'bg-emerald-100 text-emerald-700', label: 'On track'  },
+  green: { dot: 'bg-emerald-400', ring: 'border-gray-200',  badge: 'bg-emerald-100 text-emerald-700', label: 'On track'  },
   amber: { dot: 'bg-amber-400',   ring: 'border-amber-300',  badge: 'bg-amber-100 text-amber-700',    label: 'Check in'  },
   red:   { dot: 'bg-red-400',     ring: 'border-red-300',    badge: 'bg-red-100 text-red-700',        label: 'Needs you' },
 }
@@ -167,7 +167,7 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
   return (
     <div className={`bg-white rounded-2xl border-2 overflow-hidden ${cfg.ring}`}>
       {/* Main row */}
-      <a href={`/coach/athlete/${athlete.athlete_id}`} className="flex items-center gap-3 px-4 py-3.5 active:bg-slate-50">
+      <a href={`/coach/athlete/${athlete.athlete_id}`} className="flex items-center gap-3 px-4 py-3.5 active:bg-[#f8f8f6]">
         {/* Character avatar — class emoji replaces generic 🏃 */}
         <div className="relative shrink-0">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${cls ? '' : 'bg-gray-100'}`}
@@ -180,36 +180,36 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <p className="text-sm font-bold text-slate-900 truncate">{name}</p>
+            <p className="text-sm font-bold text-gray-900 truncate">{name}</p>
             <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${cfg.badge}`}>
               {cfg.label}
             </span>
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
             {athlete.plan_name && (
-              <p className="text-xs text-slate-400 truncate">
+              <p className="text-xs text-gray-400 truncate">
                 {athlete.plan_name} · W{athlete.current_week}/{athlete.total_weeks}
               </p>
             )}
             {cls && (
               <>
-                {athlete.plan_name && <span className="text-[10px] text-slate-300">·</span>}
-                <span className="text-[10px] text-slate-400 shrink-0">{cls.name}</span>
+                {athlete.plan_name && <span className="text-[10px] text-gray-300">·</span>}
+                <span className="text-[10px] text-gray-400 shrink-0">{cls.name}</span>
               </>
             )}
           </div>
         </div>
 
-        <span className="text-slate-300 text-lg shrink-0">›</span>
+        <span className="text-gray-300 text-lg shrink-0">›</span>
       </a>
 
       {/* Stats strip */}
-      <div className="grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100">
+      <div className="grid grid-cols-3 divide-x divide-gray-100 border-t border-gray-100">
         <div className="px-3 py-2 text-center">
-          <p className="text-xs font-black text-slate-800">
+          <p className="text-xs font-black text-gray-800">
             {athlete.sessions_done_week}/{athlete.sessions_total_week || '?'}
           </p>
-          <p className="text-[9px] text-slate-400">sessions</p>
+          <p className="text-[9px] text-gray-400">sessions</p>
         </div>
         <div className={`px-3 py-2 text-center ${
           athlete.acwr === null ? '' :
@@ -217,19 +217,19 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
           athlete.acwr < 0.8 ? 'bg-amber-50' : 'bg-emerald-50'
         }`}>
           <p className={`text-xs font-black ${
-            athlete.acwr === null ? 'text-slate-400' :
+            athlete.acwr === null ? 'text-gray-400' :
             athlete.acwr > 1.3 ? 'text-red-700' :
             athlete.acwr < 0.8 ? 'text-amber-700' : 'text-emerald-700'
           }`}>
             {athlete.acwr?.toFixed(2) ?? '—'}
           </p>
-          <p className="text-[9px] text-slate-400">ACWR</p>
+          <p className="text-[9px] text-gray-400">ACWR</p>
         </div>
         <div className="px-3 py-2 text-center">
-          <p className="text-xs font-black text-slate-800">
+          <p className="text-xs font-black text-gray-800">
             {daysSince === null ? '—' : daysSince === 0 ? 'Today' : `${daysSince}d`}
           </p>
-          <p className="text-[9px] text-slate-400">last active</p>
+          <p className="text-[9px] text-gray-400">last active</p>
         </div>
       </div>
 
@@ -248,7 +248,7 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
       <div className="px-4 pb-3 flex gap-2">
         <button
           onClick={() => onMessage(athlete.athlete_id)}
-          className="flex-1 bg-slate-100 text-slate-700 text-xs font-semibold py-2 rounded-xl active:bg-slate-200"
+          className="flex-1 bg-gray-100 text-gray-700 text-xs font-semibold py-2 rounded-xl active:bg-gray-200"
         >
           💬 Message
         </button>

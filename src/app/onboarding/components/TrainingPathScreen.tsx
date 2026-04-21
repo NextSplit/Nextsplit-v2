@@ -89,13 +89,13 @@ export function TrainingPathScreen() {
   const recommended = getRecommendation()
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
         <div className="mb-2">
-          <h1 className="text-xl font-black text-slate-900">How do you want to train?</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-xl font-black text-gray-900">How do you want to train?</h1>
+          <p className="text-sm text-gray-500 mt-1">
             Based on your profile, we think{' '}
             <span className="text-[var(--ns-forest)] font-semibold">
               {PATHS.find(p => p.id === recommended)?.label}
@@ -209,7 +209,7 @@ export function TrainingPathScreen() {
           })}
         </div>
 
-        <p className="text-xs text-slate-400 text-center pb-2">
+        <p className="text-xs text-gray-400 text-center pb-2">
           You can switch training path or start a new plan anytime from your profile
         </p>
       </div>
