@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: plan, error: planErr } = await (supabase as any)
       .from('plan_templates')
-      .select('id, name, meta, is_public, author_type, weeks_data, weeks_min, weeks_max, distance, level')
+      .select('id, name, meta, is_public, author_type, author_id, weeks_data, weeks_min, weeks_max, distance, level, total_starts')
       .eq('id', template_id)
       .eq('is_public', true)
       .single()
@@ -51,15 +51,18 @@ export async function POST(req: NextRequest) {
       .maybeSingle()
 
     if (!existing) {
-      // Record purchase using real column names: athlete_id, template_id, amount_gbp
+      // Record purchase with full schema: athlete_id, template_id, coach_id, amount_gbp
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase as any)
         .from('plan_purchases')
         .insert({
-          athlete_id:             user.id,
-          template_id:            template_id,
-          amount_gbp:             priceGbp,
-          stripe_payment_id:      stripe_payment_intent_id ?? null,
+          athlete_id:        user.id,
+          template_id:       template_id,
+          coach_id:          plan.author_id ?? null,
+          amount_gbp:        priceGbp,
+          stripe_payment_id: stripe_payment_intent_id ?? null,
+          coach_payout_gbp:  priceGbp ? Math.round(priceGbp * 0.7 * 100) / 100 : 0,
+          platform_fee_gbp:  priceGbp ? Math.round(priceGbp * 0.3 * 100) / 100 : 0,
         })
 
       // Increment total_starts on the template
