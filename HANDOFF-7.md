@@ -258,9 +258,15 @@ ALTER TABLE profiles
 
 ---
 
-## Current Phase: UI Hardening + Alpha Prep
+## Current Phase: Three Pillars Build (Priority 1)
 
-**Phases A–F complete + UI overhaul in progress. Core bugs fixed. Ready for alpha after seed + manual verification.**
+**Phases A–F complete. UI overhaul done. Three Pillars are now the priority.**
+
+New canonical documents created this session:
+- **THREE-PILLARS-STRATEGY.md** — Full spec for all three pillars (Split Leader, Marketplace, Coach Hub)
+- **MASTER-DELIVERY-PLAN-V2.md** — Rewritten with Three Pillars phase order
+
+Next code session starts: **Phase SL1 — Split Leader Foundation** (database schema + squad creation + invite link)
 
 ## Phase D — Design Uplift ✅ COMPLETE
 
@@ -507,6 +513,49 @@ MASTER-DELIVERY-PLAN-V2.md            Full revised delivery plan (phases A→I)
 | Head of Growth | Phase H (retention gate met) | CAC, conversion, referral |
 | Community & Coach Partnerships | Phase I (coach beta) | Coach relationships, clubs |
 
+
+
+---
+
+## Three Pillars — Strategic Decisions Locked (April 2026)
+
+See THREE-PILLARS-STRATEGY.md for full spec. Key decisions:
+
+**Split Leader (Pillar 2):**
+- Automatic unlock with Premium subscription
+- Squad cap: 5 members, leader leads 1 squad only
+- Members can join multiple squads
+- Leader sees: session status, distance, weekly km, streak (NOT pace/ACWR/wellness)
+- Nudge system: curated messages only (8 options), 1 per member per day
+- Reactions: milestones only (plan complete, race result, PB, streak milestone)
+- Squad goals: monthly collective km or sessions
+- Seasons: monthly + annual + lifetime — all archived in Trophy Room
+- Referral reward: 1 free month per squad member Premium conversion (max 5)
+- Member discount: 50% off first month when joining via squad invite
+- 2nd gen referral: 1 week free, 2 levels max
+- Inactivity: 30-day warning → 6-month disband
+- Leadership transfer: any Premium member can claim after 30-day leader inactivity
+- Leader RPG identity: crown/stopwatch accessory on avatar
+- Squad colour coding: Track gold (#c49a3c) — distinct from Forest (solo) and Navy (coach)
+
+**Coaching Marketplace (Pillar 3):**
+- Commission: 15% → 12% (10+ clients) → 10% (25+) → 8% (50+)
+- Coach sets own prices (NextSplit shows market averages)
+- Verification: credential upload + UKA API check. Non-UK: self-declared + 3 reviews
+- Featured coaches: weekly editorial, gold ⭐ badge, top placement
+- Review unlock: after 50% programme completion
+- Dispute: 7-day window, full refund
+- Coach Pro: £19.99/mo — scheduled messages, advanced analytics, coach referral
+- Coach referral: £100 one-off when referred coach hits 5 paying clients
+- Capacity tiers: 10 → 25 → 50 → 50+ (NextSplit gated progression)
+- Annual pricing: £59.99/yr (37.5% saving vs monthly)
+- Corporate: on roadmap, Phase J, no external trigger required
+
+**Open decisions before SL1 build:**
+1. Do free squad members get full squad features, or limited? (Recommendation: full — offer is contextual not a gate)
+2. Voice notes — standard coach or Coach Pro only? (Recommendation: standard coach)
+3. Annual plan referral credits — extend subscription or credit toward renewal? (Recommendation: credit toward renewal)
+4. Multi-squad member: which leader gets credit if member upgrades without invite link? (Recommendation: nobody — organic join, no credit)
 
 ---
 
