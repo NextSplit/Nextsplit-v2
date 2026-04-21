@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { UserPlan, TrainingLog } from '@/types/database'
+import RaceResultShareCard from '@/components/RaceResultShareCard'
 
 interface Props {
   plan: UserPlan
@@ -92,6 +93,7 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
   const router = useRouter()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [visible, setVisible] = useState(false)
+  const [showShare, setShowShare] = useState(false)
   const stats = computeStats(logs)
 
   // Delay entrance for dramatic effect
@@ -168,18 +170,39 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
 
         {/* CTAs */}
         <button
+          onClick={() => setShowShare(true)}
+          className="w-full py-4 bg-white rounded-2xl text-base font-black mb-3 shadow-xl active:scale-95 transition-transform"
+          style={{ color: 'var(--ns-forest)' }}
+        >
+          Share your achievement →
+        </button>
+        <button
           onClick={() => { router.push('/onboarding'); onClose() }}
-          className="w-full py-4 bg-white text-teal-900 rounded-2xl text-base font-black mb-3 shadow-xl active:scale-95 transition-transform"
+          className="w-full py-3 bg-white/10 text-white rounded-2xl text-sm font-semibold mb-2 active:scale-95 transition-transform"
         >
           Start your next plan →
         </button>
         <button
           onClick={onClose}
-          className="w-full py-3 text-white/60 text-sm font-medium"
+          className="w-full py-3 text-white/50 text-sm font-medium"
         >
-          View dashboard
+          Close
         </button>
       </div>
+
+      {/* Race result share card */}
+      {showShare && (
+        <RaceResultShareCard
+          planName={plan.name}
+          totalWeeks={plan.total_weeks}
+          raceDate={plan.race_date ?? undefined}
+          totalKm={stats.totalKm}
+          sessionsDone={stats.totalSessions}
+          longestRun={Math.max(0, ...Object.values(logs).filter(l => l.done).map(l => l.km ?? 0))}
+          displayName="Runner"
+          onClose={() => setShowShare(false)}
+        />
+      )}
     </div>
   )
 }

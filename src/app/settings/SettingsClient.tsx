@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useProfile } from '@/hooks/useProfile'
 import { useActivePlan } from '@/hooks/useActivePlan'
+import { useSubscription } from '@/hooks/useSubscription'
 import { useToast } from '@/components/Toast'
 import { setThemePreference } from '@/components/ThemeWrapper'
 import { setUnits } from '@/lib/units'
@@ -97,7 +98,7 @@ function ButtonRow({ label, sublabel, buttonLabel, onClick, danger, disabled }: 
         className={`text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40 transition-all ${
           danger
             ? 'text-red-500 bg-red-50 border border-red-200 hover:bg-red-100'
-            : 'text-[var(--ns-forest)] bg-teal-50 border border-teal-200 hover:bg-teal-100'
+            : 'text-[var(--ns-forest)] bg-[var(--ns-forest-light)] border border-green-100 hover:bg-green-100'
         }`}
         aria-label={buttonLabel}
       >
@@ -212,7 +213,7 @@ function CoachAccessSection() {
   }, [])
 
   if (!rel) {
-    return <p className="text-sm text-gray-400 px-1">No active coach connected. <a href="/coach/setup" className="text-teal-600 hover:underline">Become a coach</a> or accept an invite to connect.</p>
+    return <p className="text-sm text-gray-400 px-1">No active coach connected. <a href="/coach/setup" className="text-[var(--ns-forest)] hover:underline">Become a coach</a> or accept an invite to connect.</p>
   }
 
   const toggle = async (field: 'share_logs' | 'share_wellness' | 'share_nutrition' | 'share_body_weight') => {
@@ -253,7 +254,7 @@ function CoachAccessSection() {
           <button
             onClick={() => toggle(item.field)}
             disabled={saving}
-            className={`w-11 h-6 rounded-full transition-all relative ${rel[item.field] ? 'bg-teal-500' : 'bg-gray-200'}`}
+            className={`w-11 h-6 rounded-full transition-all relative ${rel[item.field] ? 'bg-[var(--ns-forest)]' : 'bg-gray-200'}`}
           >
             <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${rel[item.field] ? 'left-5' : 'left-0.5'}`} />
           </button>
@@ -266,12 +267,168 @@ function CoachAccessSection() {
   )
 }
 
+// ─── Split Leader Upgrade Section ────────────────────────────────────────────
+
+function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; isPro: boolean }) {
+  const [activating, setActivating] = useState(false)
+  const [done, setDone] = useState(coachTier === 'split_leader' || coachTier === 'professional')
+  const { error: toastError, success: toastSuccess } = useToast()
+
+  async function activate() {
+    if (!isPro) return
+    setActivating(true)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any)
+        .from('profiles')
+        .update({ is_coach: true, coach_tier: 'split_leader' })
+        .eq('id', user.id)
+      if (error) throw error
+      setDone(true)
+      toastSuccess('Split Leader activated! Head to the Athletes tab to manage your squad.')
+    } catch {
+      toastError('Something went wrong — try again')
+    } finally {
+      setActivating(false)
+    }
+  }
+
+  // Already a pro coach — don't show split leader section
+  if (coachTier === 'professional') return null
+
+  if (done) {
+    return (
+      <div className="flex items-center gap-3 px-1">
+        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+          <span className="text-sm">✓</span>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-gray-800">Split Leader active</p>
+          <p className="text-xs text-gray-400">Manage your squad from the Athletes tab</p>
+        </div>
+        <a href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-forest)] flex-shrink-0">
+          Squad →
+        </a>
+      </div>
+    )
+  }
+
+  if (!isPro) {
+    return (
+      <div className="bg-[var(--ns-forest-light)] rounded-2xl p-4 space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">👥</span>
+          <p className="text-sm font-bold text-[var(--ns-forest)]">Split Leader</p>
+          <span className="text-[10px] bg-[var(--ns-forest)] text-white px-2 py-0.5 rounded-full font-bold ml-auto">Pro</span>
+        </div>
+        <p className="text-xs text-gray-600 leading-relaxed">
+          Coach up to 5 runners. Share your plan, annotate sessions, run a squad leaderboard. Included free with NextSplit Pro.
+        </p>
+        <a href="/profile" className="inline-block mt-1 text-xs font-bold text-[var(--ns-forest)] underline">
+          Upgrade to Pro to unlock →
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="bg-[var(--ns-forest-light)] rounded-2xl p-4">
+        <div className="flex items-start gap-3 mb-3">
+          <span className="text-2xl">👥</span>
+          <div>
+            <p className="text-sm font-bold text-[var(--ns-forest)]">Become a Split Leader</p>
+            <p className="text-xs text-gray-600 mt-0.5">Included with your Pro subscription — no extra cost.</p>
+          </div>
+        </div>
+        <ul className="space-y-1.5 mb-4">
+          {[
+            'Squad view — see all your runners in one place',
+            'Annotate sessions — leave coaching notes on any run',
+            'Squad leaderboard — friendly competition drives consistency',
+            'Share your training plan — runners follow it free',
+            'Up to 5 runners (upgrade to Pro Coach for more)',
+          ].map(f => (
+            <li key={f} className="flex items-start gap-2 text-xs text-gray-700">
+              <span className="text-[var(--ns-forest)] font-bold mt-0.5">→</span>
+              {f}
+            </li>
+          ))}
+        </ul>
+        <button
+          onClick={activate}
+          disabled={activating}
+          className="w-full py-3 rounded-xl text-sm font-bold text-white disabled:opacity-50 transition-all active:scale-95"
+          style={{ background: 'var(--ns-forest)' }}
+        >
+          {activating ? 'Activating…' : 'Activate Split Leader →'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─── Pro Coach Apply Section ──────────────────────────────────────────────────
+
+function ProCoachSection({ coachTier, isPro }: { coachTier: string | null; isPro: boolean }) {
+  const router = useRouter()
+  const isApplied = coachTier === 'professional'
+  const isLeader  = coachTier === 'split_leader'
+
+  if (isApplied) {
+    return (
+      <div className="flex items-center gap-3 px-1">
+        <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+          <span className="text-sm">🏆</span>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-gray-800">Professional Coach</p>
+          <p className="text-xs text-gray-400">Full coach platform unlocked</p>
+        </div>
+        <a href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-forest)] flex-shrink-0">
+          Dashboard →
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <span className="text-lg">🏆</span>
+        <p className="text-sm font-bold text-amber-800">Professional Coach</p>
+        <span className="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold ml-auto">£29/mo</span>
+      </div>
+      <p className="text-xs text-amber-700 leading-relaxed">
+        Unlimited athletes, voice messages, plan builder, marketplace listing, AI automation, verified badge. 48hr review for credentialed coaches.
+      </p>
+      {!isPro && (
+        <p className="text-[11px] text-amber-600 font-medium">Requires Pro subscription first.</p>
+      )}
+      <button
+        onClick={() => router.push('/coach/setup')}
+        disabled={!isPro && !isLeader}
+        className="w-full py-2.5 rounded-xl text-xs font-bold text-amber-800 bg-amber-100 border border-amber-200 disabled:opacity-40 active:scale-95 transition-all"
+      >
+        {isLeader ? 'Apply to become a Pro Coach →' : 'Learn more about Pro Coach →'}
+      </button>
+    </div>
+  )
+}
+
 export default function SettingsClient({ email, initialProfile }: Props) {
   const router = useRouter()
   const { profile, updateProfile } = useProfile()
   const { plan, archivePlan } = useActivePlan()
   const { success, error: toastError, warning } = useToast()
   const { subscribe: pushSubscribe, unsubscribe: pushUnsubscribe, status: pushStatus } = usePushNotifications()
+  const { isPro } = useSubscription()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const coachTier = (profile as any)?.coach_tier ?? null
 
   // Use live profile if loaded, fall back to server-rendered initial
   const p = profile ?? initialProfile
@@ -510,7 +667,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
         {plan && (
           <Section title="Current Plan">
             <SettingRow label={plan.name} sublabel={`Week ${plan.current_week} of ${plan.total_weeks}`}>
-              <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-teal-100 text-teal-700">Active</span>
+              <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-[var(--ns-forest-light)] text-[var(--ns-forest)]">Active</span>
             </SettingRow>
 
             {/* Reset */}
@@ -621,6 +778,12 @@ export default function SettingsClient({ email, initialProfile }: Props) {
               </div>
             </div>
           )}
+        </Section>
+
+        {/* ── Squad & Coaching ── */}
+        <Section title="Squad & Coaching">
+          <SplitLeaderSection coachTier={coachTier} isPro={isPro} />
+          <ProCoachSection coachTier={coachTier} isPro={isPro} />
         </Section>
 
         {/* ── Coach Access ── */}
