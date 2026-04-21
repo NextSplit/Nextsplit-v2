@@ -91,16 +91,19 @@ export async function POST(req: NextRequest) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: profileData } = await (supabase as any)
     .from('profiles')
-    .select('recent_race_5k_secs, recent_race_10k_secs, recent_race_half_secs, recent_race_marathon_secs')
+    .select('recent_race_times, recent_race_5k_secs, recent_race_10k_secs, recent_race_half_secs, recent_race_marathon_secs')
     .eq('id', user.id)
     .single()
 
-  // Find best available race time for VDOT
+  // recent_race_times is a JSON object saved by onboarding: { '5k': secs, '10k': secs, half: secs, marathon: secs }
+  // Fall back to legacy individual columns if present
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rt = (profileData?.recent_race_times as Record<string, any>) ?? {}
   const racePairs: [number, number | null][] = [
-    [42.2, profileData?.recent_race_marathon_secs],
-    [21.1, profileData?.recent_race_half_secs],
-    [10,   profileData?.recent_race_10k_secs],
-    [5,    profileData?.recent_race_5k_secs],
+    [42.2, rt['marathon'] ?? profileData?.recent_race_marathon_secs ?? null],
+    [21.1, rt['half']     ?? profileData?.recent_race_half_secs     ?? null],
+    [10,   rt['10k']      ?? profileData?.recent_race_10k_secs      ?? null],
+    [5,    rt['5k']       ?? profileData?.recent_race_5k_secs       ?? null],
   ]
   const bestRace = racePairs.find(([, t]) => t && t > 0)
 

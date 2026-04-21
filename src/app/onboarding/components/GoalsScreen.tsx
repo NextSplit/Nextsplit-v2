@@ -73,8 +73,9 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove }: GoalCardProps)
               key={t.id}
               onClick={() => onUpdate({ ...goal, goal_type: t.id as UserGoal['goal_type'] })}
               className={`w-full text-left px-3 py-2 rounded-xl border text-xs transition-all ${
-                goal.goal_type === t.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-teal-800' : 'bg-[#f8f8f6] border-gray-200 text-gray-600'
+                goal.goal_type === t.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-teal-800' : 'border-[var(--color-border)] text-[var(--color-text-secondary)]'
               }`}
+              style={goal.goal_type !== t.id ? { background: 'var(--color-surface-2)' } : {}}
             >
               <span className="mr-2">{t.emoji}</span>
               <span className="font-semibold">{t.label}</span>
@@ -242,7 +243,7 @@ export function GoalsScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">

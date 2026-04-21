@@ -178,7 +178,7 @@ export function StravaConnectScreen() {
   // ── Checking state ──────────────────────────────────────────────────────────
   if (status === 'checking' || status === 'importing') {
     return (
-      <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
+      <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
         <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
         <div className="flex-1 flex flex-col items-center justify-center gap-4 px-6 text-center">
           <div className="text-4xl animate-pulse">🔄</div>
@@ -193,7 +193,7 @@ export function StravaConnectScreen() {
   // ── Connected + prefill ready ───────────────────────────────────────────────
   if (status === 'connected' && prefill) {
     return (
-      <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
+      <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
         <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
         <div className="flex-1 px-4 pt-4 pb-32 space-y-4">
@@ -268,7 +268,7 @@ export function StravaConnectScreen() {
 
   // ── Idle — prompt to connect ────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 px-4 pt-6 pb-32 flex flex-col items-center justify-center gap-6 text-center">

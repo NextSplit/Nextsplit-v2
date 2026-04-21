@@ -91,7 +91,7 @@ export function PlanPreviewScreen() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8f8f6] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--color-bg)" }}>
         <div className="text-center">
           <div className="text-4xl mb-3 animate-pulse">📋</div>
           <p className="text-sm text-gray-400">Loading your plan…</p>
@@ -101,7 +101,7 @@ export function PlanPreviewScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
       {/* Header */}
       <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-12 pb-8 text-center">
         <div className="text-4xl mb-3">🎉</div>

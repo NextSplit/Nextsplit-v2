@@ -33,7 +33,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f8f8f6] flex flex-col">
+    <main className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
       {/* Brand header */}
       <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-16 pb-10 text-center">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--ns-forest)]/20 border border-[var(--ns-forest)]/30 mb-4">
