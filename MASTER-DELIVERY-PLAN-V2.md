@@ -82,28 +82,60 @@ const { plan_id, week_n } = result.data
 **Deliverable:** Zod on all 15 critical API routes. Install zod, add schemas,
 no breaking changes to frontend (schemas match what frontend already sends).
 
+#### A1b — Supabase Type Regeneration
+
+~40 `any` type casts in community and coach routes from tables added after last
+type generation. Until this is done, the compiler can't catch real bugs.
+
+```bash
+npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.ts
+```
+
+Run, fix the resulting TypeScript errors (mostly adding missing fields to
+interface usages), commit. Estimated: 2–3 hours. Do before Zod schemas are
+written so schemas can use the correct types.
+
 ---
 
-### A2 — Cookie Consent
+### A2 — Legal Foundation + Cookie Consent
 
-**Why even for alpha:** PostHog fires on every page load with no consent.
-ICO compliance requires consent before analytics cookies fire. Alpha users
-are real people in the UK/EU — this is not optional.
+**Non-negotiable before any user, alpha or otherwise.**
 
-**Approach:** Full accept/reject banner. Not a notice. Not a tooltip.
-A proper consent mechanism that:
+#### A2a — Non-code legal tasks (do immediately, parallel with build)
+
+| Item | Action | Cost | Urgency |
+|---|---|---|---|
+| ICO registration | ico.org.uk — health data requires this | £40/yr | ⚠️ Before alpha |
+| Company formation | Companies House online | £12 | ⚠️ Before alpha |
+| Privacy policy | Termly free tier. Must cover: health data, coaching liability, analytics, GDPR rights | £0 | ⚠️ Before alpha |
+| Terms of service | Termly free tier. Must cover: coaching disclaimer, adaptation limits, subscription terms | £0 | ⚠️ Before alpha |
+| Medical disclaimer | Add to: onboarding screen 1, ACWR UI, wellness check-in. "NextSplit is not a medical device. ACWR is a training load indicator, not a medical diagnosis." | £0 | ⚠️ Before alpha |
+
+#### A2b — Cookie consent (code)
+
+PostHog fires on every page load with no consent. ICO requires consent
+before analytics cookies fire. Even for a closed alpha.
+
+**Approach:** Full accept/reject. Not a notice. A proper consent mechanism:
 - Blocks PostHog from firing until accepted
-- Stores consent in localStorage + cookie
-- Has a "Manage preferences" option in Settings
-- Uses NextSplit brand language, not legal boilerplate
-- On mobile: bottom sheet, not a banner (feels native)
+- Stores consent in localStorage + Supabase profile
+- "Manage preferences" in Settings
+- Mobile: bottom sheet (feels native, not a desktop banner)
+- Brand language, not legal boilerplate
 
 **Copy:** "We use analytics to understand how runners use NextSplit and
-improve training plans. No advertising. No third-party sharing. Accept to
-help us improve, or decline to train privately."
+improve training plans. No advertising. No third-party sharing."
 
-**Deliverable:** CookieConsentBanner component, PostHog conditional init,
-Settings preference management.
+#### A2c — GDPR data export (verify E2E)
+
+Settings has "Export my data" button. Verify it:
+- Actually generates a complete export (all training logs, wellness, goals)
+- Downloads as JSON (GDPR requires machine-readable)
+- Completes within 30 seconds for a typical user
+- Includes a deletion request path ("Delete my account" → confirm → purge all data)
+
+**Deliverables:** ICO registered, Privacy + Terms pages live (real content),
+medical disclaimer in 3 places, CookieConsentBanner component, GDPR export E2E verified.
 
 ---
 
@@ -168,11 +200,39 @@ Without this, lifecycle emails go to spam.
 
 ---
 
+### A7 — In-App NPS Prompt
+
+Must be built before alpha so you collect data from day one.
+
+**Trigger:** Day 7 after first session logged, and Day 30.
+**Format:** Single question bottom sheet. "How likely are you to recommend
+NextSplit to a running friend? (0–10)" + optional free text.
+**Store:** PostHog `nps_submitted` event + Supabase `nps_responses` table.
+**Coach voice:** "Quick question — it helps us improve." Not "Take our survey."
+
+### A8 — Monday PostHog Dashboard (Non-code setup)
+
+Configure before alpha users arrive. Sections:
+- Onboarding funnel (step completion %)
+- Day 7 / Day 30 retention
+- Session logging rate (sessions/user/week)
+- NPS score (rolling 30-day)
+- Today tab → session logged conversion
+
+**30 minutes to configure. Do it before first alpha invite goes out.**
+
 ### Phase A Gate
 - [ ] Zod on all 15 critical routes
+- [ ] Supabase types regenerated
+- [ ] ICO registered, company formed
+- [ ] Privacy + Terms pages live (real content)
+- [ ] Medical disclaimer in 3 locations
 - [ ] Cookie consent built and blocking PostHog pre-consent
+- [ ] GDPR data export verified E2E
 - [ ] 10 AI Bespoke plans reviewed manually
 - [ ] Onboarding funnel events firing in PostHog
+- [ ] Monday PostHog dashboard configured
+- [ ] NPS prompt built (Day 7 + Day 30 triggers)
 - [ ] Adaptation E2E verified for 5 test scenarios
 - [ ] Email sending from verified domain
 
@@ -240,6 +300,20 @@ Coach can't see conversation history.
   read the message? Timestamp visible.
 - **Template messages** — coach builds 5-10 reusable messages
   ("Great interval session — your times are improving", "Easy run tomorrow, genuinely easy")
+
+#### Split Leader Invitation Link
+
+Split Leaders need a simple way to invite runners to their squad.
+
+**Flow:**
+1. Split Leader taps "Invite athlete" in Lead Dashboard
+2. App generates unique invite link (`/invite/[leader_code]`)
+3. Invited runner lands on personalised page: "Alex invited you to their squad"
+4. Runner signs up / logs in → auto-connected to Split Leader's squad
+5. Split Leader gets notification: "New athlete joined your squad"
+
+This is the Growth Pillar's highest-density referral vector. Each Split Leader
+with 5 athletes = 5 potential referrals to the platform.
 
 ---
 
@@ -656,6 +730,12 @@ serves training quality.
 - Race day support: if a squadmate has a race today, prompt for encouragement
 - PB recognition: automatic notification when squadmate hits a PB
 
+**Milestone squad notifications:**
+When a squad member hits a milestone (first 20km run, PB, race finish):
+- Squad feed shows the milestone automatically
+- Coach / Split Leader gets a push notification → can send voice response
+- Squad members see it in club feed with reaction option
+
 **Do not build:** Comments, general posts, following, likes count, feed algorithm.
 
 ---
@@ -724,6 +804,24 @@ Goals:
 - Coach beta programme (5 coaches)
 - PostHog Monday dashboard live
 - Referral programme active
+- **Custom domain migration (nextsplit.com)**
+  When domain changes, all of these must change simultaneously:
+  Vercel domain → Supabase SITE_URL → Strava OAuth redirect →
+  Stripe webhook URL → Email SPF/DKIM → App Store URL.
+  Do not do partial migrations.
+- Weekly featured plan (push + email, Monday morning)
+- Race season campaigns (spring: Feb–Apr, autumn: Sep–Nov)
+- Apple Health sync (via Capacitor HealthKit — requires native app)
+- Apple Watch companion (via WatchKit — requires native app + HealthKit)
+- Club B2B offering (after 3 active club partnerships proven)
+- Training science research programme (after 1,000 users + 50,000 sessions)
+- ProfileContext refactor (when complexity causes real bugs — not before)
+- **Co-founder search (ongoing — start now, not after alpha)**
+  Technical co-founder: Next.js, TypeScript, Supabase, startup pace.
+  Product instinct required. Permanent hire before equity signs.
+  Do not wait for revenue.
+- Hiring: Product designer (after Phase D), Head of Growth (at Phase H), Coach partnerships
+- Advisory board outreach (Sports Scientist, Consumer App Growth, Running Industry)
 
 ---
 
