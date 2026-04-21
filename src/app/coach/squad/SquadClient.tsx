@@ -188,10 +188,9 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
 }
 
 export default function SquadClient({ coachProfile }: { coachProfile: CoachProfile }) {
-  const [athletes, setAthletes]       = useState<AthleteStatus[]>([])
-  const [loading, setLoading]         = useState(true)
-  const [showInvite, setShowInvite]   = useState(false)
-  const [filter, setFilter]           = useState<'all' | 'red' | 'amber' | 'green'>('all')
+  const [athletes, setAthletes]     = useState<AthleteStatus[]>([])
+  const [loading, setLoading]       = useState(true)
+  const [showInvite, setShowInvite] = useState(false)
 
   const fetchStatus = useCallback(async () => {
     setLoading(true)
@@ -208,166 +207,208 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchStatus() }, [fetchStatus])
 
-  const filtered = filter === 'all' ? athletes : athletes.filter(a => a.status === filter)
-  const red      = athletes.filter(a => a.status === 'red')
-  const amber    = athletes.filter(a => a.status === 'amber')
-  const green    = athletes.filter(a => a.status === 'green')
+  const needsAttention = athletes.filter(a => a.status !== 'green')
+  const onTrack        = athletes.filter(a => a.status === 'green')
+  const today          = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })
 
   const handleMessage = (athleteId: string) => {
     window.location.href = `/coach/athlete/${athleteId}?tab=message`
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-28">
+    <div className="min-h-screen pb-28" style={{ background: '#f8f8f6' }}>
 
-      {/* Header */}
-      <div className="bg-white border-b border-slate-100 px-4 pt-12 pb-4 sticky top-0 z-40">
-        <div className="max-w-lg mx-auto space-y-3">
-          <div className="flex items-center justify-between">
+      {/* Command centre header */}
+      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+        <div className="max-w-lg mx-auto">
+          <div className="flex items-center justify-between mb-1">
             <div>
-              <h1 className="text-lg font-black text-slate-900">Athletes</h1>
-              <p className="text-xs text-slate-400">
-                {coachProfile.display_name}
-                {coachProfile.verified && ' · ✅ Verified'}
-              </p>
+              <h1 className="text-lg font-black text-gray-900">Squad</h1>
+              <p className="text-xs text-gray-400">{today}</p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={fetchStatus} className="text-slate-400 text-lg px-1.5">↻</button>
+              <button onClick={fetchStatus} className="text-gray-400 text-lg px-1.5">↻</button>
               <button
                 onClick={() => setShowInvite(true)}
-                className="bg-teal-500 text-white text-sm font-bold px-4 py-2 rounded-xl active:scale-95"
+                className="text-white text-sm font-bold px-4 py-2 rounded-xl active:scale-95"
+                style={{ background: 'var(--ns-forest)' }}
               >
                 + Invite
               </button>
             </div>
           </div>
 
-          {/* Status summary pills */}
-          {athletes.length > 0 && (
-            <div className="flex gap-2">
-              {[
-                { key: 'all',   label: `All (${athletes.length})`,  colour: filter === 'all'   ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600' },
-                { key: 'red',   label: `🔴 ${red.length}`,          colour: filter === 'red'   ? 'bg-red-500 text-white'   : 'bg-red-50 text-red-700' },
-                { key: 'amber', label: `🟡 ${amber.length}`,        colour: filter === 'amber' ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-700' },
-                { key: 'green', label: `🟢 ${green.length}`,        colour: filter === 'green' ? 'bg-emerald-500 text-white' : 'bg-emerald-50 text-emerald-700' },
-              ].map(f => (
-                <button
-                  key={f.key}
-                  onClick={() => setFilter(f.key as typeof filter)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${f.colour}`}
-                >
-                  {f.label}
-                </button>
-              ))}
+          {/* At-a-glance strip */}
+          {!loading && athletes.length > 0 && (
+            <div className="flex items-center gap-3 mt-2">
+              {needsAttention.length > 0 && (
+                <span className="text-[11px] font-bold text-red-600 bg-red-50 px-2 py-1 rounded-lg">
+                  {needsAttention.length} need{needsAttention.length === 1 ? 's' : ''} attention
+                </span>
+              )}
+              {onTrack.length > 0 && (
+                <span className="text-[11px] font-semibold text-emerald-600">
+                  {onTrack.length} on track ✓
+                </span>
+              )}
+              <span className="text-[11px] text-gray-400 ml-auto">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</span>
             </div>
           )}
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+      <div className="max-w-lg mx-auto px-4 pt-4 space-y-4">
 
-        {/* Empty state — no athletes */}
+        {/* Loading */}
+        {loading && (
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-28 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+            ))}
+          </div>
+        )}
+
+        {/* Empty state */}
         {!loading && athletes.length === 0 && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center space-y-4">
-            <div className="text-5xl">👥</div>
-            <div>
-              <h2 className="text-base font-bold text-slate-800">No athletes yet</h2>
-              <p className="text-sm text-slate-500 mt-1">
-                Invite your first athlete — they&apos;ll get a personalised welcome page with your profile and coaching offer.
-              </p>
-            </div>
+          <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+            <div className="text-4xl mb-3">👥</div>
+            <h3 className="text-sm font-bold text-gray-900 mb-1">No athletes yet</h3>
+            <p className="text-xs text-gray-400 mb-4">Invite runners to your squad to start coaching.</p>
             <button
               onClick={() => setShowInvite(true)}
-              className="bg-teal-500 text-white text-sm font-bold px-8 py-3 rounded-xl active:scale-95"
+              className="text-xs font-bold px-4 py-2 rounded-xl text-white"
+              style={{ background: 'var(--ns-forest)' }}
             >
-              Invite first athlete →
+              Generate invite link →
             </button>
           </div>
         )}
 
-        {/* Loading skeleton */}
-        {loading && [1,2,3].map(i => (
-          <div key={i} className="bg-white rounded-2xl border border-slate-200 animate-pulse">
-            <div className="flex items-center gap-3 px-4 py-4">
-              <div className="w-10 h-10 rounded-full bg-slate-100 shrink-0" />
-              <div className="flex-1 space-y-2">
-                <div className="h-3 w-28 bg-slate-100 rounded" />
-                <div className="h-2 w-20 bg-slate-100 rounded" />
-              </div>
-            </div>
-            <div className="grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100">
-              {[1,2,3].map(j => <div key={j} className="px-3 py-3 flex flex-col items-center gap-1"><div className="h-3 w-8 bg-slate-100 rounded" /><div className="h-2 w-10 bg-slate-100 rounded" /></div>)}
-            </div>
-          </div>
-        ))}
-
-        {/* Athlete cards — red first then amber then green */}
-        {!loading && filtered.map(a => (
-          <AthleteCard key={a.athlete_id} athlete={a} onMessage={handleMessage} />
-        ))}
-
-        {/* Coach tools row */}
-        {athletes.length > 0 && (
-          <div className="pt-2">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Coach tools</p>
-            <div className="grid grid-cols-2 gap-3">
-              <Link href="/coach/plan-builder"
-                className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 active:bg-slate-50">
-                <span className="text-xl">📋</span>
-                <p className="text-sm font-bold text-slate-800">Plan Builder</p>
-                <p className="text-xs text-slate-400">Build plans for your athletes</p>
-              </Link>
-              <Link href="/marketplace"
-                className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 active:bg-slate-50">
-                <span className="text-xl">🏪</span>
-                <p className="text-sm font-bold text-slate-800">Marketplace</p>
-                <p className="text-xs text-slate-400">Browse and publish plans</p>
-              </Link>
-              <Link href="/community"
-                className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 active:bg-slate-50">
-                <span className="text-xl">👥</span>
-                <p className="text-sm font-bold text-slate-800">Community</p>
-                <p className="text-xs text-slate-400">Clubs, challenges, races</p>
-              </Link>
-              <button
-                onClick={async () => {
-                  const res = await fetch('/api/stripe/connect', { method: 'POST' })
-                  const d   = await res.json()
-                  if (d.url) window.location.href = d.url
-                }}
-                className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 text-left active:bg-slate-50">
-                <span className="text-xl">💳</span>
-                <p className="text-sm font-bold text-slate-800">Payouts</p>
-                <p className="text-xs text-slate-400">Set up Stripe payments</p>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Profile card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Your coach profile</p>
-            <a href={`/coach/${coachProfile.slug}`} className="text-xs text-teal-600 font-semibold">
-              View public →
-            </a>
-          </div>
-          {coachProfile.bio && (
-            <p className="text-sm text-slate-600 leading-relaxed">{coachProfile.bio}</p>
-          )}
-          {coachProfile.specialities && coachProfile.specialities.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {coachProfile.specialities.map(s => (
-                <span key={s} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{s}</span>
+        {/* NEEDS ATTENTION — top priority, always first */}
+        {!loading && needsAttention.length > 0 && (
+          <section>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 mb-2">
+              Needs attention ({needsAttention.length})
+            </p>
+            <div className="space-y-3">
+              {needsAttention.map(athlete => (
+                <AthleteCard key={athlete.athlete_id} athlete={athlete} onMessage={handleMessage} />
               ))}
             </div>
-          )}
-          {!coachProfile.verified && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mt-1">
-              <p className="text-xs text-amber-700 font-semibold">🔓 Apply for ✅ verification to unlock marketplace featuring</p>
+          </section>
+        )}
+
+        {/* ON TRACK — collapsed if any need attention, expanded if clean */}
+        {!loading && onTrack.length > 0 && (
+          <section>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 mb-2">
+              {needsAttention.length > 0 ? `On track (${onTrack.length})` : `All on track ✓`}
+            </p>
+
+            {needsAttention.length === 0 ? (
+              /* Clean dashboard — no attention needed */
+              <div className="bg-emerald-50 border border-emerald-100 rounded-2xl px-4 py-4 flex items-center gap-3">
+                <span className="text-2xl">✓</span>
+                <div>
+                  <p className="text-sm font-bold text-emerald-800">All {onTrack.length} athletes on track</p>
+                  <p className="text-xs text-emerald-600 mt-0.5">No action needed right now.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {onTrack.map(athlete => (
+                  <AthleteCard key={athlete.athlete_id} athlete={athlete} onMessage={handleMessage} />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* WEEKLY LOAD OVERVIEW */}
+        {!loading && athletes.length > 0 && (
+          <section>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 mb-2">
+              This week
+            </p>
+            <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
+              {athletes.map(a => {
+                const done  = a.sessions_done_week
+                const total = a.sessions_total_week || 0
+                const pct   = total > 0 ? (done / total) * 100 : 0
+                const name  = a.display_name ?? (a.handle ? `@${a.handle}` : 'Athlete')
+                const cls   = a.runner_class ? RUNNER_CLASSES[a.runner_class as RunnerClassId] : null
+                return (
+                  <a key={a.athlete_id} href={`/coach/athlete/${a.athlete_id}`}
+                    className="flex items-center gap-3 group active:opacity-70">
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0"
+                      style={{ background: 'var(--ns-forest-light)' }}>
+                      {cls?.emoji ?? '🏃'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs font-semibold text-gray-800 truncate group-hover:underline">{name}</p>
+                        <p className="text-[10px] text-gray-400 flex-shrink-0 ml-2">
+                          {done}/{total || '?'} sessions
+                        </p>
+                      </div>
+                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full transition-all"
+                          style={{
+                            width: `${Math.min(pct, 100)}%`,
+                            background: pct >= 100 ? '#10b981' : pct >= 60 ? 'var(--ns-forest)' : '#f59e0b',
+                          }} />
+                      </div>
+                    </div>
+                    {a.acwr !== null && (
+                      <span className={`text-[10px] font-bold flex-shrink-0 px-1.5 py-0.5 rounded-lg ${
+                        a.acwr > 1.3 ? 'bg-red-50 text-red-600' :
+                        a.acwr < 0.8 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'
+                      }`}>
+                        {a.acwr.toFixed(1)}
+                      </span>
+                    )}
+                  </a>
+                )
+              })}
             </div>
-          )}
-        </div>
+          </section>
+        )}
+
+        {/* COACH TOOLS */}
+        <section>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 mb-2">Tools</p>
+          <div className="grid grid-cols-2 gap-3">
+            <Link href="/coach/plan-builder"
+              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
+              <span className="text-xl">📋</span>
+              <p className="text-sm font-bold text-gray-800">Plan Builder</p>
+              <p className="text-xs text-gray-400">Build plans for athletes</p>
+            </Link>
+            <Link href="/marketplace"
+              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
+              <span className="text-xl">🏪</span>
+              <p className="text-sm font-bold text-gray-800">Marketplace</p>
+              <p className="text-xs text-gray-400">Browse and publish plans</p>
+            </Link>
+            <Link href="/community"
+              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
+              <span className="text-xl">👥</span>
+              <p className="text-sm font-bold text-gray-800">Community</p>
+              <p className="text-xs text-gray-400">Clubs, challenges, races</p>
+            </Link>
+            <button
+              onClick={async () => {
+                try {
+                  await fetch('/api/coach/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tier: 'professional' }) })
+                } catch { /* ignore */ }
+              }}
+              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 text-left active:bg-gray-50">
+              <span className="text-xl">⚙️</span>
+              <p className="text-sm font-bold text-gray-800">Coach Settings</p>
+              <p className="text-xs text-gray-400">Profile, credentials</p>
+            </button>
+          </div>
+        </section>
       </div>
 
       {showInvite && <InviteModal onClose={() => setShowInvite(false)} />}
