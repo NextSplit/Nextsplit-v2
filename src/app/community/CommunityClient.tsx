@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useCommunity } from '@/hooks/useCommunity'
 import { RUNNER_CLASSES } from '@/lib/rpg'
 import CharacterProfileModal from '@/components/CharacterProfileModal'
@@ -123,16 +123,40 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
 
 export default function CommunityClient({ userId, profile }: { userId: string; profile: Profile | null }) {
   const { myClubs, challenges, races, leaderboard, season, loading, refresh } = useCommunity()
-  const [tab, setTab]             = useState<'clubs' | 'challenges' | 'races' | 'leaderboard'>('clubs')
+  const [tab, setTab]             = useState<'feed' | 'clubs' | 'challenges' | 'races' | 'leaderboard'>('feed')
   const [showJoin, setShowJoin]   = useState(false)
   const [showCreate, setShowCreate] = useState(false)
   const [viewingCharacter, setViewingCharacter] = useState<{ userId: string; displayName: string; handle?: string } | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [feed, setFeed]           = useState<any[]>([])
+  const [feedLoading, setFeedLoading] = useState(false)
+  const [reactions, setReactions] = useState<Record<string, string>>({})
 
   const league      = (profile?.current_league ?? 'bronze') as keyof typeof LEAGUE_CONFIG
   const leagueCfg   = LEAGUE_CONFIG[league] ?? LEAGUE_CONFIG.bronze
   const myRank      = leaderboard.findIndex(l => l.user_id === userId) + 1
 
   const daysLeft = season ? Math.max(0, Math.ceil((new Date(season.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24))) : null
+
+  // Fetch feed when tab selected
+  useEffect(() => {
+    if (tab !== 'feed') return
+    setFeedLoading(true)
+    fetch('/api/community/feed')
+      .then(r => r.json())
+      .then(d => setFeed(d.feed ?? []))
+      .catch(() => {})
+      .finally(() => setFeedLoading(false))
+  }, [tab])
+
+  async function reactToFeed(feedId: string, reaction: string) {
+    setReactions(r => ({ ...r, [feedId]: reactions[feedId] === reaction ? '' : reaction }))
+    await fetch('/api/community/feed', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ feed_item_id: feedId, reaction }),
+    }).catch(() => {})
+  }
 
   const joinChallenge = async (id: string) => {
     await fetch('/api/community/challenges', {
@@ -192,11 +216,11 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
           </div>
 
           {/* Tab nav */}
-          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
-            {(['clubs','challenges','races','leaderboard'] as const).map(t => (
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1 overflow-x-auto">
+            {(['feed','clubs','challenges','races','leaderboard'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold capitalize transition-all ${tab === t ? 'bg-white text-gray-900 shadow' : 'text-gray-500'}`}>
-                {t === 'leaderboard' ? '🏆' : t === 'clubs' ? '👥' : t === 'challenges' ? '🎯' : '🏁'} {t}
+                className={`flex-shrink-0 flex-1 py-1.5 rounded-lg text-[10px] font-bold capitalize transition-all min-w-[52px] ${tab === t ? 'bg-white text-gray-900 shadow' : 'text-gray-500'}`}>
+                {t === 'feed' ? '📣' : t === 'leaderboard' ? '🏆' : t === 'clubs' ? '👥' : t === 'challenges' ? '🎯' : '🏁'} {t}
               </button>
             ))}
           </div>
@@ -204,6 +228,95 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+
+        {/* FEED TAB */}
+        {tab === 'feed' && (
+          <>
+            {feedLoading && (
+              <div className="space-y-3">
+                {[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />)}
+              </div>
+            )}
+            {!feedLoading && feed.length === 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+                <div className="text-4xl mb-3">📣</div>
+                <h2 className="text-sm font-bold text-gray-800 mb-1">No activity yet</h2>
+                <p className="text-xs text-gray-500">Join a club and log sessions to see your squad's activity here.</p>
+              </div>
+            )}
+            {!feedLoading && feed.map((item) => {
+              const cls = item.profiles?.runner_class
+                ? RUNNER_CLASSES[item.profiles.runner_class as keyof typeof RUNNER_CLASSES]
+                : null
+              const name = item.profiles?.display_name ?? item.profiles?.handle ?? 'Runner'
+              const timeAgo = (() => {
+                const mins = Math.floor((Date.now() - new Date(item.created_at).getTime()) / 60000)
+                if (mins < 60) return `${mins}m ago`
+                const hrs = Math.floor(mins / 60)
+                if (hrs < 24) return `${hrs}h ago`
+                return `${Math.floor(hrs / 24)}d ago`
+              })()
+              const MILESTONE_LABELS: Record<string, string> = {
+                first_session: '🌅 First session!',
+                first_20k:     '🎉 First 20km!',
+                first_half:    '🏅 First half marathon!',
+                pb_distance:   '📏 New longest run!',
+                pb_pace:       '⚡ New pace PB!',
+                streak_7:      '🔥 7-day streak!',
+                streak_30:     '🔥🔥 30-day streak!',
+              }
+              const FEED_REACTIONS = ['🔥', '👏', '💪', '🏃']
+              const myReaction = reactions[item.id]
+              const reactionCounts = FEED_REACTIONS.reduce<Record<string, number>>((acc, r) => {
+                acc[r] = (item.club_feed_reactions ?? []).filter((fr: { reaction: string }) => fr.reaction === r).length
+                return acc
+              }, {})
+
+              return (
+                <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-base flex-shrink-0"
+                      style={{ background: 'var(--ns-forest-light)' }}>
+                      {cls?.emoji ?? '🏃'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-bold text-gray-900">{name}</p>
+                        <span className="text-[10px] text-gray-400 flex-shrink-0">{timeAgo}</span>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-0.5">
+                        {item.session_name}
+                        {item.km ? <span className="font-data ml-1.5 text-gray-500">{item.km}km</span> : null}
+                        {item.pace ? <span className="font-data ml-1.5 text-gray-400">{item.pace}/km</span> : null}
+                      </p>
+                      {item.milestone_type && (
+                        <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                          style={{ background: 'var(--ns-track-light)', color: 'var(--ns-track)' }}>
+                          {MILESTONE_LABELS[item.milestone_type] ?? item.milestone_type}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {/* Reactions */}
+                  <div className="flex gap-1.5 mt-3 pl-12">
+                    {FEED_REACTIONS.map(r => (
+                      <button key={r}
+                        onClick={() => reactToFeed(item.id, r)}
+                        className={`flex items-center gap-1 px-2 py-1 rounded-xl border text-xs transition-all ${
+                          myReaction === r
+                            ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]'
+                            : 'border-gray-100 bg-white hover:border-gray-200'
+                        }`}>
+                        <span>{r}</span>
+                        {reactionCounts[r] > 0 && <span className="text-[10px] text-gray-500">{reactionCounts[r]}</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </>
+        )}
 
         {/* CLUBS TAB */}
         {tab === 'clubs' && (
@@ -345,11 +458,32 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
 
                   {r.my_entry ? (
                     r.my_entry.finish_time_secs ? (
-                      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center">
-                        <p className="text-sm font-black text-emerald-700">{fmtTime(r.my_entry.finish_time_secs)}</p>
-                        <p className="text-xs text-emerald-600">
-                          {r.my_entry.position ? `#${r.my_entry.position} place` : 'Time submitted'}
-                        </p>
+                      <div className="space-y-2">
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center">
+                          <p className="text-sm font-black font-data text-emerald-700">{fmtTime(r.my_entry.finish_time_secs)}</p>
+                          <p className="text-xs text-emerald-600">
+                            {r.my_entry.position === 1 ? '🥇 1st place' :
+                             r.my_entry.position === 2 ? '🥈 2nd place' :
+                             r.my_entry.position === 3 ? '🥉 3rd place' :
+                             r.my_entry.position ? `#${r.my_entry.position} place` : 'Time submitted'}
+                          </p>
+                        </div>
+                        <button
+                          onClick={async () => {
+                            const res = await fetch(`/api/community/race-leaderboard?race_id=${r.id}`)
+                            const data = await res.json()
+                            alert(
+                              `${r.name} — Top finishers:\n` +
+                              (data.results ?? []).slice(0, 10).map(
+                                (e: {position: number; display_name: string; finish_time_secs: number}) =>
+                                  `${e.position === 1 ? '🥇' : e.position === 2 ? '🥈' : e.position === 3 ? '🥉' : `#${e.position}`} ${e.display_name} — ${fmtTime(e.finish_time_secs)}`
+                              ).join('\n')
+                            )
+                          }}
+                          className="w-full text-xs font-bold py-2 rounded-xl border border-gray-200 text-gray-600 hover:border-gray-300 transition-colors"
+                        >
+                          View full leaderboard ({r.entry_count} finishers)
+                        </button>
                       </div>
                     ) : (
                       <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] rounded-xl p-3 text-center">

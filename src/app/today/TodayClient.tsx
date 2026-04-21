@@ -195,17 +195,30 @@ export default function TodayClient() {
     // Fire-and-forget community progress update
     if (params.done) {
       const session = planDay?.sessions[params.session_i]
+      const communityPayload = {
+        km:           params.km ?? 0,
+        done:         true,
+        session_type: session?.c ?? 'run',
+        session_name: session?.n ?? 'Session',
+        duration_secs: params.duration_secs,
+        pace:         params.pace,
+        effort:       params.effort,
+      }
       fetch('/api/community/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(communityPayload),
+      }).catch(() => {}) // non-blocking
+
+      // Milestone detection — PBs, streaks, first runs (non-blocking)
+      fetch('/api/community/milestone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           km:           params.km ?? 0,
-          done:         true,
-          session_type: session?.c ?? 'run',
-          session_name: session?.n ?? 'Session',
-          duration_secs: params.duration_secs,
           pace:         params.pace,
-          effort:       params.effort,
+          session_name: session?.n ?? 'Session',
+          session_type: session?.c ?? 'run',
         }),
       }).catch(() => {}) // non-blocking
 
