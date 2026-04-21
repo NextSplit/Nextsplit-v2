@@ -27,6 +27,8 @@ import SessionCard from '@/components/SessionCard'
 import { useProfile } from '@/hooks/useProfile'
 import MissedSessionFlow from '@/components/MissedSessionFlow'
 import AICoachingNote from '@/components/AICoachingNote'
+import LeadDashboard from '@/components/LeadDashboard'
+import { useLeadMode } from '@/hooks/useLeadMode'
 
 
 export default function TodayClient() {
@@ -35,6 +37,7 @@ export default function TodayClient() {
   const { logs: allPlanLogs } = useAllTrainingLogs()
   const { gymLogs } = useGymLog(plan?.id ?? null)
   const { profile } = useProfile()
+  const { isLeadMode, isSplitLeader, isProfessional, athleteCount, canToggle, exitLeadMode } = useLeadMode()
 
   const [dateOffset, setDateOffset] = useState(0)
   const [readinessScore, setReadinessScore] = useState<number | null>(null)
@@ -328,6 +331,43 @@ export default function TodayClient() {
       />
 
       <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
+
+        {/* Lead mode toggle button — shown to coaches, athlete view */}
+        {canToggle && !isLeadMode && (
+          <button
+            onClick={() => {
+              try { localStorage.setItem('nextsplit_lead_mode', 'true') } catch { /* ignore */ }
+              window.location.reload()
+            }}
+            className="w-full flex items-center gap-3 bg-white rounded-2xl border border-gray-100 px-4 py-3 text-left active:scale-[0.98] transition-all"
+          >
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-base flex-shrink-0"
+              style={{ background: 'var(--ns-forest-light)' }}>
+              {isSplitLeader || isProfessional ? '👥' : '🏃'}
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-bold text-gray-800">
+                Switch to {isSplitLeader ? 'Split Leader' : 'Coach'} view
+              </p>
+              <p className="text-[10px] text-gray-400 mt-0.5">
+                See your squad — {athleteCount} athlete{athleteCount !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <span className="text-gray-300 text-lg">›</span>
+          </button>
+        )}
+
+        {/* Lead Dashboard — replaces Today content when in Lead mode */}
+        {isLeadMode && (
+          <LeadDashboard
+            onExitLeadMode={exitLeadMode}
+            athleteCount={athleteCount}
+            isSplitLeader={isSplitLeader}
+          />
+        )}
+
+        {/* Normal Today content — hidden in Lead mode via display */}
+        <div style={{ display: isLeadMode ? 'none' : undefined }}>
 
         {/* Manual/empty plan — no sessions yet */}
         {!loading && plan && currentWeek && currentWeek.days.every(d => d.sessions.length === 0) && (
@@ -787,6 +827,7 @@ export default function TodayClient() {
             />
           </>
         )}
+        </div>{/* end normal content wrapper */}
       </div>
 
       {/* Missed session conversational flow */}
