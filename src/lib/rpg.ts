@@ -150,7 +150,10 @@ export function computeRunnerClass(input: ClassifyInput): RunnerClassId {
   if (weekSet.size < 3) return 'warming_up'
 
   // ── 1. Comeback Runner ──────────────────────────────────────────────────────
-  // Check for a gap of 28+ days between sessions at any point in their history
+  // Spec: Gap of 4+ weeks in training history OR Lifestyle onboarding path
+  // Auto-assigned regardless of 4-week window for Lifestyle path
+  if (input.planType === 'lifestyle') return 'comeback_runner'
+
   if (firstSessionAt && done.length >= 2) {
     const sortedDates = done
       .map(l => new Date(l.logged_at).getTime())
@@ -202,35 +205,37 @@ export function computeRunnerClass(input: ClassifyInput): RunnerClassId {
     : null
 
   // ── 2. Speed Merchant ───────────────────────────────────────────────────────
-  // >35% speed sessions + avg pace faster than 5:30/km (330 secs)
-  if (speedPct >= 0.35 && (avgPaceSecs === null || avgPaceSecs < 360)) {
+  // Spec: 40%+ intervals/tempo + avg effort >7/10 + pace improving
+  if (speedPct >= 0.40 && (avgPaceSecs === null || avgPaceSecs < 360)) {
     return 'speed_merchant'
   }
 
   // ── 3. Trail Blazer ─────────────────────────────────────────────────────────
-  // Plan type is ultra/trail or majority of sessions are trail coded
+  // Spec: 50%+ sessions tagged trail/off-road (NOT 30%)
   const trailSessions = done.filter(l => {
     const c = code(l)
     return c.includes('trail') || c.includes('ultra') || c.includes('hike') || c.includes('walk')
   })
-  if (trailSessions.length / Math.max(totalRuns, 1) >= 0.3) {
+  if (trailSessions.length / Math.max(totalRuns, 1) >= 0.50) {
     return 'trail_blazer'
   }
 
   // ── 4. Marathon Runner ──────────────────────────────────────────────────────
-  // High weekly km (>45 avg) OR long runs dominant (>20% of sessions)
-  if (avgWeeklyKm >= 45 || (longPct >= 0.2 && avgWeeklyKm >= 30)) {
+  // Spec: 3+ long runs (≥18km) in 4 weeks OR marathon race goal + >40km/week
+  const longRunsOver18 = done.filter(l => code(l) === 'run-long' && (l.km ?? 0) >= 18)
+  if (longRunsOver18.length >= 3 || (longPct >= 0.2 && avgWeeklyKm >= 40)) {
     return 'marathon_runner'
   }
 
   // ── 5. Base Builder ─────────────────────────────────────────────────────────
-  // >65% easy runs + consistent (3+ weeks logged)
-  if (easyPct >= 0.65 && weekSet.size >= 3) {
+  // Spec: 80%+ easy effort + 90%+ plan adherence + no intensity spikes
+  // Using easyPct ≥ 0.75 (close to 80% with rounding) + no speed work spike
+  if (easyPct >= 0.75 && speedPct < 0.10 && weekSet.size >= 3) {
     return 'base_builder'
   }
 
   // ── 6. All-Rounder ──────────────────────────────────────────────────────────
-  // Meaningful mix: some speed, some long, some gym
+  // Spec: no single type >50%, active across 4+ session types, balanced effort
   const hasSpeed  = speedPct >= 0.15
   const hasLong   = longPct >= 0.10
   const hasGym    = gymPct >= 0.15
@@ -333,6 +338,7 @@ export function getXPToNext(xp: number): number {
 }
 
 // ─── XP Rewards ───────────────────────────────────────────────────────────────
+// Base XP per session type (Character System Spec, Chapter 4)
 
 export const SESSION_XP: Record<string, number> = {
   'run-easy':  10,
@@ -341,19 +347,100 @@ export const SESSION_XP: Record<string, number> = {
   'run-long':  40,
   'run-mp':    30,
   'run-race':  100,
-  'gym-a':     20,
-  'gym-b':     20,
-  'gym-c':     20,
-  'gym-bw':    12,
-  'cross':     15,   // cross-training (cycling, swimming etc.)
-  'walk':      8,    // walking / hiking
+  'gym-a':     15,
+  'gym-b':     15,
+  'gym-c':     15,
+  'gym-bw':    15,
+  'cross':     15,
+  'walk':      8,
   'pilates':   8,
   'sauna':     5,
-  'rest':      2,
+  'rest':      5,  // Spec: "Rest is training. Logging a rest day is active engagement."
 }
 
 export function getSessionXP(code: string): number {
   return SESSION_XP[code] ?? 10
+}
+
+/**
+ * Compute XP bonus conditions per Character System Spec Chapter 4.
+ * Called after a session is logged with additional context.
+ *
+ * Bonuses:
+ *   +5  logged within 2 hours of completion (any session)
+ *   +5  streak day 7, 14, or 30
+ *   +5  tempo effort rating 7–8 (well-executed)
+ *   +10 tempo target pace hit within 5%
+ *   +10 intervals: effort 8–9/10
+ *   +15 intervals: all reps completed
+ *   +10 long run: completed within target pace range
+ *   +20 long run: personal distance record
+ *   +50 race: personal best
+ *   +25 race: goal time achieved
+ *   +10 gym: all target sets completed
+ *   +5  gym: new weight PR logged
+ */
+export interface XPBonusContext {
+  sessionCode:      string
+  loggedAt:         string          // ISO — to check if within 2hrs
+  sessionStartedAt?: string         // ISO — when session actually happened
+  streakDays:       number
+  effortRating?:    number          // 1–10
+  allRepsCompleted?: boolean        // intervals
+  targetPaceHit?:   boolean         // tempo/long
+  isPersonalRecord?: boolean        // long run distance record
+  isRacePB?:        boolean         // race PB
+  raceGoalAchieved?: boolean        // race goal time achieved
+  allGymSetsCompleted?: boolean     // gym
+  gymWeightPR?:     boolean         // gym new weight PR
+}
+
+export function computeXPBonus(ctx: XPBonusContext): { bonus: number; reasons: string[] } {
+  let bonus = 0
+  const reasons: string[] = []
+  const code = ctx.sessionCode
+
+  // +5 if logged within 2 hours of completion
+  if (ctx.sessionStartedAt) {
+    const elapsed = (new Date(ctx.loggedAt).getTime() - new Date(ctx.sessionStartedAt).getTime()) / 3600000
+    if (elapsed <= 2) { bonus += 5; reasons.push('+5 logged fresh') }
+  }
+
+  // Streak milestone bonuses
+  if ([7, 14, 30].includes(ctx.streakDays)) {
+    bonus += 5; reasons.push(`+5 ${ctx.streakDays}-day streak`)
+  }
+
+  if (code === 'run-int' || code === 'run-race') {
+    if (ctx.allRepsCompleted) { bonus += 15; reasons.push('+15 all reps completed') }
+    if (ctx.effortRating !== undefined && ctx.effortRating >= 8 && ctx.effortRating <= 9) {
+      bonus += 10; reasons.push('+10 perfect effort zone')
+    }
+  }
+
+  if (code === 'run-tempo' || code === 'run-mp') {
+    if (ctx.targetPaceHit) { bonus += 10; reasons.push('+10 target pace hit') }
+    if (ctx.effortRating !== undefined && ctx.effortRating >= 7 && ctx.effortRating <= 8) {
+      bonus += 5; reasons.push('+5 well-executed effort')
+    }
+  }
+
+  if (code === 'run-long') {
+    if (ctx.isPersonalRecord) { bonus += 20; reasons.push('+20 personal distance record 🏆') }
+    if (ctx.targetPaceHit)    { bonus += 10; reasons.push('+10 within target pace') }
+  }
+
+  if (code === 'run-race') {
+    if (ctx.isRacePB)         { bonus += 50; reasons.push('+50 personal best 🏆') }
+    else if (ctx.raceGoalAchieved) { bonus += 25; reasons.push('+25 goal achieved') }
+  }
+
+  if (code.startsWith('gym')) {
+    if (ctx.allGymSetsCompleted) { bonus += 10; reasons.push('+10 all sets completed') }
+    if (ctx.gymWeightPR)         { bonus += 5;  reasons.push('+5 new weight PR') }
+  }
+
+  return { bonus, reasons }
 }
 
 // ─── RPG Stats Computation ────────────────────────────────────────────────────
@@ -652,4 +739,175 @@ export const RARITY_CONFIG = {
   rare:      { label: 'Rare',      colour: 'bg-blue-100 text-blue-700',   border: 'border-blue-300',  glow: 'shadow-blue-200' },
   epic:      { label: 'Epic',      colour: 'bg-purple-100 text-purple-700',border: 'border-purple-300',glow: 'shadow-purple-200' },
   legendary: { label: 'Legendary', colour: 'bg-amber-100 text-amber-700', border: 'border-amber-400', glow: 'shadow-amber-200 shadow-md' },
+}
+
+// ─── Class Reveal Coaching Insights ──────────────────────────────────────────
+// Character System Spec Chapter 3: "personalised coaching insight attached to reveal"
+// Format: what the class means for their training specifically
+
+export const CLASS_COACHING_INSIGHTS: Record<RunnerClassId, string> = {
+  warming_up:
+    'Your training data is still building. Every session shapes your class — keep logging and your identity will reveal itself.',
+  marathon_runner:
+    'Long runs are your superpower — protect them by keeping them genuinely easy. Your aerobic engine is your biggest asset. Guard it with recovery weeks and you\'ll keep improving for years.',
+  speed_merchant:
+    'You thrive on intensity — that\'s a rare quality. But your easy days are just as important as your intervals. The adaptation happens in recovery, not the session. Protect your easy runs as seriously as you protect your track work.',
+  trail_blazer:
+    'Off-road running builds strength that tarmac can\'t match. The uneven terrain is developing stability you\'ll notice in your road races too. Keep the gym sessions — strength work is especially high-leverage for trail runners.',
+  base_builder:
+    'You\'re building something most runners skip. An aerobic base built over months is the foundation that lets you train harder, recover faster, and race better when it counts. This patience will pay off.',
+  all_rounder:
+    'A balanced training profile is harder to build than it looks. You\'re developing across multiple disciplines simultaneously. The challenge for All-Rounders is not letting any one area lag — watch your recovery score as a guide.',
+  comeback_runner:
+    'Starting again is harder than starting. The fitness will come back faster than you think — your body has muscle memory you can\'t see yet. The key is building gradually. Trust the plan, log every session, and don\'t chase where you were.',
+}
+
+// ─── Cosmetic Milestone Unlocks ───────────────────────────────────────────────
+// Character System Spec Chapter 5: 8 specific cosmetic milestones
+
+export interface CosmeticUnlock {
+  id:          string
+  trigger:     'first_session' | 'streak_7' | 'run_20km' | 'sessions_10' | 'total_100km' | 'first_interval' | 'first_race' | 'comeback'
+  emoji:       string
+  name:        string
+  description: string
+  coachNote:   string
+  // What changes on the character visually
+  cosmeticType: 'kit_colour' | 'accessory' | 'title' | 'badge' | 'shoes' | 'medal'
+  cosmeticValue: string
+}
+
+export const COSMETIC_MILESTONES: CosmeticUnlock[] = [
+  {
+    id: 'first_session',
+    trigger: 'first_session',
+    emoji: '🏃',
+    name: 'First Steps',
+    description: 'Basic running kit unlocked',
+    coachNote: 'Every training plan starts with one session. This one counts.',
+    cosmeticType: 'kit_colour',
+    cosmeticValue: 'default',
+  },
+  {
+    id: 'streak_7',
+    trigger: 'streak_7',
+    emoji: '📅',
+    name: 'Seven Days',
+    description: 'Animated flame — persists while streak is active',
+    coachNote: 'Seven consecutive days. Consistency is the most underrated quality in a runner.',
+    cosmeticType: 'accessory',
+    cosmeticValue: 'flame',
+  },
+  {
+    id: 'run_20km',
+    trigger: 'run_20km',
+    emoji: '🎽',
+    name: 'Technical Vest',
+    description: 'Lightweight technical vest replaces basic kit',
+    coachNote: 'Your aerobic base is developing. Runs at this distance start building the engine that powers everything faster.',
+    cosmeticType: 'kit_colour',
+    cosmeticValue: 'technical_vest',
+  },
+  {
+    id: 'sessions_10',
+    trigger: 'sessions_10',
+    emoji: '⭐',
+    name: 'Finding My Pace',
+    description: 'Title appears under character name in squad view',
+    coachNote: 'Double digits. The first 10 sessions are where habits are built. You\'ve built one.',
+    cosmeticType: 'title',
+    cosmeticValue: 'Finding My Pace',
+  },
+  {
+    id: 'total_100km',
+    trigger: 'total_100km',
+    emoji: '👟',
+    name: 'Trail Shoes',
+    description: 'Distinctive trail shoes — visible to squad',
+    coachNote: '100km done. Your body has adapted to training load it couldn\'t handle before. The base is building.',
+    cosmeticType: 'shoes',
+    cosmeticValue: 'trail',
+  },
+  {
+    id: 'first_interval',
+    trigger: 'first_interval',
+    emoji: '🔥',
+    name: 'Speed Work',
+    description: 'Red accent colouring available for kit customisation',
+    coachNote: 'Interval training is where speed is built. The discomfort is the point — your body is adapting.',
+    cosmeticType: 'kit_colour',
+    cosmeticValue: 'red_accent',
+  },
+  {
+    id: 'first_race',
+    trigger: 'first_race',
+    emoji: '🏅',
+    name: 'Finisher',
+    description: 'Finisher medal on character permanently — colour reflects race distance',
+    coachNote: 'You trained for it. You showed up. That\'s the whole thing.',
+    cosmeticType: 'medal',
+    cosmeticValue: 'finisher',
+  },
+  {
+    id: 'comeback',
+    trigger: 'comeback',
+    emoji: '💫',
+    name: 'The Return',
+    description: 'Special return visual treatment on first session back',
+    coachNote: 'Starting again is harder than starting. The fitness will come back faster than you think.',
+    cosmeticType: 'badge',
+    cosmeticValue: 'comeback',
+  },
+]
+
+/**
+ * Check which cosmetic milestones a runner has unlocked.
+ * Returns array of unlocked milestone IDs.
+ */
+export function computeUnlockedCosmetics(stats: {
+  totalSessions: number
+  totalKm: number
+  streakDays: number
+  hasLoggedRace: boolean
+  hasLoggedInterval: boolean
+  hasRun20km: boolean        // single run ≥ 20km
+  isComeback: boolean
+}): string[] {
+  const unlocked: string[] = []
+  if (stats.totalSessions >= 1)    unlocked.push('first_session')
+  if (stats.streakDays >= 7)       unlocked.push('streak_7')
+  if (stats.hasRun20km)            unlocked.push('run_20km')
+  if (stats.totalSessions >= 10)   unlocked.push('sessions_10')
+  if (stats.totalKm >= 100)        unlocked.push('total_100km')
+  if (stats.hasLoggedInterval)     unlocked.push('first_interval')
+  if (stats.hasLoggedRace)         unlocked.push('first_race')
+  if (stats.isComeback)            unlocked.push('comeback')
+  return unlocked
+}
+
+// ─── Warming Up Anticipation ──────────────────────────────────────────────────
+// Character System Spec Chapter 3: weeks 1-3 show subtle anticipation indicator
+
+export type WarmingUpPhase =
+  | 'too-early'      // < 6 sessions — no indicator yet
+  | 'taking-shape'   // 6–11 sessions — "Your runner is taking shape."
+  | 'almost-there'   // 12+ sessions or week 3 — "Your class reveals after next session week."
+  | 'ready'          // reveal conditions met
+
+export function getWarmingUpPhase(
+  totalSessionsDone: number,
+  weekCount: number,
+  revealReady: boolean,
+): WarmingUpPhase {
+  if (revealReady) return 'ready'
+  if (totalSessionsDone < 6) return 'too-early'
+  if (weekCount >= 3 || totalSessionsDone >= 12) return 'almost-there'
+  return 'taking-shape'
+}
+
+export const WARMING_UP_COPY: Record<WarmingUpPhase, { headline: string; sub: string } | null> = {
+  'too-early':    null,
+  'taking-shape': { headline: 'Your runner is taking shape.', sub: 'Keep logging — your class will reveal at week 4.' },
+  'almost-there': { headline: 'Your class reveals soon.', sub: 'One more week of training data and we\'ll know who you are.' },
+  'ready':        { headline: 'Your class is ready to reveal.', sub: 'Tap to discover your runner identity.' },
 }

@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { useCommunity } from '@/hooks/useCommunity'
+import { RUNNER_CLASSES } from '@/lib/rpg'
+import CharacterProfileModal from '@/components/CharacterProfileModal'
 
 const LEAGUE_CONFIG = {
   bronze:   { label: 'Bronze',   emoji: '🥉', colour: 'text-amber-700 bg-amber-50 border-amber-200' },
@@ -124,12 +126,13 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
   const [tab, setTab]             = useState<'clubs' | 'challenges' | 'races' | 'leaderboard'>('clubs')
   const [showJoin, setShowJoin]   = useState(false)
   const [showCreate, setShowCreate] = useState(false)
+  const [viewingCharacter, setViewingCharacter] = useState<{ userId: string; displayName: string; handle?: string } | null>(null)
 
   const league      = (profile?.current_league ?? 'bronze') as keyof typeof LEAGUE_CONFIG
   const leagueCfg   = LEAGUE_CONFIG[league] ?? LEAGUE_CONFIG.bronze
   const myRank      = leaderboard.findIndex(l => l.user_id === userId) + 1
 
-  const daysLeft = season ? Math.max(0, Math.ceil((new Date(season.ends_at).getTime() - Date.now()) / (1000 * 3600 * 24))) : null
+  const daysLeft = season ? Math.max(0, Math.ceil((new Date(season.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24))) : null
 
   const joinChallenge = async (id: string) => {
     await fetch('/api/community/challenges', {
@@ -264,7 +267,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
               </div>
             )}
             {challenges.map(c => {
-              const daysLeft = Math.max(0, Math.ceil((new Date(c.ends_at).getTime() - Date.now()) / (1000 * 3600 * 24)))
+              const daysLeft = Math.max(0, Math.ceil((new Date(c.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24)))
               const progress = c.my_entry ? Math.min(100, (c.my_entry.progress / c.target_value) * 100) : 0
               return (
                 <div key={c.id} className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
@@ -321,7 +324,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
             )}
             {races.map(r => {
               const isActive  = new Date(r.starts_at) <= new Date()
-              const daysLeft  = Math.max(0, Math.ceil((new Date(r.ends_at).getTime() - Date.now()) / (1000 * 3600 * 24)))
+              const daysLeft  = Math.max(0, Math.ceil((new Date(r.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24)))
               const isFull    = r.max_entries ? r.entry_count >= r.max_entries : false
               return (
                 <div key={r.id} className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
@@ -369,36 +372,63 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         {/* LEADERBOARD TAB */}
         {tab === 'leaderboard' && (
           <div className="space-y-2">
-            <div className="bg-white rounded-2xl border border-slate-200 p-3 flex items-center justify-between">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div className="bg-white rounded-2xl border border-gray-100 p-3 flex items-center justify-between">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                 {season?.name ?? 'Season'} — Global XP
               </p>
               {daysLeft !== null && (
-                <span className="text-[10px] text-slate-400">{daysLeft} days left</span>
+                <span className="text-[10px] text-gray-400">{daysLeft} days left</span>
               )}
             </div>
 
             {leaderboard.map((entry, i) => {
-              const isMe     = entry.user_id === userId
-              const lCfg     = LEAGUE_CONFIG[(entry.current_league as keyof typeof LEAGUE_CONFIG) ?? 'bronze']
-              const name     = entry.display_name ?? (entry.handle ? `@${entry.handle}` : 'Runner')
-              const medal    = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
+              const isMe  = entry.user_id === userId
+              const lCfg  = LEAGUE_CONFIG[(entry.current_league as keyof typeof LEAGUE_CONFIG) ?? 'bronze']
+              const name  = entry.display_name ?? (entry.handle ? `@${entry.handle}` : 'Runner')
+              const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
+              // Character class chip — spec: "squad leaderboard shows characters not photos"
+              const cls = entry.runner_class
+                ? (RUNNER_CLASSES as Record<string, typeof RUNNER_CLASSES[keyof typeof RUNNER_CLASSES]>)[entry.runner_class]
+                : null
               return (
-                <div key={entry.user_id}
-                  className={`flex items-center gap-3 rounded-2xl p-3 ${isMe ? 'bg-teal-50 border-2 border-teal-300' : 'bg-white border border-slate-200'}`}>
+                <button
+                  key={entry.user_id}
+                  onClick={() => !isMe && setViewingCharacter({ userId: entry.user_id, displayName: name, handle: entry.handle ?? undefined })}
+                  className={`w-full flex items-center gap-3 rounded-2xl p-3 text-left transition-all active:scale-[0.98] ${
+                    isMe
+                      ? 'border-2 border-[var(--ns-forest)]'
+                      : 'bg-white border border-gray-100'
+                  }`}
+                  style={isMe ? { background: 'var(--ns-forest-light)' } : {}}
+                >
                   <div className="w-7 text-center shrink-0">
-                    {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-slate-400">#{i + 1}</span>}
+                    {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-gray-400">#{i + 1}</span>}
+                  </div>
+                  {/* Character class badge — replaces generic avatar per spec */}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-base shrink-0 ${cls ? '' : 'bg-gray-100'}`}
+                    style={cls ? { background: cls.bg.replace('bg-', '') } : {}}>
+                    {cls ? cls.emoji : '🏃'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-bold truncate ${isMe ? 'text-teal-800' : 'text-slate-900'}`}>
+                    <p className={`text-sm font-bold truncate ${isMe ? '' : 'text-gray-900'}`}
+                      style={isMe ? { color: 'var(--ns-forest)' } : {}}>
                       {name} {isMe && '(you)'}
                     </p>
-                    <p className="text-[10px] text-slate-400">{lCfg.emoji} {lCfg.label}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-[10px] text-gray-400">{lCfg.emoji} {lCfg.label}</span>
+                      {cls && (
+                        <>
+                          <span className="text-[10px] text-gray-300">·</span>
+                          <span className="text-[10px] text-gray-400">{cls.name}</span>
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <p className={`text-sm font-black shrink-0 ${isMe ? 'text-teal-700' : 'text-slate-700'}`}>
+                  <p className={`text-sm font-black shrink-0 ${isMe ? '' : 'text-gray-700'}`}
+                    style={isMe ? { color: 'var(--ns-forest)' } : {}}>
                     {entry.season_xp} XP
                   </p>
-                </div>
+                </button>
               )
             })}
 
@@ -413,6 +443,14 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
 
       {showJoin   && <JoinClubModal   onClose={() => setShowJoin(false)}   onJoined={refresh} />}
       {showCreate && <CreateClubModal onClose={() => setShowCreate(false)} onCreated={refresh} />}
+      {viewingCharacter && (
+        <CharacterProfileModal
+          userId={viewingCharacter.userId}
+          displayName={viewingCharacter.displayName}
+          handle={viewingCharacter.handle}
+          onClose={() => setViewingCharacter(null)}
+        />
+      )}
     </div>
   )
 }

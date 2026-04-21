@@ -49,6 +49,7 @@ import PWAProfileCard from '@/components/rpg/PWAProfileCard'
 import StravaSection from '@/components/rpg/StravaSection'
 import AthleteProfileSection from '@/components/rpg/AthleteProfileSection'
 import { db } from '@/lib/supabase/db'
+import { getWarmingUpPhase, WARMING_UP_COPY } from '@/lib/rpg'
 
 const RACE_DISTANCES = [
   { label: '5K', km: 5 },
@@ -119,6 +120,7 @@ export default function ProfileClient({
   const [showClassReveal, setShowClassReveal] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStravaClientId(config.stravaClientId || null)
     // Load RPG char selection from localStorage
     const saved = localStorage.getItem('nextsplit_rpg_char')
@@ -236,6 +238,7 @@ export default function ProfileClient({
   useEffect(() => {
     const currentLevel = rpgStats.level.level
     if (prevLevel !== null && currentLevel > prevLevel) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLevelUpLevel(currentLevel)
       setLevelUpShow(true)
     }
@@ -251,6 +254,7 @@ export default function ProfileClient({
   useEffect(() => {
     const newBadges = checkNewBadges(rpgStats, seenBadgeIds)
     if (newBadges.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBadgeToast(newBadges[0])
       const updated = [...seenBadgeIds, ...newBadges.map(b => b.id)]
       setSeenBadgeIds(updated)
@@ -445,6 +449,36 @@ export default function ProfileClient({
         </div>
 
         {/* Runner class — earned identity */}
+        {/* Warming Up anticipation indicator (Character Spec: weeks 1–3) */}
+        {(!runnerClass || runnerClass === 'warming_up') && (() => {
+          const weekCount = new Set(allPlanLogsArr.filter(l => l.done).map(l => l.week_n)).size
+          const phase = getWarmingUpPhase(rpgStats.totalRuns, weekCount, classRevealReady)
+          const copy  = WARMING_UP_COPY[phase]
+          if (!copy) return null
+          return (
+            <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest)]20 rounded-2xl px-4 py-3 flex items-start gap-3">
+              <span className="text-xl mt-0.5">🌅</span>
+              <div className="flex-1">
+                <p className="text-sm font-bold leading-snug" style={{ color: 'var(--ns-forest)' }}>
+                  {copy.headline}
+                </p>
+                <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--ns-forest)', opacity: 0.7 }}>
+                  {copy.sub}
+                </p>
+                {phase === 'ready' && (
+                  <button
+                    onClick={() => setShowClassReveal(true)}
+                    className="mt-2 text-xs font-bold px-3 py-1.5 rounded-lg text-white"
+                    style={{ background: 'var(--ns-forest)' }}
+                  >
+                    Reveal my class →
+                  </button>
+                )}
+              </div>
+            </div>
+          )
+        })()}
+
         <RunnerClassCard
           classId={runnerClass}
           revealReady={classRevealReady}

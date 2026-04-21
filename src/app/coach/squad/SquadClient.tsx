@@ -1,7 +1,10 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import type { CoachProfile } from '@/types/database'
+import { RUNNER_CLASSES } from '@/lib/rpg'
+import type { RunnerClassId } from '@/lib/rpg'
 
 interface AthleteStatus {
   athlete_id:          string
@@ -17,6 +20,7 @@ interface AthleteStatus {
   current_week:        number | null
   total_weeks:         number | null
   plan_name:           string | null
+  runner_class:        string | null
 }
 
 const STATUS = {
@@ -76,16 +80,24 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
   const cfg       = STATUS[athlete.status]
   const name      = athlete.display_name ?? (athlete.handle ? `@${athlete.handle}` : 'Athlete')
   const daysSince = athlete.last_active
-    ? Math.floor((Date.now() - new Date(athlete.last_active).getTime()) / (24 * 3600 * 1000))
+    ? Math.floor((new Date().getTime() - new Date(athlete.last_active).getTime()) / (24 * 3600 * 1000))
+    : null
+
+  // Character class — spec: "coach sees athletes as characters in the dashboard"
+  const cls = athlete.runner_class
+    ? RUNNER_CLASSES[athlete.runner_class as RunnerClassId]
     : null
 
   return (
     <div className={`bg-white rounded-2xl border-2 overflow-hidden ${cfg.ring}`}>
       {/* Main row */}
       <a href={`/coach/athlete/${athlete.athlete_id}`} className="flex items-center gap-3 px-4 py-3.5 active:bg-slate-50">
-        {/* Status dot + avatar */}
+        {/* Character avatar — class emoji replaces generic 🏃 */}
         <div className="relative shrink-0">
-          <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-lg">🏃</div>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${cls ? '' : 'bg-gray-100'}`}
+            style={cls ? { background: cls.bg.replace('bg-', '') + '20', border: `2px solid ${cls.colour}40` } : {}}>
+            {cls ? cls.emoji : '🏃'}
+          </div>
           <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ${cfg.dot}`} />
         </div>
 
@@ -97,11 +109,19 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
               {cfg.label}
             </span>
           </div>
-          {athlete.plan_name && (
-            <p className="text-xs text-slate-400 truncate mt-0.5">
-              {athlete.plan_name} · W{athlete.current_week}/{athlete.total_weeks}
-            </p>
-          )}
+          <div className="flex items-center gap-1.5 mt-0.5">
+            {athlete.plan_name && (
+              <p className="text-xs text-slate-400 truncate">
+                {athlete.plan_name} · W{athlete.current_week}/{athlete.total_weeks}
+              </p>
+            )}
+            {cls && (
+              <>
+                {athlete.plan_name && <span className="text-[10px] text-slate-300">·</span>}
+                <span className="text-[10px] text-slate-400 shrink-0">{cls.name}</span>
+              </>
+            )}
+          </div>
         </div>
 
         <span className="text-slate-300 text-lg shrink-0">›</span>
@@ -179,9 +199,13 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
       const res  = await fetch('/api/coach/squad-status')
       const data = await res.json()
       setAthletes(data.athletes ?? [])
-    } finally { setLoading(false) }
+      setLoading(false)
+    } catch {
+      setLoading(false)
+    }
   }, [])
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchStatus() }, [fetchStatus])
 
   const filtered = filter === 'all' ? athletes : athletes.filter(a => a.status === filter)
@@ -287,24 +311,24 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
           <div className="pt-2">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Coach tools</p>
             <div className="grid grid-cols-2 gap-3">
-              <a href="/coach/plan-builder"
+              <Link href="/coach/plan-builder"
                 className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 active:bg-slate-50">
                 <span className="text-xl">📋</span>
                 <p className="text-sm font-bold text-slate-800">Plan Builder</p>
                 <p className="text-xs text-slate-400">Build plans for your athletes</p>
-              </a>
-              <a href="/marketplace"
+              </Link>
+              <Link href="/marketplace"
                 className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 active:bg-slate-50">
                 <span className="text-xl">🏪</span>
                 <p className="text-sm font-bold text-slate-800">Marketplace</p>
                 <p className="text-xs text-slate-400">Browse and publish plans</p>
-              </a>
-              <a href="/community"
+              </Link>
+              <Link href="/community"
                 className="bg-white rounded-2xl border border-slate-200 p-3.5 space-y-1 active:bg-slate-50">
                 <span className="text-xl">👥</span>
                 <p className="text-sm font-bold text-slate-800">Community</p>
                 <p className="text-xs text-slate-400">Clubs, challenges, races</p>
-              </a>
+              </Link>
               <button
                 onClick={async () => {
                   const res = await fetch('/api/stripe/connect', { method: 'POST' })

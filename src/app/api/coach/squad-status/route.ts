@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
 
     // Batch fetch all data
     const [profilesRes, logsRes, wellnessRes, plansRes] = await Promise.all([
-      db(supabase).from('profiles').select('id, display_name, handle').in('id', athleteIds),
+      db(supabase).from('profiles').select('id, display_name, handle, runner_class').in('id', athleteIds),
       db(supabase).from('training_logs').select('user_id, done, km, logged_at, week_n').in('user_id', athleteIds).gte('logged_at', fourWeeksAgo),
       db(supabase).from('wellness_logs').select('user_id, sleep, energy, mood, soreness, log_date').in('user_id', athleteIds).gte('log_date', oneWeekAgo),
       db(supabase).from('user_plans').select('user_id, name, current_week, total_weeks, status').in('user_id', athleteIds).eq('status', 'active'),
@@ -124,6 +124,7 @@ export async function GET(req: NextRequest) {
         current_week:        plan?.current_week ?? null,
         total_weeks:         plan?.total_weeks ?? null,
         plan_name:           plan?.name ?? null,
+        runner_class:        (profile as { runner_class?: string | null })?.runner_class ?? null,
       }
     })
 

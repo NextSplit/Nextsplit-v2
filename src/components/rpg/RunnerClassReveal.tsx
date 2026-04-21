@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getRunnerClass, RUNNER_CLASSES } from '@/lib/rpg'
+import { getRunnerClass, RUNNER_CLASSES, CLASS_COACHING_INSIGHTS } from '@/lib/rpg'
 import type { RunnerClassId } from '@/lib/rpg'
 import { hapticSuccess } from '@/lib/haptics'
 
@@ -135,9 +135,19 @@ export default function RunnerClassReveal({ classId, onDismiss }: Props) {
             style={{ opacity: 1 }}
           >
             {/* Description card */}
-            <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-5 mb-6 text-left">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-5 mb-4 text-left">
               <p className="text-white/80 text-sm leading-relaxed">
                 {cls.description}
+              </p>
+            </div>
+
+            {/* Coaching insight — Character Spec: "personalised coaching insight" */}
+            <div className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-2xl p-5 mb-6 text-left">
+              <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-2">
+                🧠 Coaching insight
+              </p>
+              <p className="text-white/90 text-sm leading-relaxed">
+                {CLASS_COACHING_INSIGHTS[classId]}
               </p>
             </div>
 

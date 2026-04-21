@@ -33,6 +33,7 @@ interface Race {
 interface LeaderboardEntry {
   user_id: string; display_name: string | null; handle: string | null
   season_xp: number; current_league: string; weekly_km: number
+  runner_class: string | null
 }
 
 interface CommunityState {
@@ -65,7 +66,7 @@ export function useCommunity() {
           fetch('/api/community/races'),
           // Top 20 by season XP
           supabase.from('profiles')
-            .select('id, display_name, handle, season_xp, current_league')
+            .select('id, display_name, handle, season_xp, current_league, runner_class')
             .order('season_xp', { ascending: false })
             .limit(20),
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -82,7 +83,8 @@ export function useCommunity() {
           myClubs:     clubsData.clubs ?? [],
           challenges:  challengesData.challenges ?? [],
           races:       racesData.races ?? [],
-          leaderboard: (leaderRes.data ?? []) as LeaderboardEntry[],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          leaderboard: ((leaderRes.data ?? []) as any[]).map(p => ({ ...p, user_id: p.id })) as LeaderboardEntry[],
           season:      seasonRes.data ?? null,
           loading:     false,
         })
