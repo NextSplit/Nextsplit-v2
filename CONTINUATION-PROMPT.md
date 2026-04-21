@@ -2,6 +2,21 @@
 
 You are continuing development of **NextSplit v2**, a production Next.js + Supabase running coaching app. This is an active project with ~200 Vercel deployments. Read everything below carefully before touching any code.
 
+**HANDOFF DOC:** Read `HANDOFF-4.md` in repo root — this is the canonical source of truth. It incorporates 14 strategy documents (Vision, Personas, Master Roadmap, 8 Pillar docs, Character System, Conflict Audit) resolved April 2026. Every build decision must trace to HANDOFF-4.
+
+**STRATEGIC NORTH STAR:** Users become believers the first time the plan adapts around something that went wrong in their life. Everything traces back to that moment.
+
+**THREE-TIER MODEL (resolved — do not reopen):**
+- Athlete (Free / Pro £7.99/mo)
+- Split Leader (included in Pro, hard cap 5 runners, cannot sell plans)
+- Professional Coach (£29/mo, application required, marketplace access)
+
+**BRAND (from Brand Pillar — not yet implemented in code):**
+- Primary: Forest `#2b5c3f` (NOT current teal `#0D9488` — migration planned Phase 2)
+- Accent: Ember `#e85d26` | Gold: Track `#c49a3c` | Slate: Night `#2c3e50`
+- Fonts: Cormorant Garamond (display) + Outfit (body) + JetBrains Mono (data)
+- Tagline: "The plan that keeps up with your life."
+
 ---
 
 ## YOUR FIRST ACTION
@@ -23,7 +38,7 @@ If TypeScript is clean, proceed. If not, fix errors before anything else.
 **Live:** https://nextsplit-v2.vercel.app  
 **GitHub:** https://github.com/NextSplit/Nextsplit-v2  
 **Stack:** Next.js 16.2 (App Router) · Supabase · Tailwind · PWA · Anthropic Claude SDK  
-**HANDOFF doc:** `HANDOFF-3.md` in repo root — read it in full before starting
+**
 
 The app is a training OS for serious runners: AI coaching, personalised plans, injury analytics, RPG progression, coach marketplace, community. Think Strava × TrainingPeaks × a personal coach.
 
@@ -233,4 +248,4 @@ Once core loop is solid:
 - The owner tests on mobile (Android, Chrome). Always think mobile-first.
 - Commit messages should be specific — what changed and why.
 
-Read `HANDOFF-3.md` now. Then start.
+Read `HANDOFF-4.md` now. Then start.
