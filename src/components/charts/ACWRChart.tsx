@@ -12,7 +12,7 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
   if (data.length < 2) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 p-5">
-        <div className="text-sm font-bold text-gray-900 mb-1">Training Load (ACWR)</div>
+        <div className="font-data text-sm font-bold text-gray-900 mb-1">Training Load (ACWR)</div>
         <p className="text-xs text-gray-400">Log at least 2 weeks of sessions to see your acute:chronic workload ratio.</p>
         <div className="mt-3 p-3 bg-green-50 rounded-xl">
           <p className="text-xs text-green-700 font-medium">Target zone: 0.8 – 1.3</p>
@@ -76,7 +76,7 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
         <div className="mt-3 flex items-center justify-between">
           <div>
             <span className="text-xs text-gray-500">Current ACWR: </span>
-            <span className={`text-sm font-bold ${
+            <span className={`text-sm font-bold font-data ${
               data[data.length - 1].acwr > 1.3 ? 'text-red-500' :
               data[data.length - 1].acwr < 0.8 ? 'text-yellow-500' : 'text-[var(--ns-forest)]'
             }`}>

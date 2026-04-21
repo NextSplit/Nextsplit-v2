@@ -48,11 +48,11 @@ function JoinClubModal({ onClose, onJoined }: { onClose: () => void; onJoined: (
         <p className="text-sm text-slate-500">Enter the 6-character join code from your club admin.</p>
         <input value={code} onChange={e => setCode(e.target.value.toUpperCase())}
           placeholder="e.g. A3F9C2" maxLength={6}
-          className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-lg font-mono text-center tracking-widest outline-none focus:border-teal-400" />
+          className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-lg font-mono text-center tracking-widest outline-none focus:border-[var(--ns-forest)]" />
         {error && <p className="text-xs text-red-500 text-center">{error}</p>}
         {success && <p className="text-xs text-emerald-600 text-center font-bold">{success}</p>}
         <button onClick={join} disabled={code.length < 6 || loading}
-          className="w-full bg-teal-500 text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
+          className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
           {loading ? 'Joining…' : 'Join club →'}
         </button>
       </div>
@@ -94,17 +94,17 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
         <div className="flex gap-2 flex-wrap">
           {EMOJIS.map(e => (
             <button key={e} onClick={() => setEmoji(e)}
-              className={`text-2xl w-10 h-10 rounded-xl border-2 transition-all ${emoji === e ? 'border-teal-500 bg-teal-50' : 'border-slate-200'}`}>
+              className={`text-2xl w-10 h-10 rounded-xl border-2 transition-all ${emoji === e ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]' : 'border-slate-200'}`}>
               {e}
             </button>
           ))}
         </div>
 
         <input value={name} onChange={e => setName(e.target.value)} placeholder="Club name"
-          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-teal-400" />
+          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)]" />
         <textarea value={desc} onChange={e => setDesc(e.target.value)} rows={2}
           placeholder="What's your club about? (optional)"
-          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-teal-400 resize-none" />
+          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none" />
 
         <label className="flex items-center gap-3 text-sm text-slate-700">
           <input type="checkbox" checked={isPublic} onChange={e => setPublic(e.target.checked)} className="rounded" />
@@ -113,7 +113,7 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
 
         {error && <p className="text-xs text-red-500">{error}</p>}
         <button onClick={create} disabled={!name.trim() || loading}
-          className="w-full bg-teal-500 text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
+          className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
           {loading ? 'Creating…' : 'Create club →'}
         </button>
       </div>
@@ -186,7 +186,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
               <span>Next league at {league === 'bronze' ? 500 : league === 'silver' ? 1500 : league === 'gold' ? 3000 : league === 'platinum' ? 6000 : '∞'} XP</span>
             </div>
             <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-teal-500 rounded-full transition-all"
+              <div className="h-full bg-[var(--ns-forest)] rounded-full transition-all"
                 style={{ width: `${Math.min(100, ((profile?.season_xp ?? 0) / (league === 'bronze' ? 500 : 1500)) * 100)}%` }} />
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                 Enter code
               </button>
               <button onClick={() => setShowCreate(true)}
-                className="flex-1 bg-teal-500 text-white rounded-2xl py-3 text-sm font-bold active:scale-95">
+                className="flex-1 bg-[var(--ns-forest)] text-white rounded-2xl py-3 text-sm font-bold active:scale-95">
                 + Create club
               </button>
             </div>
@@ -235,7 +235,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-bold text-slate-900 truncate">{club.name}</p>
-                      {role === 'owner' && <span className="text-[10px] text-teal-600 font-bold">Owner</span>}
+                      {role === 'owner' && <span className="text-[10px] text-[var(--ns-forest)] font-bold">Owner</span>}
                     </div>
                     <p className="text-xs text-slate-400">{club.member_count} members</p>
                   </div>
@@ -246,9 +246,9 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                     <p className="text-sm font-black text-slate-800">{Math.round(club.weekly_km)}km</p>
                     <p className="text-[10px] text-slate-400">club this week</p>
                   </div>
-                  <div className="bg-teal-50 rounded-xl py-2">
-                    <p className="text-sm font-black text-teal-700">{Math.round(weekly_km ?? 0)}km</p>
-                    <p className="text-[10px] text-teal-500">your contribution</p>
+                  <div className="bg-[var(--ns-forest-light)] rounded-xl py-2">
+                    <p className="text-sm font-black text-[var(--ns-forest)]">{Math.round(weekly_km ?? 0)}km</p>
+                    <p className="text-[10px] text-[var(--ns-forest-mid)]">your contribution</p>
                   </div>
                 </div>
               </a>
@@ -277,7 +277,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                       <p className="text-xs text-slate-400 mt-0.5">{c.description}</p>
                     </div>
                     <div className="text-right shrink-0 ml-3">
-                      <p className="text-xs font-bold text-teal-600">+{c.reward_xp} XP</p>
+                      <p className="text-xs font-bold text-[var(--ns-forest)]">+{c.reward_xp} XP</p>
                       <p className="text-[10px] text-slate-400">{daysLeft}d left</p>
                     </div>
                   </div>
@@ -296,13 +296,13 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                         <span>{Math.round(progress)}%</span>
                       </div>
                       <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full transition-all ${c.my_entry.completed ? 'bg-emerald-500' : 'bg-teal-500'}`}
+                        <div className={`h-full rounded-full transition-all ${c.my_entry.completed ? 'bg-emerald-500' : 'bg-[var(--ns-forest)]'}`}
                           style={{ width: `${progress}%` }} />
                       </div>
                     </div>
                   ) : (
                     <button onClick={() => joinChallenge(c.id)}
-                      className="w-full bg-teal-50 border border-teal-200 text-teal-700 py-2 rounded-xl text-xs font-bold active:scale-95">
+                      className="w-full bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] text-[var(--ns-forest)] py-2 rounded-xl text-xs font-bold active:scale-95">
                       Join challenge →
                     </button>
                   )}
@@ -352,14 +352,14 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                         </p>
                       </div>
                     ) : (
-                      <div className="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center">
-                        <p className="text-xs font-bold text-teal-700">✓ Entered — submit your time when done</p>
+                      <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] rounded-xl p-3 text-center">
+                        <p className="text-xs font-bold text-[var(--ns-forest)]">✓ Entered — submit your time when done</p>
                       </div>
                     )
                   ) : (
                     <button onClick={() => !isFull && isActive && enterRace(r.id)}
                       disabled={isFull || !isActive}
-                      className="w-full bg-teal-500 text-white py-2.5 rounded-xl text-sm font-bold disabled:opacity-40 active:scale-95">
+                      className="w-full bg-[var(--ns-forest)] text-white py-2.5 rounded-xl text-sm font-bold disabled:opacity-40 active:scale-95">
                       {isFull ? 'Race full' : !isActive ? 'Opens soon' : 'Enter race →'}
                     </button>
                   )}

@@ -78,7 +78,7 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus, personalisedPa
           )}
           {myPace && (
             <div className="flex items-center gap-1 mt-1">
-              <span className="text-[10px] text-teal-600 font-semibold">You: {myPace}</span>
+              <span className="text-[10px] text-[var(--ns-forest)] font-semibold">You: {myPace}</span>
               <span className="text-[9px] text-gray-300">personalised</span>
             </div>
           )}
@@ -87,9 +87,9 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus, personalisedPa
               <span className="text-[11px] text-emerald-600 font-bold">
                 ✓ Done{log?.effort ? ` · RPE ${log.effort}` : ''}
               </span>
-              {log?.km && <span className="text-[10px] text-gray-400">{log.km}km</span>}
-              {log?.duration_secs && <span className="text-[10px] text-gray-400">{Math.round(log.duration_secs / 60)}min</span>}
-              {log?.pace && <span className="text-[10px] text-gray-400">{log.pace}/km</span>}
+              {log?.km && <span className="text-[10px] text-gray-400 font-data">{log.km}km</span>}
+              {log?.duration_secs && <span className="text-[10px] text-gray-400 font-data">{Math.round(log.duration_secs / 60)}min</span>}
+              {log?.pace && <span className="text-[10px] text-gray-400 font-data">{log.pace}/km</span>}
               {log?.hr && <span className="text-[10px] text-gray-400">♥ {log.hr}</span>}
               {log?.notes && <span className="text-[10px] text-gray-400 italic truncate max-w-[100px]">{log.notes}</span>}
               {log?.strava_id && <span className="text-[10px] text-orange-500 font-semibold">⚡ Strava</span>}
@@ -105,7 +105,7 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus, personalisedPa
         <div className="relative flex-shrink-0">
           {showXP && (
             <div className="absolute -top-1 left-1/2 -translate-x-1/2 pointer-events-none z-10 animate-xp-float">
-              <span className="text-[11px] font-black text-teal-600 bg-white rounded-full px-1.5 py-0.5 shadow-md whitespace-nowrap">
+              <span className="text-[11px] font-black bg-white rounded-full px-1.5 py-0.5 shadow-md whitespace-nowrap font-data">
                 +{xp} XP
               </span>
             </div>

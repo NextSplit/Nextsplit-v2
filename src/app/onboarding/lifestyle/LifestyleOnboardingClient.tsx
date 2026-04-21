@@ -86,8 +86,8 @@ export default function LifestyleOnboardingClient() {
 
       {step === 'freq' && (
         <div>
-          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
-            <span className="text-xs font-bold text-teal-400">{selectedFocus?.label} ✓</span>
+          <div className="inline-flex items-center gap-1.5 bg-[var(--ns-forest)]/15 border border-[var(--ns-forest)]/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-[var(--ns-forest-mid)]">{selectedFocus?.label} ✓</span>
           </div>
           <h1 className="text-2xl font-black text-white mb-1">How often can you run?</h1>
           <p className="text-zinc-400 text-sm mb-7">Be realistic — consistency beats intensity.</p>
@@ -106,15 +106,15 @@ export default function LifestyleOnboardingClient() {
 
       {step === 'name' && (
         <div>
-          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
-            <span className="text-xs font-bold text-teal-400">{selectedFocus?.label} · {freq} days/week ✓</span>
+          <div className="inline-flex items-center gap-1.5 bg-[var(--ns-forest)]/15 border border-[var(--ns-forest)]/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-[var(--ns-forest-mid)]">{selectedFocus?.label} · {freq} days/week ✓</span>
           </div>
           <h1 className="text-2xl font-black text-white mb-1">Almost there</h1>
           <p className="text-zinc-400 text-sm mb-6">Name your plan and choose whether to include strength sessions.</p>
           <div className="space-y-3 mb-6">
             <input value={planName} onChange={e => setPlanName(e.target.value)}
               placeholder="My Running Plan"
-              className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
               style={{ background: 'rgba(255,255,255,0.07)' }} />
 
             {/* Gym toggle */}

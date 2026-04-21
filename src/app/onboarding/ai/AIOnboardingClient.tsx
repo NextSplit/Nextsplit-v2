@@ -161,8 +161,8 @@ export default function AIOnboardingClient() {
 
       {step === 'level' && (
         <div>
-          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
-            <span className="text-xs font-bold text-teal-400">{selectedGoal?.label} ✓</span>
+          <div className="inline-flex items-center gap-1.5 bg-[var(--ns-forest)]/15 border border-[var(--ns-forest)]/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-[var(--ns-forest-mid)]">{selectedGoal?.label} ✓</span>
           </div>
           <h1 className="text-2xl font-black text-white mb-1">Your experience level?</h1>
           <p className="text-zinc-400 text-sm mb-7">We&apos;ll calibrate volume and intensity.</p>
@@ -177,13 +177,13 @@ export default function AIOnboardingClient() {
 
       {step === 'race_date' && (
         <div>
-          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
-            <span className="text-xs font-bold text-teal-400">{selectedGoal?.label} · {selectedLevel?.label} ✓</span>
+          <div className="inline-flex items-center gap-1.5 bg-[var(--ns-forest)]/15 border border-[var(--ns-forest)]/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-[var(--ns-forest-mid)]">{selectedGoal?.label} · {selectedLevel?.label} ✓</span>
           </div>
           <h1 className="text-2xl font-black text-white mb-1">Race date?</h1>
           <p className="text-zinc-400 text-sm mb-7">Skip if you don&apos;t have one — add it later.</p>
           <input type="date" value={raceDate} onChange={e => setRaceDate(e.target.value)} min={today}
-            className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500 mb-4"
+            className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)] mb-4"
             style={{ background: 'rgba(255,255,255,0.07)' }} />
           <button onClick={() => setStep('gym')}
             className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
@@ -194,8 +194,8 @@ export default function AIOnboardingClient() {
 
       {step === 'gym' && (
         <div>
-          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
-            <span className="text-xs font-bold text-teal-400">
+          <div className="inline-flex items-center gap-1.5 bg-[var(--ns-forest)]/15 border border-[var(--ns-forest)]/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-[var(--ns-forest-mid)]">
               {selectedGoal?.label} · {selectedLevel?.label}{raceDate ? ' · ' + new Date(raceDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''} ✓
             </span>
           </div>
@@ -212,8 +212,8 @@ export default function AIOnboardingClient() {
 
       {step === 'name' && (
         <div>
-          <div className="inline-flex items-center gap-1.5 bg-teal-500/15 border border-teal-500/30 rounded-full px-3 py-1 mb-6">
-            <span className="text-xs font-bold text-teal-400">
+          <div className="inline-flex items-center gap-1.5 bg-[var(--ns-forest)]/15 border border-[var(--ns-forest)]/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-[var(--ns-forest-mid)]">
               {selectedGoal?.label} · {selectedLevel?.label} · {gymPreference === 'yes' ? '🏋️ Gym' : '🏃 Run only'} ✓
             </span>
           </div>
@@ -221,7 +221,7 @@ export default function AIOnboardingClient() {
           <p className="text-zinc-400 text-sm mb-7">Something to remember it by.</p>
           <input value={planName} onChange={e => setPlanName(e.target.value)}
             placeholder={`${selectedGoal?.label} ${new Date().getFullYear()}`}
-            className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-teal-500 mb-4"
+            className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)] mb-4"
             style={{ background: 'rgba(255,255,255,0.07)' }} />
           <button onClick={analyse}
             className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
@@ -237,7 +237,7 @@ export default function AIOnboardingClient() {
           <p className="text-zinc-400 text-sm">Finding the perfect plan structure for you.</p>
           <div className="flex gap-1.5 mt-8">
             {[0,1,2].map(i => (
-              <div key={i} className="w-2 h-2 rounded-full bg-teal-500 animate-bounce"
+              <div key={i} className="w-2 h-2 rounded-full bg-[var(--ns-forest)] animate-bounce"
                 style={{ animationDelay: `${i * 0.15}s` }} />
             ))}
           </div>
@@ -246,7 +246,7 @@ export default function AIOnboardingClient() {
 
       {step === 'recommendation' && (
         <div>
-          <div className="text-xs font-bold text-teal-400 uppercase tracking-wider mb-5">Your AI recommendation</div>
+          <div className="text-xs font-bold text-[var(--ns-forest-mid)] uppercase tracking-wider mb-5">Your AI recommendation</div>
           <div className="rounded-2xl border border-white/10 p-5 mb-5"
             style={{ background: 'rgba(255,255,255,0.04)' }}>
             <div className="text-2xl mb-2">🤖</div>
@@ -261,7 +261,7 @@ export default function AIOnboardingClient() {
           <div className="mb-5">
             <label className="text-xs font-bold text-zinc-400 block mb-2">Plan name</label>
             <input value={planName} onChange={e => setPlanName(e.target.value)}
-              className="w-full rounded-xl border border-white/20 px-3 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full rounded-xl border border-white/20 px-3 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
               style={{ background: 'rgba(255,255,255,0.07)' }} />
           </div>
           {error && <p className="text-red-400 text-xs mb-3">{error}</p>}

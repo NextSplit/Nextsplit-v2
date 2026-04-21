@@ -81,7 +81,7 @@ function PWAProfileCard() {
         </p>
       )}
       {showIOSSteps && (
-        <div className="mt-3 px-3 py-2.5 bg-teal-50 rounded-xl border border-teal-100 text-xs text-teal-700 leading-relaxed">
+        <div className="mt-3 px-3 py-2.5 bg-[var(--ns-forest-light)] rounded-xl border border-teal-100 text-xs text-[var(--ns-forest)] leading-relaxed">
           1. Tap the <strong>Share ↑</strong> button in Safari<br />
           2. Scroll and tap <strong>&quot;Add to Home Screen&quot;</strong><br />
           3. Tap <strong>Add</strong> to confirm

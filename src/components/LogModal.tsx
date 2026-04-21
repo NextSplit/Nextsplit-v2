@@ -395,7 +395,7 @@ function KmPicker({ km, setKm, planned }: { km: number; setKm: (n: number) => vo
         <button onClick={() => setKm(Math.max(0, Math.round((km - 0.5) * 10) / 10))}
           className="w-10 h-10 rounded-full bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center">−</button>
         <div className="flex-1 text-center">
-          <span className="text-3xl font-bold text-gray-900">{km.toFixed(1)}</span>
+          <span className="font-data text-3xl text-gray-900">{km.toFixed(1)}</span>
           <span className="text-sm text-gray-400 ml-1">km</span>
         </div>
         <button onClick={() => setKm(Math.round((km + 0.5) * 10) / 10)}
@@ -416,7 +416,7 @@ function DurationPicker({ mins, setMins }: { mins: number; setMins: (n: number) 
         <button onClick={() => setMins(Math.max(0, mins - 5))}
           className="w-10 h-10 rounded-full bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center">−</button>
         <div className="flex-1 text-center">
-          <span className="text-3xl font-bold text-gray-900">{mins}</span>
+          <span className="font-data text-3xl text-gray-900">{mins}</span>
           <span className="text-sm text-gray-400 ml-1">min</span>
         </div>
         <button onClick={() => setMins(mins + 5)}

@@ -365,7 +365,7 @@ export default function ProfileClient({
               onClick={() => setProfileTab(tab.id)}
               className={`flex-1 py-2.5 text-xs font-bold border-b-2 transition-all ${
                 profileTab === tab.id
-                  ? 'border-teal-500 text-teal-600'
+                  ? 'border-[var(--ns-forest)] text-[var(--ns-forest)]'
                   : 'border-transparent text-gray-400'
               }`}
             >
@@ -552,7 +552,7 @@ export default function ProfileClient({
                 href={`/u/${encodeURIComponent(displayName)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[11px] font-semibold text-teal-600 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-xl"
+                className="text-[11px] font-semibold text-[var(--ns-forest)] bg-[var(--ns-forest-light)] border border-teal-100 px-3 py-1.5 rounded-xl"
               >
                 Preview →
               </a>

@@ -137,7 +137,7 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-3 mb-6 w-full">
           <div className="text-white/60 text-xs uppercase tracking-wider mb-0.5">Plan finished</div>
           <div className="text-white font-bold text-base">{plan.name}</div>
-          <div className="text-teal-300 text-xs">{planDurationWeeks} weeks · {plan.goal ?? 'Running'}</div>
+          <div className="text-[var(--ns-forest-light)] text-xs">{planDurationWeeks} weeks · {plan.goal ?? 'Running'}</div>
         </div>
 
         {/* Stats row */}

@@ -21,9 +21,9 @@ function daysUntil(dateStr: string): number {
 
 function StatPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-teal-50 border border-teal-100 rounded-2xl px-4 py-3 text-center">
-      <p className="text-lg font-black text-teal-700">{value}</p>
-      <p className="text-xs text-teal-500 mt-0.5">{label}</p>
+    <div className="bg-[var(--ns-forest-light)] border border-teal-100 rounded-2xl px-4 py-3 text-center">
+      <p className="text-lg font-black text-[var(--ns-forest)]">{value}</p>
+      <p className="text-xs text-[var(--ns-forest-mid)] mt-0.5">{label}</p>
     </div>
   )
 }
@@ -106,7 +106,7 @@ export function PlanPreviewScreen() {
       <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-12 pb-8 text-center">
         <div className="text-4xl mb-3">🎉</div>
         <h1 className="text-2xl font-black text-white">Your plan is ready</h1>
-        <p className="text-teal-300 text-sm mt-1">
+        <p className="text-[var(--ns-forest-light)] text-sm mt-1">
           Welcome to NextSplit, @{data.handle}
         </p>
       </div>
@@ -161,7 +161,7 @@ export function PlanPreviewScreen() {
                   </p>
                 )}
                 {aGoal.target_time_secs && (
-                  <p className="text-xs text-teal-600 font-semibold mt-0.5">
+                  <p className="text-xs text-[var(--ns-forest)] font-semibold mt-0.5">
                     Target: {Math.floor(aGoal.target_time_secs / 3600)}:{String(Math.floor((aGoal.target_time_secs % 3600) / 60)).padStart(2, '0')}:{String(aGoal.target_time_secs % 60).padStart(2, '0')}
                   </p>
                 )}

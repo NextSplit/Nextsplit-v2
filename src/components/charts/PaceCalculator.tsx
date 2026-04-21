@@ -55,9 +55,9 @@ function PaceCalculator() {
             className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
         </div>
         {result && (
-          <div className="bg-teal-50 border border-teal-100 rounded-xl px-4 py-3 text-center">
-            <div className="text-[10px] text-teal-600 uppercase tracking-wide mb-0.5">{mode === 'time→pace' ? 'Average pace' : 'Finish time'}</div>
-            <div className="text-2xl font-black text-teal-700">{result}</div>
+          <div className="bg-[var(--ns-forest-light)] border border-teal-100 rounded-xl px-4 py-3 text-center">
+            <div className="text-[10px] text-[var(--ns-forest)] uppercase tracking-wide mb-0.5">{mode === 'time→pace' ? 'Average pace' : 'Finish time'}</div>
+            <div className="text-2xl font-black text-[var(--ns-forest)]">{result}</div>
           </div>
         )}
       </div>

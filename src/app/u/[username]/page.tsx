@@ -125,7 +125,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               </div>
               <div className="flex-1 min-w-0 pt-1">
                 <div className="text-white font-black text-xl leading-tight">{displayName}</div>
-                <div className="text-teal-300 text-xs font-semibold mt-0.5">{level.name}</div>
+                <div className="text-[var(--ns-forest-light)] text-xs font-semibold mt-0.5">{level.name}</div>
                 {plan && (
                   <div className="text-gray-400 text-[10px] mt-0.5">{plan.name} · W{plan.current_week}/{plan.total_weeks}</div>
                 )}
@@ -183,8 +183,8 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
             <p className="text-sm font-bold text-gray-900 mb-3">Personal Bests</p>
             <div className="grid grid-cols-2 gap-2">
               {pbs.map(pb => (
-                <div key={pb.distanceKm} className="bg-teal-50 border border-teal-100 rounded-xl p-3">
-                  <div className="text-[10px] text-teal-600 font-bold">
+                <div key={pb.distanceKm} className="bg-[var(--ns-forest-light)] border border-teal-100 rounded-xl p-3">
+                  <div className="text-[10px] text-[var(--ns-forest)] font-bold">
                     {Object.entries(RACE_LABELS).find(([km]) => Math.abs(Number(km) - pb.distanceKm) < 0.1)?.[1] ?? `${pb.distanceKm}km`}
                   </div>
                   <div className="text-lg font-black text-gray-900">{pb.timeStr}</div>
@@ -200,7 +200,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           <p className="text-white font-black text-base mb-1">Track your runs with NextSplit</p>
           <p className="text-teal-100 text-xs mb-4">AI coaching, gamification, and real training plans</p>
           <a href="/auth/login"
-            className="inline-block bg-white text-teal-600 font-bold text-sm px-6 py-2.5 rounded-xl">
+            className="inline-block bg-white text-[var(--ns-forest)] font-bold text-sm px-6 py-2.5 rounded-xl">
             Start for free →
           </a>
         </div>

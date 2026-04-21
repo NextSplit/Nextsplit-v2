@@ -99,7 +99,7 @@ export function TodayModals({
           <div className="relative animate-slide-up">
             <span className="absolute top-0 left-1/2 w-2 h-2 rounded-sm bg-yellow-400 opacity-0" style={{ animation: 'confetti-fall-1 0.8s 0.1s ease-out forwards' }} />
             <span className="absolute top-0 left-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 opacity-0" style={{ animation: 'confetti-fall-2 0.8s 0.15s ease-out forwards' }} />
-            <span className="absolute top-0 left-1/2 w-2 h-1 rounded-sm bg-teal-400 opacity-0" style={{ animation: 'confetti-fall-3 0.9s 0.05s ease-out forwards' }} />
+            <span className="absolute top-0 left-1/2 w-2 h-1 rounded-sm bg-[var(--ns-forest-mid)] opacity-0" style={{ animation: 'confetti-fall-3 0.9s 0.05s ease-out forwards' }} />
             <span className="absolute top-0 left-1/2 w-1.5 h-1.5 rounded-full bg-amber-300 opacity-0" style={{ animation: 'confetti-fall-4 0.85s 0.2s ease-out forwards' }} />
             <span className="absolute top-0 left-1/2 w-1 h-2 rounded-sm bg-red-400 opacity-0" style={{ animation: 'confetti-fall-5 0.75s 0.1s ease-out forwards' }} />
             <span className="absolute top-0 left-1/2 w-2 h-1 rounded-full bg-orange-400 opacity-0" style={{ animation: 'confetti-fall-6 0.9s 0.0s ease-out forwards' }} />

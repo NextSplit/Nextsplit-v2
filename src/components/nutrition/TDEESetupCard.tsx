@@ -48,7 +48,7 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
             <p className="text-[10px] text-gray-400">{s === 'female' ? 'Female' : 'Male'} · {h}cm · {a}yo</p>
           </div>
         </div>
-        <span className="text-[10px] text-teal-600 font-semibold">Edit ✎</span>
+        <span className="text-[10px] text-[var(--ns-forest)] font-semibold">Edit ✎</span>
       </button>
     )
   }
@@ -92,7 +92,7 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
         <div className="flex gap-2">
           {(['male', 'female'] as const).map(s => (
             <button key={s} onClick={() => setSex(s)}
-              className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${sex === s ? 'bg-teal-500 text-white' : 'bg-gray-100 text-gray-500'}`}>
+              className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${sex === s ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-500'}`}>
               {s === 'male' ? '♂ Male' : '♀ Female'}
             </button>
           ))}
@@ -100,7 +100,7 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
       </div>
 
       <button onClick={handleSave}
-        className="w-full py-2.5 rounded-xl bg-teal-500 text-white text-sm font-bold">
+        className="w-full py-2.5 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-bold">
         Save profile
       </button>
     </div>

@@ -67,7 +67,7 @@ export default function TodayBelowFold({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[11px] font-bold text-teal-800 uppercase tracking-wide">Week {weeklyReport.weekN} · {weeklyReport.weekTitle}</p>
-                <p className="text-xs text-teal-600 mt-0.5">Your weekly report</p>
+                <p className="text-xs text-[var(--ns-forest)] mt-0.5">Your weekly report</p>
               </div>
               <span className="text-2xl">{weeklyReport.completionPct >= 90 ? '🌟' : weeklyReport.completionPct >= 60 ? '✅' : '💪'}</span>
             </div>
@@ -75,29 +75,29 @@ export default function TodayBelowFold({
           <div className="px-4 py-3 grid grid-cols-3 gap-3 border-b border-teal-100/30">
             <div className="text-center">
               <div className="text-lg font-black text-teal-900">{weeklyReport.completionPct}%</div>
-              <div className="text-[10px] text-teal-500">sessions done</div>
-              <div className="text-[9px] text-teal-400">{weeklyReport.sessionsDone}/{weeklyReport.sessionsPlanned}</div>
+              <div className="text-[10px] text-[var(--ns-forest-mid)]">sessions done</div>
+              <div className="text-[9px] text-[var(--ns-forest-mid)]">{weeklyReport.sessionsDone}/{weeklyReport.sessionsPlanned}</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-black text-teal-900">{weeklyReport.kmLogged}</div>
-              <div className="text-[10px] text-teal-500">km logged</div>
-              <div className="text-[9px] text-teal-400">of {weeklyReport.kmPlanned} planned</div>
+              <div className="text-[10px] text-[var(--ns-forest-mid)]">km logged</div>
+              <div className="text-[9px] text-[var(--ns-forest-mid)]">of {weeklyReport.kmPlanned} planned</div>
             </div>
             <div className="text-center">
               <div className={`text-lg font-black ${vsColour}`}>
                 {vsArrow} {weeklyReport.lastWeekKm > 0 ? Math.abs(Math.round((weeklyReport.kmLogged - weeklyReport.lastWeekKm) * 10) / 10) : '—'}
               </div>
-              <div className="text-[10px] text-teal-500">vs prev week</div>
-              {weeklyReport.avgEffort && <div className="text-[9px] text-teal-400">RPE {weeklyReport.avgEffort} avg</div>}
+              <div className="text-[10px] text-[var(--ns-forest-mid)]">vs prev week</div>
+              {weeklyReport.avgEffort && <div className="text-[9px] text-[var(--ns-forest-mid)]">RPE {weeklyReport.avgEffort} avg</div>}
             </div>
           </div>
           {(weeklyReport.bestSession || weeklyReport.lookAheadNote) && (
             <div className="px-4 py-3 space-y-1.5">
               {weeklyReport.bestSession && (
-                <p className="text-xs text-teal-700"><span className="font-semibold">Best session:</span> {weeklyReport.bestSession}</p>
+                <p className="text-xs text-[var(--ns-forest)]"><span className="font-semibold">Best session:</span> {weeklyReport.bestSession}</p>
               )}
               {weeklyReport.lookAheadNote && (
-                <p className="text-xs text-teal-600 leading-relaxed line-clamp-2">
+                <p className="text-xs text-[var(--ns-forest)] leading-relaxed line-clamp-2">
                   <span className="font-semibold">This week:</span> {weeklyReport.lookAheadNote}
                 </p>
               )}
@@ -108,11 +108,11 @@ export default function TodayBelowFold({
 
       {/* Sunday coach banner */}
       {planDay === 0 && hasPlanNextWeek && (
-        <div className="bg-teal-50 rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
+        <div className="bg-[var(--ns-forest-light)] rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
           <span className="text-base mt-0.5">🗓️</span>
           <div>
             <p className="text-[11px] font-bold text-teal-800 mb-0.5">Week {weekN} complete!</p>
-            <p className="text-xs text-teal-700 leading-relaxed">
+            <p className="text-xs text-[var(--ns-forest)] leading-relaxed">
               Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what&apos;s ahead.
             </p>
           </div>

@@ -230,8 +230,8 @@ export function StravaConnectScreen() {
                     const m = Math.floor((secs % 3600) / 60)
                     const s = secs % 60
                     return (
-                      <div key={dist} className="bg-teal-50 rounded-xl p-2 text-center">
-                        <p className="text-xs text-teal-600 font-bold uppercase">{dist}</p>
+                      <div key={dist} className="bg-[var(--ns-forest-light)] rounded-xl p-2 text-center">
+                        <p className="text-xs text-[var(--ns-forest)] font-bold uppercase">{dist}</p>
                         <p className="text-sm font-black text-teal-800">
                           {`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
                         </p>
@@ -251,7 +251,7 @@ export function StravaConnectScreen() {
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-4 space-y-2">
           <button
             onClick={handleUsePrefill}
-            className="w-full bg-teal-500 text-white py-3.5 rounded-2xl text-sm font-bold active:scale-95 transition-all"
+            className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold active:scale-95 transition-all"
           >
             Use this data → skip ahead
           </button>

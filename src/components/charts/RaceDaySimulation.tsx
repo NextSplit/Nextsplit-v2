@@ -66,7 +66,7 @@ export default function RaceDaySimulation({ logs, targetDistanceKm, raceDate }: 
             onClick={() => setFocusKm(d.km)}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex-shrink-0 ${
               focusKm === d.km
-                ? 'bg-teal-500 text-white'
+                ? 'bg-[var(--ns-forest)] text-white'
                 : 'bg-gray-100 text-gray-600'
             }`}
           >
@@ -95,7 +95,7 @@ export default function RaceDaySimulation({ logs, targetDistanceKm, raceDate }: 
             </div>
             <div className="w-px h-8 bg-gray-100" />
             <div className="text-center">
-              <p className="text-sm font-bold text-teal-600 text-lg font-black">{focusPred.realistic}</p>
+              <p className="text-sm font-bold text-[var(--ns-forest)] text-lg font-black">{focusPred.realistic}</p>
               <p className="text-[9px] text-gray-400">expected</p>
             </div>
             <div className="w-px h-8 bg-gray-100" />
@@ -114,18 +114,18 @@ export default function RaceDaySimulation({ logs, targetDistanceKm, raceDate }: 
             key={p.km}
             onClick={() => setFocusKm(p.km)}
             className={`w-full flex items-center justify-between px-4 py-3 transition-all ${
-              focusKm === p.km ? 'bg-teal-50' : 'hover:bg-gray-50'
+              focusKm === p.km ? 'bg-[var(--ns-forest-light)]' : 'hover:bg-gray-50'
             }`}
           >
             <div className="flex items-center gap-3">
-              <span className={`text-xs font-bold w-24 text-left ${focusKm === p.km ? 'text-teal-700' : 'text-gray-700'}`}>
+              <span className={`text-xs font-bold w-24 text-left ${focusKm === p.km ? 'text-[var(--ns-forest)]' : 'text-gray-700'}`}>
                 {p.distance}
               </span>
               <span className="text-[10px] text-gray-400">{p.pacePerKm}/km</span>
             </div>
             <div className="flex items-center gap-3 text-right">
               <span className="text-[10px] text-red-400">{p.pessimistic}</span>
-              <span className={`text-sm font-black ${focusKm === p.km ? 'text-teal-700' : 'text-gray-800'}`}>
+              <span className={`text-sm font-black ${focusKm === p.km ? 'text-[var(--ns-forest)]' : 'text-gray-800'}`}>
                 {p.realistic}
               </span>
               <span className="text-[10px] text-emerald-500">{p.optimistic}</span>

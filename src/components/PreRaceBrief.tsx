@@ -118,7 +118,7 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
   const sections = [
     { icon: '⏱️', label: 'Pacing strategy', key: 'pacing' as const, colour: 'text-blue-800 bg-blue-50 border-blue-100' },
     { icon: '⚡', label: 'Race fuelling',    key: 'fuelling' as const, colour: 'text-amber-800 bg-amber-50 border-amber-100' },
-    { icon: '😴', label: 'Taper notes',     key: 'taper' as const,    colour: 'text-teal-800 bg-teal-50 border-teal-100' },
+    { icon: '😴', label: 'Taper notes',     key: 'taper' as const,    colour: 'text-teal-800 bg-[var(--ns-forest-light)] border-teal-100' },
     { icon: '🧠', label: 'Race mindset',    key: 'mindset' as const,  colour: 'text-emerald-800 bg-emerald-50 border-emerald-100' },
   ]
 

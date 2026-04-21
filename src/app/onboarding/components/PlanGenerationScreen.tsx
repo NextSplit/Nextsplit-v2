@@ -330,16 +330,16 @@ export function PlanGenerationScreen() {
     <div className="min-h-screen bg-gradient-to-b from-[#0f172a] via-[#0d3d38] to-[#0f172a] flex flex-col items-center justify-center px-6 text-center">
 
       <div className="relative mb-8">
-        <div className="w-24 h-24 rounded-full bg-teal-500/10 border border-teal-500/20 flex items-center justify-center">
+        <div className="w-24 h-24 rounded-full bg-[var(--ns-forest)]/10 border border-[var(--ns-forest)]/20 flex items-center justify-center">
           <span className="text-5xl animate-bounce">🏃</span>
         </div>
         <div className="absolute inset-0 animate-spin" style={{ animationDuration: '3s' }}>
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-teal-400 opacity-60" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[var(--ns-forest-mid)] opacity-60" />
         </div>
       </div>
 
       <h1 className="text-2xl font-black text-white mb-2">Building your plan</h1>
-      <p className="text-teal-300 text-sm mb-8">Our coaches are working through your requirements</p>
+      <p className="text-[var(--ns-forest-light)] text-sm mb-8">Our coaches are working through your requirements</p>
 
       <div className="h-6 mb-6">
         <p className="text-slate-400 text-sm">{MESSAGES[msgIndex]}</p>
@@ -347,7 +347,7 @@ export function PlanGenerationScreen() {
 
       <div className="w-full max-w-xs bg-white/10 rounded-full h-1.5 overflow-hidden mb-4">
         <div
-          className="h-full bg-teal-400 rounded-full transition-all duration-300 ease-out"
+          className="h-full bg-[var(--ns-forest-mid)] rounded-full transition-all duration-300 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>

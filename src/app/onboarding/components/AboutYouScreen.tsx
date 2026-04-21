@@ -20,7 +20,7 @@ function TogglePill({ label, selected, onToggle }: { label: string; selected: bo
     <button
       onClick={onToggle}
       className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
-        selected ? 'bg-teal-500 text-white border-teal-500' : 'bg-white text-slate-600 border-slate-200 hover:border-teal-300'
+        selected ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200 hover:border-teal-300'
       }`}
     >
       {label}
@@ -100,7 +100,7 @@ export function AboutYouScreen() {
             value={displayName}
             onChange={e => setDisplayName(e.target.value)}
             placeholder="How should we address you?"
-            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-colors"
+            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
           />
         </div>
 
@@ -114,7 +114,7 @@ export function AboutYouScreen() {
               onChange={e => setAge(e.target.value)}
               placeholder="e.g. 32"
               min={13} max={99}
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-colors"
+              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
             />
           </div>
 
@@ -127,7 +127,7 @@ export function AboutYouScreen() {
                   key={s}
                   onClick={() => setSex(s)}
                   className={`flex-1 py-2.5 rounded-xl text-xs font-semibold border transition-all ${
-                    sex === s ? 'bg-teal-500 text-white border-teal-500' : 'bg-white text-slate-600 border-slate-200'
+                    sex === s ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200'
                   }`}
                 >
                   {s === 'prefer_not_to_say' ? 'Prefer not to say' : s.charAt(0).toUpperCase() + s.slice(1)}
@@ -156,7 +156,7 @@ export function AboutYouScreen() {
               value={injuryFreeText}
               onChange={e => setInjuryFreeText(e.target.value)}
               placeholder="Any more detail? (optional)"
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-teal-400 transition-colors"
+              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-[var(--ns-forest)] transition-colors"
             />
           )}
         </div>
@@ -172,7 +172,7 @@ export function AboutYouScreen() {
                 onClick={() => toggleHealth(o.id)}
                 className={`w-full text-left px-3 py-2.5 rounded-xl text-sm border transition-all ${
                   healthFlags.includes(o.id)
-                    ? 'bg-teal-50 border-teal-400 text-teal-800 font-semibold'
+                    ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-teal-800 font-semibold'
                     : 'bg-white border-slate-200 text-slate-700'
                 }`}
               >
@@ -189,7 +189,7 @@ export function AboutYouScreen() {
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}
-          className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-teal-600 active:scale-95"
+          className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-[var(--ns-forest)] active:scale-95"
         >
           {saving ? 'Saving…' : 'Continue →'}
         </button>

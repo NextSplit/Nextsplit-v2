@@ -396,12 +396,12 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
 
         {/* Coach notes — promoted to be visible early */}
         {(meta.coach_notes as string) && (
-          <div className="bg-teal-50 rounded-2xl border border-teal-100 p-4">
+          <div className="bg-[var(--ns-forest-light)] rounded-2xl border border-teal-100 p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-base">🧠</span>
               <span className="text-xs font-bold text-teal-800 uppercase tracking-wide">Coach notes</span>
             </div>
-            <p className="text-sm text-teal-700 leading-relaxed">{meta.coach_notes as string}</p>
+            <p className="text-sm text-[var(--ns-forest)] leading-relaxed">{meta.coach_notes as string}</p>
           </div>
         )}
 
@@ -420,7 +420,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           <div>
             <label className="text-xs font-semibold text-gray-500 block mb-1.5">Plan name</label>
             <input type="text" value={planName} onChange={e => setPlanName(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100 transition-colors" />
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors" />
           </div>
 
           <div>
@@ -428,7 +428,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
               Race date <span className="text-gray-300 font-normal">(optional)</span>
             </label>
             <input type="date" value={raceDateInput} onChange={e => setRaceDateInput(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100 transition-colors" />
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors" />
             <p className="text-[10px] text-gray-400 mt-1">
               We&apos;ll align your training weeks to build up to race day.
             </p>
@@ -462,7 +462,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           )}
 
           <button onClick={handleActivate} disabled={activating || !planName.trim()}
-            className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50">
+            className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-xl text-sm font-bold hover:bg-[var(--ns-forest)] transition-colors disabled:opacity-50">
             {activating ? 'Starting your plan…' : 'Start this plan →'}
           </button>
         </div>

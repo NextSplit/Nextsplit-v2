@@ -77,7 +77,7 @@ export function GymConfigScreen() {
             </div>
             <button
               onClick={() => setGymEnabled(!gymEnabled)}
-              className={`relative w-12 h-6 rounded-full transition-all ${gymEnabled ? 'bg-teal-500' : 'bg-slate-300'}`}
+              className={`relative w-12 h-6 rounded-full transition-all ${gymEnabled ? 'bg-[var(--ns-forest)]' : 'bg-slate-300'}`}
             >
               <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${gymEnabled ? 'left-6' : 'left-0.5'}`} />
             </button>
@@ -100,7 +100,7 @@ export function GymConfigScreen() {
                     key={n}
                     onClick={() => setSessionsPerWeek(n)}
                     className={`flex-1 py-3 rounded-xl text-sm font-black border transition-all ${
-                      sessionsPerWeek === n ? 'bg-teal-500 text-white border-teal-500' : 'bg-white text-slate-600 border-slate-200'
+                      sessionsPerWeek === n ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200'
                     }`}
                   >
                     {n}x
@@ -126,7 +126,7 @@ export function GymConfigScreen() {
                     key={o.id}
                     onClick={() => toggleEquipment(o.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                      equipment.includes(o.id) ? 'bg-teal-50 border-teal-400' : 'bg-white border-slate-200'
+                      equipment.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-slate-200'
                     }`}
                   >
                     <p className={`text-sm font-bold ${equipment.includes(o.id) ? 'text-teal-800' : 'text-slate-700'}`}>
@@ -147,7 +147,7 @@ export function GymConfigScreen() {
                     key={o.id}
                     onClick={() => setFocus(o.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                      focus === o.id ? 'bg-teal-50 border-teal-400' : 'bg-white border-slate-200'
+                      focus === o.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-slate-200'
                     }`}
                   >
                     <p className={`text-sm font-bold ${focus === o.id ? 'text-teal-800' : 'text-slate-700'}`}>{o.label}</p>
@@ -166,7 +166,7 @@ export function GymConfigScreen() {
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}
-          className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-teal-600 active:scale-95"
+          className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-[var(--ns-forest)] active:scale-95"
         >
           {saving ? 'Saving…' : canContinue ? 'Continue →' : 'Select equipment and focus to continue'}
         </button>

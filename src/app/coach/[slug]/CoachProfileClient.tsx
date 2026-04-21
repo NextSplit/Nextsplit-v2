@@ -38,7 +38,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
         <div className="max-w-lg mx-auto space-y-4">
           <div className="flex items-start gap-4">
             {/* Avatar */}
-            <div className="w-20 h-20 rounded-3xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-3xl shrink-0">
+            <div className="w-20 h-20 rounded-3xl bg-[var(--ns-forest)]/20 border border-[var(--ns-forest)]/30 flex items-center justify-center text-3xl shrink-0">
               {coach.photo_url ? (
                 <Image src={coach.photo_url} alt={coach.display_name ?? 'Coach'} fill className="object-cover rounded-3xl" />
               ) : '🏃'}
@@ -47,14 +47,14 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl font-black text-white">{coach.display_name}</h1>
                 {coach.verified && (
-                  <span className="text-xs bg-teal-500/30 border border-teal-500/40 text-teal-300 px-2 py-0.5 rounded-full font-bold">
+                  <span className="text-xs bg-[var(--ns-forest)]/30 border border-[var(--ns-forest)]/40 text-[var(--ns-forest-light)] px-2 py-0.5 rounded-full font-bold">
                     ✅ Verified
                   </span>
                 )}
               </div>
               {coach.location && <p className="text-slate-400 text-sm mt-0.5">📍 {coach.location}</p>}
               {coach.rate_monthly_gbp && (
-                <p className="text-teal-300 text-sm font-semibold mt-1">
+                <p className="text-[var(--ns-forest-light)] text-sm font-semibold mt-1">
                   From £{coach.rate_monthly_gbp}/month
                 </p>
               )}
@@ -78,14 +78,14 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
               {viewerLoggedIn ? (
                 <button
                   onClick={() => setShowEnquiry(true)}
-                  className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold active:scale-95"
+                  className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold active:scale-95"
                 >
                   Send enquiry →
                 </button>
               ) : (
                 <a
                   href={`/auth/signup?coach=${coach.slug}`}
-                  className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold text-center active:scale-95"
+                  className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold text-center active:scale-95"
                 >
                   Train with {coach.display_name} →
                 </a>
@@ -142,7 +142,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
                     </p>
                   </div>
                   {(plan.meta as { price_gbp?: number }).price_gbp && (
-                    <span className="text-sm font-black text-teal-600 shrink-0">
+                    <span className="text-sm font-black text-[var(--ns-forest)] shrink-0">
                       £{(plan.meta as { price_gbp?: number }).price_gbp}
                     </span>
                   )}
@@ -151,7 +151,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
                   <p className="text-xs text-slate-500 leading-relaxed">{plan.description}</p>
                 )}
                 {viewerLoggedIn && !isOwnProfile && (
-                  <button className="w-full bg-teal-50 border border-teal-200 text-teal-700 py-2 rounded-xl text-xs font-bold active:scale-95">
+                  <button className="w-full bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] text-[var(--ns-forest)] py-2 rounded-xl text-xs font-bold active:scale-95">
                     View plan →
                   </button>
                 )}
@@ -165,13 +165,13 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Links</p>
           {coach.website_url && (
             <a href={coach.website_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-teal-600 hover:underline">
+              className="flex items-center gap-2 text-sm text-[var(--ns-forest)] hover:underline">
               🌐 {coach.website_url.replace(/^https?:\/\//, '')}
             </a>
           )}
           {coach.instagram_handle && (
             <a href={`https://instagram.com/${coach.instagram_handle}`} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-teal-600 hover:underline">
+              className="flex items-center gap-2 text-sm text-[var(--ns-forest)] hover:underline">
               📸 @{coach.instagram_handle}
             </a>
           )}
@@ -194,7 +194,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
               onChange={e => setEnquiryText(e.target.value)}
               placeholder="Hi, I'm training for my first marathon in October and looking for a coach…"
               rows={5}
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-teal-400 resize-none"
+              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none"
             />
             {enquirySent ? (
               <div className="w-full bg-emerald-500 text-white py-3.5 rounded-2xl text-sm font-bold text-center">
@@ -202,7 +202,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
               </div>
             ) : (
               <button onClick={sendEnquiry} disabled={!enquiryText.trim()}
-                className="w-full bg-teal-500 text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
+                className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
                 Send enquiry →
               </button>
             )}

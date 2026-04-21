@@ -382,7 +382,7 @@ export default function TodayClient() {
                 : "Your plan is building — check the Plan tab for your full schedule."}
             </p>
             <a href="/plan"
-              className="inline-block bg-teal-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl">
+              className="inline-block bg-[var(--ns-forest)] text-white text-xs font-bold px-5 py-2.5 rounded-xl">
               Go to Plan →
             </a>
           </div>
@@ -678,7 +678,7 @@ export default function TodayClient() {
                   )}
                   <button
                     onClick={() => setShowWeeklyShare(true)}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-teal-600 bg-white border border-teal-200 px-3 py-1.5 rounded-full"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-[var(--ns-forest)] bg-white border border-[var(--ns-forest-light)] px-3 py-1.5 rounded-full"
                   >
                     📊 Week card
                   </button>
@@ -714,9 +714,9 @@ export default function TodayClient() {
 
             {/* Sleep note */}
             {planDay?.sleep && (
-              <div className="bg-teal-50 rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
+              <div className="bg-[var(--ns-forest-light)] rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
                 <span className="text-base mt-0.5">🌙</span>
-                <p className="text-xs text-teal-700 leading-relaxed">{planDay.sleep}</p>
+                <p className="text-xs text-[var(--ns-forest)] leading-relaxed">{planDay.sleep}</p>
               </div>
             )}
 
@@ -724,7 +724,7 @@ export default function TodayClient() {
             {isToday && (
               <button
                 onClick={() => setShowAdHocModal(true)}
-                className="w-full flex items-center gap-3 border border-dashed border-gray-200 rounded-2xl px-4 py-3 text-left hover:border-teal-300 hover:bg-teal-50/40 transition-all"
+                className="w-full flex items-center gap-3 border border-dashed border-gray-200 rounded-2xl px-4 py-3 text-left hover:border-teal-300 hover:bg-[var(--ns-forest-light)]/40 transition-all"
               >
                 <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-lg font-light flex-shrink-0">+</div>
                 <div>

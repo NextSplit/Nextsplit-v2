@@ -14,20 +14,20 @@ export function WelcomeScreen() {
 
         {/* Logo mark */}
         <div className="relative">
-          <div className="w-20 h-20 rounded-3xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-3xl bg-[var(--ns-forest)]/20 border border-[var(--ns-forest)]/30 flex items-center justify-center">
             <span className="text-4xl">🏃</span>
           </div>
-          <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center">
+          <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[var(--ns-forest)] rounded-full flex items-center justify-center">
             <span className="text-xs">✓</span>
           </div>
         </div>
 
         {/* Headline */}
         <div className="space-y-2">
-          <h1 className="text-3xl font-black text-white tracking-tight">
+          <h1 className="font-display text-display-lg text-white">
             Your coach is ready.
           </h1>
-          <p className="text-teal-300 text-base">
+          <p className="text-base" style={{ color: 'var(--ns-forest-light)' }}>
             Let&apos;s build something great together.
           </p>
         </div>

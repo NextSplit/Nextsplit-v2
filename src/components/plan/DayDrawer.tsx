@@ -7,7 +7,7 @@ import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/databa
 import { db } from '@/lib/supabase/db'
 
 const PHASE_LABELS: Record<string, { label: string; bg: string; text: string }> = {
-  p1: { label: 'Phase 1', bg: 'bg-teal-100',   text: 'text-teal-800'   },
+  p1: { label: 'Phase 1', bg: 'bg-[var(--ns-forest-light)]',   text: 'text-teal-800'   },
   p2: { label: 'Phase 2', bg: 'bg-violet-100', text: 'text-violet-800' },
   tr: { label: 'Travel',  bg: 'bg-amber-100',  text: 'text-amber-800'  },
 }
@@ -65,7 +65,7 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
             <div>
               <div className="flex items-center gap-2">
                 <span className={`text-base font-bold ${isToday ? 'text-[var(--ns-forest)]' : 'text-gray-900'}`}>{day.d}</span>
-                {isToday && <span className="text-[10px] font-bold text-[var(--ns-forest)] bg-teal-50 px-2 py-0.5 rounded-full">Today</span>}
+                {isToday && <span className="text-[10px] font-bold text-[var(--ns-forest)] bg-[var(--ns-forest-light)] px-2 py-0.5 rounded-full">Today</span>}
                 {isPast && <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Past</span>}
               </div>
               <p className="text-[11px] text-gray-400 mt-0.5">{weekTitle}</p>
@@ -138,9 +138,9 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
                               <>
                                 <p className="text-[11px] text-gray-600 mt-0.5 leading-relaxed font-medium">{technical}</p>
                                 {rationale && (
-                                  <div className="flex items-start gap-1.5 mt-1.5 bg-teal-50 rounded-lg px-2 py-1.5">
+                                  <div className="flex items-start gap-1.5 mt-1.5 bg-[var(--ns-forest-light)] rounded-lg px-2 py-1.5">
                                     <span className="text-[10px] flex-shrink-0 mt-px">🧠</span>
-                                    <p className="text-[10px] text-teal-700 leading-relaxed">{rationale}</p>
+                                    <p className="text-[10px] text-[var(--ns-forest)] leading-relaxed">{rationale}</p>
                                   </div>
                                 )}
                               </>

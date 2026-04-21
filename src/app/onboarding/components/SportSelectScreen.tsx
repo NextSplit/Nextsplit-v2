@@ -65,15 +65,15 @@ export function SportSelectScreen() {
                 className={`rounded-2xl border p-4 transition-all ${
                   sport.active
                     ? isSelected
-                      ? 'bg-teal-50 border-teal-400 shadow-sm'
-                      : 'bg-white border-slate-200 hover:border-teal-200'
+                      ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] shadow-sm'
+                      : 'bg-white border-slate-200 hover:border-[var(--ns-forest-light)]'
                     : 'bg-slate-100 border-slate-200 opacity-70'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   {/* Emoji */}
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${
-                    isSelected ? 'bg-teal-100' : 'bg-slate-100'
+                    isSelected ? 'bg-[var(--ns-forest-light)]' : 'bg-slate-100'
                   }`}>
                     {sport.emoji}
                   </div>
@@ -83,7 +83,7 @@ export function SportSelectScreen() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-bold text-slate-800">{sport.label}</p>
                       {sport.id === 'running' && (
-                        <span className="text-[9px] font-bold text-white bg-teal-500 px-1.5 py-0.5 rounded-full">
+                        <span className="text-[9px] font-bold text-white bg-[var(--ns-forest)] px-1.5 py-0.5 rounded-full">
                           Core
                         </span>
                       )}
@@ -108,7 +108,7 @@ export function SportSelectScreen() {
                       disabled={sport.id === 'running'}
                       className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                         isSelected
-                          ? 'bg-teal-500 border-teal-500'
+                          ? 'bg-[var(--ns-forest)] border-[var(--ns-forest)]'
                           : 'border-slate-300'
                       }`}
                     >
@@ -119,8 +119,8 @@ export function SportSelectScreen() {
                       onClick={() => handleNotify(sport.id)}
                       className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all flex-shrink-0 ${
                         isNotified
-                          ? 'bg-teal-50 border-teal-300 text-teal-600'
-                          : 'bg-white border-slate-200 text-slate-500 hover:border-teal-200'
+                          ? 'bg-[var(--ns-forest-light)] border-teal-300 text-[var(--ns-forest)]'
+                          : 'bg-white border-slate-200 text-slate-500 hover:border-[var(--ns-forest-light)]'
                       }`}
                     >
                       {isNotified ? '✓ Notify me' : 'Notify me'}
@@ -145,7 +145,7 @@ export function SportSelectScreen() {
         <button
           onClick={handleContinue}
           disabled={saving}
-          className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-teal-600 active:scale-95"
+          className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-[var(--ns-forest)] active:scale-95"
         >
           {saving ? 'Saving…' : 'Continue →'}
         </button>

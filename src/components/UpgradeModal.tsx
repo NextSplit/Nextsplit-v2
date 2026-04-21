@@ -102,7 +102,7 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
               }`}
             >
               Annual
-              <span className="absolute -top-2 -right-1 bg-teal-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">
+              <span className="absolute -top-2 -right-1 bg-[var(--ns-forest)] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">
                 Save {saving}
               </span>
             </button>
@@ -119,7 +119,7 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
               </span>
             </div>
             {interval === 'annual' && (
-              <p className="text-xs text-teal-600 font-semibold mt-1">
+              <p className="text-xs text-[var(--ns-forest)] font-semibold mt-1">
                 Just {annualMonthly}/mo · Billed annually
               </p>
             )}
@@ -145,7 +145,7 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
           <button
             onClick={handleUpgrade}
             disabled={loading}
-            className="w-full bg-teal-500 text-white py-4 rounded-2xl text-base font-black disabled:opacity-50 transition-all active:scale-95 hover:bg-teal-600"
+            className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-base font-black disabled:opacity-50 transition-all active:scale-95 hover:bg-[var(--ns-forest)]"
           >
             {loading ? 'Redirecting to checkout…' : 'Start free trial →'}
           </button>

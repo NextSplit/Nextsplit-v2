@@ -96,7 +96,7 @@ function ColourPicker({ colours, value, onChange }: { colours: string[]; value: 
         <button
           key={c}
           onClick={() => onChange(c)}
-          className={`w-7 h-7 rounded-full border-2 transition-all ${value === c ? 'border-teal-500 scale-110' : 'border-transparent'}`}
+          className={`w-7 h-7 rounded-full border-2 transition-all ${value === c ? 'border-[var(--ns-forest)] scale-110' : 'border-transparent'}`}
           style={{ background: c === '#ffffff' ? '#f8fafc' : c, boxShadow: c === '#ffffff' ? 'inset 0 0 0 1px #e2e8f0' : undefined }}
         />
       ))}
@@ -118,7 +118,7 @@ function PillPicker<T extends string>({ options, value, onChange }: {
           onClick={() => onChange(o.id)}
           className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
             value === o.id
-              ? 'bg-teal-500 text-white border-teal-500'
+              ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
               : 'bg-white text-slate-600 border-slate-200 hover:border-teal-300'
           }`}
         >
@@ -231,7 +231,7 @@ export function CharacterCreationScreen() {
                   onChange={e => validateHandle(e.target.value)}
                   maxLength={20}
                   placeholder="yourhandle"
-                  className="w-full pl-7 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-colors"
+                  className="w-full pl-7 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
                 />
               </div>
               {handle.length > 0 && handle.length < 3 && (
@@ -240,7 +240,7 @@ export function CharacterCreationScreen() {
               {handleError && <p className="text-xs text-red-500">{handleError}</p>}
               {checkingHandle && <p className="text-xs text-slate-400">Checking…</p>}
               {handle.length >= 3 && !handleError && !checkingHandle && (
-                <p className="text-xs text-teal-600">✓ @{handle} is available</p>
+                <p className="text-xs text-[var(--ns-forest)]">✓ @{handle} is available</p>
               )}
               <p className="text-xs text-slate-400">This is how other runners will find and follow you</p>
             </Section>
@@ -257,7 +257,7 @@ export function CharacterCreationScreen() {
                   <button
                     key={t}
                     onClick={() => patch({ skinTone: t })}
-                    className={`w-8 h-8 rounded-full border-2 transition-all ${config.skinTone === t ? 'border-teal-500 scale-110' : 'border-transparent'}`}
+                    className={`w-8 h-8 rounded-full border-2 transition-all ${config.skinTone === t ? 'border-[var(--ns-forest)] scale-110' : 'border-transparent'}`}
                     style={{ backgroundColor: SKIN_COLOURS[t] }}
                   />
                 ))}
@@ -298,7 +298,7 @@ export function CharacterCreationScreen() {
                     onClick={() => toggleAccessory(a.id as 'cap' | 'sunglasses' | 'watch')}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                       config.accessories?.includes(a.id as 'cap' | 'sunglasses' | 'watch')
-                        ? 'bg-teal-500 text-white border-teal-500'
+                        ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
                         : 'bg-white text-slate-600 border-slate-200'
                     }`}
                   >
@@ -319,7 +319,7 @@ export function CharacterCreationScreen() {
                     onClick={() => patch({ startingTitle: t })}
                     className={`px-3 py-2 rounded-xl text-xs font-semibold border text-left transition-all ${
                       config.startingTitle === t
-                        ? 'bg-teal-500 text-white border-teal-500'
+                        ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
                         : 'bg-white text-slate-600 border-slate-200'
                     }`}
                   >
@@ -338,7 +338,7 @@ export function CharacterCreationScreen() {
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}
-          className="w-full bg-teal-500 text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 transition-all hover:bg-teal-600 active:scale-95"
+          className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 transition-all hover:bg-[var(--ns-forest)] active:scale-95"
         >
           {saving ? 'Saving…' : canContinue ? `Let's go, @${handle} →` : 'Choose a handle to continue'}
         </button>

@@ -103,7 +103,7 @@ export function FeedbackWidget() {
                     onClick={() => setType(t.id)}
                     className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
                       type === t.id
-                        ? 'bg-teal-500 text-white border-teal-500'
+                        ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
                         : 'bg-white text-slate-600 border-slate-200'
                     }`}
                   >
@@ -123,7 +123,7 @@ export function FeedbackWidget() {
                         onClick={() => setRating(n)}
                         className={`flex-1 py-2 rounded-xl text-sm border transition-all ${
                           rating === n
-                            ? 'bg-teal-500 text-white border-teal-500'
+                            ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
                             : 'bg-slate-50 text-slate-500 border-slate-200'
                         }`}
                       >
@@ -140,7 +140,7 @@ export function FeedbackWidget() {
                 onChange={e => setText(e.target.value)}
                 placeholder={placeholder}
                 rows={4}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 resize-none"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 resize-none"
               />
 
               {/* Page context shown to user for transparency */}
@@ -151,7 +151,7 @@ export function FeedbackWidget() {
               <button
                 onClick={handleSubmit}
                 disabled={!text.trim() || sending}
-                className="w-full bg-teal-500 text-white py-3 rounded-xl text-sm font-bold disabled:opacity-40 transition-all active:scale-95"
+                className="w-full bg-[var(--ns-forest)] text-white py-3 rounded-xl text-sm font-bold disabled:opacity-40 transition-all active:scale-95"
               >
                 {sending ? 'Sending…' : 'Send feedback →'}
               </button>

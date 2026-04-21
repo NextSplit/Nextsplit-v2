@@ -281,3 +281,82 @@ a[role="button"]:active {
 }
 /* Override for elements that already have their own transform */
 button.no-tap-scale:active { transform: none; }
+
+/* ─── Typography system — Phase D1 ──────────────────────────────────────────
+   Usage:
+   .font-display  → Cormorant Garamond (display headings, brand moments)
+   .font-body     → Outfit (all UI, labels, descriptions)
+   .font-data     → JetBrains Mono (paces, times, distances, data)
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.font-body {
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+}
+
+.font-data {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Display heading sizes */
+.text-display-xl { font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.05; }
+.text-display-lg { font-size: clamp(1.5rem, 4vw, 2.25rem); line-height: 1.1; }
+.text-display-md { font-size: clamp(1.25rem, 3vw, 1.75rem); line-height: 1.15; }
+
+/* Data/pace display sizes */
+.text-pace-lg { font-size: 1.75rem; line-height: 1; }
+.text-pace-md { font-size: 1.25rem; line-height: 1; }
+.text-pace-sm { font-size: 0.875rem; line-height: 1.2; }
+
+/* ─── Ember CTA — Phase D2 ───────────────────────────────────────────────────
+   Primary CTAs use Ember for energy/action contrast.
+   Forest = brand/nav/selected. Ember = do something now.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.btn-primary {
+  background: var(--ns-ember);
+  color: white;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 700;
+  border-radius: 1rem;
+  padding: 0.75rem 1.5rem;
+  transition: transform 0.1s, opacity 0.1s;
+}
+.btn-primary:active { transform: scale(0.97); opacity: 0.9; }
+
+.btn-secondary {
+  background: var(--ns-forest-light);
+  color: var(--ns-forest);
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 700;
+  border-radius: 1rem;
+  padding: 0.75rem 1.5rem;
+}
+
+/* ─── Surface system — Phase D2 ─────────────────────────────────────────────
+   Consistent surface hierarchy replacing ad-hoc gray-50/slate-50.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.surface-page    { background: var(--color-bg); }
+.surface-card    { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 1rem; }
+.surface-raised  { background: var(--color-surface); box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); border-radius: 1rem; }
+.surface-inset   { background: var(--color-surface-2); border-radius: 0.75rem; }
+
+/* ─── Track (gold) premium indicators — Phase D2 ────────────────────────────  */
+.premium-badge {
+  background: var(--ns-track-light);
+  color: var(--ns-track);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+}

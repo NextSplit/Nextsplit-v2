@@ -254,7 +254,7 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
         </button>
         <a
           href={`/coach/athlete/${athlete.athlete_id}`}
-          className="flex-1 bg-teal-50 text-teal-700 text-xs font-semibold py-2 rounded-xl text-center active:bg-teal-100"
+          className="flex-1 bg-[var(--ns-forest-light)] text-[var(--ns-forest)] text-xs font-semibold py-2 rounded-xl text-center active:bg-[var(--ns-forest-light)]"
         >
           📊 View data
         </a>

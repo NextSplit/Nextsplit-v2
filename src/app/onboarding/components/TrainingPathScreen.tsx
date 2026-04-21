@@ -97,7 +97,7 @@ export function TrainingPathScreen() {
           <h1 className="text-xl font-black text-slate-900">How do you want to train?</h1>
           <p className="text-sm text-slate-500 mt-1">
             Based on your profile, we think{' '}
-            <span className="text-teal-600 font-semibold">
+            <span className="text-[var(--ns-forest)] font-semibold">
               {PATHS.find(p => p.id === recommended)?.label}
             </span>{' '}
             suits you best — but the choice is yours.

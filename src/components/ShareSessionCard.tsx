@@ -229,8 +229,8 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
           <div className="relative z-10 p-5 h-full flex flex-col">
             {/* Top bar */}
             <div className="flex items-center justify-between mb-4">
-              <span className="text-teal-400 font-black text-sm tracking-wider">NEXTSPLIT</span>
-              <span className="text-[10px] text-teal-300/70 bg-teal-900/40 px-2 py-0.5 rounded-full">Week {weekN}</span>
+              <span className="text-[var(--ns-forest-mid)] font-black text-sm tracking-wider">NEXTSPLIT</span>
+              <span className="text-[10px] text-[var(--ns-forest-light)]/70 bg-teal-900/40 px-2 py-0.5 rounded-full">Week {weekN}</span>
             </div>
 
             {/* Type pill */}
@@ -251,7 +251,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
             {log.effort && (
               <div className="flex items-center gap-1 mb-3">
                 {Array.from({ length: 10 }, (_, i) => (
-                  <div key={i} className={`w-3 h-3 rounded-full ${i < log.effort! ? 'bg-teal-400' : 'bg-white/10'}`} />
+                  <div key={i} className={`w-3 h-3 rounded-full ${i < log.effort! ? 'bg-[var(--ns-forest-mid)]' : 'bg-white/10'}`} />
                 ))}
                 <span className="text-white/50 text-[10px] ml-1">RPE {log.effort}</span>
               </div>
@@ -259,7 +259,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
 
             {/* XP + bottom */}
             <div className="flex items-center justify-between">
-              <span className="text-teal-300 text-xs font-black bg-teal-900/50 border border-teal-700/50 rounded-full px-2.5 py-0.5">
+              <span className="text-[var(--ns-forest-light)] text-xs font-black bg-teal-900/50 border border-teal-700/50 rounded-full px-2.5 py-0.5">
                 +{xp} XP
               </span>
               {log.strava_id && (

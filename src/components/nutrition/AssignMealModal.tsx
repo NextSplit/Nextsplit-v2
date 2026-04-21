@@ -54,7 +54,7 @@ function AssignMealModal({
                 return (
                   <button key={r.id}
                     onClick={() => setSelected(s => s?.id === r.id ? null : r)}
-                    className={`w-full text-left rounded-2xl border px-4 py-3 transition-all ${selected?.id === r.id ? 'border-[var(--ns-forest)] bg-teal-50' : 'border-gray-100 bg-white'}`}
+                    className={`w-full text-left rounded-2xl border px-4 py-3 transition-all ${selected?.id === r.id ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]' : 'border-gray-100 bg-white'}`}
                   >
                     <div className="flex items-center justify-between">
                       <div>

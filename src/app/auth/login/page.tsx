@@ -36,11 +36,11 @@ export default function LoginPage() {
     <main className="min-h-screen bg-[#f8f8f6] flex flex-col">
       {/* Brand header */}
       <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-16 pb-10 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-teal-500/20 border border-teal-500/30 mb-4">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--ns-forest)]/20 border border-[var(--ns-forest)]/30 mb-4">
           <span className="text-2xl">🏃</span>
         </div>
         <h1 className="text-2xl font-black text-white tracking-tight">NextSplit</h1>
-        <p className="text-teal-300 text-sm mt-1">Track. Log. Level up.</p>
+        <p className="text-[var(--ns-forest-light)] text-sm mt-1">Track. Log. Level up.</p>
       </div>
 
       {/* Form */}
@@ -72,13 +72,13 @@ export default function LoginPage() {
             <div>
               <label className="text-xs font-semibold text-gray-500 block mb-1.5">Email</label>
               <input name="email" type="email" required autoComplete="email"
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100 transition-colors"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
                 placeholder="you@example.com" />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 block mb-1.5">Password</label>
               <input name="password" type="password" required autoComplete="current-password"
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100 transition-colors"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
                 placeholder="••••••••" />
             </div>
 
@@ -87,7 +87,7 @@ export default function LoginPage() {
             )}
 
             <button type="submit" disabled={loading}
-              className="w-full bg-[var(--ns-forest)] text-white py-3 rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50">
+              className="w-full bg-[var(--ns-forest)] text-white py-3 rounded-xl text-sm font-bold hover:bg-[var(--ns-forest)] transition-colors disabled:opacity-50">
               {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>

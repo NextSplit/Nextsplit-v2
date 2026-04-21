@@ -47,7 +47,7 @@ export default function TodayProgressStrip({ logs, streak, acwr, weekN }: Props)
         {/* Header */}
         <div className="px-4 pt-3 pb-2 flex items-center justify-between">
           <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">This week</p>
-          <span className="text-[10px] text-teal-600 font-semibold">Full stats →</span>
+          <span className="text-[10px] text-[var(--ns-forest)] font-semibold">Full stats →</span>
         </div>
 
         {/* Stats row */}

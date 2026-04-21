@@ -93,10 +93,10 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[var(--ns-forest)]/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="relative max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 rounded-full px-4 py-1.5 mb-8 text-sm text-teal-300 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 bg-[var(--ns-forest)]/10 border border-[var(--ns-forest)]/20 rounded-full px-4 py-1.5 mb-8 text-sm text-[var(--ns-forest-light)] font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--ns-forest-mid)] animate-pulse" />
             500 founding spots — £7.99/mo locked in forever
           </div>
           <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none mb-6">
@@ -111,7 +111,7 @@ export default function LandingPage() {
             Built for serious amateur runners who want more than a PDF.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/auth/signup" className="w-full sm:w-auto bg-teal-500 hover:bg-teal-400 text-white font-black text-base px-8 py-4 rounded-xl transition-all">
+            <Link href="/auth/signup" className="w-full sm:w-auto bg-[var(--ns-forest)] hover:bg-[var(--ns-forest-mid)] text-white font-black text-base px-8 py-4 rounded-xl transition-all">
               Start training free →
             </Link>
             <Link href="/auth/login" className="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-base px-8 py-4 rounded-xl transition-all">
@@ -138,7 +138,7 @@ export default function LandingPage() {
       <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-xs font-bold text-teal-400 uppercase tracking-widest mb-3">What it does</p>
+            <p className="text-xs font-bold text-[var(--ns-forest-mid)] uppercase tracking-widest mb-3">What it does</p>
             <h2 className="text-4xl font-black tracking-tight">
               Everything a serious runner needs.
               <br />
@@ -161,7 +161,7 @@ export default function LandingPage() {
       <section className="py-20 px-6 bg-white/[0.02] border-y border-white/5">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-xs font-bold text-teal-400 uppercase tracking-widest mb-3">Getting started</p>
+            <p className="text-xs font-bold text-[var(--ns-forest-mid)] uppercase tracking-widest mb-3">Getting started</p>
             <h2 className="text-3xl font-black tracking-tight">Your plan, your way.</h2>
             <p className="text-white/40 mt-3 text-sm max-w-lg mx-auto">
               Four paths into training — from expert-curated plans to fully bespoke AI generation.
@@ -170,7 +170,7 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {PLAN_TYPES.map(p => (
-              <div key={p.label} className="bg-[#0a0a0a] border border-white/8 rounded-2xl p-5 text-center hover:border-teal-500/30 hover:bg-teal-500/5 transition-all">
+              <div key={p.label} className="bg-[#0a0a0a] border border-white/8 rounded-2xl p-5 text-center hover:border-[var(--ns-forest)]/30 hover:bg-[var(--ns-forest)]/5 transition-all">
                 <span className="text-3xl mb-3 block">{p.emoji}</span>
                 <p className="text-sm font-bold text-white mb-1">{p.label}</p>
                 <p className="text-[11px] text-white/40 leading-snug">{p.desc}</p>
@@ -183,17 +183,17 @@ export default function LandingPage() {
       {/* Coach platform */}
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="relative bg-gradient-to-br from-teal-950 via-[#0a2a24] to-[#0a0a0a] rounded-3xl border border-teal-500/20 p-10 overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl" />
+          <div className="relative bg-gradient-to-br from-teal-950 via-[#0a2a24] to-[#0a0a0a] rounded-3xl border border-[var(--ns-forest)]/20 p-10 overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--ns-forest)]/10 rounded-full blur-3xl" />
             <div className="relative grid sm:grid-cols-2 gap-10 items-center">
               <div>
-                <p className="text-xs font-bold text-teal-400 uppercase tracking-widest mb-4">For coaches</p>
+                <p className="text-xs font-bold text-[var(--ns-forest-mid)] uppercase tracking-widest mb-4">For coaches</p>
                 <h2 className="text-3xl font-black tracking-tight mb-4">Your athletes.<br />One dashboard.</h2>
                 <p className="text-white/50 text-sm leading-relaxed mb-6">
                   See every athlete&apos;s training load, wellness, ACWR, and adherence in real time.
                   Leave annotations. Message directly. Publish plans. Get paid.
                 </p>
-                <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-teal-500 text-white font-bold text-sm px-5 py-3 rounded-xl hover:bg-teal-400 transition-all">
+                <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-[var(--ns-forest)] text-white font-bold text-sm px-5 py-3 rounded-xl hover:bg-[var(--ns-forest-mid)] transition-all">
                   Become a coach →
                 </Link>
               </div>
@@ -221,7 +221,7 @@ export default function LandingPage() {
       <section className="py-20 px-6 border-y border-white/5 bg-white/[0.02]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-xs font-bold text-teal-400 uppercase tracking-widest mb-3">Early feedback</p>
+            <p className="text-xs font-bold text-[var(--ns-forest-mid)] uppercase tracking-widest mb-3">Early feedback</p>
             <h2 className="text-2xl font-black">From runners who&apos;ve tried it.</h2>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
@@ -239,7 +239,7 @@ export default function LandingPage() {
       {/* Pricing */}
       <section className="py-24 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-xs font-bold text-teal-400 uppercase tracking-widest mb-3">Pricing</p>
+          <p className="text-xs font-bold text-[var(--ns-forest-mid)] uppercase tracking-widest mb-3">Pricing</p>
           <h2 className="text-4xl font-black tracking-tight mb-4">Start free.<br /><span className="text-white/30">Upgrade when ready.</span></h2>
           <p className="text-white/40 text-sm mb-12 max-w-md mx-auto">
             Core training is free. Elite features are £7.99/mo for founding members — rising to £13.99 after the first 500.
@@ -250,16 +250,16 @@ export default function LandingPage() {
               <p className="text-3xl font-black text-white mb-4">£0</p>
               <ul className="space-y-2 text-sm text-white/50 mb-6">
                 {['Training plan + session logging','Basic AI coaching','Community & clubs','Character + XP system','Race history'].map(f => (
-                  <li key={f} className="flex items-center gap-2"><span className="text-teal-500">✓</span>{f}</li>
+                  <li key={f} className="flex items-center gap-2"><span className="text-[var(--ns-forest-mid)]">✓</span>{f}</li>
                 ))}
               </ul>
               <Link href="/auth/signup" className="block w-full text-center bg-white/10 hover:bg-white/15 text-white font-bold py-3 rounded-xl transition-all text-sm">
                 Get started
               </Link>
             </div>
-            <div className="bg-teal-950 border border-teal-500/30 rounded-2xl p-6 text-left relative overflow-hidden">
+            <div className="bg-teal-950 border border-[var(--ns-forest)]/30 rounded-2xl p-6 text-left relative overflow-hidden">
               <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full">⭐ FOUNDING</div>
-              <div className="absolute bottom-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-2xl" />
+              <div className="absolute bottom-0 right-0 w-32 h-32 bg-[var(--ns-forest)]/10 rounded-full blur-2xl" />
               <p className="text-base font-black text-white mb-1">Elite</p>
               <div className="flex items-baseline gap-2 mb-4">
                 <p className="text-3xl font-black text-white">£7.99</p>
@@ -267,13 +267,13 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-2 text-sm text-white/70 mb-6">
                 {['Everything in Free','Unlimited AI coaching','ACWR + race predictions','Weekly coaching debrief','Adaptive plan','Coach marketplace','Founding badge'].map(f => (
-                  <li key={f} className="flex items-center gap-2"><span className="text-teal-400">✓</span>{f}</li>
+                  <li key={f} className="flex items-center gap-2"><span className="text-[var(--ns-forest-mid)]">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/auth/signup" className="relative block w-full text-center bg-teal-500 hover:bg-teal-400 text-white font-black py-3 rounded-xl transition-all text-sm">
+              <Link href="/auth/signup" className="relative block w-full text-center bg-[var(--ns-forest)] hover:bg-[var(--ns-forest-mid)] text-white font-black py-3 rounded-xl transition-all text-sm">
                 Claim founding spot →
               </Link>
-              <p className="text-[10px] text-teal-300/50 text-center mt-2">7-day free trial · cancel anytime</p>
+              <p className="text-[10px] text-[var(--ns-forest-light)]/50 text-center mt-2">7-day free trial · cancel anytime</p>
             </div>
           </div>
         </div>

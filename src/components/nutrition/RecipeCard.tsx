@@ -22,7 +22,7 @@ function RecipeCard({
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
       <button onClick={() => setExpanded(e => !e)}
         className="w-full flex items-center gap-3 px-4 py-3 text-left">
-        <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-xl flex-shrink-0">🍽️</div>
+        <div className="w-10 h-10 rounded-xl bg-[var(--ns-forest-light)] flex items-center justify-center text-xl flex-shrink-0">🍽️</div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-gray-900">{recipe.name}</p>
           <p className="text-[10px] text-gray-400 mt-0.5">

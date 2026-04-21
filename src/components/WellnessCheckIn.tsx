@@ -9,7 +9,7 @@ function readinessScore(sleep: number, soreness: number, motivation: number): nu
 
 function readinessLabel(score: number): { label: string; colour: string; emoji: string } {
   if (score >= 9) return { label: 'Excellent', colour: 'text-emerald-600', emoji: '🟢' }
-  if (score >= 7) return { label: 'Good', colour: 'text-teal-600', emoji: '🟢' }
+  if (score >= 7) return { label: 'Good', colour: 'text-[var(--ns-forest)]', emoji: '🟢' }
   if (score >= 5) return { label: 'Moderate', colour: 'text-amber-600', emoji: '🟡' }
   return { label: 'Low', colour: 'text-red-500', emoji: '🔴' }
 }
@@ -149,7 +149,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
             <div className="text-xs text-gray-400">Tap to log readiness</div>
           </div>
           <div className="ml-auto">
-            <span className="text-[11px] font-semibold text-[var(--ns-forest)] bg-teal-50 px-2.5 py-1 rounded-full">Log</span>
+            <span className="text-[11px] font-semibold text-[var(--ns-forest)] bg-[var(--ns-forest-light)] px-2.5 py-1 rounded-full">Log</span>
           </div>
         </button>
         <button

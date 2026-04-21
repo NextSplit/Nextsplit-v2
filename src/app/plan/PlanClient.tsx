@@ -19,7 +19,7 @@ import DayRow from '@/components/plan/DayRow'
 import WeekRow from '@/components/plan/WeekRow'
 
 const PHASE_LABELS: Record<string, { label: string; bg: string; text: string }> = {
-  p1: { label: 'Phase 1', bg: 'bg-teal-100',   text: 'text-teal-800'   },
+  p1: { label: 'Phase 1', bg: 'bg-[var(--ns-forest-light)]',   text: 'text-teal-800'   },
   p2: { label: 'Phase 2', bg: 'bg-violet-100', text: 'text-violet-800' },
   tr: { label: 'Travel',  bg: 'bg-amber-100',  text: 'text-amber-800'  },
 }
@@ -197,7 +197,7 @@ export default function PlanClient() {
           {(['plan', 'fuel'] as const).map(t => (
             <button key={t} onClick={() => setPlanTab(t)}
               className={`flex-1 py-2.5 text-xs font-bold capitalize border-b-2 transition-all ${
-                planTab === t ? 'border-teal-500 text-teal-600' : 'border-transparent text-slate-400'
+                planTab === t ? 'border-[var(--ns-forest)] text-[var(--ns-forest)]' : 'border-transparent text-slate-400'
               }`}>
               {t === 'plan' ? '📋 Training Plan' : '🥗 Fuel'}
             </button>

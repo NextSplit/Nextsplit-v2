@@ -211,7 +211,7 @@ function ActivityPicker({ activities, session, onSelect, onCancel }: ActivityPic
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {a.is_today && (
-                    <span className="text-[10px] font-bold text-[var(--ns-forest)] bg-teal-50 px-2 py-0.5 rounded-full">Today</span>
+                    <span className="text-[10px] font-bold text-[var(--ns-forest)] bg-[var(--ns-forest-light)] px-2 py-0.5 rounded-full">Today</span>
                   )}
                   {score >= 90 && (
                     <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Match</span>

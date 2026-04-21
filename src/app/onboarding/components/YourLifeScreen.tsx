@@ -90,7 +90,7 @@ export function YourLifeScreen() {
                 onClick={() => toggleDay(day)}
                 className={`py-3 rounded-xl text-xs font-black transition-all ${
                   trainingDays.includes(day)
-                    ? 'bg-teal-500 text-white'
+                    ? 'bg-[var(--ns-forest)] text-white'
                     : 'bg-slate-100 text-slate-500'
                 }`}
               >
@@ -148,7 +148,7 @@ export function YourLifeScreen() {
                 key={day}
                 onClick={() => setLongRunDay(day)}
                 className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
-                  longRunDay === day ? 'bg-teal-500 text-white border-teal-500' : 'bg-white text-slate-600 border-slate-200'
+                  longRunDay === day ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200'
                 }`}
               >
                 {day.slice(0, 3)}
@@ -166,7 +166,7 @@ export function YourLifeScreen() {
                 key={t.id}
                 onClick={() => setRunTime(t.id)}
                 className={`w-full text-left px-4 py-3 rounded-xl border transition-all flex items-center gap-3 ${
-                  runTime === t.id ? 'bg-teal-50 border-teal-400' : 'bg-white border-slate-200'
+                  runTime === t.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-slate-200'
                 }`}
               >
                 <span className="text-xl">{t.label.split(' ')[0]}</span>
@@ -176,7 +176,7 @@ export function YourLifeScreen() {
                   </p>
                   <p className="text-xs text-slate-400">{t.desc}</p>
                 </div>
-                {runTime === t.id && <span className="ml-auto text-teal-500 font-bold">✓</span>}
+                {runTime === t.id && <span className="ml-auto text-[var(--ns-forest-mid)] font-bold">✓</span>}
               </button>
             ))}
           </div>
@@ -189,7 +189,7 @@ export function YourLifeScreen() {
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}
-          className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-teal-600 active:scale-95"
+          className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-[var(--ns-forest)] active:scale-95"
         >
           {saving ? 'Saving…' : 'Continue →'}
         </button>

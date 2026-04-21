@@ -59,7 +59,7 @@ function CharSelectModal({
               return (
                 <button key={ch.id}
                   onClick={() => setSelected(ch.id)}
-                  className={`rounded-2xl border-2 p-3 text-center transition-all ${isSel ? 'border-[var(--ns-forest)] bg-teal-50 shadow-md' : 'border-gray-100 bg-white'}`}
+                  className={`rounded-2xl border-2 p-3 text-center transition-all ${isSel ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)] shadow-md' : 'border-gray-100 bg-white'}`}
                 >
                   <div dangerouslySetInnerHTML={{ __html: renderCharSVG(ch.id, previewLevel, 60, 76) }} />
                   <div className={`text-xs font-bold mt-1 ${isSel ? 'text-[var(--ns-forest)]' : 'text-gray-700'}`}>{ch.label}</div>

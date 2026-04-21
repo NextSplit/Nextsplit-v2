@@ -69,12 +69,12 @@ function RaceTimeInput({ label, value, onChange }: {
         onChange={e => setRaw(e.target.value)}
         onBlur={handleBlur}
         placeholder="e.g. 25:30"
-        className={`w-full px-3 py-2 rounded-xl border text-sm outline-none focus:ring-2 focus:ring-teal-100 transition-colors ${
-          error ? 'border-red-300' : 'border-slate-200 focus:border-teal-400'
+        className={`w-full px-3 py-2 rounded-xl border text-sm outline-none focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors ${
+          error ? 'border-red-300' : 'border-slate-200 focus:border-[var(--ns-forest)]'
         }`}
       />
       {error && <p className="text-xs text-red-500">{error}</p>}
-      {value && !error && <p className="text-xs text-teal-600">✓ {secsToMMSS(value)}</p>}
+      {value && !error && <p className="text-xs text-[var(--ns-forest)]">✓ {secsToMMSS(value)}</p>}
     </div>
   )
 }
@@ -205,7 +205,7 @@ export function YourRunningScreen() {
               onChange={e => setWeeklyKm(Number(e.target.value))}
               className="flex-1 accent-teal-500"
             />
-            <span className="text-lg font-black text-teal-600 w-16 text-right">{weeklyKm}km</span>
+            <span className="text-lg font-black text-[var(--ns-forest)] w-16 text-right">{weeklyKm}km</span>
           </div>
           <div className="flex justify-between text-xs text-slate-400">
             <span>0km</span><span>60km</span><span>120km</span>
@@ -238,7 +238,7 @@ export function YourRunningScreen() {
                 key={o}
                 onClick={() => setLongestRun(o)}
                 className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
-                  longestRun === o ? 'bg-teal-500 text-white border-teal-500' : 'bg-white text-slate-600 border-slate-200'
+                  longestRun === o ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-slate-600 border-slate-200'
                 }`}
               >
                 {o}
@@ -256,7 +256,7 @@ export function YourRunningScreen() {
                 key={o.id}
                 onClick={() => toggleSurface(o.id)}
                 className={`py-2.5 px-3 rounded-xl text-sm font-semibold border transition-all text-left ${
-                  surfaces.includes(o.id) ? 'bg-teal-50 border-teal-400 text-teal-800' : 'bg-white border-slate-200 text-slate-700'
+                  surfaces.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-teal-800' : 'bg-white border-slate-200 text-slate-700'
                 }`}
               >
                 {o.label}
@@ -272,7 +272,7 @@ export function YourRunningScreen() {
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}
-          className="flex-1 bg-teal-500 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-teal-600 active:scale-95"
+          className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-[var(--ns-forest)] active:scale-95"
         >
           {saving ? 'Saving…' : canContinue ? 'Continue →' : 'Select your experience level'}
         </button>

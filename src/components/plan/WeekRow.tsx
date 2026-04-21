@@ -6,7 +6,7 @@ import { getSessionType, fmtKm, decodeHtml, parseDet } from '@/lib/sessionUtils'
 import { useGymLog } from '@/hooks/useGymLog'
 import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/database'
 const PHASE_LABELS: Record<string, { label: string; bg: string; text: string }> = {
-  p1: { label: 'Phase 1', bg: 'bg-teal-100',   text: 'text-teal-800'   },
+  p1: { label: 'Phase 1', bg: 'bg-[var(--ns-forest-light)]',   text: 'text-teal-800'   },
   p2: { label: 'Phase 2', bg: 'bg-violet-100', text: 'text-violet-800' },
   tr: { label: 'Travel',  bg: 'bg-amber-100',  text: 'text-amber-800'  },
 }

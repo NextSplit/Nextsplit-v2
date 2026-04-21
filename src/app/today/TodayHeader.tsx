@@ -61,7 +61,7 @@ export function TodayHeader({
             <p className="text-xs font-semibold text-gray-400 mb-0.5">
               {greeting}{firstName ? `, ${firstName}` : ''} —
             </p>
-            <p className={`text-sm font-semibold leading-snug ${isLowReadiness ? 'text-amber-600' : ''}`}
+            <p className={`font-display text-base leading-snug ${isLowReadiness ? 'text-amber-600' : ''}`}
               style={isLowReadiness ? {} : { color: 'var(--ns-forest)' }}>
               {allDone
                 ? `All done today. ${todaySessions.length === 1 ? 'One session' : `${todaySessions.length} sessions`} complete. ✓`
@@ -96,7 +96,7 @@ export function TodayHeader({
             {/* Plan progress */}
             {plan && (
               <div className="flex flex-col items-end gap-0.5">
-                <span className="text-[11px] text-gray-500 font-semibold">
+                <span className="font-data text-[11px] text-gray-500">
                   W{weekN}/{plan.total_weeks}
                   {daysToRace !== null && daysToRace > 0 && (
                     <span className="text-gray-400 ml-1">· {daysToRace}d</span>

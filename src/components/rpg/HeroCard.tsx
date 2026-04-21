@@ -65,7 +65,7 @@ function HeroCard({
             <div className="flex items-center gap-2">
               <div className="text-white font-black text-lg leading-tight">{displayName}</div>
             </div>
-            <div className="text-teal-300 text-xs font-semibold mt-0.5">{stats.level.name}</div>
+            <div className="text-[var(--ns-forest-light)] text-xs font-semibold mt-0.5">{stats.level.name}</div>
             <div className={`text-[10px] mt-0.5 font-medium ${stateLabelColour}`}>{stateLabel}</div>
 
             {/* XP bar */}

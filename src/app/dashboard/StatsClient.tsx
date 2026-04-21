@@ -377,15 +377,15 @@ export default function StatsClient() {
                           <span className="text-2xl">🌱</span>
                           <div className="flex-1">
                             <p className="text-sm font-bold text-teal-800 mb-1">Building your baseline</p>
-                            <p className="text-xs text-teal-700 leading-relaxed">
+                            <p className="text-xs text-[var(--ns-forest)] leading-relaxed">
                               Log {Math.max(0, 4 - doneSessions)} more session{doneSessions === 3 ? '' : 's'} to unlock ACWR, pace trend, and training zones.
                             </p>
                             {doneSessions > 0 && (
                               <div className="mt-2 flex items-center gap-2">
-                                <div className="flex-1 h-1.5 bg-teal-100 rounded-full overflow-hidden">
-                                  <div className="h-full bg-teal-400 rounded-full" style={{ width: `${(doneSessions / 4) * 100}%` }} />
+                                <div className="flex-1 h-1.5 bg-[var(--ns-forest-light)] rounded-full overflow-hidden">
+                                  <div className="h-full bg-[var(--ns-forest-mid)] rounded-full" style={{ width: `${(doneSessions / 4) * 100}%` }} />
                                 </div>
-                                <span className="text-[10px] font-semibold text-teal-600">{doneSessions}/4</span>
+                                <span className="text-[10px] font-semibold text-[var(--ns-forest)]">{doneSessions}/4</span>
                               </div>
                             )}
                           </div>
@@ -440,7 +440,7 @@ export default function StatsClient() {
                           const confColour = prediction.confidence === 'high' ? 'text-emerald-500'
                             : prediction.confidence === 'medium' ? 'text-amber-500' : 'text-gray-300'
                           return (
-                            <div key={label} className={`px-4 py-3 flex items-center justify-between ${isTarget ? 'bg-teal-50/50' : ''}`}>
+                            <div key={label} className={`px-4 py-3 flex items-center justify-between ${isTarget ? 'bg-[var(--ns-forest-light)]/50' : ''}`}>
                               <div className="flex items-center gap-2.5">
                                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold ${isTarget ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-500'}`}>
                                   {label}
@@ -454,7 +454,7 @@ export default function StatsClient() {
                                 <span className={`text-[9px] font-bold uppercase ${confColour}`}>
                                   {prediction.confidence}
                                 </span>
-                                {isTarget && <div className="text-[9px] text-teal-600 font-semibold">your goal</div>}
+                                {isTarget && <div className="text-[9px] text-[var(--ns-forest)] font-semibold">your goal</div>}
                               </div>
                             </div>
                           )
