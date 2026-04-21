@@ -143,7 +143,7 @@ coach_messages     id, coach_id, athlete_id, sender_id, body, read_at
 session_annotations id, coach_id, athlete_id, training_log_id, reaction, note
 ```
 
-### ⚠️ Pending SQL (run in Supabase before Phase 8)
+### ⚠️ Pending SQL (run in Supabase — Phase 12 migration file at supabase/migrations/phase-12-referral.sql)
 
 ```sql
 ALTER TABLE profiles
