@@ -16,9 +16,9 @@ const LEVEL_LABEL: Record<string, string> = {
   beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced',
 }
 const LEVEL_PILL: Record<string, string> = {
-  beginner:     'bg-emerald-100 text-emerald-700',
-  intermediate: 'bg-amber-100 text-amber-700',
-  advanced:     'bg-red-100 text-red-600',
+  beginner:     'bg-emerald-900/50 text-emerald-300',
+  intermediate: 'bg-amber-900/50 text-amber-300',
+  advanced:     'bg-red-900/50 text-red-300',
 }
 type SortKey = 'level' | 'weeks_asc' | 'weeks_desc' | 'rating' | 'completion'
 
@@ -61,14 +61,14 @@ export default function PlanBrowserClient({ templates }: Props) {
   if (selectedPlan) return <PlanDetail plan={selectedPlan} onBack={() => setSelectedPlan(null)} />
 
   return (
-    <main className="min-h-screen bg-[#f8f8f6]">
+    <main className="min-h-screen" style={{ background: "var(--color-bg)" }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3 sticky top-0 z-40">
+      <div className="border-b px-4 pt-12 pb-3 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto">
           <div className="flex items-center gap-3 mb-3">
             <Link href="/onboarding" className="text-gray-400 text-sm font-medium">← Back</Link>
             <span className="text-base font-bold text-gray-900">Choose your plan</span>
-            <span className="text-xs text-gray-400 ml-auto">{filtered.length} plans</span>
+            <span className="text-xs ml-auto" style={{ color: "var(--color-text-tertiary)" }}>{filtered.length} plans</span>
           </div>
 
           {/* Distance filter */}
@@ -84,7 +84,7 @@ export default function PlanBrowserClient({ templates }: Props) {
             <select
               value={selectedLevel}
               onChange={e => setSelectedLevel(e.target.value)}
-              className="text-xs font-semibold border border-gray-200 rounded-xl px-2.5 py-1.5 outline-none bg-white flex-shrink-0"
+              className="text-xs font-semibold rounded-xl px-2.5 py-1.5 outline-none flex-shrink-0" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}
             >
               <option value="all">All levels</option>
               {LEVEL_ORDER.map(l => <option key={l} value={l}>{LEVEL_LABEL[l]}</option>)}
@@ -92,7 +92,7 @@ export default function PlanBrowserClient({ templates }: Props) {
             <select
               value={maxWeeks}
               onChange={e => setMaxWeeks(Number(e.target.value))}
-              className="text-xs font-semibold border border-gray-200 rounded-xl px-2.5 py-1.5 outline-none bg-white flex-shrink-0"
+              className="text-xs font-semibold rounded-xl px-2.5 py-1.5 outline-none flex-shrink-0" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}
             >
               <option value={0}>Any duration</option>
               <option value={8}>≤ 8 weeks</option>
@@ -103,7 +103,7 @@ export default function PlanBrowserClient({ templates }: Props) {
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as SortKey)}
-              className="text-xs font-semibold border border-gray-200 rounded-xl px-2.5 py-1.5 outline-none bg-white flex-shrink-0"
+              className="text-xs font-semibold rounded-xl px-2.5 py-1.5 outline-none flex-shrink-0" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}
             >
               <option value="level">By level</option>
               <option value="weeks_asc">Shortest first</option>
@@ -123,7 +123,7 @@ export default function PlanBrowserClient({ templates }: Props) {
       <div className="max-w-lg mx-auto px-4 pt-4 pb-20">
         {filtered.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-sm font-semibold text-gray-700 mb-1">No plans match those filters</p>
+            <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>No plans match those filters</p>
             <button onClick={() => { setSelectedDistance('all'); setSelectedLevel('all'); setMaxWeeks(0) }}
               className="text-xs font-bold mt-2" style={{ color: 'var(--ns-forest)' }}>
               Clear filters
@@ -132,7 +132,7 @@ export default function PlanBrowserClient({ templates }: Props) {
         ) : (
           Object.entries(grouped).map(([dist, plans]) => (
             <div key={dist} className="mb-6">
-              <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">
+              <h2 className="text-xs font-bold uppercase tracking-widest mb-3 px-1" style={{ color: "var(--color-text-tertiary)" }}>
                 {DISTANCE_LABEL[dist] ?? dist}
               </h2>
               <div className="space-y-2">
@@ -169,8 +169,8 @@ function PlanCard({ plan, onClick, onPreview }: { plan: PlanTemplate; onClick: (
   const tags = (meta?.tags as string[]) ?? []
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-      <button onClick={onClick} className="w-full text-left p-4 hover:bg-gray-50 transition-colors">
+    <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+      <button onClick={onClick} className="w-full text-left p-4 transition-colors active:opacity-80">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -178,19 +178,20 @@ function PlanCard({ plan, onClick, onPreview }: { plan: PlanTemplate; onClick: (
                 {LEVEL_LABEL[plan.level]}
               </span>
               {tags.slice(0,2).map(tag => (
-                <span key={tag} className="text-[10px] font-medium text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">{tag}</span>
+                <span key={tag} className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+                  style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>{tag}</span>
               ))}
             </div>
-            <div className="text-sm font-bold text-gray-900 leading-tight">{plan.name}</div>
-            {plan.subtitle && <div className="text-xs text-gray-500 mt-0.5">{plan.subtitle}</div>}
+            <div className="text-sm font-bold leading-tight" style={{ color: 'var(--color-text-primary)' }}>{plan.name}</div>
+            {plan.subtitle && <div className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>{plan.subtitle}</div>}
           </div>
           <div className="text-right shrink-0">
-            <div className="text-xl font-black text-gray-900 leading-none">{plan.weeks_min}</div>
-            <div className="text-[10px] text-gray-400 mt-0.5">weeks</div>
+            <div className="text-xl font-black font-data leading-none" style={{ color: 'var(--ns-ember)' }}>{plan.weeks_min}</div>
+            <div className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>weeks</div>
           </div>
         </div>
 
-        <div className="flex gap-4 mt-3 pt-3 border-t border-gray-50 items-center">
+        <div className="flex gap-4 mt-3 pt-3 border-t items-center" style={{ borderColor: 'var(--color-border)' }}>
           <Stat label="runs/wk" value={String(plan.runs_per_week)} />
           {plan.peak_km_week && <Stat label="peak km" value={`${plan.peak_km_week}`} />}
           {(plan as any).avg_rating && (plan as any).review_count > 0 && (
@@ -209,7 +210,8 @@ function PlanCard({ plan, onClick, onPreview }: { plan: PlanTemplate; onClick: (
 
       {/* Week 1 preview button */}
       <button onClick={onPreview}
-        className="w-full text-[10px] font-bold text-center py-2 border-t border-gray-50 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
+        className="w-full text-[10px] font-bold text-center py-2 border-t transition-colors"
+        style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-tertiary)' }}>
         Preview week 1 →
       </button>
     </div>
@@ -219,8 +221,8 @@ function PlanCard({ plan, onClick, onPreview }: { plan: PlanTemplate; onClick: (
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-xs font-bold text-gray-900">{value}</div>
-      <div className="text-[10px] text-gray-400">{label}</div>
+      <div className="text-xs font-bold font-data" style={{ color: 'var(--color-text-primary)' }}>{value}</div>
+      <div className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>{label}</div>
     </div>
   )
 }
@@ -236,7 +238,7 @@ function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose
     <>
       <div className="fixed inset-0 z-50 bg-black/40" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 max-w-lg mx-auto">
-        <div className="bg-white rounded-t-3xl px-5 pt-4 pb-8 max-h-[75vh] overflow-y-auto">
+        <div className="rounded-t-3xl px-5 pt-4 pb-8 max-h-[75vh] overflow-y-auto" style={{ background: "var(--color-surface)" }}>
           <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
           <div className="flex items-start justify-between mb-4">
             <div>

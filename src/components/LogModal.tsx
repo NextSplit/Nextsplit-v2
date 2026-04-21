@@ -105,9 +105,8 @@ function LogModal({
   // ── REST DAY ───────────────────────────────────────────────────────────────
   if (mode === 'rest') {
     return (
-      <div className="fixed inset-0 z-50 flex items-end" onClick={handleBackdropClick}>
-        <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl p-6 text-center"
-          style={{ marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
+        <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl p-6 text-center" style={{ background: "var(--color-surface)", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
           <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
           <div className="text-4xl mb-3">😴</div>
           <h2 className="text-base font-bold text-gray-900 mb-1">Rest day</h2>
@@ -128,7 +127,7 @@ function LogModal({
   // ── ONE-TAP (Easy runs) ────────────────────────────────────────────────────
   if (mode === 'one-tap' && !existingLog) {
     return (
-      <div className="fixed inset-0 z-50 flex items-end" onClick={handleBackdropClick}>
+      <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
         <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl"
           style={{ marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
           <div className="p-6">
@@ -175,9 +174,8 @@ function LogModal({
   // ── FULL DEBRIEF (Intervals + Race) ───────────────────────────────────────
   if (mode === 'full-debrief') {
     return (
-      <div className="fixed inset-0 z-50 flex items-end" onClick={handleBackdropClick}>
-        <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl max-h-[92vh] flex flex-col"
-          style={{ marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
+        <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col" style={{ background: "var(--color-surface)", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
           <div className="overflow-y-auto flex-1 px-6 pt-6 pb-2 space-y-5">
             <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
 
@@ -279,9 +277,8 @@ function LogModal({
 
   // ── STANDARD (Tempo, Long, MP, default) ────────────────────────────────────
   return (
-    <div className="fixed inset-0 z-50 flex items-end" onClick={handleBackdropClick}>
-      <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl max-h-[92vh] flex flex-col"
-        style={{ marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
+      <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col" style={{ background: "var(--color-surface)", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
         <div className="overflow-y-auto flex-1 px-6 pt-6 pb-2 space-y-5">
           <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
 

@@ -35,7 +35,8 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-[#e8e8e8] safe-area-pb"
+      className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-sm border-t safe-area-pb"
+      style={{ background: 'rgba(15, 26, 20, 0.95)', borderColor: 'var(--color-border)' }}
       role="navigation"
       aria-label="Main navigation"
     >
@@ -49,18 +50,18 @@ export default function BottomNav() {
               aria-label={tab.label}
               aria-current={active ? 'page' : undefined}
               className={`flex-1 flex flex-col items-center justify-center gap-0.5 pt-2 pb-1.5 relative transition-colors focus-visible:outline-none ${
-                active ? 'text-[var(--ns-forest)]' : 'text-[#bbb]'
+                active ? 'text-[var(--ns-forest)]' : 'text-[var(--color-text-tertiary)]'
               }`}
             >
               {/* Active indicator line */}
               {active && (
                 <span
                   className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full"
-                  style={{ background: 'var(--ns-forest)' }}
+                  style={{ background: 'var(--ns-ember)' }}
                 />
               )}
               <tab.Icon size={23} weight={active ? 'fill' : 'regular'} />
-              <span className={`text-[9px] font-bold tracking-wide ${active ? 'text-[var(--ns-forest)]' : 'text-[#bbb]'}`}>
+              <span className={`text-[9px] font-bold tracking-wide ${active ? 'text-[var(--ns-forest)]' : 'text-[var(--color-text-tertiary)]'}`}>
                 {tab.label}
               </span>
             </Link>

@@ -233,8 +233,48 @@ export default function PlanClient() {
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
 
+        {/* ── FUEL TAB ── */}
+        {planTab === 'fuel' && (
+          <div className="space-y-4">
+            <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)' }}>
+              <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--ns-ember)' }}>
+                🥗 Fuel & Nutrition
+              </p>
+              <p className="text-xs mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+                Your nutrition plan is tailored to this week's training load.
+              </p>
+              <a href="/nutrition"
+                className="block w-full py-3 rounded-2xl text-center text-sm font-bold text-white"
+                style={{ background: 'var(--ns-forest)' }}>
+                Open full nutrition dashboard →
+              </a>
+            </div>
+
+            {/* Quick fuel summary for today */}
+            <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)' }}>
+              <p className="text-xs font-bold mb-3" style={{ color: 'var(--color-text-tertiary)' }}>
+                TODAY'S FUEL GUIDE
+              </p>
+              {[
+                { time: 'Pre-run', guide: 'Light carbs 60-90 min before. Banana, toast, oats. Avoid high fat/fibre.', icon: '🌅' },
+                { time: 'During run', guide: 'For runs over 60 min: 30-60g carbs/hr. Gels, chews, or sports drink.', icon: '🏃' },
+                { time: 'Recovery', guide: 'Within 30 min: protein + carbs. 3:1 carb:protein ratio. Chocolate milk works.', icon: '🍫' },
+                { time: 'Hydration', guide: '500ml 2hrs before. 150-250ml every 20 min during. Electrolytes if >90 min.', icon: '💧' },
+              ].map(item => (
+                <div key={item.time} className="flex gap-3 py-3 border-b last:border-0" style={{ borderColor: 'var(--color-border)' }}>
+                  <span className="text-xl flex-shrink-0">{item.icon}</span>
+                  <div>
+                    <p className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>{item.time}</p>
+                    <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>{item.guide}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Advance prompt */}
-        {canAdvance && (
+        {planTab === 'plan' && canAdvance && (
           <div className="bg-emerald-50 rounded-2xl border border-emerald-100 px-4 py-4 flex items-center justify-between">
             <div>
               <p className="text-sm font-bold text-emerald-700">Week {plan.current_week} complete! 🎉</p>
@@ -248,16 +288,16 @@ export default function PlanClient() {
         )}
 
         {/* Adaptive coaching suggestions */}
-        <AdaptiveSuggestions
+        {planTab === 'plan' && <AdaptiveSuggestions
           weeks={weeks}
           logs={logs}
           gymLogs={gymLogs}
           currentWeek={plan.current_week}
           planId={plan.id}
-        />
+        />}
 
         {/* ── ACTIVE VIEW ── */}
-        {viewMode === 'active' && (
+        {planTab === 'plan' && viewMode === 'active' && (
           <>
             {/* Completed accordion */}
             {completedWeeks.filter(filterWeek).length > 0 && (
@@ -303,7 +343,7 @@ export default function PlanClient() {
         )}
 
         {/* ── FULL VIEW ── */}
-        {viewMode === 'full' && weeks.filter(filterWeek).map(week => {
+        {planTab === 'plan' && viewMode === 'full' && weeks.filter(filterWeek).map(week => {
           const status = week.n < plan.current_week ? 'completed' : week.n === plan.current_week ? 'current' : 'upcoming'
           return (
             <WeekRow key={week.n} week={week} status={status} logs={logs} gymLogs={gymLogs}

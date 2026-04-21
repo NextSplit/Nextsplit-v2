@@ -35,7 +35,7 @@ export default function SeedPageClient() {
       <div className="max-w-lg mx-auto">
         <h1 className="text-xl font-bold text-gray-900 mb-2">Seed Plan Templates</h1>
         <p className="text-sm text-gray-500 mb-6">
-          Inserts all 17 training plans into Supabase. Safe to run multiple times (upsert).
+          Inserts all 36 training plans into Supabase. Safe to run multiple times (upsert).
         </p>
 
         {!done && (
