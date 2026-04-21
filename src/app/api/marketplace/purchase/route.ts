@@ -46,20 +46,20 @@ export async function POST(req: NextRequest) {
     const { data: existing } = await (supabase as any)
       .from('plan_purchases')
       .select('id')
-      .eq('user_id', user.id)
-      .eq('plan_template_id', template_id)
+      .eq('athlete_id', user.id)
+      .eq('template_id', template_id)
       .maybeSingle()
 
     if (!existing) {
-      // Record purchase
+      // Record purchase using real column names: athlete_id, template_id, amount_gbp
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase as any)
         .from('plan_purchases')
         .insert({
-          user_id: user.id,
-          plan_template_id: template_id,
-          price_gbp: priceGbp,
-          stripe_payment_intent_id: stripe_payment_intent_id ?? null,
+          athlete_id:             user.id,
+          template_id:            template_id,
+          amount_gbp:             priceGbp,
+          stripe_payment_id:      stripe_payment_intent_id ?? null,
         })
 
       // Increment total_starts on the template

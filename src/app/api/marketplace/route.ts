@@ -45,12 +45,12 @@ export async function GET(req: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: purchases } = await (supabase as any)
       .from('plan_purchases')
-      .select('plan_template_id')
-      .eq('user_id', user.id)
+      .select('template_id')
+      .eq('athlete_id', user.id)
 
     const purchasedIds = new Set(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (purchases ?? []).map((p: any) => p.plan_template_id)
+      (purchases ?? []).map((p: any) => p.template_id)
     )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
