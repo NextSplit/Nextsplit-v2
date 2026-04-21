@@ -53,24 +53,100 @@ function InviteModal({ onClose }: { onClose: () => void }) {
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 space-y-4 max-w-lg mx-auto">
-        <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto" />
-        <h2 className="text-base font-black text-slate-900">Invite an athlete</h2>
-        <p className="text-sm text-slate-500">Each link is single-use and expires in 7 days. Generate a new one for each athlete.</p>
+        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+        <h2 className="text-base font-black text-gray-900">Invite an athlete</h2>
+        <p className="text-sm text-gray-500">Each link is single-use and expires in 7 days. Generate a new one for each athlete.</p>
         {!inviteUrl ? (
           <button onClick={generate} disabled={loading}
-            className="w-full bg-teal-500 text-white py-4 rounded-2xl text-sm font-bold disabled:opacity-50 active:scale-95">
+            className="w-full text-white py-4 rounded-2xl text-sm font-bold disabled:opacity-50 active:scale-95"
+            style={{ background: 'var(--ns-forest)' }}>
             {loading ? 'Generating…' : 'Generate invite link →'}
           </button>
         ) : (
           <div className="space-y-3">
-            <div className="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 font-mono break-all border border-slate-200">{inviteUrl}</div>
-            <button onClick={copy} className={`w-full py-4 rounded-2xl text-sm font-bold transition-all ${copied ? 'bg-emerald-500 text-white' : 'bg-teal-500 text-white'}`}>
+            <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-600 font-mono break-all border border-gray-200">{inviteUrl}</div>
+            <button onClick={copy} className={`w-full py-4 rounded-2xl text-sm font-bold text-white transition-all`}
+              style={{ background: copied ? '#10b981' : 'var(--ns-forest)' }}>
               {copied ? '✓ Copied to clipboard!' : 'Copy invite link'}
             </button>
-            <button onClick={generate} className="w-full py-2 text-xs text-slate-400">Generate another link</button>
+            <button onClick={generate} className="w-full py-2 text-xs text-gray-400">Generate another link</button>
           </div>
         )}
-        <button onClick={onClose} className="w-full text-slate-400 text-sm py-2">Close</button>
+        <button onClick={onClose} className="w-full text-gray-400 text-sm py-2">Close</button>
+      </div>
+    </>
+  )
+}
+
+function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athleteCount: number }) {
+  const [body, setBody]     = useState('')
+  const [sending, setSending] = useState(false)
+  const [sent, setSent]     = useState(false)
+
+  const TEMPLATES = [
+    'Great training week everyone — keep it up 💪',
+    'Remember: easy runs should feel genuinely easy. If you can\'t hold a conversation, slow down.',
+    'Race season is coming — make sure you\'re logging your wellness each morning.',
+    'Big week ahead. Prioritise sleep and stay hydrated.',
+    'Check in with me if you\'re feeling any niggles — catch them early.',
+  ]
+
+  const send = async () => {
+    if (!body.trim()) return
+    setSending(true)
+    try {
+      await fetch('/api/coach/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ body }),
+      })
+      setSent(true)
+      setTimeout(() => { setSent(false); onClose() }, 2000)
+    } finally { setSending(false) }
+  }
+
+  return (
+    <>
+      <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 space-y-4 max-w-lg mx-auto">
+        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+        <div>
+          <h2 className="text-base font-black text-gray-900">Message all athletes</h2>
+          <p className="text-xs text-gray-400 mt-0.5">Sends to all {athleteCount} active athlete{athleteCount !== 1 ? 's' : ''}</p>
+        </div>
+
+        {sent ? (
+          <div className="py-6 text-center">
+            <p className="text-2xl mb-2">✓</p>
+            <p className="text-sm font-bold text-emerald-700">Sent to {athleteCount} athlete{athleteCount !== 1 ? 's' : ''}</p>
+          </div>
+        ) : (
+          <>
+            <textarea
+              value={body}
+              onChange={e => setBody(e.target.value)}
+              placeholder="Write your squad message…"
+              rows={3}
+              className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none resize-none"
+              style={{ outlineColor: 'var(--ns-forest)' }}
+            />
+            <div className="space-y-1.5">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Quick templates</p>
+              {TEMPLATES.map(t => (
+                <button key={t} onClick={() => setBody(t)}
+                  className="w-full text-left text-xs px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 text-gray-600 hover:border-gray-200">
+                  {t}
+                </button>
+              ))}
+            </div>
+            <button onClick={send} disabled={sending || !body.trim()}
+              className="w-full py-3 rounded-2xl text-white text-sm font-bold disabled:opacity-40"
+              style={{ background: 'var(--ns-forest)' }}>
+              {sending ? 'Sending…' : `Send to ${athleteCount} athlete${athleteCount !== 1 ? 's' : ''}`}
+            </button>
+          </>
+        )}
+        <button onClick={onClose} className="w-full text-gray-400 text-sm py-2">Close</button>
       </div>
     </>
   )
@@ -188,9 +264,10 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
 }
 
 export default function SquadClient({ coachProfile }: { coachProfile: CoachProfile }) {
-  const [athletes, setAthletes]     = useState<AthleteStatus[]>([])
-  const [loading, setLoading]       = useState(true)
-  const [showInvite, setShowInvite] = useState(false)
+  const [athletes, setAthletes]       = useState<AthleteStatus[]>([])
+  const [loading, setLoading]         = useState(true)
+  const [showInvite, setShowInvite]   = useState(false)
+  const [showBroadcast, setShowBroadcast] = useState(false)
 
   const fetchStatus = useCallback(async () => {
     setLoading(true)
@@ -228,6 +305,14 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
             </div>
             <div className="flex items-center gap-2">
               <button onClick={fetchStatus} className="text-gray-400 text-lg px-1.5">↻</button>
+              {athletes.length > 0 && (
+                <button
+                  onClick={() => setShowBroadcast(true)}
+                  className="text-gray-600 text-sm font-bold px-3 py-2 rounded-xl border border-gray-200 active:bg-gray-50"
+                >
+                  📢
+                </button>
+              )}
               <button
                 onClick={() => setShowInvite(true)}
                 className="text-white text-sm font-bold px-4 py-2 rounded-xl active:scale-95"
@@ -412,6 +497,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
       </div>
 
       {showInvite && <InviteModal onClose={() => setShowInvite(false)} />}
+      {showBroadcast && <BroadcastModal onClose={() => setShowBroadcast(false)} athleteCount={athletes.length} />}
     </div>
   )
 }
