@@ -14,7 +14,7 @@ interface Annotation {
 
 const REACTION_CONFIG = {
   great:   { emoji: '🌟', colour: 'text-amber-600 bg-amber-50 border-amber-200' },
-  good:    { emoji: '👍', colour: 'text-teal-600 bg-teal-50 border-teal-200' },
+  good:    { emoji: '👍', colour: 'text-[var(--ns-forest)] bg-[var(--ns-forest-light)] border-green-200' },
   concern: { emoji: '⚠️', colour: 'text-orange-600 bg-orange-50 border-orange-200' },
   flag:    { emoji: '🚩', colour: 'text-red-600 bg-red-50 border-red-200' },
 }
@@ -23,6 +23,7 @@ export function CoachCard() {
   const { coach, relationship, hasCoach, loading } = useMyCoach()
   const [annotations, setAnnotations]              = useState<Annotation[]>([])
   const [unreadMessages, setUnreadMessages]         = useState(0)
+  const [unreadVoice, setUnreadVoice]               = useState(0)
   const [showMessages, setShowMessages]             = useState(false)
   const [expanded, setExpanded]                     = useState(false)
 
@@ -36,7 +37,7 @@ export function CoachCard() {
 
   useEffect(() => {
     if (!hasCoach || !relationship) return
-    // Count unread messages from coach
+    // Count unread text messages from coach
     fetch(`/api/coach/message?coach_id=${relationship.coach_id}&athlete_id=${relationship.athlete_id}`)
       .then(r => r.json())
       .then(d => {
@@ -47,40 +48,58 @@ export function CoachCard() {
         setUnreadMessages(unread)
       })
       .catch(() => {})
+
+    // Count unread voice messages from coach
+    fetch(`/api/voice-messages?athlete_id=${relationship.coach_id}`)
+      .then(r => r.json())
+      .then(d => {
+        const unreadV = (d.messages ?? []).filter(
+          (m: { coach_id: string; listened_at: string | null }) =>
+            m.coach_id === relationship.coach_id && !m.listened_at
+        ).length
+        setUnreadVoice(unreadV)
+      })
+      .catch(() => {})
   }, [hasCoach, relationship])
 
   if (loading || !hasCoach || !coach || !relationship) return null
 
   const latestAnnotation = annotations[0]
-  const hasUnread = unreadMessages > 0 || (latestAnnotation && !latestAnnotation.acknowledged_at)
+  const totalUnread = unreadMessages + unreadVoice
+  const hasUnread = totalUnread > 0 || (latestAnnotation && !latestAnnotation.acknowledged_at)
 
   return (
     <>
       <div className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${
-        hasUnread ? 'border-teal-400' : 'border-gray-100'
+        hasUnread ? 'border-[var(--ns-forest)]' : 'border-gray-100'
       }`}>
         {/* Header */}
         <button
           onClick={() => setExpanded(!expanded)}
           className="w-full px-4 py-3 flex items-center gap-3 text-left"
         >
-          <div className="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center text-lg shrink-0">
+          <div className="w-9 h-9 rounded-full bg-[var(--ns-forest-light)] flex items-center justify-center text-lg shrink-0">
             🏃
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <p className="text-sm font-bold text-gray-900">{coach.display_name}</p>
-              {coach.verified && <span className="text-[10px] text-teal-600">✅</span>}
+              {coach.verified && <span className="text-[10px] text-[var(--ns-forest)]">✅</span>}
             </div>
             <p className="text-xs text-gray-400">Your coach</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {hasUnread && (
-              <span className="w-2 h-2 rounded-full bg-teal-500" />
+              <span className="w-2 h-2 rounded-full" style={{ background: 'var(--ns-forest)' }} />
             )}
-            {unreadMessages > 0 && (
-              <span className="text-[10px] font-bold text-white bg-teal-500 rounded-full px-1.5 py-0.5">
-                {unreadMessages}
+            {totalUnread > 0 && (
+              <span className="text-[10px] font-bold text-white rounded-full px-1.5 py-0.5" style={{ background: 'var(--ns-forest)' }}>
+                {totalUnread}
+              </span>
+            )}
+            {unreadVoice > 0 && (
+              <span className="text-[10px] font-bold text-white bg-red-500 rounded-full px-1.5 py-0.5">
+                🎙️ {unreadVoice}
               </span>
             )}
             <span className="text-gray-300 text-sm">{expanded ? '▲' : '▼'}</span>
@@ -117,11 +136,18 @@ export function CoachCard() {
                 <span className="text-base">💬</span>
                 <span className="text-sm font-semibold text-slate-700">Message {coach.display_name}</span>
               </div>
-              {unreadMessages > 0 && (
-                <span className="text-xs font-bold text-white bg-teal-500 rounded-full px-2 py-0.5">
-                  {unreadMessages} new
-                </span>
-              )}
+              <div className="flex items-center gap-1.5">
+                {unreadMessages > 0 && (
+                  <span className="text-xs font-bold text-white rounded-full px-2 py-0.5" style={{ background: 'var(--ns-forest)' }}>
+                    {unreadMessages}
+                  </span>
+                )}
+                {unreadVoice > 0 && (
+                  <span className="text-xs font-bold text-white bg-red-500 rounded-full px-2 py-0.5">
+                    🎙️ {unreadVoice}
+                  </span>
+                )}
+              </div>
             </button>
 
             {annotations.length > 1 && (
