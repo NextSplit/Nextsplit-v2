@@ -42,7 +42,7 @@ function JoinClubModal({ onClose, onJoined }: { onClose: () => void; onJoined: (
   return (
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl px-4 pt-4 pb-8 space-y-4 max-w-lg mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl px-4 pt-4 pb-8 space-y-4 max-w-lg mx-auto" style={{ background: "var(--color-surface)" }}>
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
         <h2 className="text-base font-black text-gray-900">Join a club</h2>
         <p className="text-sm text-gray-500">Enter the 6-character join code from your club admin.</p>
@@ -87,7 +87,7 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
   return (
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl px-4 pt-4 pb-8 max-h-[85dvh] overflow-y-auto space-y-4 max-w-lg mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl px-4 pt-4 pb-8 max-h-[85dvh] overflow-y-auto space-y-4 max-w-lg mx-auto" style={{ background: "var(--color-surface)" }}>
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
         <h2 className="text-base font-black text-gray-900">Create a club</h2>
 
@@ -182,9 +182,9 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: "var(--color-bg)" }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto space-y-3">
           <div className="flex items-center justify-between">
             <div>
@@ -219,7 +219,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
           <div className="flex gap-1 bg-gray-100 rounded-xl p-1 overflow-x-auto">
             {(['feed','clubs','challenges','races','leaderboard'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex-shrink-0 flex-1 py-1.5 rounded-lg text-[10px] font-bold capitalize transition-all min-w-[52px] ${tab === t ? 'bg-white text-gray-900 shadow' : 'text-gray-500'}`}>
+                className={`flex-shrink-0 flex-1 py-1.5 rounded-lg text-[10px] font-bold capitalize transition-all min-w-[52px] ${tab === t ? 'text-gray-900 shadow' : 'text-gray-500'}`}>
                 {t === 'feed' ? '📣' : t === 'leaderboard' ? '🏆' : t === 'clubs' ? '👥' : t === 'challenges' ? '🎯' : '🏁'} {t}
               </button>
             ))}
@@ -323,7 +323,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
           <>
             <div className="flex gap-2">
               <button onClick={() => setShowJoin(true)}
-                className="flex-1 bg-white border border-gray-200 rounded-2xl py-3 text-sm font-bold text-gray-700 active:bg-[#f8f8f6]">
+                className="flex-1 rounded-2xl py-3 text-sm font-bold" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}>
                 Enter code
               </button>
               <button onClick={() => setShowCreate(true)}

@@ -157,8 +157,8 @@ function PlanDetail({ summary, onBack }: { summary: ArchivedPlanSummary; onBack:
   const completionPct = totalSessions > 0 ? Math.round((loggedSessions / totalSessions) * 100) : 0
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+    <div className="min-h-screen pb-24" style={{ background: "var(--color-bg)" }}>
+      <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button onClick={onBack} aria-label="Back to history"
             className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500">
@@ -275,8 +275,8 @@ export default function HistoryClient() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+    <div className="min-h-screen pb-24" style={{ background: "var(--color-bg)" }}>
+      <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button onClick={() => router.back()} aria-label="Go back"
             className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500">

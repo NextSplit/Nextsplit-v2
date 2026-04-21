@@ -139,7 +139,7 @@ export default function NutritionClient() {
   const allWeekEntries = Object.values(byDate).flat()
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: "var(--color-bg)" }}>
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">

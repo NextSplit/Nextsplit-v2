@@ -41,11 +41,11 @@ function SessionCard({ session, log, onTap, onQuickDone, onFocus, personalisedPa
 
   return (
     <div
-      className={`rounded-3xl border-l-4 transition-all min-h-[88px] ${
-        done
-          ? `${cfg.accent} border-emerald-200 bg-emerald-50`
-          : `${cfg.accent} border-gray-100 bg-white shadow-sm`
-      } overflow-hidden`}
+      className={`rounded-3xl border-l-4 transition-all min-h-[88px] ${cfg.accent} overflow-hidden`}
+      style={done
+        ? { background: 'rgba(16,185,129,0.08)', borderRightColor: 'transparent', borderTopColor: 'transparent', borderBottomColor: 'transparent' }
+        : { background: 'var(--color-surface)', borderRightColor: 'transparent', borderTopColor: 'transparent', borderBottomColor: 'transparent' }
+      }
     >
       <div className="flex items-start gap-3 p-5" onClick={onTap}>
         {/* Type indicator — tap for focus mode (gym: tap routes to live tracker) */}

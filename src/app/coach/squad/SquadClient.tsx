@@ -213,8 +213,8 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
         </div>
         <div className={`px-3 py-2 text-center ${
           athlete.acwr === null ? '' :
-          athlete.acwr > 1.3 ? 'bg-red-50' :
-          athlete.acwr < 0.8 ? 'bg-amber-50' : 'bg-emerald-50'
+          athlete.acwr > 1.3 ? 'bg-red-900/20' :
+          athlete.acwr < 0.8 ? 'bg-amber-900/20' : 'bg-emerald-900/20'
         }`}>
           <p className={`text-xs font-black ${
             athlete.acwr === null ? 'text-gray-400' :
@@ -237,7 +237,7 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
       {athlete.flags.length > 0 && (
         <div className="px-4 pb-3 pt-1 space-y-1">
           {athlete.flags.map(f => (
-            <div key={f} className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 rounded-lg px-2.5 py-1.5">
+            <div key={f} className="flex items-center gap-2 text-xs text-amber-400 bg-amber-900/20 rounded-lg px-2.5 py-1.5">
               <span>{f}</span>
             </div>
           ))}
@@ -327,7 +327,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
           {!loading && athletes.length > 0 && (
             <div className="flex items-center gap-3 mt-2">
               {needsAttention.length > 0 && (
-                <span className="text-[11px] font-bold text-red-600 bg-red-50 px-2 py-1 rounded-lg">
+                <span className="text-[11px] font-bold text-red-400 bg-red-900/20 px-2 py-1 rounded-lg">
                   {needsAttention.length} need{needsAttention.length === 1 ? 's' : ''} attention
                 </span>
               )}
@@ -392,7 +392,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
 
             {needsAttention.length === 0 ? (
               /* Clean dashboard — no attention needed */
-              <div className="bg-emerald-50 border border-emerald-100 rounded-2xl px-4 py-4 flex items-center gap-3">
+              <div className="bg-emerald-900/20 rounded-2xl px-4 py-4 flex items-center gap-3" style={{ border: "1px solid rgba(16,185,129,0.2)" }}>
                 <span className="text-2xl">✓</span>
                 <div>
                   <p className="text-sm font-bold text-emerald-800">All {onTrack.length} athletes on track</p>
@@ -446,8 +446,8 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
                     </div>
                     {a.acwr !== null && (
                       <span className={`text-[10px] font-bold flex-shrink-0 px-1.5 py-0.5 rounded-lg ${
-                        a.acwr > 1.3 ? 'bg-red-50 text-red-600' :
-                        a.acwr < 0.8 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'
+                        a.acwr > 1.3 ? 'bg-red-900/20 text-red-400' :
+                        a.acwr < 0.8 ? 'bg-amber-900/20 text-amber-400' : 'bg-emerald-900/20 text-emerald-400'
                       }`}>
                         {a.acwr.toFixed(1)}
                       </span>

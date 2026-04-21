@@ -28,7 +28,7 @@ function Section({ title, children, id }: { title: string; children: React.React
       <div className="px-4 py-2">
         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{title}</span>
       </div>
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden divide-y divide-gray-50">
+      <div className="rounded-2xl overflow-hidden divide-y" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", borderColor: "var(--color-border)" }}>
         {children}
       </div>
     </div>
@@ -79,7 +79,7 @@ function SelectRow<T extends string>({ label, sublabel, value, options, onChange
       <select
         value={value}
         onChange={e => onChange(e.target.value as T)}
-        className="text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
+        className="text-sm rounded-lg px-2.5 py-1.5 focus:outline-none" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}
         aria-label={label}
       >
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -630,10 +630,10 @@ export default function SettingsClient({ email, initialProfile }: Props) {
   // ─── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: "var(--color-bg)" }}>
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button onClick={() => router.back()} aria-label="Go back"
             className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 flex-shrink-0">
@@ -686,7 +686,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
                     {resetting ? 'Resetting…' : 'Yes, reset'}
                   </button>
                   <button onClick={() => setConfirmReset(false)}
-                    className="flex-1 py-2 text-xs font-semibold bg-white border border-gray-200 text-gray-600 rounded-xl">
+                    className="flex-1 py-2 text-xs font-semibold rounded-xl" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)" }}>
                     Cancel
                   </button>
                 </div>
@@ -706,7 +706,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
                     {archiving ? 'Archiving…' : 'Yes, archive'}
                   </button>
                   <button onClick={() => setConfirmArchive(false)}
-                    className="flex-1 py-2 text-xs font-semibold bg-white border border-gray-200 text-gray-600 rounded-xl">
+                    className="flex-1 py-2 text-xs font-semibold rounded-xl" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border)", color: "var(--color-text-secondary)" }}>
                     Cancel
                   </button>
                 </div>
@@ -776,7 +776,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
                     type="time"
                     defaultValue={p.notification_time?.slice(0, 5) ?? '07:00'}
                     onChange={e => saveNotificationTime(e.target.value)}
-                    className="text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
+                    className="text-sm rounded-lg px-2.5 py-1.5 focus:outline-none" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}
                     aria-label="Notification time"
                   />
                 </div>
