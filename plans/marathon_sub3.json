@@ -1,0 +1,1647 @@
+{
+  "meta": {
+    "id": "marathon_sub3",
+    "name": "Sub-3 Hour Marathon",
+    "subtitle": "Elite amateur territory",
+    "distance": "marathon",
+    "level": "advanced",
+    "weeks": 20,
+    "runs_per_week": 6,
+    "long_run_day": "Sun",
+    "gym_sessions": 2,
+    "peak_km_week": 110,
+    "longest_run_km": 35,
+    "description": "Sub-3 hours (4:15/km) is a serious athletic achievement. This plan requires 90–110km peak weeks and significant racing experience.",
+    "target_finish_time": "Sub-3:00:00",
+    "tags": [
+      "advanced",
+      "marathon",
+      "sub-3",
+      "competitive",
+      "high-mileage"
+    ],
+    "author_type": "nextsplit",
+    "price_gbp": null,
+    "is_public": true
+  },
+  "weeks": [
+    {
+      "n": 1,
+      "ph": "p1",
+      "title": "Base Building — Week 1",
+      "b": "d",
+      "kl": [
+        72,
+        88
+      ],
+      "note": "Week 1: Build your aerobic base. Every run should feel comfortable — you're conditioning your body to handle more.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "8km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 8
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "14km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 14
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "14km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 14
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "12km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 12
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "28km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 28
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "ph": "p1",
+      "title": "Base Building — Week 2",
+      "b": "d",
+      "kl": [
+        74,
+        90
+      ],
+      "note": "Week 2: Build your aerobic base. Every run should feel comfortable — you're conditioning your body to handle more.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "8km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 8
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "15km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 15
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "15km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 15
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "12km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 12
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "29km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 29
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "ph": "p1",
+      "title": "Base Building — Week 3",
+      "b": "d",
+      "kl": [
+        77,
+        94
+      ],
+      "note": "Week 3: Build your aerobic base. Every run should feel comfortable — you're conditioning your body to handle more.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "9km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 9
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "15km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 15
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "15km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 15
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "13km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "30km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "ph": "p1",
+      "title": "Base Building — Week 4",
+      "b": "d",
+      "kl": [
+        59,
+        72
+      ],
+      "note": "Week 4: Build your aerobic base. Every run should feel comfortable — you're conditioning your body to handle more.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "7km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 7
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 12
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "7km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 7
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "12km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 12
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "10km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 10
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "21km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 21
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "ph": "p1",
+      "title": "Base Building — Week 5",
+      "b": "d",
+      "kl": [
+        80,
+        98
+      ],
+      "note": "Week 5: Build your aerobic base. Every run should feel comfortable — you're conditioning your body to handle more.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "9km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 9
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "16km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 16
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "16km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 16
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "13km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "31km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 31
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "ph": "p1",
+      "title": "Base Building — Week 6",
+      "b": "d",
+      "kl": [
+        82,
+        100
+      ],
+      "note": "Week 6: Build your aerobic base. Every run should feel comfortable — you're conditioning your body to handle more.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "9km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 9
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "16km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 16
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "16km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 16
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "14km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 14
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "32km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 32
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "ph": "p1",
+      "title": "Base Building — Week 7",
+      "b": "d",
+      "kl": [
+        85,
+        103
+      ],
+      "note": "Week 7: Build your aerobic base. Every run should feel comfortable — you're conditioning your body to handle more.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "9km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 9
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "17km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 17
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "17km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 17
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "14km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 14
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "33km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 33
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "ph": "p2",
+      "title": "Build Phase — Week 8",
+      "b": "d",
+      "kl": [
+        66,
+        80
+      ],
+      "note": "Week 8: Quality over quantity. The interval and tempo sessions are where fitness is made. Protect your sleep this week.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "7km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 7
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "11km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 11
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "7km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 7
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "13km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "9km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 9
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "21km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 21
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "ph": "p2",
+      "title": "Build Phase — Week 9",
+      "b": "d",
+      "kl": [
+        86,
+        106
+      ],
+      "note": "Week 9: Quality over quantity. The interval and tempo sessions are where fitness is made. Protect your sleep this week.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "10km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 10
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "14km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 14
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "17km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 17
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "12km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 12
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "31km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 31
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "ph": "p2",
+      "title": "Build Phase — Week 10",
+      "b": "d",
+      "kl": [
+        88,
+        108
+      ],
+      "note": "Week 10: Quality over quantity. The interval and tempo sessions are where fitness is made. Protect your sleep this week.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "10km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 10
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "15km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 15
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "18km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 18
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "12km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 12
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "31km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 31
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 11,
+      "ph": "p2",
+      "title": "Build Phase — Week 11",
+      "b": "d",
+      "kl": [
+        91,
+        111
+      ],
+      "note": "Week 11: Quality over quantity. The interval and tempo sessions are where fitness is made. Protect your sleep this week.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "10km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 10
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "15km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 15
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "18km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 18
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "12km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 12
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "32km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 32
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "ph": "p2",
+      "title": "Build Phase — Week 12",
+      "b": "d",
+      "kl": [
+        72,
+        88
+      ],
+      "note": "Week 12: Quality over quantity. The interval and tempo sessions are where fitness is made. Protect your sleep this week.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "8km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 8
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "12km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 12
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "8km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 8
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "14km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 14
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "10km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 10
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "23km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 23
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "ph": "p2",
+      "title": "Build Phase — Week 13",
+      "b": "d",
+      "kl": [
+        95,
+        116
+      ],
+      "note": "Week 13: Quality over quantity. The interval and tempo sessions are where fitness is made. Protect your sleep this week.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "11km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 11
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "16km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 16
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "19km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 19
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "13km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "34km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 34
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 14,
+      "ph": "p2",
+      "title": "Build Phase — Week 14",
+      "b": "d",
+      "kl": [
+        97,
+        119
+      ],
+      "note": "Week 14: Quality over quantity. The interval and tempo sessions are where fitness is made. Protect your sleep this week.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "11km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 11
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "16km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 16
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "19km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 19
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "13km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "35km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 35
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 15,
+      "ph": "p2",
+      "title": "Build Phase — Week 15",
+      "b": "d",
+      "kl": [
+        99,
+        121
+      ],
+      "note": "Week 15: Quality over quantity. The interval and tempo sessions are where fitness is made. Protect your sleep this week.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "11km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 11
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "17km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 17
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "20km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 20
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "13km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "35km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 35
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 16,
+      "ph": "p3",
+      "title": "Peak Training — Week 16",
+      "b": "d",
+      "kl": [
+        99,
+        121
+      ],
+      "note": "Week 16: Peak training week. This is hard — it's meant to be. Trust the process and execute each session.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "11km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 11
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "17km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 17
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "13km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-strides",
+              "n": "Easy + strides",
+              "det": "13km easy then 4 × 100m strides · Start slow, build to 90% in the final 30m of each stride.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "33km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 33
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 17,
+      "ph": "p3",
+      "title": "Peak Training — Week 17",
+      "b": "d",
+      "kl": [
+        99,
+        121
+      ],
+      "note": "Week 17: Peak training week. This is hard — it's meant to be. Trust the process and execute each session.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "11km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 11
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "17km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 17
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "13km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-strides",
+              "n": "Easy + strides",
+              "det": "13km easy then 4 × 100m strides · Start slow, build to 90% in the final 30m of each stride.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "33km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 33
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 18,
+      "ph": "p3",
+      "title": "Peak Training — Week 18",
+      "b": "d",
+      "kl": [
+        99,
+        121
+      ],
+      "note": "Week 18: Peak training week. This is hard — it's meant to be. Trust the process and execute each session.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": [
+            {
+              "c": "run-recovery",
+              "n": "Recovery run",
+              "det": "11km very easy · 6:30–7:00/km · Shake out the legs. Slower than you think you need.",
+              "km": 11
+            }
+          ]
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-tempo",
+              "n": "Tempo run",
+              "det": "17km tempo · 4:45–5:05/km · Comfortably hard. You can speak in short sentences only.",
+              "km": 17
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": [
+            {
+              "c": "gym",
+              "n": "Strength session",
+              "det": "45–60 min · Squats, lunges, hip thrusts, calf raises, core work · Injury prevention first.",
+              "km": null
+            }
+          ]
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-interval",
+              "n": "Interval session",
+              "det": "13km total · 400m reps at 5K race pace · Full recovery between reps. Quality over quantity.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": [
+            {
+              "c": "run-strides",
+              "n": "Easy + strides",
+              "det": "13km easy then 4 × 100m strides · Start slow, build to 90% in the final 30m of each stride.",
+              "km": 13
+            }
+          ]
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "33km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 33
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 19,
+      "ph": "p4",
+      "title": "Taper — Week 19",
+      "b": "d",
+      "kl": [
+        77,
+        95
+      ],
+      "note": "Week 19: Trust the taper. The work is done. Freshen up the legs — no heroics.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": []
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "15km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 15
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": []
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-strides",
+              "n": "Easy + strides",
+              "det": "10km easy then 4 × 100m strides · Start slow, build to 90% in the final 30m of each stride.",
+              "km": 10
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": []
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "26km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 26
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 20,
+      "ph": "p4",
+      "title": "Taper — Week 20",
+      "b": "d",
+      "kl": [
+        55,
+        67
+      ],
+      "note": "Week 20: Trust the taper. The work is done. Freshen up the legs — no heroics.",
+      "days": [
+        {
+          "d": "Mon",
+          "sessions": []
+        },
+        {
+          "d": "Tue",
+          "sessions": [
+            {
+              "c": "run-easy",
+              "n": "Easy run",
+              "det": "11km easy · 5:50–6:20/km · Conversational pace. If you can't hold a conversation, you're going too fast.",
+              "km": 11
+            }
+          ]
+        },
+        {
+          "d": "Wed",
+          "sessions": []
+        },
+        {
+          "d": "Thu",
+          "sessions": [
+            {
+              "c": "run-strides",
+              "n": "Easy + strides",
+              "det": "7km easy then 4 × 100m strides · Start slow, build to 90% in the final 30m of each stride.",
+              "km": 7
+            }
+          ]
+        },
+        {
+          "d": "Fri",
+          "sessions": []
+        },
+        {
+          "d": "Sat",
+          "sessions": []
+        },
+        {
+          "d": "Sun",
+          "sessions": [
+            {
+              "c": "run-long",
+              "n": "Long run",
+              "det": "18km long · 6:00–6:30/km · Easy, conversational effort throughout. The longest run of your week.",
+              "km": 18
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

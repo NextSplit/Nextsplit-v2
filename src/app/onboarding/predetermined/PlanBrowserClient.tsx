@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import type { PlanTemplate } from '@/types/database'
 
-const DISTANCE_ORDER = ['5k','10k','10mi','half','marathon','ultra_50mi','ultra_100mi']
+const DISTANCE_ORDER = ['5k','10k','10mi','half','marathon','lifestyle','ultra_50mi','ultra_100mi','ultra']
 const DISTANCE_LABEL: Record<string, string> = {
   '5k': '5K', '10k': '10K', '10mi': '10 Miles',
   'half': 'Half Marathon', 'marathon': 'Marathon',
+  'lifestyle': 'Lifestyle', 'ultra': 'Ultra',
   'ultra_50mi': '50-Mile Ultra', 'ultra_100mi': '100-Mile Ultra',
 }
 const LEVEL_ORDER = ['beginner','intermediate','advanced']
@@ -19,27 +20,41 @@ const LEVEL_PILL: Record<string, string> = {
   intermediate: 'bg-amber-100 text-amber-700',
   advanced:     'bg-red-100 text-red-600',
 }
+type SortKey = 'level' | 'weeks_asc' | 'weeks_desc' | 'rating' | 'completion'
 
 interface Props { templates: PlanTemplate[] }
 
 export default function PlanBrowserClient({ templates }: Props) {
   const [selectedDistance, setSelectedDistance] = useState<string>('all')
-  const [selectedLevel, setSelectedLevel] = useState<string>('all')
-  const [selectedPlan, setSelectedPlan] = useState<PlanTemplate | null>(null)
+  const [selectedLevel,    setSelectedLevel]    = useState<string>('all')
+  const [maxWeeks,         setMaxWeeks]          = useState<number>(0)   // 0 = any
+  const [sortBy,           setSortBy]            = useState<SortKey>('level')
+  const [selectedPlan,     setSelectedPlan]      = useState<PlanTemplate | null>(null)
+  const [previewPlan,      setPreviewPlan]       = useState<PlanTemplate | null>(null)
 
   const distances = DISTANCE_ORDER.filter(d => templates.some(t => t.distance === d))
 
-  const filtered = templates.filter(t => {
-    if (selectedDistance !== 'all' && t.distance !== selectedDistance) return false
-    if (selectedLevel !== 'all' && t.level !== selectedLevel) return false
-    return true
-  })
+  const filtered = useMemo(() => {
+    let list = templates.filter(t => {
+      if (selectedDistance !== 'all' && t.distance !== selectedDistance) return false
+      if (selectedLevel    !== 'all' && t.level    !== selectedLevel)    return false
+      if (maxWeeks > 0 && (t.weeks_min ?? 0) > maxWeeks)                return false
+      return true
+    })
+    list = [...list].sort((a, b) => {
+      if (sortBy === 'level')       return LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level)
+      if (sortBy === 'weeks_asc')   return (a.weeks_min ?? 0) - (b.weeks_min ?? 0)
+      if (sortBy === 'weeks_desc')  return (b.weeks_min ?? 0) - (a.weeks_min ?? 0)
+      if (sortBy === 'rating')      return ((b as any).avg_rating ?? 0) - ((a as any).avg_rating ?? 0)
+      if (sortBy === 'completion')  return ((b as any).avg_completion_rate ?? 0) - ((a as any).avg_completion_rate ?? 0)
+      return 0
+    })
+    return list
+  }, [templates, selectedDistance, selectedLevel, maxWeeks, sortBy])
 
   const grouped = DISTANCE_ORDER.reduce<Record<string, PlanTemplate[]>>((acc, dist) => {
-    const plans = filtered.filter(t => t.distance === dist)
-    if (plans.length > 0) acc[dist] = plans.sort((a, b) =>
-      LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level)
-    )
+    const plans = filtered.filter(t => t.distance === dist || (dist === 'ultra' && t.distance?.startsWith('ultra')))
+    if (plans.length > 0 && dist !== 'ultra_50mi' && dist !== 'ultra_100mi') acc[dist] = plans
     return acc
   }, {})
 
@@ -48,113 +63,156 @@ export default function PlanBrowserClient({ templates }: Props) {
   return (
     <main className="min-h-screen bg-[#f8f8f6]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-3">
             <Link href="/onboarding" className="text-gray-400 text-sm font-medium">← Back</Link>
             <span className="text-base font-bold text-gray-900">Choose your plan</span>
+            <span className="text-xs text-gray-400 ml-auto">{filtered.length} plans</span>
           </div>
 
           {/* Distance filter */}
           <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide mb-2">
-            <button
-              onClick={() => setSelectedDistance('all')}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap flex-shrink-0 ${
-                selectedDistance === 'all' ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-600'
-              }`}
-            >All distances</button>
-            {distances.map(d => (
-              <button key={d} onClick={() => setSelectedDistance(d)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap flex-shrink-0 ${
-                  selectedDistance === d ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-600'
-                }`}
-              >{DISTANCE_LABEL[d]}</button>
+            <FilterChip label="All" active={selectedDistance === 'all'} onClick={() => setSelectedDistance('all')} />
+            {distances.filter(d => !d.startsWith('ultra_')).map(d => (
+              <FilterChip key={d} label={DISTANCE_LABEL[d] ?? d} active={selectedDistance === d} onClick={() => setSelectedDistance(d)} />
             ))}
           </div>
 
-          {/* Level filter */}
-          <div className="flex gap-1.5">
-            {['all', ...LEVEL_ORDER].map(l => (
-              <button key={l} onClick={() => setSelectedLevel(l)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors capitalize ${
-                  selectedLevel === l ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-600'
-                }`}
-              >{l === 'all' ? 'All levels' : l}</button>
-            ))}
+          {/* Level + Duration + Sort row */}
+          <div className="flex gap-2 items-center overflow-x-auto pb-1 scrollbar-hide">
+            <select
+              value={selectedLevel}
+              onChange={e => setSelectedLevel(e.target.value)}
+              className="text-xs font-semibold border border-gray-200 rounded-xl px-2.5 py-1.5 outline-none bg-white flex-shrink-0"
+            >
+              <option value="all">All levels</option>
+              {LEVEL_ORDER.map(l => <option key={l} value={l}>{LEVEL_LABEL[l]}</option>)}
+            </select>
+            <select
+              value={maxWeeks}
+              onChange={e => setMaxWeeks(Number(e.target.value))}
+              className="text-xs font-semibold border border-gray-200 rounded-xl px-2.5 py-1.5 outline-none bg-white flex-shrink-0"
+            >
+              <option value={0}>Any duration</option>
+              <option value={8}>≤ 8 weeks</option>
+              <option value={12}>≤ 12 weeks</option>
+              <option value={16}>≤ 16 weeks</option>
+              <option value={20}>≤ 20 weeks</option>
+            </select>
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as SortKey)}
+              className="text-xs font-semibold border border-gray-200 rounded-xl px-2.5 py-1.5 outline-none bg-white flex-shrink-0"
+            >
+              <option value="level">By level</option>
+              <option value="weeks_asc">Shortest first</option>
+              <option value="weeks_desc">Longest first</option>
+              <option value="rating">Top rated</option>
+              <option value="completion">Best completion</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-4">
-        {/* Empty state */}
-        {Object.keys(grouped).length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-4xl mb-3">🔍</div>
+      {/* Week 1 preview sheet */}
+      {previewPlan && (
+        <Week1Preview plan={previewPlan} onClose={() => setPreviewPlan(null)} onSelect={() => { setSelectedPlan(previewPlan); setPreviewPlan(null) }} />
+      )}
+
+      <div className="max-w-lg mx-auto px-4 pt-4 pb-20">
+        {filtered.length === 0 ? (
+          <div className="text-center py-12">
             <p className="text-sm font-semibold text-gray-700 mb-1">No plans match those filters</p>
-            <button onClick={() => { setSelectedDistance('all'); setSelectedLevel('all') }}
-              className="text-xs text-[var(--ns-forest)] font-semibold mt-2">
+            <button onClick={() => { setSelectedDistance('all'); setSelectedLevel('all'); setMaxWeeks(0) }}
+              className="text-xs font-bold mt-2" style={{ color: 'var(--ns-forest)' }}>
               Clear filters
             </button>
           </div>
-        )}
-
-        {/* Plan groups */}
-        {Object.entries(grouped).map(([dist, plans]) => (
-          <div key={dist} className="mb-6">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">
-              {DISTANCE_LABEL[dist]}
-            </h2>
-            <div className="space-y-2">
-              {plans.map(plan => (
-                <PlanCard key={plan.id} plan={plan} onClick={() => setSelectedPlan(plan)} />
-              ))}
+        ) : (
+          Object.entries(grouped).map(([dist, plans]) => (
+            <div key={dist} className="mb-6">
+              <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">
+                {DISTANCE_LABEL[dist] ?? dist}
+              </h2>
+              <div className="space-y-2">
+                {plans.map(plan => (
+                  <PlanCard key={plan.id} plan={plan}
+                    onClick={() => setSelectedPlan(plan)}
+                    onPreview={() => setPreviewPlan(plan)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </main>
   )
 }
 
-function PlanCard({ plan, onClick }: { plan: PlanTemplate; onClick: () => void }) {
+function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button onClick={onClick}
+      className={`flex-shrink-0 text-xs font-bold px-3 py-1.5 rounded-xl border-2 transition-all ${
+        active ? 'text-white border-transparent' : 'border-gray-200 text-gray-600 bg-white'
+      }`}
+      style={active ? { background: 'var(--ns-forest)', borderColor: 'var(--ns-forest)' } : {}}
+    >
+      {label}
+    </button>
+  )
+}
+
+function PlanCard({ plan, onClick, onPreview }: { plan: PlanTemplate; onClick: () => void; onPreview: () => void }) {
   const meta = plan.meta as Record<string, unknown>
   const tags = (meta?.tags as string[]) ?? []
 
   return (
-    <button onClick={onClick}
-      className="w-full text-left bg-white rounded-2xl border border-gray-100 p-4 hover:border-teal-200 hover:shadow-sm transition-all">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${LEVEL_PILL[plan.level]}`}>
-              {LEVEL_LABEL[plan.level]}
-            </span>
-            {tags.slice(0,2).map(tag => (
-              <span key={tag} className="text-[10px] font-medium text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">
-                {tag}
+    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <button onClick={onClick} className="w-full text-left p-4 hover:bg-gray-50 transition-colors">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${LEVEL_PILL[plan.level]}`}>
+                {LEVEL_LABEL[plan.level]}
               </span>
-            ))}
+              {tags.slice(0,2).map(tag => (
+                <span key={tag} className="text-[10px] font-medium text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">{tag}</span>
+              ))}
+            </div>
+            <div className="text-sm font-bold text-gray-900 leading-tight">{plan.name}</div>
+            {plan.subtitle && <div className="text-xs text-gray-500 mt-0.5">{plan.subtitle}</div>}
           </div>
-          <div className="text-sm font-bold text-gray-900 leading-tight">{plan.name}</div>
-          {plan.subtitle && <div className="text-xs text-gray-500 mt-0.5">{plan.subtitle}</div>}
+          <div className="text-right shrink-0">
+            <div className="text-xl font-black text-gray-900 leading-none">{plan.weeks_min}</div>
+            <div className="text-[10px] text-gray-400 mt-0.5">weeks</div>
+          </div>
         </div>
-        <div className="text-right shrink-0">
-          <div className="text-xl font-black text-gray-900 leading-none">{plan.weeks_min}</div>
-          <div className="text-[10px] text-gray-400 mt-0.5">weeks</div>
-        </div>
-      </div>
 
-      <div className="flex gap-4 mt-3 pt-3 border-t border-gray-50">
-        <Stat label="runs/wk" value={String(plan.runs_per_week)} />
-        {plan.peak_km_week && <Stat label="peak km" value={`${plan.peak_km_week}`} />}
-        {plan.longest_run_km && <Stat label="long run" value={`${plan.longest_run_km}km`} />}
-        <div className="ml-auto text-[var(--ns-forest)]">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
+        <div className="flex gap-4 mt-3 pt-3 border-t border-gray-50 items-center">
+          <Stat label="runs/wk" value={String(plan.runs_per_week)} />
+          {plan.peak_km_week && <Stat label="peak km" value={`${plan.peak_km_week}`} />}
+          {(plan as any).avg_rating && (plan as any).review_count > 0 && (
+            <Stat label="rating" value={`★ ${((plan as any).avg_rating as number).toFixed(1)}`} />
+          )}
+          {(plan as any).avg_completion_rate && (
+            <Stat label="completion" value={`${Math.round((plan as any).avg_completion_rate as number)}%`} />
+          )}
+          <div className="ml-auto" style={{ color: 'var(--ns-forest)' }}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
         </div>
-      </div>
-    </button>
+      </button>
+
+      {/* Week 1 preview button */}
+      <button onClick={onPreview}
+        className="w-full text-[10px] font-bold text-center py-2 border-t border-gray-50 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
+        Preview week 1 →
+      </button>
+    </div>
   )
 }
 
@@ -167,6 +225,79 @@ function Stat({ label, value }: { label: string; value: string }) {
   )
 }
 
+function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose: () => void; onSelect: () => void }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const weeks = (plan as any).weeks_data as any[] ?? []
+  const week1 = weeks[0]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const days  = (week1?.days ?? []) as any[]
+
+  return (
+    <>
+      <div className="fixed inset-0 z-50 bg-black/40" onClick={onClose} />
+      <div className="fixed bottom-0 left-0 right-0 z-50 max-w-lg mx-auto">
+        <div className="bg-white rounded-t-3xl px-5 pt-4 pb-8 max-h-[75vh] overflow-y-auto">
+          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h3 className="text-sm font-black text-gray-900">{plan.name}</h3>
+              <p className="text-xs text-gray-500 mt-0.5">Week 1 preview</p>
+            </div>
+            <button onClick={onClose} className="text-gray-400 text-lg">✕</button>
+          </div>
+
+          {days.length === 0 ? (
+            <p className="text-xs text-gray-400 text-center py-4">Week 1 preview not available for this plan</p>
+          ) : (
+            <div className="space-y-2 mb-5">
+              {days.map((d: any, i: number) => {
+                const sessions = d.sessions ?? []
+                if (sessions.length === 0) return (
+                  <div key={i} className="flex gap-3 items-center">
+                    <span className="text-[10px] font-bold text-gray-400 w-8">{d.d}</span>
+                    <span className="text-xs text-gray-300">Rest</span>
+                  </div>
+                )
+                return (
+                  <div key={i} className="flex gap-3 items-start">
+                    <span className="text-[10px] font-bold text-gray-400 w-8 pt-1">{d.d}</span>
+                    <div className="flex-1 space-y-1">
+                      {sessions.map((s: any, j: number) => (
+                        <div key={j} className={`text-xs px-2 py-1.5 rounded-lg ${
+                          s.c?.includes('long')     ? 'bg-amber-50 text-amber-800' :
+                          s.c?.includes('interval') ? 'bg-red-50 text-red-800' :
+                          s.c?.includes('tempo')    ? 'bg-orange-50 text-orange-800' :
+                          s.c?.includes('gym')      ? 'bg-purple-50 text-purple-800' :
+                          s.c?.includes('rest')     ? 'bg-gray-50 text-gray-400' :
+                          'bg-emerald-50 text-emerald-800'
+                        }`}>
+                          <span className="font-bold">{s.n}</span>
+                          {s.km && <span className="opacity-70 ml-1.5">{s.km}km</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            <button onClick={onClose}
+              className="flex-1 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-500">
+              Back to browse
+            </button>
+            <button onClick={onSelect}
+              className="flex-1 py-3 rounded-2xl text-white text-sm font-bold"
+              style={{ background: 'var(--ns-forest)' }}>
+              Select this plan →
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
 function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }) {
   const [raceDateInput, setRaceDateInput] = useState('')
   const [planName, setPlanName] = useState(plan.name)

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { PlanTemplate } from '@/types/database'
 import { z } from 'zod'
 import { zodError } from '@/lib/schemas'
+import { raceToPaces, personaliseSessionPace } from '@/lib/vdot'
 
 const ActivateSchema = z.object({
   template_id:  z.string().uuid().optional(),
@@ -86,6 +87,40 @@ export async function POST(req: NextRequest) {
         })),
       }))
 
+  // VDOT pace personalisation — fetch user's recent race times from profile
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: profileData } = await (supabase as any)
+    .from('profiles')
+    .select('recent_race_5k_secs, recent_race_10k_secs, recent_race_half_secs, recent_race_marathon_secs')
+    .eq('id', user.id)
+    .single()
+
+  // Find best available race time for VDOT
+  const racePairs: [number, number | null][] = [
+    [42.2, profileData?.recent_race_marathon_secs],
+    [21.1, profileData?.recent_race_half_secs],
+    [10,   profileData?.recent_race_10k_secs],
+    [5,    profileData?.recent_race_5k_secs],
+  ]
+  const bestRace = racePairs.find(([, t]) => t && t > 0)
+
+  let personalised = weeksData
+  if (bestRace && bestRace[1]) {
+    try {
+      const paces = raceToPaces(bestRace[0], bestRace[1])
+      personalised = weeksData.map(week => ({
+        ...week,
+        days: week.days.map(day => ({
+          ...day,
+          sessions: day.sessions.map((s: PlanSession) => ({
+            ...s,
+            det: s.det ? personaliseSessionPace(s.det, paces) : s.det,
+          })),
+        })),
+      }))
+    } catch { /* non-blocking — use generic paces if VDOT fails */ }
+  }
+
   const { data: newPlan, error: insertErr } = await supabase
     .from('user_plans')
     .insert({
@@ -99,7 +134,7 @@ export async function POST(req: NextRequest) {
       start_date: startDate,
       total_weeks: t.weeks_min,
       current_week: 1,
-      weeks_data: weeksData,
+      weeks_data: personalised,
       meta: {
         peak_km_week: t.peak_km_week,
         longest_run_km: t.longest_run_km,
