@@ -316,7 +316,7 @@ export default function ProfileClient({
   return (
     <div className="min-h-screen bg-[#f8f8f6] pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div>
             {editingName ? (
@@ -581,11 +581,20 @@ export default function ProfileClient({
         {/* ── STATS TAB ── */}
         {profileTab === 'stats' && (
           <div className="space-y-4">
+            {/* Stats tab header */}
+            <div className="rounded-2xl px-4 py-3 flex items-center gap-3"
+              style={{ background: 'linear-gradient(135deg, #1e3829 0%, #162a1e 100%)', border: '1px solid var(--color-border)' }}>
+              <span className="text-2xl">📊</span>
+              <div>
+                <p className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--ns-track)' }}>Training Analytics</p>
+                <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>ACWR · pace trends · training zones</p>
+              </div>
+            </div>
             {allPlanLogs.length < 4 ? (
-              <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center space-y-2">
+              <div className="rounded-2xl p-8 text-center space-y-2" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
                 <div className="text-3xl">📊</div>
-                <p className="text-sm font-bold text-gray-800">Stats unlock after 4 sessions</p>
-                <p className="text-xs text-gray-400">Log more sessions to see ACWR, pace trends and training zones.</p>
+                <p className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>Stats unlock after 4 sessions</p>
+                <p className="text-xs" style={{ color: "var(--color-text-tertiary)" }}>Log more sessions to see ACWR, pace trends and training zones.</p>
               </div>
             ) : (
               <>
@@ -605,6 +614,15 @@ export default function ProfileClient({
         {/* ── RECORDS TAB ── */}
         {profileTab === 'records' && (
           <div className="space-y-4">
+            {/* Records tab header */}
+            <div className="rounded-2xl px-4 py-3 flex items-center gap-3"
+              style={{ background: 'linear-gradient(135deg, #2c1f0a 0%, #1e1508 100%)', border: '1px solid #3d2e10' }}>
+              <span className="text-2xl">🏆</span>
+              <div>
+                <p className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--ns-track)' }}>Personal Bests &amp; Records</p>
+                <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Race history · session logs · all-time bests</p>
+              </div>
+            </div>
             <RaceDaySimulation
               logs={allPlanLogsKeyed}
               targetDistanceKm={undefined}
@@ -613,35 +631,35 @@ export default function ProfileClient({
             <PBCard logs={allPlanLogsKeyed} />
             <TrainingSummary logs={allPlanLogsKeyed} />
             {/* Race history */}
-            <a href="/races" className="flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3.5">
+            <a href="/races" className="flex items-center justify-between rounded-2xl px-4 py-3.5" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
               <div className="flex items-center gap-3">
                 <span className="text-xl">🏁</span>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">Race history</p>
-                  <p className="text-xs text-gray-400">All your logged races and times</p>
+                  <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>Race history</p>
+                  <p className="text-xs" style={{ color: "var(--color-text-tertiary)" }}>All your logged races and times</p>
                 </div>
               </div>
-              <span className="text-gray-300 text-lg">›</span>
+              <span className="text-lg" style={{ color: "var(--color-text-tertiary)" }}>›</span>
             </a>
-            <a href="/history" className="flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3.5">
+            <a href="/history" className="flex items-center justify-between rounded-2xl px-4 py-3.5" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
               <div className="flex items-center gap-3">
                 <span className="text-xl">📅</span>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">Session history</p>
-                  <p className="text-xs text-gray-400">Every session you&apos;ve logged</p>
+                  <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>Session history</p>
+                  <p className="text-xs" style={{ color: "var(--color-text-tertiary)" }}>Every session you've logged</p>
                 </div>
               </div>
-              <span className="text-gray-300 text-lg">›</span>
+              <span className="text-lg" style={{ color: "var(--color-text-tertiary)" }}>›</span>
             </a>
-            <a href="/dashboard" className="flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3.5">
+            <a href="/dashboard" className="flex items-center justify-between rounded-2xl px-4 py-3.5" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
               <div className="flex items-center gap-3">
                 <span className="text-xl">📈</span>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">Full analytics dashboard</p>
-                  <p className="text-xs text-gray-400">All charts, predictions, coaching summary</p>
+                  <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>Full analytics dashboard</p>
+                  <p className="text-xs" style={{ color: "var(--color-text-tertiary)" }}>All charts, predictions, coaching summary</p>
                 </div>
               </div>
-              <span className="text-gray-300 text-lg">›</span>
+              <span className="text-lg" style={{ color: "var(--color-text-tertiary)" }}>›</span>
             </a>
           </div>
         )}
@@ -724,7 +742,7 @@ export default function ProfileClient({
             </span>
             <span className="text-sm font-semibold text-gray-700">Settings</span>
           </div>
-          <span className="text-gray-300 text-lg">›</span>
+          <span className="text-lg" style={{ color: "var(--color-text-tertiary)" }}>›</span>
         </a>
 
         {/* Data export */}
