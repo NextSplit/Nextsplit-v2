@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { PurchasePlanSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 
 /**
@@ -14,7 +15,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { template_id, stripe_payment_intent_id } = await req.json()
+    const parsed = PurchasePlanSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { template_id, stripe_payment_intent_id } = parsed.data
     if (!template_id) return NextResponse.json({ error: 'template_id required' }, { status: 400 })
 
     // Fetch plan details

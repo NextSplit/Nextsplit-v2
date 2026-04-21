@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CommunityProgressSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 
 // Called after a session is logged — updates challenge progress + club feed + season XP
@@ -8,7 +9,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { km = 0, done = true, session_type, session_name, duration_secs, pace, effort } = await req.json()
+    const parsed = CommunityProgressSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { km, done, session_type, session_name, duration_secs, pace, effort } = parsed.data
 
     if (!done) return NextResponse.json({ skipped: true })
 

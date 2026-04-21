@@ -1,8 +1,19 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import type { PlanTemplate } from '@/types/database'
+import { z } from 'zod'
+import { zodError } from '@/lib/schemas'
 
-export async function POST(req: Request) {
+const ActivateSchema = z.object({
+  template_id:  z.string().uuid().optional(),
+  slug:         z.string().min(1).max(100).optional(),
+  name:         z.string().min(1).max(200),
+  race_date:    z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  plan_type:    z.string().optional(),
+  include_gym:  z.boolean().default(true),
+})
+
+export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -10,11 +21,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  const body = await req.json()
-  const { template_id, slug, name, race_date, plan_type, include_gym = true } = body
+  const parsed = ActivateSchema.safeParse(await req.json())
+  if (!parsed.success) return zodError(parsed.error)
+  const { template_id, slug, name, race_date, plan_type, include_gym } = parsed.data
 
-  if ((!template_id && !slug) || !name) {
-    return NextResponse.json({ error: 'template_id (or slug) and name are required' }, { status: 400 })
+  if (!template_id && !slug) {
+    return NextResponse.json({ error: 'template_id or slug required' }, { status: 400 })
   }
 
   // Validate race date is in the future
@@ -36,7 +48,7 @@ export async function POST(req: Request) {
   const query = supabase.from('plan_templates').select('*')
   const { data: template, error: tErr } = template_id
     ? await query.eq('id', template_id).single()
-    : await query.eq('slug', slug).single()
+    : await query.eq('slug', slug!).single()
 
   if (tErr || !template) {
     return NextResponse.json({ error: 'Template not found' }, { status: 404 })

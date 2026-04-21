@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { randomBytes } from 'crypto'
+import { CreateClubSchema, zodError } from '@/lib/schemas'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = any
@@ -49,7 +50,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { name, description, emoji = '🏃', is_public = true } = await req.json()
+    const parsed = CreateClubSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { name, description, emoji, is_public } = parsed.data
     if (!name?.trim()) return NextResponse.json({ error: 'Club name required' }, { status: 400 })
 
     const slug      = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').slice(0, 40)

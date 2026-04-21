@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CoachSavePlanSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 
@@ -17,19 +18,20 @@ export async function POST(req: NextRequest) {
 
     if (!coachProfile) return NextResponse.json({ error: 'Not a coach' }, { status: 403 })
 
+    const parsed = CoachSavePlanSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
     const {
-      name, subtitle, distance, level, description,
-      weeks_data, runs_per_week, peak_km_week, longest_run_km,
-      price_gbp, is_public = true,
-      template_id, // if editing existing
-    } = await req.json()
+      name, description, subtitle, distance, level,
+      weeks_data, price_gbp, is_public, template_id,
+      runs_per_week, peak_km_week, longest_run_km,
+    } = parsed.data
 
     if (!name || !distance || !level || !weeks_data) {
       return NextResponse.json({ error: 'name, distance, level and weeks_data are required' }, { status: 400 })
     }
 
-    const weeks    = Array.isArray(weeks_data) ? weeks_data : []
-    const weekCount = weeks.length
+    const weeksArr  = Array.isArray(weeks_data) ? weeks_data : []
+    const weekCount = weeksArr.length
 
     const planData = {
       name,
@@ -43,7 +45,7 @@ export async function POST(req: NextRequest) {
       runs_per_week: runs_per_week ?? 4,
       peak_km_week: peak_km_week ?? null,
       longest_run_km: longest_run_km ?? null,
-      weeks_data:  weeks,
+      weeks_data:  weeksArr,
       meta:        { price_gbp: price_gbp ?? null },
       author_type: 'coach',
       author_id:   user.id,

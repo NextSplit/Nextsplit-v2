@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { PushSubscribeSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 
@@ -8,7 +9,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { endpoint, p256dh, auth } = await req.json()
+    const parsed = PushSubscribeSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { endpoint, p256dh, auth } = parsed.data
     if (!endpoint || !p256dh || !auth) {
       return NextResponse.json({ error: 'Missing subscription fields' }, { status: 400 })
     }

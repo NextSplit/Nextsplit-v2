@@ -1,5 +1,6 @@
 import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
+import { AiSuggestionsSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
@@ -20,7 +21,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
   }
 
-  const { analysisData } = await req.json()
+  const parsed = AiSuggestionsSchema.safeParse(await req.json())
+  if (!parsed.success) return zodError(parsed.error)
+  const { analysisData } = parsed.data
 
   const prompt = `${JSON.stringify(analysisData, null, 2)}
 

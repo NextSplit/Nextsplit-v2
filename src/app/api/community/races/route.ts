@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { RaceActionSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,7 +50,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { race_id, action, finish_time_secs } = await req.json()
+    const parsed = RaceActionSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { race_id, action, finish_time_secs } = parsed.data
     if (!race_id) return NextResponse.json({ error: 'race_id required' }, { status: 400 })
 
     // Verify race exists and is active

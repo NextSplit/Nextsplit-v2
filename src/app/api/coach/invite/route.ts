@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 import { randomBytes } from 'crypto'
+import { CoachInviteSchema, zodError } from '@/lib/schemas'
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,7 +34,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Maximum athletes reached' }, { status: 400 })
     }
 
-    const { athlete_goal, coach_notes } = await req.json().catch(() => ({}))
+    const parsed = CoachInviteSchema.safeParse(await req.json().catch(() => ({})))
+    if (!parsed.success) return zodError(parsed.error)
+    const { athlete_goal, coach_notes } = parsed.data
 
     // Generate unique token — stored in coach_invites table (no athlete_id yet)
     const token = randomBytes(16).toString('hex')

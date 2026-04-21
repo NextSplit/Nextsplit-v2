@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { VoiceMessageListenSchema, zodError } from '@/lib/schemas'
 
 /**
  * GET  /api/voice-messages?athlete_id=X  — list messages for a coach↔athlete pair
@@ -113,8 +114,9 @@ export async function PATCH(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { message_id } = await req.json()
-    if (!message_id) return NextResponse.json({ error: 'message_id required' }, { status: 400 })
+    const parsed = VoiceMessageListenSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { message_id } = parsed.data
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase as any)

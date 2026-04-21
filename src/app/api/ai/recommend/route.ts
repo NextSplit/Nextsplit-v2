@@ -1,5 +1,6 @@
 import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
+import { AiRecommendSchema, zodError } from '@/lib/schemas'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 
@@ -21,7 +22,9 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
   try {
-    const body = await req.json()
+    const parsed = AiRecommendSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const body = parsed.data
     const { experience, goal, weeksAvailable, daysPerWeek } = body
 
     const prompt = `You are a running coach helping a runner pick the best training plan.

@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
+import { ResetPlanSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 
@@ -7,7 +8,9 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { plan_id } = await req.json()
+  const parsed = ResetPlanSchema.safeParse(await req.json())
+  if (!parsed.success) return zodError(parsed.error)
+  const { plan_id } = parsed.data
   if (!plan_id) return NextResponse.json({ error: 'plan_id required' }, { status: 400 })
 
   // Verify the plan belongs to this user

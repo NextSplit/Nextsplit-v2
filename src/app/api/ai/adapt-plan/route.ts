@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 import Anthropic from '@anthropic-ai/sdk'
 import type { PlanWeek, TrainingLog } from '@/types/database'
+import { AdaptPlanSchema, zodError } from '@/lib/schemas'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -17,10 +18,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { plan_id, week_n, missed_day_indices } = await req.json()
-    if (!plan_id || week_n === undefined) {
-      return NextResponse.json({ error: 'plan_id and week_n required' }, { status: 400 })
-    }
+    const parsed = AdaptPlanSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { plan_id, week_n, missed_day_indices } = parsed.data
 
     // Fetch plan
     const { data: plan } = await db(supabase)

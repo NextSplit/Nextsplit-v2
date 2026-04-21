@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
+import { GeneratePlanSchema, zodError } from '@/lib/schemas'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -13,9 +14,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    // Plan generation is metered separately — write to ai_usage for observability
-    const { prompt } = await req.json()
-    if (!prompt) return NextResponse.json({ error: 'No prompt provided' }, { status: 400 })
+    const parsed = GeneratePlanSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { prompt } = parsed.data
 
     const today = new Date().toISOString().split('T')[0]
     await db(supabase).from('ai_usage').upsert(

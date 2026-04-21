@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CoachReviewSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 
@@ -8,7 +9,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { coach_id, plan_id, rating, review_text } = await req.json()
+    const parsed = CoachReviewSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { coach_id, plan_id, rating, review_text } = parsed.data
 
     if (!coach_id || !rating || rating < 1 || rating > 5) {
       return NextResponse.json({ error: 'coach_id and rating (1-5) required' }, { status: 400 })

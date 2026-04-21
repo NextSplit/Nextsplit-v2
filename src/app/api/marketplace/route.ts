@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { MarketplacePublishSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 
@@ -90,7 +91,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Pro Coach account required to publish plans' }, { status: 403 })
     }
 
-    const body = await req.json()
+    const parsed = MarketplacePublishSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const body = parsed.data
     const {
       name, subtitle, distance, level, weeks_min, weeks_max,
       description, price_gbp, weeks_data, meta = {},

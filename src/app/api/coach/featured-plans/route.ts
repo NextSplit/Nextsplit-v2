@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CoachFeaturedPlansSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(req: NextRequest) {
@@ -48,7 +49,9 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
     // TODO: check admin role — for now any authenticated user can set featured (admin only in production)
-    const { template_ids, week_start, feature_type = 'editorial' } = await req.json()
+    const parsed = CoachFeaturedPlansSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { template_ids, week_start, feature_type } = parsed.data
 
     if (!template_ids?.length || !week_start) {
       return NextResponse.json({ error: 'template_ids and week_start required' }, { status: 400 })

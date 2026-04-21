@@ -1,5 +1,6 @@
 import { serverConfig } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
+import { AiCoachDigestSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 import Anthropic from '@anthropic-ai/sdk'
@@ -12,7 +13,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { athlete_id } = await req.json()
+    const parsed = AiCoachDigestSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { athlete_id } = parsed.data
     if (!athlete_id) return NextResponse.json({ error: 'athlete_id required' }, { status: 400 })
 
     // Verify coach-athlete relationship

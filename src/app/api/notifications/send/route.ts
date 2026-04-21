@@ -2,6 +2,14 @@ import { config, serverConfig } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
+import { z } from 'zod'
+import { zodError } from '@/lib/schemas'
+
+const SendNotifSchema = z.object({
+  title: z.string().min(1).max(100),
+  body:  z.string().min(1).max(300),
+  url:   z.string().max(200).default('/today'),
+})
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,7 +24,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { title, body, url } = await req.json()
+    const parsed = SendNotifSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { title, body, url } = parsed.data
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: sub } = await db(supabase)

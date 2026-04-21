@@ -1,5 +1,6 @@
 import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
+import { AiPreRaceBriefSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
@@ -20,7 +21,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
   }
 
-  const { context } = await req.json()
+  const parsed = AiPreRaceBriefSchema.safeParse(await req.json())
+  if (!parsed.success) return zodError(parsed.error)
+  const { context } = parsed.data
 
   const prompt = `You are an expert running coach. Generate a concise pre-race brief for this athlete.
 

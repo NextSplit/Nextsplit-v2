@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CoachMessageSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 
@@ -8,7 +9,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { coach_id, athlete_id, body } = await req.json()
+    const parsed = CoachMessageSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { coach_id, athlete_id, body } = parsed.data
     if (!body?.trim()) return NextResponse.json({ error: 'Message body required' }, { status: 400 })
 
     // Determine the coach/athlete pair from the sender

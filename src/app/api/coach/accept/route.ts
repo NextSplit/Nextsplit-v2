@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CoachAcceptSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 
@@ -8,7 +9,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { token, share_nutrition = false, share_body_weight = false } = await req.json()
+    const parsed = CoachAcceptSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { token, share_nutrition, share_body_weight } = parsed.data
     if (!token) return NextResponse.json({ error: 'Token required' }, { status: 400 })
 
     // Find the invite from coach_invites

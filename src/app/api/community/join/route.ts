@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { JoinClubSchema, zodError } from '@/lib/schemas'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = any
@@ -10,10 +11,13 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { join_code, action = 'join' } = await req.json()
+    // Parse body once — fixes previous double req.json() bug
+    const parsed = JoinClubSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { join_code, club_id, action } = parsed.data
 
     if (action === 'leave') {
-      const { club_id } = await req.json()
+      if (!club_id) return NextResponse.json({ error: 'club_id required to leave' }, { status: 400 })
       // Can't leave if owner
       const { data: membership } = await supabase
         .from('club_members').select('role').eq('club_id', club_id).eq('user_id', user.id).single()
@@ -21,7 +25,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Transfer ownership before leaving' }, { status: 400 })
       }
       await supabase.from('club_members').delete().eq('club_id', club_id).eq('user_id', user.id)
-      // Decrement member count
       await supabase.rpc('decrement_club_members', { p_club_id: club_id })
       return NextResponse.json({ success: true })
     }

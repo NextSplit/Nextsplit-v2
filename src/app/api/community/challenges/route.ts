@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ChallengeActionSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,7 +49,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { challenge_id, action = 'join' } = await req.json()
+    const parsed = ChallengeActionSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { challenge_id, action } = parsed.data
     if (!challenge_id) return NextResponse.json({ error: 'challenge_id required' }, { status: 400 })
 
     if (action === 'join') {

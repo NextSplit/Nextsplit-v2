@@ -1,5 +1,6 @@
 import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
+import { AiCoachSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
@@ -33,7 +34,9 @@ export async function POST(req: Request) {
     )
   }
 
-  const body = await req.json().catch(() => ({}))
+  const parsed = AiCoachSchema.safeParse(await req.json().catch(() => ({})))
+  if (!parsed.success) return zodError(parsed.error)
+  const body = parsed.data
   const mode = body.mode ?? 'insight'
 
   // ── Fetch plan ──────────────────────────────────────────────────────────────

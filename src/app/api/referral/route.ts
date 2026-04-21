@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { generateReferralCode, buildReferralUrl } from '@/lib/referral'
+import { ReferralCodeSchema, zodError } from '@/lib/schemas'
 
 /**
  * GET  /api/referral       — get current user's referral code (creates if missing)
@@ -47,7 +48,9 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { code } = await req.json() as { code?: string }
+    const parsed = ReferralCodeSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { code } = parsed.data
     if (!code || typeof code !== 'string') {
       return NextResponse.json({ error: 'code required' }, { status: 400 })
     }

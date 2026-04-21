@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CoachAnnotateSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 
@@ -8,7 +9,9 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { athlete_id, plan_id, week_n, day_i, session_i, note, reaction } = await req.json()
+    const parsed = CoachAnnotateSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { athlete_id, plan_id, week_n, day_i, session_i, note, reaction } = parsed.data
 
     if (!athlete_id || !note) {
       return NextResponse.json({ error: 'athlete_id and note are required' }, { status: 400 })
