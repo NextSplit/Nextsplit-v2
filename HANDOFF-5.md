@@ -295,28 +295,33 @@ Phase 02 ✅  Coach Platform + Community + Brand + Marketplace
              Split Leader settings, race result share card, voice messages
              (60s, waveform, signed URLs), plan marketplace (browse/detail/
              purchase/ownership), full AARRR analytics (25+ events)
+
+Phase 04 ✅  Today Tab & Session Logging Polish
+             Time-aware greeting (Good morning/afternoon/evening [name]),
+             adaptive log modal by session type (rest/easy/standard/intervals),
+             missed session 4-step conversational flow + paywall reveal,
+             AICoachingNote component (ACWR risk flag + readiness, coach voice),
+             offline session queue (IndexedDB, auto-sync on reconnect)
+
+Phase 05 ✅  Character System Completion
+             Exact class triggers (Trail Blazer 50%, Speed Merchant 40%,
+             Marathon Runner 3+ runs ≥18km, Comeback auto on Lifestyle path),
+             computeXPBonus (8 bonus conditions per session type),
+             8 cosmetic milestones (vest/shoes/medal/flame/title/badge),
+             Warming Up anticipation indicator (3 phases, weeks 1-3),
+             class reveal coaching insight per class, CharacterProfileModal
+             (character as social profile), leaderboard shows class emoji,
+             coach dashboard character emoji per athlete
 ```
 
-### Build now — no users required (Phases 3–11, ~13 weeks)
+### Build now — no users required (Phases 3, 6–11)
 ```
-Phase 03     Legal + Revenue + Infrastructure
-             ICO registration, company formation, cookie consent, privacy
-             policy, terms, medical disclaimer, Stripe E2E + paywall live,
-             Zod on all routes, Supabase type regen, Monday PostHog dashboard,
-             GDPR data export, Sentry configured
+Phase 03     Legal + Revenue + Infrastructure          ← PARTIALLY DONE
+             TODO: ICO registration (£40), company formation, cookie consent,
+             Stripe E2E test + PREMIUM_ENFORCED=true, Zod on API routes,
+             Supabase type regen, Monday PostHog dashboard, GDPR data export
 
-Phase 04     Today Tab & Session Logging Polish          ← STARTING NOW
-             Time-aware greeting, adaptive log modal per session type,
-             4-step missed session conversational flow, AI coaching notes
-             in coach voice, Today tab < 500ms, offline session logging
-
-Phase 05     Character System Completion
-             XP bonus conditions (full table), exact class trigger logic,
-             Warming Up anticipation weeks 1-3, class reveal coaching insight,
-             8 cosmetic milestone unlocks, character as social profile,
-             squad leaderboard shows characters, coach dashboard character
-
-Phase 06     Production Notifications + Lifecycle Emails
+Phase 06     Production Notifications + Lifecycle Emails  ← NEXT
              8 push notification types with guardrails, 7-email lifecycle
              sequence (Resend), notification preferences in Settings
 
