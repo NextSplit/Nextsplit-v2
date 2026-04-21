@@ -29,6 +29,7 @@ import MissedSessionFlow from '@/components/MissedSessionFlow'
 import AICoachingNote from '@/components/AICoachingNote'
 import LeadDashboard from '@/components/LeadDashboard'
 import { useLeadMode } from '@/hooks/useLeadMode'
+import NPSPrompt from '@/components/NPSPrompt'
 
 
 export default function TodayClient() {
@@ -893,6 +894,9 @@ export default function TodayClient() {
         handleLogSession={handleLogSession}
         toastSuccess={toastSuccess}
       />
+
+      {/* NPS prompt — Day 7 and Day 30 triggers */}
+      <NPSPrompt firstSessionAt={(profile as { first_session_logged_at?: string | null })?.first_session_logged_at ?? null} />
     </div>
   )
 }

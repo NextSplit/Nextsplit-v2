@@ -51,6 +51,12 @@ export const Analytics = {
   stravaConnected:      (source: 'onboarding' | 'settings') => track('strava_connected', { source }),
   onboardingCompleted:  (path: string)              => track('onboarding_completed', { training_path: path }),
 
+  // ── NPS ───────────────────────────────────────────────────────────────────
+  npsShown:             (trigger: 'day_7' | 'day_30') => track('nps_shown', { trigger }),
+  npsSubmitted:         (score: number, trigger: 'day_7' | 'day_30', comment?: string) =>
+                          track('nps_submitted', { score, trigger, comment, promoter: score >= 9, detractor: score <= 6 }),
+  npsDismissed:         (trigger: 'day_7' | 'day_30') => track('nps_dismissed', { trigger }),
+
   // ── Plans ─────────────────────────────────────────────────────────────────
   planActivated:        (type: string, name: string) => track('plan_activated',  { plan_type: type, plan_name: name }),
   planArchived:         (type: string, reason: string) => track('plan_archived', { plan_type: type, reason }),
