@@ -258,7 +258,15 @@ ALTER TABLE profiles
 
 ---
 
-## Current Phase: D — Design Uplift
+## Current Phase: E — Community Completion
+
+## Phase D — Design Uplift ✅ COMPLETE
+
+| Sub-phase | Commit | What |
+|---|---|---|
+| D1-D3 Typography + teal purge + icons | 000e4ef | .font-display/.font-data/.font-body CSS, 435 teal→Forest, Phosphor BottomNav fix |
+| D4 Character SVG avatars | e765f60 | 7 illustrated SVGs, wired into reveal modal + CharacterProfileModal |
+| D5 Component polish | e765f60 | SessionCard rounded-3xl + shadow, BottomNav frosted + indicator, modal animations |
 
 ## Phase C — Plan Library ✅ COMPLETE (commit 339f0ca)
 
