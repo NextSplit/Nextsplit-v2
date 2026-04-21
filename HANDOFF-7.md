@@ -258,7 +258,15 @@ ALTER TABLE profiles
 
 ---
 
-## Current Phase: C — Plan Library Expansion
+## Current Phase: D — Design Uplift
+
+## Phase C — Plan Library ✅ COMPLETE (commit 339f0ca)
+
+| Sub-phase | What |
+|---|---|
+| C1 | 36 plan templates (was 17). Generator: scripts/generate-plans.ts. Run seed-plans.ts to upload. |
+| C2 | VDOT pace personalisation (src/lib/vdot.ts). Wired into plans/activate route. |
+| C3 | Plan browser: sort, duration filter, week 1 preview, Forest tokens. |
 
 ## Phase B — Coach Dashboard ✅ COMPLETE
 
