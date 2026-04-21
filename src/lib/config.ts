@@ -38,6 +38,7 @@ export const serverConfig = {
   cronSecret:             process.env.CRON_SECRET ?? '',
   vapidPrivateKey:        process.env.VAPID_PRIVATE_KEY ?? '',
   vapidEmail:             process.env.VAPID_EMAIL ?? '',
+  resendApiKey:           process.env.RESEND_API_KEY ?? '',
 } as const
 
 // ── Type guard — call in server startup to verify critical vars ─────────────

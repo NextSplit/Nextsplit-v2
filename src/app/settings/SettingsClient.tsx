@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useProfile } from '@/hooks/useProfile'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useSubscription } from '@/hooks/useSubscription'
@@ -213,7 +214,7 @@ function CoachAccessSection() {
   }, [])
 
   if (!rel) {
-    return <p className="text-sm text-gray-400 px-1">No active coach connected. <a href="/coach/setup" className="text-[var(--ns-forest)] hover:underline">Become a coach</a> or accept an invite to connect.</p>
+    return <p className="text-sm text-gray-400 px-1">No active coach connected. <Link href="/coach/setup" className="text-[var(--ns-forest)] hover:underline">Become a coach</Link> or accept an invite to connect.</p>
   }
 
   const toggle = async (field: 'share_logs' | 'share_wellness' | 'share_nutrition' | 'share_body_weight') => {
@@ -309,9 +310,9 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
           <p className="text-sm font-semibold text-gray-800">Split Leader active</p>
           <p className="text-xs text-gray-400">Manage your squad from the Athletes tab</p>
         </div>
-        <a href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-forest)] flex-shrink-0">
+        <Link href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-forest)] flex-shrink-0">
           Squad →
-        </a>
+        </Link>
       </div>
     )
   }
@@ -388,9 +389,9 @@ function ProCoachSection({ coachTier, isPro }: { coachTier: string | null; isPro
           <p className="text-sm font-semibold text-gray-800">Professional Coach</p>
           <p className="text-xs text-gray-400">Full coach platform unlocked</p>
         </div>
-        <a href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-forest)] flex-shrink-0">
+        <Link href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-forest)] flex-shrink-0">
           Dashboard →
-        </a>
+        </Link>
       </div>
     )
   }
@@ -757,26 +758,68 @@ export default function SettingsClient({ email, initialProfile }: Props) {
         <Section title="Notifications">
           <ToggleRow
             label="Training reminders"
-            sublabel="Daily reminder when you have a session"
+            sublabel="Enable push notifications from NextSplit"
             value={p?.notifications_enabled ?? false}
             onChange={saveNotifications}
           />
           {p?.notifications_enabled && (
-            <div className="px-4 py-3.5 border-t border-gray-50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm font-medium text-gray-900">Reminder time</div>
-                  <div className="text-[11px] text-gray-400 mt-0.5">What time to send your daily reminder</div>
+            <>
+              <div className="px-4 py-3.5 border-t border-gray-50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">Reminder time</div>
+                    <div className="text-[11px] text-gray-400 mt-0.5">Your typical session time</div>
+                  </div>
+                  <input
+                    type="time"
+                    defaultValue={p.notification_time?.slice(0, 5) ?? '07:00'}
+                    onChange={e => saveNotificationTime(e.target.value)}
+                    className="text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
+                    aria-label="Notification time"
+                  />
                 </div>
-                <input
-                  type="time"
-                  defaultValue={p.notification_time?.slice(0, 5) ?? '07:00'}
-                  onChange={e => saveNotificationTime(e.target.value)}
-                  className="text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
-                  aria-label="Notification time"
-                />
               </div>
-            </div>
+              {/* Per-type notification preferences */}
+              <div className="border-t border-gray-50">
+                <div className="px-4 py-2.5">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                    Notification types
+                  </p>
+                </div>
+                {([
+                  { key: 'session_reminder',     label: 'Session reminders',   sub: 'Before your scheduled sessions' },
+                  { key: 'adaptation_alert',     label: 'Plan updates',         sub: 'When your plan is adapted' },
+                  { key: 'weekly_recap',         label: 'Weekly recap',         sub: 'Sunday evening summary' },
+                  { key: 'race_countdown',       label: 'Race countdown',       sub: 'Final 4 weeks before race day' },
+                  { key: 'streak_at_risk',       label: 'Streak reminder',      sub: 'When your streak is at risk' },
+                  { key: 'coach_message',        label: 'Coach messages',       sub: 'Voice notes and messages' },
+                  { key: 'at_risk_reengagement', label: 'Check-in reminder',   sub: 'If you haven\'t logged in 4 days' },
+                  { key: 'class_revealed',       label: 'Class reveal',         sub: 'When your runner class is ready' },
+                ] as const).map(item => {
+                  const prefKey = `notif_${item.key}`
+                  const isOn = p?.[prefKey as keyof typeof p] !== false  // default true
+                  return (
+                    <ToggleRow
+                      key={item.key}
+                      label={item.label}
+                      sublabel={item.sub}
+                      value={isOn}
+                      onChange={async (val) => {
+                        try {
+                          await updateProfile({ [prefKey]: val } as never)
+                        } catch { toastError('Failed to update') }
+                      }}
+                    />
+                  )
+                })}
+                <div className="px-4 py-3 border-t border-gray-50">
+                  <p className="text-[10px] text-gray-400 leading-relaxed">
+                    Quiet hours (10pm–7am) are always respected regardless of these settings.
+                    Maximum one notification per day.
+                  </p>
+                </div>
+              </div>
+            </>
           )}
         </Section>
 
