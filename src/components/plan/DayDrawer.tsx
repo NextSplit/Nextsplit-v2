@@ -52,10 +52,10 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
   const isRest = day.sessions.length === 0 || day.sessions.every(s => !s.c || s.c === 'rest')
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end bg-black/20 backdrop-blur-[2px]" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex flex-col justify-end backdrop-blur-[2px]" style={{ background: "rgba(0,0,0,0.6)" }} onClick={onClose}>
       <div
-        className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl flex flex-col"
-        style={{ maxHeight: '88vh', marginBottom: bottomInset }}
+        className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl flex flex-col"
+        style={{ background: 'var(--color-surface)', maxHeight: '88vh', marginBottom: bottomInset }}
         onClick={e => e.stopPropagation()}
       >
         {/* Handle + header */}

@@ -165,24 +165,24 @@ export function passesGuardrails(ctx: GuardrailContext): { ok: boolean; reason?:
   // Per-type preference
   if (ctx.typePrefs[ctx.type] === false) return { ok: false, reason: 'type_disabled' }
 
+  // Max 1 notification per day (checked before quiet hours — rate limits are absolute)
+  if (ctx.lastNotificationAt) {
+    const msSince = Date.now() - ctx.lastNotificationAt.getTime()
+    if (msSince < 20 * 3600 * 1000) {
+      return { ok: false, reason: 'rate_limit_1_per_day' }
+    }
+  }
+
+  // At-risk: sent once only, never again (checked before quiet hours — permanent block)
+  if (ctx.type === 'at_risk_reengagement' && ctx.atRiskSentAt) {
+    return { ok: false, reason: 'at_risk_already_sent' }
+  }
+
   // Quiet hours: never 10pm–7am in user's local time
   const nowUtcMs = Date.now()
   const localHour = Math.floor((nowUtcMs + ctx.userTimezoneOffset * 60 * 1000) / (1000 * 3600)) % 24
   if (localHour >= 22 || localHour < 7) {
     return { ok: false, reason: 'quiet_hours' }
-  }
-
-  // Max 1 notification per day
-  if (ctx.lastNotificationAt) {
-    const msSince = nowUtcMs - ctx.lastNotificationAt.getTime()
-    if (msSince < 20 * 3600 * 1000) {  // 20hr buffer (not exact 24 to avoid edge cases)
-      return { ok: false, reason: 'rate_limit_1_per_day' }
-    }
-  }
-
-  // At-risk: sent once only, never again
-  if (ctx.type === 'at_risk_reengagement' && ctx.atRiskSentAt) {
-    return { ok: false, reason: 'at_risk_already_sent' }
   }
 
   return { ok: true }
