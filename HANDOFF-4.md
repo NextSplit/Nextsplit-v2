@@ -286,7 +286,20 @@ and social share card.
 2. Set thresholds: if Day 30 retention < 25%, pause growth and fix loop
 3. Weekly Monday review cadence starts now
 
-**Decision gate to Phase 2:** 50 weekly active users + Day 30 retention ≥ 40%
+### ✅ PHASE 2 COMPLETE — April 2026
+
+| Feature | Status | Notes |
+|---|---|---|
+| Runner class system | ✅ Done | 7 earned classes, 4-week reveal, share card |
+| Brand token migration | ✅ Done | Forest/Ember/Track/Night, Outfit + Cormorant fonts |
+| Split Leader upgrade flow | ✅ Done | Settings → activate in one tap |
+| Race result share card | ✅ Done | "Got me to the start line ready." |
+| Voice messages | ✅ Done | 60s coach audio, waveform, signed URLs |
+| Plan marketplace | ✅ Done | Browse, detail modal, purchase, ownership tracking |
+| Analytics (AARRR) | ✅ Done | 25+ events, all key funnels instrumented |
+| Referral programme | ⏸ Held | Ships after Day 30 retention ≥ 40% |
+
+**Decision gate to Phase 3:** App Store submission, Garmin integration
 
 ---
 
@@ -479,6 +492,8 @@ Stripe Connect · Anthropic API (claude-sonnet-4-20250514) · Recharts
 
 ```
 profiles           — user profile, RPG data, onboarding state, Stripe subscription
+                     NEW: runner_class, runner_class_updated_at, runner_class_revealed,
+                          first_session_logged_at
 user_plans         — active/archived plans with weeks_data JSON
 training_logs      — every session log
 wellness_logs      — daily check-ins
@@ -488,14 +503,20 @@ recipes            — recipe library
 gym_logs           — gym session logs
 activity_logs      — ad-hoc activities
 user_races         — race history
-plan_templates     — 17 seeded plans (NextSplit Official)
+plan_templates     — 17 seeded plans + coach plans
+                     NEW: author_type, author_id, is_public, avg_completion_rate,
+                          total_starts, avg_rating, review_count
+plan_purchases     — marketplace plan purchases (athlete_id, template_id, coach_id,
+                     amount_gbp, stripe_payment_id, coach_payout_gbp, platform_fee_gbp)
+voice_messages     — coach voice notes (coach_id, athlete_id, storage_path,
+                     duration_secs, listened_at)
 coach_profiles     — Pro Coach accounts
 coach_athletes     — coach-athlete relationships
-coach_messages     — messaging
+coach_messages     — text messaging
 coach_invites      — invite tokens
 coach_reviews      — athlete reviews
 session_annotations— coach notes on sessions
-featured_plans     — marketplace plans
+featured_plans     — marketplace featured plans
 clubs              — community clubs
 club_members       — memberships
 club_feed          — activity feed
@@ -507,12 +528,8 @@ seasons            — XP seasons
 push_subscriptions — web push tokens
 ```
 
-**Needed additions (Phase 2 — run migrations before building):**
-- `runner_classes` — or add `runner_class` column to `profiles`
-- `referrals` — referral links, conversions, reward tracking
-- `marketplace_purchases` — plan purchase records
-- `voice_messages` — audio message metadata (Supabase Storage for files)
-- `ai_usage` — already in code but table may not exist; create if missing
+**Storage buckets:**
+- `voice-messages` — coach audio files (max 5MB, webm/mp4/ogg, private)
 
 ---
 
@@ -612,31 +629,36 @@ All conflicts resolved (see table above). Gap analysis complete. This handoff wr
 
 ---
 
-## Immediate Next Steps (Next Session)
+## Immediate Next Steps (Phase 3)
 
 In priority order:
 
-1. **Stripe end-to-end test** — test card `4242 4242 4242 4242`
-   - Verify `profiles.is_pro = true` in Supabase after webhook fires
-   - Verify founding member count increments
-   - Then flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true` in Vercel
-
-2. **Supabase type regeneration**
+1. **Capacitor native app wrap** — PWA → iOS/Android for App Store
    ```bash
-   npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.ts
+   npm install @capacitor/core @capacitor/cli @capacitor/ios @capacitor/android
+   npx cap init NextSplit app.nextsplit.app
+   npx cap add ios && npx cap add android
    ```
-   Eliminates ~40 `any` types in community/coach routes.
 
-3. **Privacy + Terms pages** — real content (currently stubs at `/privacy` and `/terms`)
+2. **Garmin Health API** — pull activities automatically
+   - Register at Garmin Developer Portal
+   - `/api/garmin/callback` — OAuth + activity webhook
+   - Map Garmin activity types to NextSplit session types
 
-4. **Analytics threshold review** — check PostHog for any Day 7 data from early users
+3. **Apple Health** (iOS via Capacitor plugin)
+   ```bash
+   npm install @capacitor-community/health-kit
+   ```
 
-5. **Runner class system** — Phase 2 first build
-   - Add `computeRunnerClass(logs: TrainingLog[]): RunnerClass` to `src/lib/rpg.ts`
-   - Classes: Warming Up (default) / Marathon Runner / Speed Merchant / Trail Blazer /
-     Base Builder / All-Rounder / Comeback Runner
-   - Store in `profiles.runner_class` (add column via Supabase SQL editor)
-   - Reveal screen: fires after 4 weeks of training data
+4. **Custom domain** — nextsplit.com
+   - Update Vercel, Supabase auth redirect, Strava OAuth redirect, Stripe webhook
+
+5. **Supabase type regeneration** — eliminates ~40 remaining `any` types
+   ```bash
+   npx supabase gen types typescript --project-id YOUR_ID > src/types/database.ts
+   ```
+
+6. **Stripe end-to-end test** (still pending) → flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true`
 
 ---
 
