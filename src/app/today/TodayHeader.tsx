@@ -52,7 +52,7 @@ export function TodayHeader({
     : null
 
   return (
-    <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+    <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
       <div className="max-w-lg mx-auto">
 
         {/* Time-aware greeting — Today only, spec: "Good morning, Alex — session in plain English" */}

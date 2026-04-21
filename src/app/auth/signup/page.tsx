@@ -82,8 +82,8 @@ function SignupForm() {
 
       {/* Form */}
       <div className="flex-1 px-6 py-8 max-w-sm mx-auto w-full">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
-          <h2 className="text-base font-bold text-gray-900 text-center">Create your free account</h2>
+        <div className="rounded-2xl p-6 space-y-4" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
+          <h2 className="text-base font-bold text-center" style={{ color: "var(--color-text-primary)" }}>Create your free account</h2>
 
           {/* Referral banner */}
           {refCode && (
@@ -100,7 +100,7 @@ function SignupForm() {
           <button
             onClick={async () => { setLoading(true); await signInWithGoogle() }}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 rounded-xl py-3 text-sm font-semibold transition-colors disabled:opacity-50" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -111,51 +111,48 @@ function SignupForm() {
             Continue with Google
           </button>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100" />
-            </div>
-            <div className="relative flex justify-center text-xs text-gray-400 bg-white px-3">or</div>
+          <div className="flex items-center">
+            <div className="flex-1 border-t" style={{ borderColor: "var(--color-border)" }} /><span className="px-3 text-xs" style={{ color: "var(--color-text-tertiary)" }}>or</span><div className="flex-1 border-t" style={{ borderColor: "var(--color-border)" }} />
           </div>
 
           <form onSubmit={e => { e.preventDefault(); handleSubmit(new FormData(e.currentTarget)) }} className="space-y-3">
             <div>
-              <label className="text-xs font-semibold text-gray-500 block mb-1.5">Your name</label>
+              <label className="text-xs font-semibold block mb-1.5" style={{ color: "var(--color-text-tertiary)" }}>Your name</label>
               <input name="name" type="text" required
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
+                className="w-full px-3 py-3 rounded-xl text-sm outline-none transition-colors" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}
                 placeholder="Alex" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-500 block mb-1.5">Email</label>
+              <label className="text-xs font-semibold block mb-1.5" style={{ color: "var(--color-text-tertiary)" }}>Email</label>
               <input name="email" type="email" required autoComplete="email"
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
+                className="w-full px-3 py-3 rounded-xl text-sm outline-none transition-colors" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}
                 placeholder="you@example.com" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-500 block mb-1.5">Password</label>
+              <label className="text-xs font-semibold block mb-1.5" style={{ color: "var(--color-text-tertiary)" }}>Password</label>
               <input name="password" type="password" required minLength={8} autoComplete="new-password"
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors"
+                className="w-full px-3 py-3 rounded-xl text-sm outline-none transition-colors" style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-2)", color: "var(--color-text-primary)" }}
                 placeholder="Minimum 8 characters" />
             </div>
 
             {error && (
-              <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-xl border border-red-100">{error}</p>
+              <p className="text-xs text-red-400 px-3 py-2 rounded-xl" style={{ background: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.3)" }}>{error}</p>
             )}
 
             <button type="submit" disabled={loading}
-              className="w-full bg-[var(--ns-forest)] text-white py-3 rounded-xl text-sm font-bold hover:bg-[var(--ns-forest)] transition-colors disabled:opacity-50">
+              className="w-full text-white py-3 rounded-xl text-sm font-bold disabled:opacity-50 transition-all active:scale-95" style={{ background: "var(--ns-forest)" }}>
               {loading ? 'Creating account…' : 'Create free account →'}
             </button>
           </form>
 
-          <p className="text-xs text-gray-400 text-center">
+          <p className="text-xs text-center" style={{ color: "var(--color-text-tertiary)" }}>
             By signing up you agree to our <a href="/terms" className="underline">Terms</a> &amp; <a href="/privacy" className="underline">Privacy Policy</a>.
           </p>
         </div>
 
-        <p className="text-center text-sm text-gray-400 mt-6">
+        <p className="text-center text-sm mt-6" style={{ color: "var(--color-text-tertiary)" }}>
           Already have an account?{' '}
-          <Link href="/auth/login" className="text-[var(--ns-forest)] font-semibold hover:underline">
+          <Link href="/auth/login" className="font-bold" style={{ color: "var(--ns-ember)" }}>
             Sign in
           </Link>
         </p>

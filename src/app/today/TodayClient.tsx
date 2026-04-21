@@ -739,7 +739,7 @@ export default function TodayClient() {
                 onClick={() => setShowAdHocModal(true)}
                 className="w-full flex items-center gap-3 border border-dashed border-gray-200 rounded-2xl px-4 py-3 text-left hover:border-teal-300 hover:bg-[var(--ns-forest-light)]/40 transition-all"
               >
-                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-lg font-light flex-shrink-0">+</div>
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-light flex-shrink-0" style={{ background: "var(--color-surface-2)", color: "var(--color-text-tertiary)" }}>+</div>
                 <div>
                   <p className="text-xs font-semibold text-gray-600">Add a session</p>
                   <p className="text-[10px] text-gray-400 mt-0.5">Log extra work that wasn&apos;t in your plan</p>
