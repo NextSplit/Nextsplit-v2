@@ -103,3 +103,41 @@ export function secsToMMSS(secs: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 // Deploy trigger Sun Apr 19 21:42:16 UTC 2026
+
+// ── Time-aware greeting ───────────────────────────────────────────────────────
+
+/** Returns "Good morning", "Good afternoon", or "Good evening" based on time */
+export function getTimeGreeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return 'Good morning'
+  if (h < 17) return 'Good afternoon'
+  return 'Good evening'
+}
+
+/** Plain-English session description per session type — coach voice, not jargon */
+export function getSessionPlainEnglish(sessionCode: string, sessionName: string): string {
+  const c = sessionCode?.toLowerCase() ?? ''
+  if (c === 'rest') return 'Rest day — your body is adapting today.'
+  if (c === 'run-easy') return `Easy run today. Keep it genuinely easy — this one builds the engine.`
+  if (c === 'run-long') return `Long run today. The one that matters most this week.`
+  if (c === 'run-int')  return `Intervals today. The hard one that makes everything else easier.`
+  if (c === 'run-tempo')return `Tempo run today. Comfortably uncomfortable — that's the zone.`
+  if (c === 'run-mp')   return `Marathon pace today. Practice the pace you'll race at.`
+  if (c === 'run-race') return `Race day. The training is done. Trust the work.`
+  if (c.startsWith('gym')) return `Strength session today. Supporting work that protects the running.`
+  if (c === 'pilates')  return `Pilates today. Mobility and control — the underrated side of training.`
+  if (c === 'sauna')    return `Recovery session today. Let the body absorb the work.`
+  return `${sessionName} today.`
+}
+
+/** Session type category for adaptive log modal behaviour */
+export type LogModalMode = 'one-tap' | 'standard' | 'full-debrief' | 'gym' | 'rest'
+
+export function getLogModalMode(sessionCode: string): LogModalMode {
+  const c = sessionCode?.toLowerCase() ?? ''
+  if (c === 'rest') return 'rest'
+  if (c === 'run-easy') return 'one-tap'
+  if (c === 'run-int' || c === 'run-race') return 'full-debrief'
+  if (c.startsWith('gym') || c === 'pilates' || c === 'sauna') return 'gym'
+  return 'standard' // tempo, long, mp, default
+}

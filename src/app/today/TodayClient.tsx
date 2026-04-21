@@ -24,6 +24,9 @@ import { useSearchParams } from 'next/navigation'
 import { TodayHeader } from './TodayHeader'
 import { TodayModals } from './TodayModals'
 import SessionCard from '@/components/SessionCard'
+import { useProfile } from '@/hooks/useProfile'
+import MissedSessionFlow from '@/components/MissedSessionFlow'
+import AICoachingNote from '@/components/AICoachingNote'
 
 
 export default function TodayClient() {
@@ -31,6 +34,7 @@ export default function TodayClient() {
   const { logs, logSession, undoSession, loading: logsLoading } = useTrainingLog(plan?.id ?? null)
   const { logs: allPlanLogs } = useAllTrainingLogs()
   const { gymLogs } = useGymLog(plan?.id ?? null)
+  const { profile } = useProfile()
 
   const [dateOffset, setDateOffset] = useState(0)
   const [readinessScore, setReadinessScore] = useState<number | null>(null)
@@ -49,6 +53,7 @@ export default function TodayClient() {
   const [showWeeklyShare, setShowWeeklyShare] = useState(false)
   const [ceremonyDismissed, setCeremonyDismissed] = useState(false)
   const [showAdHocModal, setShowAdHocModal] = useState(false)
+  const [showMissedFlow, setShowMissedFlow] = useState(false)
 
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -60,9 +65,20 @@ export default function TodayClient() {
     const notice = searchParams.get('notice')
     if (notice === 'race_soon') {
       toastWarning("Race is sooner than the full plan length — we've started from today. Make the most of the time you have!", 6000)
-      // Clean the URL without reloading
       router.replace('/today', { scroll: false })
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Offline sync — flush queued sessions when back online (Tech Pillar spec)
+  useEffect(() => {
+    let cleanup: (() => void) | undefined
+    import('@/lib/offlineQueue').then(({ initOfflineSync }) => {
+      cleanup = initOfflineSync((count) => {
+        toastSuccess(`${count} session${count > 1 ? 's' : ''} synced from offline queue`)
+      })
+    }).catch(() => {})
+    return () => cleanup?.()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const isToday = dateOffset === 0
@@ -96,6 +112,7 @@ export default function TodayClient() {
   const weekN = isToday ? (plan?.current_week ?? 1) : viewWeekN
 
   // Clear undo on date change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (undoInfo) {
       clearTimeout(undoInfo.timer)
@@ -104,7 +121,8 @@ export default function TodayClient() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateOffset])
 
-  // Undo countdown ticker
+  // Undo countdown ticker — pre-existing pattern, setState called intentionally on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!undoInfo) return
     setUndoSecsLeft(8)
@@ -126,6 +144,14 @@ export default function TodayClient() {
     try {
       log = await logSession({ plan_id: plan.id, ...params })
     } catch {
+      // Offline fallback — queue for sync on reconnect (Tech Pillar spec)
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        const { queueSession } = await import('@/lib/offlineQueue')
+        await queueSession({ plan_id: plan.id, ...params })
+        toastSuccess('Saved offline — will sync when back online')
+        hapticLight()
+        return
+      }
       toastError('Failed to save — check your connection and try again')
       return
     }
@@ -298,6 +324,7 @@ export default function TodayClient() {
         isToday={isToday}
         todaySessions={todaySessions}
         doneTodayCount={doneTodayCount}
+        displayName={profile?.display_name ?? null}
       />
 
       <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
@@ -498,24 +525,40 @@ export default function TodayClient() {
               )
             })}
 
-            {/* Low readiness suggestion — shown only when readiness ≤5 */}
+            {/* ACWR risk flag — coach voice, per Product & UX Pillar spec */}
+            {isToday && acwrCurrent !== null && acwrCurrent > 1.3 && (
+              <AICoachingNote
+                type="acwr-risk"
+                what={acwrCurrent > 1.5
+                  ? `Your training load is very high — ACWR ${acwrCurrent.toFixed(2)}.`
+                  : `Your ACWR has been in the amber zone — ${acwrCurrent.toFixed(2)}.`}
+                why={acwrCurrent > 1.5
+                  ? "You haven't done anything wrong — it's cumulative load from a strong run of training. This is the zone where injury risk rises."
+                  : "You haven't done anything wrong — it's cumulative load from a strong fortnight. Your body is adapting."}
+                protects={`I've flagged this so you can make an informed call on today's session. ${acwrCurrent > 1.5 ? 'A lighter session today protects the next two weeks.' : 'An easy option is available below if you want it.'}`}
+                canOverride={false}
+              />
+            )}
+
+            {/* Low readiness — coach voice per Product & UX Pillar spec */}
             {isToday && readinessScore !== null && readinessScore <= 5 && todaySessions.length > 0 && (() => {
               const isVeryLow = readinessScore <= 3
               const hasRunSessions = todaySessions.some(s => s?.c?.startsWith('run'))
               return (
-                <div className="bg-amber-50 rounded-2xl border border-amber-100 p-4">
-                  <div className="flex items-start gap-2.5 mb-3">
-                    <span className="text-base mt-0.5">🔄</span>
-                    <div>
-                      <p className="text-[11px] font-bold text-amber-800 mb-0.5">Low readiness today</p>
-                      <p className="text-xs text-amber-700 leading-relaxed">
-                        {isVeryLow
-                          ? 'Readiness is very low. Recovery is training — a bad day forced is two bad days.'
-                          : 'Consider modifying today\'s session. Your body is telling you something.'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
+                <div className="space-y-2">
+                  <AICoachingNote
+                    type="readiness"
+                    what={isVeryLow
+                      ? 'Readiness is very low today.'
+                      : "Readiness is below where we'd want it for today's session."}
+                    why={isVeryLow
+                      ? "Recovery is training. A bad day forced is two bad days. Your body is telling you something important."
+                      : "Your body is telling you something. Consider modifying today's session — you'll be stronger for it tomorrow."}
+                    protects="You can override this and do the original session — that option is below."
+                    canOverride={true}
+                    onOverride={() => setReadinessScore(6)}
+                  />
+                  <div className="flex flex-col gap-2 pl-1">
                     {hasRunSessions && !isVeryLow && (
                       <button
                         onClick={() => {
@@ -525,7 +568,7 @@ export default function TodayClient() {
                             }
                           })
                         }}
-                        className="w-full py-2 rounded-xl bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold"
+                        className="w-full py-2.5 rounded-xl bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold"
                       >
                         🏃 Log as easy effort (−20% volume)
                       </button>
@@ -538,15 +581,9 @@ export default function TodayClient() {
                           }
                         })
                       }}
-                      className="w-full py-2 rounded-xl bg-white border border-amber-200 text-amber-700 text-xs font-semibold"
+                      className="w-full py-2.5 rounded-xl bg-white border border-amber-200 text-amber-700 text-xs font-semibold"
                     >
-                      😴 Rest instead (log as complete)
-                    </button>
-                    <button
-                      onClick={() => setReadinessScore(6)}
-                      className="w-full py-1.5 text-[10px] text-amber-500 font-medium"
-                    >
-                      Keep original plan →
+                      😴 Rest instead — log as complete
                     </button>
                   </div>
                 </div>
@@ -587,15 +624,28 @@ export default function TodayClient() {
               </div>
             )}
 
-            {/* Missed session suggestion — past days with incomplete sessions */}
+            {/* Missed session — conversational flow (Product & UX Pillar spec) */}
             {!isToday && dateOffset < 0 && todaySessions.length > 0 && doneTodayCount < todaySessions.length && (
-              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-base mt-0.5">💡</span>
-                <div>
-                  <p className="text-[11px] font-bold text-amber-800 mb-0.5">Missed {todaySessions.length - doneTodayCount} session{todaySessions.length - doneTodayCount > 1 ? 's' : ''}</p>
-                  <p className="text-xs text-amber-700 leading-relaxed">
-                    You can still log these — tap the ✓ to mark them done. Or skip and keep moving.
-                  </p>
+              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3">
+                <div className="flex items-start gap-2.5">
+                  <span className="text-base mt-0.5">💡</span>
+                  <div className="flex-1">
+                    <p className="text-[11px] font-bold text-amber-800 mb-0.5">
+                      Looks like {todaySessions.length - doneTodayCount === 1
+                        ? `${todaySessions.find((_, i) => !logs[`${weekN}_${planDayIndex}_${i}`]?.done)?.n ?? 'a session'} didn&apos;t happen`
+                        : `${todaySessions.length - doneTodayCount} sessions didn&apos;t happen`}
+                    </p>
+                    <p className="text-xs text-amber-700 leading-relaxed mb-2.5">
+                      Tap here if you&apos;d like to sort the plan.
+                    </p>
+                    <button
+                      onClick={() => setShowMissedFlow(true)}
+                      className="text-xs font-bold px-3 py-1.5 rounded-lg text-white active:scale-95 transition-all"
+                      style={{ background: 'var(--ns-ember)' }}
+                    >
+                      Rebuild plan around this →
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -617,7 +667,7 @@ export default function TodayClient() {
                 <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-lg font-light flex-shrink-0">+</div>
                 <div>
                   <p className="text-xs font-semibold text-gray-600">Add a session</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">Log extra work that wasn't in your plan</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Log extra work that wasn&apos;t in your plan</p>
                 </div>
               </button>
             )}
@@ -738,6 +788,19 @@ export default function TodayClient() {
           </>
         )}
       </div>
+
+      {/* Missed session conversational flow */}
+      {showMissedFlow && plan && todaySessions.length > 0 && (
+        <MissedSessionFlow
+          session={todaySessions.find((_, i) => !logs[`${weekN}_${planDayIndex}_${i}`]?.done) ?? todaySessions[0]}
+          weekN={weekN}
+          planId={plan.id}
+          onMarkMissed={() => {
+            setShowMissedFlow(false)
+          }}
+          onClose={() => setShowMissedFlow(false)}
+        />
+      )}
 
       <TodayModals
         plan={plan}
