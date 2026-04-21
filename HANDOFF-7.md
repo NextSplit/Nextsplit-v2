@@ -258,60 +258,53 @@ ALTER TABLE profiles
 
 ---
 
-## Current Phase: B — Coach Dashboard Overhaul
+## Current Phase: C — Plan Library Expansion
 
-Phase A code complete (committed 6f07125). Founder actions pending: ICO, company formation, email DNS, PostHog dashboard config.
+## Phase B — Coach Dashboard ✅ COMPLETE
+
+| Sub-phase | Commit | What |
+|---|---|---|
+| B1 Squad command centre | 346067c | Needs-attention priority, clean dashboard, weekly load bars |
+| B2 Athlete drill-down | fbec37c | 12-week ACWR chart, wellness sparklines, this-week sessions |
+| B3 Communication layer | fbec37c | Unified thread, quick reactions, template messages |
+| B4 Plan build handshake | 43088f2 | Athlete intake form, 4-stage progress, coach receives structured message |
+| B5 Marketplace dashboard | 43088f2 | Per-plan revenue, starts, completion rate, ratings |
 
 ## What Was Built in Phase A
 
 | Item | Commit | Status |
 |---|---|---|
-| A1a Supabase types | manual step | ⚠️ Run manually |
-| A1b Zod on all routes | e7daf56 | ✅ |
-| A2 Cookie consent | 58a2d6b | ✅ |
-| A2 Legal pages | 58a2d6b | ✅ |
-| A2 Medical disclaimer | 58a2d6b | ✅ |
+| A1b Zod on all 27 routes | e7daf56 | ✅ |
+| A2 Cookie consent + legal | 58a2d6b | ✅ |
+| A2 Medical disclaimer (3 locations) | 58a2d6b | ✅ |
 | A3 AI plan review tool | f41639e | ✅ |
 | A4 Onboarding funnel events | f41639e | ✅ |
 | A5 Adaptation E2E test | 6f07125 | ✅ |
 | A7 NPS prompt | 6f07125 | ✅ |
 
-## What Needs Building Next — Phase B (Coach Dashboard)
+## What Needs Building Next — Phase C (Plan Library)
 
-**B1 — Squad Command Centre** ← START HERE
-Redesign /coach/squad to show actionable intel in 30 seconds:
-- Attention required strip (red/amber athletes, what's wrong, one-tap action)
-- Today's sessions per athlete (done/outstanding)
-- Load risk heatmap (ACWR per athlete, last 4 weeks)
-- Weekly completion bars
-- Quick actions (bulk voice note, weekly summary)
+**C1 — Expand to 65+ templates**
+Currently 17 seeded templates. Add:
+- Marathon: novice (18wk), intermediate (16wk), performance (20wk), Berlin/London specific
+- Half marathon: 10wk beginner, 12wk intermediate, 14wk performance
+- 10K: 8wk beginner, 10wk intermediate, 12wk performance
+- 5K: C25K (8wk), improver (8wk), sub-20 (10wk)
+- Lifestyle: 4wk base, 6wk consistency, 8wk habit
+- Ultra: 50K (16wk), 50mi (20wk), 100mi (24wk)
 
-**B2 — Athlete Drill-Down**
-Restructure /coach/athlete/[athleteId] around coach's questions:
-- 12-week load chart (ACWR over time)
-- This week session-by-session
-- Recent wellness trend (sparklines)
-- Upcoming 14-day sessions with pre-annotation
-- Unified communication thread (voice + text)
-- Quick reactions (🔥 💙 ⚡ 🧊)
+**C2 — VDOT pace adaptation**
+On plan activation, compute training paces from recent race times:
+- Easy: VDOT easy pace ±5s/km
+- Tempo: VDOT threshold pace
+- Interval: VDOT VO2max pace
+- Long: VDOT long run pace
+Replace generic paces in sessions with personalised targets.
 
-**B3 — Communication Layer**
-- Unified message thread (voice + text chronological)
-- Quick reactions per session
-- Broadcast message to all athletes
-- Response indicators (listened? read?)
-- Template messages (5-10 reusable)
-
-**B4 — Plan Build Handshake**
-Full coach-athlete plan build flow:
-1. Athlete intake form → coach sees before building
-2. Coach follow-up questions via thread
-3. Plan build progress stages (4 stages visible to athlete)
-4. Plan preview + one-round of changes
-5. Athlete accepts → payment confirms → plan activates
-
-**B5 — Marketplace Performance Dashboard**
-Per-plan: downloads, active users, completion rate, rating, revenue, geography
+**C3 — Plan browser improvements**
+- Filter by distance, level, duration, coach-authored vs NextSplit
+- Sort by: completion rate, rating, newest, price
+- Preview week 1 before activating
 
 **All of Phase A is pre-user. No exceptions. Build in parallel tracks.**
 
