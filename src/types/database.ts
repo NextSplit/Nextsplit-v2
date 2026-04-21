@@ -316,6 +316,18 @@ export interface ProfileWithRunnerClass extends Profile {
   first_session_logged_at: string | null
 }
 
+/** Voice messages — added April 2026 */
+export interface VoiceMessageRecord {
+  id: string
+  coach_id: string
+  athlete_id: string
+  storage_path: string
+  duration_secs: number | null
+  session_annotation_id: string | null
+  listened_at: string | null
+  created_at: string
+}
+
 // ── Coach Platform Types (Phase 2-3) ─────────────────────────────────────────
 
 export interface CoachProfile {
