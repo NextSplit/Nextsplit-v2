@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { config } from '@/lib/config'
+import { Analytics } from '@/lib/analytics'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
@@ -732,7 +733,10 @@ export default function ProfileClient({
       {showClassReveal && runnerClass && runnerClass !== 'warming_up' && (
         <RunnerClassReveal
           classId={runnerClass}
-          onDismiss={() => setShowClassReveal(false)}
+          onDismiss={() => {
+            setShowClassReveal(false)
+            Analytics.classRevealed(runnerClass)
+          }}
         />
       )}
 

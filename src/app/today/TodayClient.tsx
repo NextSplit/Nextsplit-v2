@@ -14,6 +14,7 @@ import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/streak'
 import { calcACWR } from '@/lib/statsUtils'
 import { hapticLight, hapticSuccess } from '@/lib/haptics'
+import { Analytics } from '@/lib/analytics'
 import TodayBelowFold from './TodayBelowFold'
 import AdaptPlanCard from '@/components/AdaptPlanCard'
 import StravaSyncButton from '@/components/StravaSyncButton'
@@ -129,6 +130,12 @@ export default function TodayClient() {
       return
     }
     hapticLight()
+
+    // Track session logged — the core retention event
+    if (params.done) {
+      const sessionCode = planDay?.sessions[params.session_i]?.c ?? 'run'
+      Analytics.sessionLogged(sessionCode, params.km, params.effort)
+    }
 
     // Check for new personal best — auto-calculate pace if not explicitly provided
     if (params.km && params.done) {
@@ -717,7 +724,11 @@ export default function TodayClient() {
               hasPlanNextWeek={!!(plan && plan.current_week < plan.total_weeks)}
               onReadiness={setReadinessScore}
               onAdvanceWeek={async () => {
-                try { await advanceWeek(); toastSuccess(`Week ${weekN + 1} started!`) }
+                try {
+                  await advanceWeek()
+                  toastSuccess(`Week ${weekN + 1} started!`)
+                  Analytics.weekAdvanced(weekN + 1, plan?.total_weeks ?? 0)
+                }
                 catch { toastError('Failed to advance week — try again') }
               }}
               logs={logs}

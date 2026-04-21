@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Analytics } from '@/lib/analytics'
 
 interface Props {
   planId:     string
@@ -45,6 +46,7 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
   const handleAdapt = async () => {
     setLoading(true)
     setError('')
+    Analytics.adaptationRequested(missedCount)
     try {
       const res  = await fetch('/api/ai/adapt-plan', {
         method:  'POST',
@@ -55,6 +57,7 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
       if (data.error) { setError(data.error); return }
       setAdaptation(data.adaptation)
       onAdapted(data.adaptation)
+      Analytics.adaptationCompleted()
     } catch {
       setError('Failed to adapt plan — try again')
     } finally {
