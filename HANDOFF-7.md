@@ -258,15 +258,17 @@ ALTER TABLE profiles
 
 ---
 
-## Current Phase: F — Pre-Alpha Quality Gates
+## Current Phase: G — Alpha (Closed Pool)
+
+**Phases A–F complete. App is ready for human testing.**
 
 ## Phase D — Design Uplift ✅ COMPLETE
 
 | Sub-phase | Commit | What |
 |---|---|---|
 | D1-D3 Typography + teal purge + icons | 000e4ef | .font-display/.font-data/.font-body CSS, 435 teal→Forest, Phosphor BottomNav fix |
-| D4 Character SVG avatars | e765f60 | 7 illustrated SVGs, wired into reveal modal + CharacterProfileModal |
-| D5 Component polish | e765f60 | SessionCard rounded-3xl + shadow, BottomNav frosted + indicator, modal animations |
+| D4 Character SVG avatars | 87cb5d8 | 7 illustrated runner class SVGs, wired into reveal+profileal + CharacterProfileModal |
+| D5 Component polish | 87cb5d8 | 552 slate→warm gray, font-data on pace/km/durationosted + indicator, modal animations |
 
 ## Phase C — Plan Library ✅ COMPLETE (commit 339f0ca)
 
@@ -504,6 +506,44 @@ MASTER-DELIVERY-PLAN-V2.md            Full revised delivery plan (phases A→I)
 | Product Designer | After Phase D design uplift | Visual execution, Figma |
 | Head of Growth | Phase H (retention gate met) | CAC, conversion, referral |
 | Community & Coach Partnerships | Phase I (coach beta) | Coach relationships, clubs |
+
+
+---
+
+## Complete Build State (All Phases A–F)
+
+| Phase | Sub-phase | Commit | Status |
+|---|---|---|---|
+| A | A1 Zod on all 27 API routes | e7daf56 | ✅ |
+| A | A2 Cookie consent + legal pages + medical disclaimer | 58a2d6b | ✅ |
+| A | A3 AI plan quality review tool (/admin/plan-review) | f41639e | ✅ |
+| A | A4 Onboarding funnel PostHog events | f41639e | ✅ |
+| A | A5 Adaptation E2E test tool (/admin/adapt-test) | 6f07125 | ✅ |
+| A | A7 In-app NPS prompt (Day 7 + Day 30) | 6f07125 | ✅ |
+| A | A2 non-code (ICO, company, DNS) | — | ⚠️ Founder action |
+| B | B1 Squad command centre redesign | 346067c | ✅ |
+| B | B2 Athlete drill-down (12wk ACWR, wellness sparklines) | fbec37c | ✅ |
+| B | B3 Communication layer (thread, reactions, templates) | fbec37c | ✅ |
+| B | B4 Plan build handshake (/coach/plan-request) | 43088f2 | ✅ |
+| B | B5 Marketplace performance dashboard | 43088f2 | ✅ |
+| C | C1 36 plan templates (was 17), generator script | 339f0ca | ✅ |
+| C | C2 VDOT pace personalisation (src/lib/vdot.ts) | 339f0ca | ✅ |
+| C | C3 Plan browser: sort, duration filter, week 1 preview | 339f0ca | ✅ |
+| D | D1 Typography system (font-display/body/data classes) | 000e4ef | ✅ |
+| D | D2 Teal→Forest colour purge (435 instances, 66 files) | 000e4ef | ✅ |
+| D | D3 Phosphor BottomNav icon fix | 000e4ef | ✅ |
+| D | D4 7 runner class SVG avatars (RunnerClassAvatars.tsx) | 87cb5d8 | ✅ |
+| D | D5 552 slate→gray replacements across 33 files | 87cb5d8 | ✅ |
+| E | E1 Club feed API + UI (Feed tab in community) | ab4f41a | ✅ |
+| E | E2 Challenge auto-verification (already in progress route) | ab4f41a | ✅ |
+| E | E3 Race leaderboard API (medals, PB detection) | ab4f41a | ✅ |
+| E | E4 Milestone detection + coach notifications | ab4f41a | ✅ |
+| F | F1-F6 Pre-alpha gate checklist + E2E tests | c0a9e65 | ✅ code done |
+| F | F1 Founder iPhone E2E | — | ⚠️ Founder action |
+| F | F2 3-person alpha test | — | ⚠️ Founder action |
+
+**Pending SQL:** Run `supabase/migrations/phase-12-referral.sql` in Supabase SQL editor.
+**Pending seed:** Run `npx tsx scripts/seed-plans.ts` to upload 36 plan templates.
 
 ---
 
