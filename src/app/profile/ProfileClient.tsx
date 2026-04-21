@@ -47,6 +47,7 @@ import XPFeed from '@/components/rpg/XPFeed'
 import TrainingSummary from '@/components/rpg/TrainingSummary'
 import PWAProfileCard from '@/components/rpg/PWAProfileCard'
 import StravaSection from '@/components/rpg/StravaSection'
+import ReferralCard from '@/components/ReferralCard'
 import AthleteProfileSection from '@/components/rpg/AthleteProfileSection'
 import { db } from '@/lib/supabase/db'
 import { getWarmingUpPhase, WARMING_UP_COPY } from '@/lib/rpg'
@@ -695,6 +696,11 @@ export default function ProfileClient({
 
         {/* Strava */}
         <StravaSection clientId={stravaClientId} isConnected={isStravaConnected} />
+
+        {/* Referral — gated by PostHog flag 'referral_programme' (build now, release at 40% Day 30 retention) */}
+        {config.referralEnabled && (
+          <ReferralCard trigger="profile" />
+        )}
 
         {/* PWA Install */}
         <PWAProfileCard />

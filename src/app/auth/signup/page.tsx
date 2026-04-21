@@ -1,14 +1,47 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { signup, signInWithGoogle } from '../actions'
 
-export default function SignupPage() {
-  const [error, setError] = useState<string | null>(null)
+function SignupForm() {
+  const [error, setError]     = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [refCode, setRefCode] = useState<string | null>(null)
+  const router       = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    // Capture referral code from URL param and persist in localStorage
+    const ref = searchParams.get('ref')
+    if (ref) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setRefCode(ref.toUpperCase())
+      try { localStorage.setItem('nextsplit_referral_code', ref.toUpperCase()) } catch { /* ignore */ }
+    } else {
+      // Check if already stored (e.g. user navigated away and back)
+      try {
+        const stored = localStorage.getItem('nextsplit_referral_code')
+        if (stored) setRefCode(stored)
+      } catch { /* ignore */ }
+    }
+  }, [searchParams])
+
+  async function applyReferralCode() {
+    const code = refCode ?? (() => {
+      try { return localStorage.getItem('nextsplit_referral_code') } catch { return null }
+    })()
+    if (!code) return
+    try {
+      await fetch('/api/referral', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      })
+      localStorage.removeItem('nextsplit_referral_code')
+    } catch { /* non-fatal */ }
+  }
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
@@ -19,12 +52,12 @@ export default function SignupPage() {
         setError(result.error)
         setLoading(false)
       } else {
-        // Signup succeeded — server action redirects, but push as fallback
+        await applyReferralCode()
         router.push('/onboarding')
       }
     } catch {
-      // Server actions throw on redirect() — this is expected on success
-      // Preserve invite token if present
+      // Server actions throw on redirect() — expected on success
+      await applyReferralCode()
       const invite = typeof window !== 'undefined' ? localStorage.getItem('nextsplit_coach_invite_token') : null
       router.push(invite ? `/onboarding?invite=${invite}` : '/onboarding')
     }
@@ -38,13 +71,30 @@ export default function SignupPage() {
           <span className="text-2xl">🏃</span>
         </div>
         <h1 className="text-2xl font-black text-white tracking-tight">NextSplit</h1>
-        <p className="text-teal-300 text-sm mt-1">AI coaching · Gamified progress · Real plans</p>
+        {refCode ? (
+          <p className="text-teal-300 text-sm mt-1">
+            🎁 You were invited — first month free when you upgrade
+          </p>
+        ) : (
+          <p className="text-teal-300 text-sm mt-1">AI coaching · Gamified progress · Real plans</p>
+        )}
       </div>
 
       {/* Form */}
       <div className="flex-1 px-6 py-8 max-w-sm mx-auto w-full">
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
           <h2 className="text-base font-bold text-gray-900 text-center">Create your free account</h2>
+
+          {/* Referral banner */}
+          {refCode && (
+            <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest)]30 rounded-xl px-3 py-2.5 flex items-center gap-2">
+              <span>🎁</span>
+              <p className="text-xs leading-snug" style={{ color: 'var(--ns-forest)' }}>
+                <span className="font-bold">Referral applied.</span>{' '}
+                Your first month is free when you upgrade to Pro.
+              </p>
+            </div>
+          )}
 
           {/* Google */}
           <button
@@ -111,5 +161,13 @@ export default function SignupPage() {
         </p>
       </div>
     </main>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f8f8f6]" />}>
+      <SignupForm />
+    </Suspense>
   )
 }

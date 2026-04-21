@@ -11,6 +11,7 @@ export const config = {
   supabaseAnonKey:       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
   stripePublishableKey:  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '',
   premiumEnforced:       process.env.NEXT_PUBLIC_PREMIUM_ENFORCED === 'true',
+  referralEnabled:       process.env.NEXT_PUBLIC_REFERRAL_ENABLED === 'true',
   posthogKey:            process.env.NEXT_PUBLIC_POSTHOG_KEY ?? '',
   posthogHost:           process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.posthog.com',
   stravaClientId:        process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID ?? '',
