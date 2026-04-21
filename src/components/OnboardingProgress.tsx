@@ -22,7 +22,7 @@ export default function OnboardingProgress({ current, total, onBack }: Props) {
             key={i}
             className="h-1 flex-1 rounded-full transition-all duration-300"
             style={{
-              background: i < current ? '#0D9488' : 'rgba(255,255,255,0.12)',
+              background: i < current ? 'var(--ns-forest)' : 'rgba(255,255,255,0.12)',
             }}
           />
         ))}

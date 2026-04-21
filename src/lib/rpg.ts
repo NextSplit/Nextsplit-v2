@@ -1,8 +1,271 @@
 // ─── NextSplit RPG Engine ─────────────────────────────────────────────────────
 // Full RPG character progression: 6 characters, 15 levels, 4 stat bars,
 // 32 badges, evolving SVG avatars, cross-plan XP persistence
+// Runner Class System: 7 earned classes, computed from 4 weeks training data
 
-// ─── Characters ───────────────────────────────────────────────────────────────
+// ─── Runner Class System ──────────────────────────────────────────────────────
+
+export type RunnerClassId =
+  | 'warming_up'
+  | 'marathon_runner'
+  | 'speed_merchant'
+  | 'trail_blazer'
+  | 'base_builder'
+  | 'all_rounder'
+  | 'comeback_runner'
+
+export interface RunnerClass {
+  id: RunnerClassId
+  name: string
+  emoji: string
+  tagline: string          // shown on HeroCard
+  description: string      // shown on reveal screen
+  colour: string           // accent colour for class card
+  bg: string               // background
+  textColour: string
+  shareText: string        // for the race day share card
+}
+
+export const RUNNER_CLASSES: Record<RunnerClassId, RunnerClass> = {
+  warming_up: {
+    id: 'warming_up',
+    name: 'Warming Up',
+    emoji: '🌅',
+    tagline: 'Every legend starts somewhere.',
+    description: 'Your class reveals after four weeks of training data. Keep logging — your running style is taking shape.',
+    colour: '#94a3b8',
+    bg: 'bg-slate-100',
+    textColour: 'text-slate-600',
+    shareText: 'Just getting started with NextSplit. Watch this space. 🌅',
+  },
+  marathon_runner: {
+    id: 'marathon_runner',
+    name: 'Marathon Runner',
+    emoji: '🏁',
+    tagline: 'Built for the long game.',
+    description: 'High weekly mileage at controlled effort. Long runs are your signature session. You understand that endurance is built in months, not weeks.',
+    colour: '#2b5c3f',
+    bg: 'bg-emerald-50',
+    textColour: 'text-emerald-800',
+    shareText: 'NextSplit classified me as a Marathon Runner. Long runs are my thing. 🏁',
+  },
+  speed_merchant: {
+    id: 'speed_merchant',
+    name: 'Speed Merchant',
+    emoji: '⚡',
+    tagline: 'Fast is a habit.',
+    description: 'Intervals and tempo runs dominate your training. You chase pace, embrace discomfort, and recover just long enough to go again.',
+    colour: '#e85d26',
+    bg: 'bg-orange-50',
+    textColour: 'text-orange-800',
+    shareText: 'NextSplit made me a Speed Merchant. Track work is the answer. ⚡',
+  },
+  trail_blazer: {
+    id: 'trail_blazer',
+    name: 'Trail Blazer',
+    emoji: '🌲',
+    tagline: 'Off-road is where it gets real.',
+    description: 'You choose terrain over tarmac. Your sessions feature elevation, variety, and the kind of beauty that road runners miss entirely.',
+    colour: '#7c5c2e',
+    bg: 'bg-amber-50',
+    textColour: 'text-amber-900',
+    shareText: 'NextSplit named me a Trail Blazer. The road is just a warm-up. 🌲',
+  },
+  base_builder: {
+    id: 'base_builder',
+    name: 'Base Builder',
+    emoji: '🔵',
+    tagline: 'Consistent. Methodical. Unbreakable.',
+    description: 'Easy aerobic running is your foundation. You understand that most runners run too hard, too often — and you\'re the one who shows up on race day.',
+    colour: '#0984e3',
+    bg: 'bg-blue-50',
+    textColour: 'text-blue-800',
+    shareText: 'NextSplit says I\'m a Base Builder. Slow and steady builds the engine. 🔵',
+  },
+  all_rounder: {
+    id: 'all_rounder',
+    name: 'All-Rounder',
+    emoji: '⭐',
+    tagline: 'No weakness. Every gear.',
+    description: 'You mix speed, endurance, and strength in equal measure. The most complete athletes are All-Rounders — and the hardest to beat on race day.',
+    colour: '#6c5ce7',
+    bg: 'bg-purple-50',
+    textColour: 'text-purple-800',
+    shareText: 'NextSplit calls me an All-Rounder. Speed, endurance, strength — bring it. ⭐',
+  },
+  comeback_runner: {
+    id: 'comeback_runner',
+    name: 'Comeback Runner',
+    emoji: '💫',
+    tagline: 'Returning is an act of courage.',
+    description: 'You took time away and came back. That takes more mental strength than any PB. The hardest run is always the return — and you did it.',
+    colour: '#e84393',
+    bg: 'bg-pink-50',
+    textColour: 'text-pink-800',
+    shareText: 'NextSplit named me a Comeback Runner. Took time away. Back now. 💫',
+  },
+}
+
+export function getRunnerClass(id: RunnerClassId | null | undefined): RunnerClass {
+  return RUNNER_CLASSES[id ?? 'warming_up'] ?? RUNNER_CLASSES.warming_up
+}
+
+/**
+ * Compute runner class from training logs over the last 4+ weeks.
+ * Returns 'warming_up' if insufficient data.
+ *
+ * Classification logic (priority order):
+ * 1. comeback_runner — returned after 4+ week gap
+ * 2. speed_merchant  — >40% sessions are intervals/tempo + avg pace fast
+ * 3. trail_blazer    — majority of runs are trail/ultra plan type
+ * 4. marathon_runner — avg weekly km >50 + long run dominant
+ * 5. base_builder    — >70% easy runs + consistent weeks
+ * 6. all_rounder     — balanced mix across run types + gym
+ * 7. warming_up      — default / insufficient data
+ */
+export interface ClassifyInput {
+  logs: Array<{
+    done: boolean
+    km: number | null
+    pace: string | null
+    logged_at: string
+    session_i: number
+    week_n: number
+    day_i: number
+  }>
+  sessionTypeMap: Map<string, string>  // `weekN_dayI_sessI` → session code
+  firstSessionAt: string | null        // ISO string of very first ever session
+  planType?: string | null             // 'predetermined' | 'ai_bespoke' | etc
+}
+
+export function computeRunnerClass(input: ClassifyInput): RunnerClassId {
+  const { logs, sessionTypeMap, firstSessionAt } = input
+  const done = logs.filter(l => l.done)
+
+  // Need at least 6 logged sessions to classify (not enough data = warming_up)
+  if (done.length < 6) return 'warming_up'
+
+  // Need sessions spread over at least 3 weeks
+  const weekSet = new Set(done.map(l => l.week_n))
+  if (weekSet.size < 3) return 'warming_up'
+
+  // ── 1. Comeback Runner ──────────────────────────────────────────────────────
+  // Check for a gap of 28+ days between sessions at any point in their history
+  if (firstSessionAt && done.length >= 2) {
+    const sortedDates = done
+      .map(l => new Date(l.logged_at).getTime())
+      .sort((a, b) => a - b)
+
+    for (let i = 1; i < sortedDates.length; i++) {
+      const gapDays = (sortedDates[i] - sortedDates[i - 1]) / (1000 * 60 * 60 * 24)
+      if (gapDays >= 28) return 'comeback_runner'
+    }
+  }
+
+  // ── Session type breakdown ──────────────────────────────────────────────────
+  function code(l: typeof done[0]): string {
+    return sessionTypeMap.get(`${l.week_n}_${l.day_i}_${l.session_i}`) ?? ''
+  }
+
+  const runSessions  = done.filter(l => code(l).startsWith('run'))
+  const gymSessions  = done.filter(l => code(l).startsWith('gym'))
+  const easySessions = done.filter(l => code(l) === 'run-easy')
+  const longSessions = done.filter(l => code(l) === 'run-long')
+  const tempoSessions = done.filter(l => code(l) === 'run-tempo' || code(l) === 'run-mp')
+  const intSessions  = done.filter(l => code(l) === 'run-int')
+  const speedSessions = [...tempoSessions, ...intSessions]
+
+  const totalRuns = runSessions.length
+  if (totalRuns === 0) return 'warming_up'
+
+  const speedPct  = speedSessions.length / totalRuns
+  const easyPct   = easySessions.length / totalRuns
+  const longPct   = longSessions.length / totalRuns
+  const gymPct    = gymSessions.length / Math.max(done.length, 1)
+
+  // Weekly km averages
+  const weeklyKmMap: Record<number, number> = {}
+  for (const l of done) {
+    weeklyKmMap[l.week_n] = (weeklyKmMap[l.week_n] ?? 0) + (l.km ?? 0)
+  }
+  const weeklyKms = Object.values(weeklyKmMap)
+  const avgWeeklyKm = weeklyKms.reduce((a, b) => a + b, 0) / Math.max(weeklyKms.length, 1)
+
+  // Avg pace from runs with pace data
+  function paceToSecs(pace: string): number {
+    const parts = pace.split(':').map(Number)
+    return (parts[0] ?? 0) * 60 + (parts[1] ?? 0)
+  }
+  const pacedRuns = done.filter(l => l.pace && code(l).startsWith('run'))
+  const avgPaceSecs = pacedRuns.length > 0
+    ? pacedRuns.reduce((a, l) => a + paceToSecs(l.pace!), 0) / pacedRuns.length
+    : null
+
+  // ── 2. Speed Merchant ───────────────────────────────────────────────────────
+  // >35% speed sessions + avg pace faster than 5:30/km (330 secs)
+  if (speedPct >= 0.35 && (avgPaceSecs === null || avgPaceSecs < 360)) {
+    return 'speed_merchant'
+  }
+
+  // ── 3. Trail Blazer ─────────────────────────────────────────────────────────
+  // Plan type is ultra/trail or majority of sessions are trail coded
+  const trailSessions = done.filter(l => {
+    const c = code(l)
+    return c.includes('trail') || c.includes('ultra') || c.includes('hike') || c.includes('walk')
+  })
+  if (trailSessions.length / Math.max(totalRuns, 1) >= 0.3) {
+    return 'trail_blazer'
+  }
+
+  // ── 4. Marathon Runner ──────────────────────────────────────────────────────
+  // High weekly km (>45 avg) OR long runs dominant (>20% of sessions)
+  if (avgWeeklyKm >= 45 || (longPct >= 0.2 && avgWeeklyKm >= 30)) {
+    return 'marathon_runner'
+  }
+
+  // ── 5. Base Builder ─────────────────────────────────────────────────────────
+  // >65% easy runs + consistent (3+ weeks logged)
+  if (easyPct >= 0.65 && weekSet.size >= 3) {
+    return 'base_builder'
+  }
+
+  // ── 6. All-Rounder ──────────────────────────────────────────────────────────
+  // Meaningful mix: some speed, some long, some gym
+  const hasSpeed  = speedPct >= 0.15
+  const hasLong   = longPct >= 0.10
+  const hasGym    = gymPct >= 0.15
+  if (hasSpeed && hasLong && (hasGym || easyPct >= 0.2)) {
+    return 'all_rounder'
+  }
+
+  // ── 7. Default ─────────────────────────────────────────────────────────────
+  return 'warming_up'
+}
+
+/**
+ * Check whether a runner has enough data for their class to be revealed.
+ * Requires 4 weeks of logged sessions OR 6+ weeks since first session.
+ */
+export function isClassRevealReady(
+  logs: Array<{ done: boolean; week_n: number; logged_at: string }>,
+  firstSessionAt: string | null
+): boolean {
+  const done = logs.filter(l => l.done)
+  if (done.length < 6) return false
+
+  const weekSet = new Set(done.map(l => l.week_n))
+  if (weekSet.size >= 4) return true
+
+  // Also reveal if 28+ days since first session (even if weeks not accumulated)
+  if (firstSessionAt) {
+    const daysSinceFirst = (Date.now() - new Date(firstSessionAt).getTime()) / (1000 * 60 * 60 * 24)
+    if (daysSinceFirst >= 28) return true
+  }
+
+  return false
+}
+
+
 
 export interface RPGChar {
   id: string
@@ -15,10 +278,10 @@ export interface RPGChar {
 }
 
 export const RPG_CHARS: RPGChar[] = [
-  { id: 'm1', label: 'Alex',   skin: '#FFCC99', hair: '#3E2723', body: 'lean',   accent: '#0D9488', specialty: 'Endurance specialist' },
+  { id: 'm1', label: 'Alex',   skin: '#FFCC99', hair: '#3E2723', body: 'lean',   accent: 'var(--ns-forest)', specialty: 'Endurance specialist' },
   { id: 'm2', label: 'Marcus', skin: '#8D5524', hair: '#1a1a1a', body: 'stocky', accent: '#DC2626', specialty: 'Power athlete' },
   { id: 'm3', label: 'Kai',    skin: '#F1C27D', hair: '#4E342E', body: 'tall',   accent: '#7C3AED', specialty: 'Versatile runner' },
-  { id: 'f1', label: 'Sarah',  skin: '#FFCC99', hair: '#5D4037', body: 'lean',   accent: '#0D9488', specialty: 'Marathon machine' },
+  { id: 'f1', label: 'Sarah',  skin: '#FFCC99', hair: '#5D4037', body: 'lean',   accent: 'var(--ns-forest)', specialty: 'Marathon machine' },
   { id: 'f2', label: 'Amara',  skin: '#8D5524', hair: '#1a1a1a', body: 'lean',   accent: '#F59E0B', specialty: 'Speed merchant' },
   { id: 'f3', label: 'Yuki',   skin: '#F1C27D', hair: '#212121', body: 'tall',   accent: '#06B6D4', specialty: 'Trail specialist' },
 ]

@@ -117,7 +117,7 @@ export default function ManualOnboardingClient() {
           </div>
           {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
           <button onClick={save} disabled={!planName.trim()}
-            className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-[0.98] transition-transform">
+            className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-[0.98] transition-transform">
             Start tracking →
           </button>
         </div>

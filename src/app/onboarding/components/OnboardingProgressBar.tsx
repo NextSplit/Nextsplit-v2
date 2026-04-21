@@ -12,7 +12,7 @@ interface Props {
 // Tiny SVG runner sprite built from character config
 function RunnerSprite({ character, size = 32 }: { character: CharacterConfig; size?: number }) {
   const skin = SKIN_TONES[character.skinTone as keyof typeof SKIN_TONES] ?? SKIN_TONES['tone-3']
-  const kit  = character.kitColour ?? '#0d9488'
+  const kit  = character.kitColour ?? 'var(--ns-forest)'
   const hair = character.hairColour ?? '#3b2314'
   const shoe = character.shoeColour ?? '#1e293b'
 

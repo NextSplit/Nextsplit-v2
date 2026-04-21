@@ -16,13 +16,15 @@ import DarkModeToggle from '@/components/DarkModeToggle'
 import { useToast } from '@/components/Toast'
 import {
   RPG_CHARS, RPG_BADGES, computeRPGStats, getLevelForXP, getXPProgress,
-  checkNewBadges, type RPGStats, type RPGBadge,
+  checkNewBadges, getRunnerClass, type RPGStats, type RPGBadge, type RunnerClassId,
 } from '@/lib/rpg'
 import { computePersonalBests } from '@/lib/personalBests'
 import { computeStreak, computeConsistency } from '@/lib/streak'
 import { useSupabase } from '@/hooks/useSupabase'
 import type { TrainingLog, PlanWeek } from '@/types/database'
 import LevelUpScreen from '@/components/rpg/LevelUpScreen'
+import RunnerClassReveal from '@/components/rpg/RunnerClassReveal'
+import RunnerClassCard from '@/components/rpg/RunnerClassCard'
 import WeeklyVolumeChart from '@/components/charts/WeeklyVolumeChart'
 import RaceDaySimulation from '@/components/charts/RaceDaySimulation'
 import WeeklyCoachingSummary from '@/components/charts/WeeklyCoachingSummary'
@@ -107,8 +109,13 @@ export default function ProfileClient({
   const [profileTab, setProfileTab] = useState<'character' | 'stats' | 'records'>('character')
   const [badgeToast, setBadgeToast] = useState<RPGBadge | null>(null)
   const [seenBadgeIds, setSeenBadgeIds] = useState<string[]>([])
-  const [kitColour, setKitColour] = useState('#0D9488')
+  const [kitColour, setKitColour] = useState('var(--ns-forest)')
   const [showCustomiser, setShowCustomiser] = useState(false)
+
+  // Runner class state
+  const [runnerClass, setRunnerClass] = useState<RunnerClassId | null>(null)
+  const [classRevealReady, setClassRevealReady] = useState(false)
+  const [showClassReveal, setShowClassReveal] = useState(false)
 
   useEffect(() => {
     setStravaClientId(config.stravaClientId || null)
@@ -119,6 +126,15 @@ export default function ProfileClient({
     if (seen) setSeenBadgeIds(JSON.parse(seen))
     const savedKit = localStorage.getItem('nextsplit_kit_colour')
     if (savedKit) setKitColour(savedKit)
+
+    // Compute runner class on mount (fire-and-forget)
+    fetch('/api/runner-class', { method: 'POST' })
+      .then(r => r.json())
+      .then(d => {
+        if (d.runnerClass) setRunnerClass(d.runnerClass as RunnerClassId)
+        if (d.revealReady) setClassRevealReady(true)
+      })
+      .catch(() => {})
 
     // Show toast based on Strava OAuth redirect status
     if (stravaStatus === 'connected') {
@@ -300,10 +316,10 @@ export default function ProfileClient({
             {editingName ? (
               <div className="flex items-center gap-2">
                 <input value={nameInput} onChange={e => setNameInput(e.target.value)}
-                  className="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+                  className="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
                   autoFocus onKeyDown={e => { if (e.key === 'Enter') saveDisplayName() }} />
                 <button onClick={saveDisplayName} disabled={savingName}
-                  className="text-[11px] font-bold text-[#0D9488]">{savingName ? '…' : 'Save'}</button>
+                  className="text-[11px] font-bold text-[var(--ns-forest)]">{savingName ? '…' : 'Save'}</button>
                 <button onClick={() => setEditingName(false)}
                   className="text-[11px] text-gray-400">Cancel</button>
               </div>
@@ -397,7 +413,7 @@ export default function ProfileClient({
             <p className="text-xs font-bold text-gray-700 mb-3">Kit colour</p>
             <div className="flex gap-2 flex-wrap">
               {[
-                { hex: '#0D9488', label: 'Teal' },
+                { hex: 'var(--ns-forest)', label: 'Teal' },
                 { hex: '#F97316', label: 'Orange' },
                 { hex: '#DC2626', label: 'Red' },
                 { hex: '#2563EB', label: 'Blue' },
@@ -426,6 +442,14 @@ export default function ProfileClient({
           <p className="text-sm font-bold text-gray-900 mb-3">🏆 Badges</p>
           <BadgeGrid unlockedIds={unlockedIds} stats={rpgStats} />
         </div>
+
+        {/* Runner class — earned identity */}
+        <RunnerClassCard
+          classId={runnerClass}
+          revealReady={classRevealReady}
+          showDescription={!(!runnerClass || runnerClass === 'warming_up')}
+          onRevealClick={() => setShowClassReveal(true)}
+        />
 
         {/* Weekly XP chart */}
         <WeeklyXPChart logs={logs} weeks={weeks} />
@@ -701,6 +725,14 @@ export default function ProfileClient({
           level={levelUpLevel}
           charId={charId}
           onDismiss={() => setLevelUpShow(false)}
+        />
+      )}
+
+      {/* Runner class reveal */}
+      {showClassReveal && runnerClass && runnerClass !== 'warming_up' && (
+        <RunnerClassReveal
+          classId={runnerClass}
+          onDismiss={() => setShowClassReveal(false)}
         />
       )}
 

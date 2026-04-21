@@ -35,7 +35,7 @@ function RestTimer({ secs, onDone }: { secs: number; onDone: () => void }) {
       <div className="relative w-24 h-24">
         <svg className="w-24 h-24 -rotate-90" viewBox="0 0 36 36">
           <circle cx="18" cy="18" r="15.9" fill="none" stroke="#E5E7EB" strokeWidth="2.5" />
-          <circle cx="18" cy="18" r="15.9" fill="none" stroke="#0D9488" strokeWidth="2.5"
+          <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--ns-forest)" strokeWidth="2.5"
             strokeDasharray={`${pct} 100`} strokeLinecap="round" />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
@@ -47,7 +47,7 @@ function RestTimer({ secs, onDone }: { secs: number; onDone: () => void }) {
       <p className="text-xs text-gray-500 font-medium">Rest · breathe</p>
       <button
         onClick={onDone}
-        className="text-xs text-[#0D9488] font-semibold px-4 py-1.5 bg-teal-50 rounded-full"
+        className="text-xs text-[var(--ns-forest)] font-semibold px-4 py-1.5 bg-teal-50 rounded-full"
       >
         Skip rest →
       </button>
@@ -114,7 +114,7 @@ function SetInput({
                 value={weight}
                 onChange={e => setWeight(e.target.value)}
                 placeholder={suggWeight != null ? String(suggWeight) : '0'}
-                className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+                className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
               />
               <button
                 onClick={() => setWeight(w => String(parseFloat(w || '0') + 2.5))}
@@ -137,7 +137,7 @@ function SetInput({
               type="number" inputMode="numeric"
               value={reps}
               onChange={e => setReps(e.target.value)}
-              className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+              className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
             />
             <button
               onClick={() => setReps(r => String(parseInt(r || '0') + 1))}
@@ -150,7 +150,7 @@ function SetInput({
 
       <button
         onClick={handleLog}
-        className="w-full py-4 bg-[#0D9488] text-white rounded-2xl text-base font-bold active:scale-95 transition-transform"
+        className="w-full py-4 bg-[var(--ns-forest)] text-white rounded-2xl text-base font-bold active:scale-95 transition-transform"
       >
         Log set ✓
       </button>
@@ -192,7 +192,7 @@ function FinishModal({
           <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">
             Keep going
           </button>
-          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-[#0D9488] text-white text-sm font-semibold">
+          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-semibold">
             Save & finish
           </button>
         </div>
@@ -362,7 +362,7 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
           }
           onDone()
         }}
-        className="w-full max-w-xs py-3 bg-[#0D9488] text-white rounded-xl text-sm font-semibold"
+        className="w-full max-w-xs py-3 bg-[var(--ns-forest)] text-white rounded-xl text-sm font-semibold"
       >
         Mark as done
       </button>
@@ -385,7 +385,7 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
             <span className="text-xs font-semibold text-gray-900">{session.n}</span>
             <button
               onClick={() => setShowFinish(true)}
-              className="text-xs font-semibold text-[#0D9488]"
+              className="text-xs font-semibold text-[var(--ns-forest)]"
             >
               Finish
             </button>
@@ -400,7 +400,7 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
                   key={i}
                   onClick={() => { setResting(false); setExIdx(i) }}
                   className={`flex-1 h-1.5 rounded-full transition-all ${
-                    i === exIdx ? 'bg-[#0D9488]' :
+                    i === exIdx ? 'bg-[var(--ns-forest)]' :
                     exDone ? 'bg-emerald-300' :
                     i < exIdx ? 'bg-gray-300' : 'bg-gray-100'
                   }`}
@@ -423,13 +423,13 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
           <div className="bg-white rounded-2xl border border-gray-100 p-5">
             <div className="flex items-start justify-between mb-1">
               <div className="flex-1">
-                <div className="text-xs font-semibold text-[#0D9488] uppercase tracking-wide mb-1">
+                <div className="text-xs font-semibold text-[var(--ns-forest)] uppercase tracking-wide mb-1">
                   {session.c === 'gym-a' ? 'Lower body' : session.c === 'gym-b' ? 'Upper body' : 'Recovery'}
                 </div>
                 <h2 className="text-2xl font-black text-gray-900 leading-tight">{currentEx.name}</h2>
               </div>
               <div className="text-right flex-shrink-0 ml-4">
-                <div className="text-2xl font-black text-[#0D9488]">{doneSetCount}</div>
+                <div className="text-2xl font-black text-[var(--ns-forest)]">{doneSetCount}</div>
                 <div className="text-xs text-gray-400">/{targetSetCount} sets</div>
               </div>
             </div>
@@ -483,14 +483,14 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
               {exIdx < exercises.length - 1 ? (
                 <button
                   onClick={nextExercise}
-                  className="mt-3 w-full py-3 bg-[#0D9488] text-white rounded-xl text-sm font-bold"
+                  className="mt-3 w-full py-3 bg-[var(--ns-forest)] text-white rounded-xl text-sm font-bold"
                 >
                   Next exercise →
                 </button>
               ) : (
                 <button
                   onClick={() => setShowFinish(true)}
-                  className="mt-3 w-full py-3 bg-[#0D9488] text-white rounded-xl text-sm font-bold"
+                  className="mt-3 w-full py-3 bg-[var(--ns-forest)] text-white rounded-xl text-sm font-bold"
                 >
                   Finish session 🎉
                 </button>

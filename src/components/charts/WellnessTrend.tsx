@@ -45,7 +45,7 @@ function WellnessTrend() {
   const labels      = last14.map(l => dayLabel(l.log_date))
 
   const metrics = {
-    readiness: { values: scores,       max: 10, label: 'Readiness', colour: 'bg-[#0D9488]', unit: '/10' },
+    readiness: { values: scores,       max: 10, label: 'Readiness', colour: 'bg-[var(--ns-forest)]', unit: '/10' },
     sleep:     { values: sleepVals,    max: 5,  label: 'Sleep',     colour: 'bg-indigo-400', unit: '/5' },
     soreness:  { values: sorenessVals, max: 5,  label: 'Freshness', colour: 'bg-amber-400',  unit: '/5' },
     mood:      { values: moodVals,     max: 5,  label: 'Mood',      colour: 'bg-violet-400', unit: '/5' },

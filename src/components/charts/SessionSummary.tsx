@@ -30,7 +30,7 @@ function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; we
       <div className="text-sm font-bold text-gray-900 mb-4">Plan Summary</div>
       <div className="grid grid-cols-4 gap-2">
         <div className="text-center">
-          <div className="text-xl font-black text-[#0D9488]">{Math.round(units === 'miles' ? totalKm * 0.621371 : totalKm)}</div>
+          <div className="text-xl font-black text-[var(--ns-forest)]">{Math.round(units === 'miles' ? totalKm * 0.621371 : totalKm)}</div>
           <div className="text-[10px] text-gray-400 mt-0.5">{units === 'miles' ? 'mi' : 'km'}</div>
         </div>
         <div className="text-center">
@@ -58,7 +58,7 @@ function SessionSummary({ logs, weeks }: { logs: Record<string, TrainingLog>; we
           </div>
           <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#0D9488] rounded-full"
+              className="h-full bg-[var(--ns-forest)] rounded-full"
               style={{ width: `${Math.min((totalSessions / plannedTotal) * 100, 100)}%` }}
             />
           </div>

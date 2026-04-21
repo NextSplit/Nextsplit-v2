@@ -1,36 +1,49 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
-/* ─── Design tokens ──────────────────────────────────────────────────────────
-   All colours flow through these variables.
-   Dark mode swaps the values — no class-level changes needed.
+/* ─── NextSplit Design Tokens ─────────────────────────────────────────────────
+   Brand palette — Forest / Ember / Track / Night / Paper / Ink
+   All colour usage flows through these variables.
    ──────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* Brand */
-  --color-brand:        #0D9488;  /* teal-600 */
-  --color-brand-light:  #CCFBF1;  /* teal-100 */
-  --color-brand-text:   #0F766E;  /* teal-700 */
+  /* ── Brand colours (NextSplit Own — not iOS, not Material) ── */
+  --ns-forest:        #2b5c3f;   /* Primary — warmth, nature, endurance */
+  --ns-forest-light:  #edf4f0;   /* Forest tint — surfaces, backgrounds */
+  --ns-forest-mid:    #3d7a57;   /* Forest hover/active state */
+  --ns-ember:         #e85d26;   /* Accent — energy, achievement, heat */
+  --ns-ember-light:   #fdf0ea;   /* Ember tint */
+  --ns-track:         #c49a3c;   /* Gold — ambition, performance, PBs */
+  --ns-track-light:   #fdf7ec;   /* Track tint */
+  --ns-night:         #2c3e50;   /* Slate — data, depth, analytics */
+  --ns-night-light:   #eef1f4;   /* Night tint */
+  --ns-paper:         #f9f6f0;   /* Background — warm off-white */
+  --ns-ink:           #1a1a14;   /* Text — warm near-black */
 
-  /* Page backgrounds */
-  --color-bg:           #f8f8f6;  /* warm off-white */
-  --color-surface:      #ffffff;  /* card surface */
-  --color-surface-2:    #f9fafb;  /* secondary surface (gray-50) */
-  --color-surface-3:    #f3f4f6;  /* tertiary surface (gray-100) */
+  /* ── Legacy alias — maps old teal token to Forest ── */
+  --color-brand:        var(--ns-forest);
+  --color-brand-light:  var(--ns-forest-light);
+  --color-brand-text:   var(--ns-forest-mid);
 
-  /* Borders */
-  --color-border:       #f3f4f6;  /* gray-100 */
-  --color-border-2:     #e5e7eb;  /* gray-200 */
+  /* ── Page backgrounds ── */
+  --color-bg:           #f8f8f6;
+  --color-surface:      #ffffff;
+  --color-surface-2:    #f9fafb;
+  --color-surface-3:    #f3f4f6;
 
-  /* Text */
-  --color-text-primary:   #111827;  /* gray-900 */
-  --color-text-secondary: #6b7280;  /* gray-500 */
-  --color-text-tertiary:  #9ca3af;  /* gray-400 */
-  --color-text-disabled:  #d1d5db;  /* gray-300 */
+  /* ── Borders ── */
+  --color-border:       #f3f4f6;
+  --color-border-2:     #e5e7eb;
 
-  /* Foreground (body default) */
+  /* ── Text ── */
+  --color-text-primary:   #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary:  #9ca3af;
+  --color-text-disabled:  #d1d5db;
+
   --background: var(--color-bg);
   --foreground: var(--color-text-primary);
 
-  /* Font size multiplier — changed by text size setting */
+  /* ── Font scale — changed by text size setting ── */
   --font-scale: 1;
 }
 
@@ -61,7 +74,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   font-size: calc(16px * var(--font-scale));
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
@@ -113,7 +126,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #0D9488;
+  background: var(--ns-forest);
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0,0,0,0.15);
 }

@@ -186,7 +186,7 @@ export default function AIOnboardingClient() {
             className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500 mb-4"
             style={{ background: 'rgba(255,255,255,0.07)' }} />
           <button onClick={() => setStep('gym')}
-            className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
+            className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
             {raceDate ? 'Continue →' : 'Skip →'}
           </button>
         </div>
@@ -224,7 +224,7 @@ export default function AIOnboardingClient() {
             className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-teal-500 mb-4"
             style={{ background: 'rgba(255,255,255,0.07)' }} />
           <button onClick={analyse}
-            className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
+            className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
             Analyse my profile →
           </button>
         </div>
@@ -267,7 +267,7 @@ export default function AIOnboardingClient() {
           {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
           <div className="space-y-2.5">
             <button onClick={activate}
-              className="w-full bg-[#0D9488] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
+              className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-sm font-bold active:scale-[0.98] transition-transform">
               Start this plan →
             </button>
             <button onClick={() => setStep('goal')}

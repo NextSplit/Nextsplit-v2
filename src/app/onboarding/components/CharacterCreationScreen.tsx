@@ -21,7 +21,7 @@ const SKIN_COLOURS: Record<string, string> = {
   'tone-4': '#C68642', 'tone-5': '#8D5524', 'tone-6': '#4A2912',
 }
 
-const KIT_COLOURS  = ['#0d9488','#3b82f6','#ef4444','#f59e0b','#8b5cf6','#ec4899','#10b981','#f97316','#1e293b','#ffffff']
+const KIT_COLOURS  = ['var(--ns-forest)','#3b82f6','#ef4444','#f59e0b','#8b5cf6','#ec4899','#10b981','#f97316','#1e293b','#ffffff']
 const HAIR_COLOURS = ['#3b2314','#1a0a00','#8b6914','#d4a017','#c0392b','#808080','#f5f5f5','#e8c4a0']
 
 // ── Randomise helper ──────────────────────────────────────────────────────────

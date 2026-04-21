@@ -182,7 +182,7 @@ export default function AdaptiveSuggestions({ weeks, logs, gymLogs = {}, current
     <div className="space-y-2">
       {loading && (
         <div className="bg-white rounded-2xl border border-gray-100 px-4 py-4 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-[#0D9488] flex items-center justify-center flex-shrink-0 animate-pulse">
+          <div className="w-8 h-8 rounded-xl bg-[var(--ns-forest)] flex items-center justify-center flex-shrink-0 animate-pulse">
             <span className="text-sm">🤖</span>
           </div>
           <div>

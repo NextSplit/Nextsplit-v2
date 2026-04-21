@@ -11,11 +11,11 @@ function RaceCountdown({ raceDate, planName }: { raceDate: string; planName: str
   const weeks = Math.floor(days / 7)
   const remaining = days % 7
 
-  const urgency = days <= 14 ? 'text-red-500' : days <= 42 ? 'text-orange-500' : 'text-[#0D9488]'
+  const urgency = days <= 14 ? 'text-red-500' : days <= 42 ? 'text-orange-500' : 'text-[var(--ns-forest)]'
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-      <div className="bg-gradient-to-r from-[#0D9488] to-[#0891B2] px-5 py-4">
+      <div className="bg-gradient-to-r from-[var(--ns-forest)] to-[#0891B2] px-5 py-4">
         <div className="text-xs font-semibold text-teal-100 uppercase tracking-wide mb-1">Race Day</div>
         <div className="text-white font-bold text-base">{planName}</div>
         <div className="text-teal-100 text-xs mt-0.5">{fmtRaceDate(raceDate)}</div>
@@ -40,7 +40,7 @@ function RaceCountdown({ raceDate, planName }: { raceDate: string; planName: str
             <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F0FDFA" strokeWidth="3" />
             <circle
               cx="18" cy="18" r="15.9" fill="none"
-              stroke="#0D9488" strokeWidth="3"
+              stroke="var(--ns-forest)" strokeWidth="3"
               strokeDasharray={`${Math.max(0, Math.min(100, (1 - Math.max(days, 0) / Math.max(daysUntil(raceDate) + days, 1)) * 100))} 100`}
               strokeLinecap="round"
             />

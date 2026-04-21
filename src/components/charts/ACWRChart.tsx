@@ -43,7 +43,7 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
         <div className="absolute inset-0 flex items-end gap-1">
           {data.map((d, i) => {
             const h = (d.acwr / maxAcwr) * 100
-            const colour = d.acwr > 1.3 ? 'bg-red-400' : d.acwr < 0.8 ? 'bg-yellow-400' : 'bg-[#0D9488]'
+            const colour = d.acwr > 1.3 ? 'bg-red-400' : d.acwr < 0.8 ? 'bg-yellow-400' : 'bg-[var(--ns-forest)]'
             return (
               <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
                 <div
@@ -78,7 +78,7 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
             <span className="text-xs text-gray-500">Current ACWR: </span>
             <span className={`text-sm font-bold ${
               data[data.length - 1].acwr > 1.3 ? 'text-red-500' :
-              data[data.length - 1].acwr < 0.8 ? 'text-yellow-500' : 'text-[#0D9488]'
+              data[data.length - 1].acwr < 0.8 ? 'text-yellow-500' : 'text-[var(--ns-forest)]'
             }`}>
               {data[data.length - 1].acwr.toFixed(2)}
             </span>

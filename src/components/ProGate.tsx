@@ -75,7 +75,7 @@ function UpgradeBadge({ feature: _ }: { feature: FeatureKey }) {
   return (
     <a
       href="/settings?tab=subscription"
-      className="flex items-center gap-2 bg-[#0D9488] text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg"
+      className="flex items-center gap-2 bg-[var(--ns-forest)] text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg"
     >
       <span>✦</span>
       <span>Pro feature — upgrade to unlock</span>
@@ -115,7 +115,7 @@ function DefaultUpgradePrompt({ feature }: { feature: FeatureKey }) {
       <p className="text-xs text-gray-500 mb-4 leading-relaxed">{meta.description}</p>
       <a
         href="/settings?tab=subscription"
-        className="inline-flex items-center gap-1.5 bg-[#0D9488] text-white px-5 py-2.5 rounded-xl text-sm font-bold"
+        className="inline-flex items-center gap-1.5 bg-[var(--ns-forest)] text-white px-5 py-2.5 rounded-xl text-sm font-bold"
       >
         <span>✦</span> Upgrade to Pro
       </a>

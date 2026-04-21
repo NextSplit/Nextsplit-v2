@@ -44,7 +44,7 @@ function HeroCard({
               />
             </button>
             {/* Level badge */}
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#0D9488] text-white text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-lg">
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[var(--ns-forest)] text-white text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-lg">
               Lv.{stats.level.level}
             </div>
             {/* Medal overlay */}

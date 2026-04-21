@@ -41,7 +41,7 @@ function BadgeGrid({ unlockedIds, stats }: { unlockedIds: Set<string>; stats: RP
       <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-hide">
         {cats.map(c => (
           <button key={c} onClick={() => setFilter(c)}
-            className={`flex-shrink-0 px-3 py-1 rounded-full text-[10px] font-bold capitalize transition-all ${filter === c ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-500'}`}>
+            className={`flex-shrink-0 px-3 py-1 rounded-full text-[10px] font-bold capitalize transition-all ${filter === c ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-500'}`}>
             {c === 'all' ? `All (${unlockedIds.size}/${RPG_BADGES.length})` : c}
           </button>
         ))}

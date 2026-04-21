@@ -54,7 +54,7 @@ function AssignMealModal({
                 return (
                   <button key={r.id}
                     onClick={() => setSelected(s => s?.id === r.id ? null : r)}
-                    className={`w-full text-left rounded-2xl border px-4 py-3 transition-all ${selected?.id === r.id ? 'border-[#0D9488] bg-teal-50' : 'border-gray-100 bg-white'}`}
+                    className={`w-full text-left rounded-2xl border px-4 py-3 transition-all ${selected?.id === r.id ? 'border-[var(--ns-forest)] bg-teal-50' : 'border-gray-100 bg-white'}`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -66,7 +66,7 @@ function AssignMealModal({
                         </p>
                       </div>
                       {selected?.id === r.id && (
-                        <span className="text-[#0D9488] text-lg">✓</span>
+                        <span className="text-[var(--ns-forest)] text-lg">✓</span>
                       )}
                     </div>
                   </button>
@@ -112,7 +112,7 @@ function AssignMealModal({
             Cancel
           </button>
           <button onClick={handleAssign} disabled={!selected || saving}
-            className="flex-1 py-3 rounded-xl bg-[#0D9488] text-white text-sm font-semibold disabled:opacity-50">
+            className="flex-1 py-3 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-semibold disabled:opacity-50">
             {saving ? 'Adding…' : 'Add to plan'}
           </button>
         </div>

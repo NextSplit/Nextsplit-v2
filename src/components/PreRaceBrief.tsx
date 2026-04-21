@@ -123,17 +123,17 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
   ]
 
   return (
-    <div className="bg-white rounded-2xl border border-[#0D9488] overflow-hidden shadow-sm">
+    <div className="bg-white rounded-2xl border border-[var(--ns-forest)] overflow-hidden shadow-sm">
       {/* Header */}
       <button
         onClick={() => setExpanded(e => !e)}
         className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
       >
-        <div className="w-9 h-9 rounded-xl bg-[#0D9488] flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-[var(--ns-forest)] flex items-center justify-center flex-shrink-0">
           <span className="text-lg">🏁</span>
         </div>
         <div className="flex-1">
-          <div className="text-[10px] font-bold text-[#0D9488] uppercase tracking-wide">Race brief</div>
+          <div className="text-[10px] font-bold text-[var(--ns-forest)] uppercase tracking-wide">Race brief</div>
           <div className="text-sm font-bold text-gray-900 truncate">{race.name}</div>
           <div className="text-[10px] text-gray-400">
             {daysUntil === 0 ? 'Today!' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil} days`}
@@ -153,7 +153,7 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
               <p className="text-sm text-gray-500 mb-3">Get your personalised race brief — pacing plan, fuelling strategy, and taper advice based on your training.</p>
               <button
                 onClick={generateBrief}
-                className="px-5 py-2.5 bg-[#0D9488] text-white text-sm font-bold rounded-xl"
+                className="px-5 py-2.5 bg-[var(--ns-forest)] text-white text-sm font-bold rounded-xl"
                 aria-label="Generate race brief"
               >
                 Generate my race brief
@@ -174,7 +174,7 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
           {error && (
             <div className="px-4 py-4 text-center">
               <p className="text-sm text-red-500 mb-2">{error}</p>
-              <button onClick={generateBrief} className="text-sm text-[#0D9488] font-semibold">Try again</button>
+              <button onClick={generateBrief} className="text-sm text-[var(--ns-forest)] font-semibold">Try again</button>
             </div>
           )}
 

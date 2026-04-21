@@ -57,7 +57,7 @@ export default function WeeklyShareCard({
       // Top bar
       ctx.fillStyle = 'rgba(255,255,255,0.06)'
       ctx.fillRect(0, 0, 1080, 90)
-      ctx.fillStyle = '#0D9488'
+      ctx.fillStyle = 'var(--ns-forest)'
       ctx.font = 'bold 30px system-ui'
       ctx.fillText('NEXTSPLIT', 60, 58)
       ctx.fillStyle = 'rgba(255,255,255,0.3)'
@@ -78,7 +78,7 @@ export default function WeeklyShareCard({
       const barY = 320
       ctx.fillStyle = 'rgba(255,255,255,0.1)'
       ctx.beginPath(); ctx.roundRect(60, barY, 960, 24, 12); ctx.fill()
-      ctx.fillStyle = pct >= 90 ? '#10B981' : '#0D9488'
+      ctx.fillStyle = pct >= 90 ? '#10B981' : 'var(--ns-forest)'
       ctx.beginPath(); ctx.roundRect(60, barY, Math.max(24, 960 * pct / 100), 24, 12); ctx.fill()
       ctx.fillStyle = 'rgba(255,255,255,0.5)'
       ctx.font = '26px system-ui'
@@ -118,7 +118,7 @@ export default function WeeklyShareCard({
       const prgY = 960
       ctx.fillStyle = 'rgba(255,255,255,0.05)'
       ctx.fillRect(0, prgY, 1080, 3)
-      ctx.fillStyle = '#0D9488'
+      ctx.fillStyle = 'var(--ns-forest)'
       ctx.fillRect(0, prgY, 1080 * (weekN / totalWeeks), 3)
 
       ctx.fillStyle = 'rgba(255,255,255,0.05)'
@@ -193,7 +193,7 @@ export default function WeeklyShareCard({
         <canvas ref={canvasRef} className="hidden" />
 
         <button onClick={handleShare} disabled={sharing}
-          className="w-full py-3.5 bg-[#0D9488] text-white font-bold text-sm rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full py-3.5 bg-[var(--ns-forest)] text-white font-bold text-sm rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
           {sharing ? 'Preparing…' : (
             <>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

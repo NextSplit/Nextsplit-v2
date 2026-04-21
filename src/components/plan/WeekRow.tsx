@@ -50,13 +50,13 @@ function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDa
     <div
       ref={weekRef}
       className={`rounded-2xl border overflow-hidden bg-white transition-all ${
-        isCurrent ? 'border-[#0D9488] shadow-sm' : isCompleted ? 'border-gray-100 opacity-60' : 'border-gray-100'
+        isCurrent ? 'border-[var(--ns-forest)] shadow-sm' : isCompleted ? 'border-gray-100 opacity-60' : 'border-gray-100'
       }`}
     >
       <button onClick={() => setOpen(o => !o)} className="w-full flex items-center gap-3 p-4 text-left">
         {/* Badge */}
         <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm ${
-          isCurrent ? 'bg-[#0D9488] text-white' : isCompleted ? 'bg-gray-100 text-gray-300' : 'bg-gray-100 text-gray-500'
+          isCurrent ? 'bg-[var(--ns-forest)] text-white' : isCompleted ? 'bg-gray-100 text-gray-300' : 'bg-gray-100 text-gray-500'
         }`}>
           {isCompleted ? (
             <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -74,7 +74,7 @@ function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDa
                 <span className={`text-[10px] font-semibold ${wtype.colour}`}>{wtype.label}</span>
               </div>
             )}
-            {isCurrent && <span className="text-[10px] font-bold text-[#0D9488]">← Now</span>}
+            {isCurrent && <span className="text-[10px] font-bold text-[var(--ns-forest)]">← Now</span>}
           </div>
           <div className={`text-sm font-semibold truncate ${isCompleted ? 'text-gray-400' : 'text-gray-900'}`}>{decodeHtml(week.title)}</div>
           <div className={`text-[10px] mt-0.5 ${isCompleted ? 'text-gray-300' : 'text-gray-400'}`}>
@@ -85,7 +85,7 @@ function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDa
         <div className="flex-shrink-0 flex flex-col items-end gap-1">
           {isCurrent && totalSessions > 0 && (
             <div className="text-right">
-              <span className="text-base font-bold text-[#0D9488] leading-none">{doneSessions}</span>
+              <span className="text-base font-bold text-[var(--ns-forest)] leading-none">{doneSessions}</span>
               <span className="text-[9px] text-gray-400">/{totalSessions}</span>
             </div>
           )}
@@ -103,7 +103,7 @@ function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDa
       {isCurrent && totalSessions > 0 && (
         <div className="px-4 pb-1">
           <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[#0D9488] rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
+            <div className="h-full bg-[var(--ns-forest)] rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
           </div>
         </div>
       )}

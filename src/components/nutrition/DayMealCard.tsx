@@ -26,23 +26,23 @@ function DayMealCard({
   const calPct = macroTargets.kcal > 0 ? Math.min(Math.round(totals.kcal / macroTargets.kcal * 100), 110) : 0
 
   return (
-    <div className={`bg-white rounded-2xl border overflow-hidden ${isToday ? 'border-[#0D9488] shadow-sm' : 'border-gray-100'}`}>
+    <div className={`bg-white rounded-2xl border overflow-hidden ${isToday ? 'border-[var(--ns-forest)] shadow-sm' : 'border-gray-100'}`}>
       <button onClick={() => setExpanded(e => !e)}
         className="w-full flex items-center gap-3 px-4 py-3 text-left">
-        <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 ${isToday ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-500'}`}>
+        <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 ${isToday ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-500'}`}>
           {new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short' }).slice(0, 2)}
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-xs font-semibold text-gray-900">
             {new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
-            {isToday && <span className="text-[#0D9488] ml-1.5">· Today</span>}
+            {isToday && <span className="text-[var(--ns-forest)] ml-1.5">· Today</span>}
           </div>
           {dayEntries.length === 0 ? (
             <div className="text-[10px] text-gray-400">No meals planned</div>
           ) : (
             <div className="flex items-center gap-2 mt-0.5">
               <div className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
-                <div className={`h-full rounded-full ${calPct > 100 ? 'bg-red-400' : 'bg-[#0D9488]'}`} style={{ width: `${Math.min(calPct, 100)}%` }} />
+                <div className={`h-full rounded-full ${calPct > 100 ? 'bg-red-400' : 'bg-[var(--ns-forest)]'}`} style={{ width: `${Math.min(calPct, 100)}%` }} />
               </div>
               <span className="text-[10px] text-gray-500">{Math.round(totals.kcal)} kcal</span>
             </div>
@@ -80,7 +80,7 @@ function DayMealCard({
                       {slot.emoji} {slot.label}
                     </span>
                     <button onClick={() => onAdd(slot.id as MealSlotId)}
-                      className="text-[10px] font-semibold text-[#0D9488]">+ Add</button>
+                      className="text-[10px] font-semibold text-[var(--ns-forest)]">+ Add</button>
                   </div>
                   {slotEntries.length === 0 ? (
                     <p className="text-[10px] text-gray-300 italic">Nothing planned</p>

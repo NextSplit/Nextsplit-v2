@@ -19,7 +19,7 @@ export default function GymLiveWrapper({ weekN, dayIndex, sessionIndex }: Props)
     return (
       <div className="fixed inset-0 bg-[#f8f8f6] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-[#0D9488] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-8 h-8 border-2 border-[var(--ns-forest)] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-sm text-gray-500">Loading session…</p>
         </div>
       </div>
@@ -44,7 +44,7 @@ export default function GymLiveWrapper({ weekN, dayIndex, sessionIndex }: Props)
           <p className="text-xs text-gray-400 mb-5">Week {weekN}, Day {dayIndex}, Session {sessionIndex}</p>
           <button
             onClick={() => router.replace('/today')}
-            className="text-sm font-semibold text-[#0D9488]"
+            className="text-sm font-semibold text-[var(--ns-forest)]"
           >
             Back to Today
           </button>

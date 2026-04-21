@@ -151,7 +151,7 @@ export default function NutritionClient() {
             {(['today', 'week', 'recipes'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2.5 text-[12px] font-semibold border-b-2 transition-colors capitalize ${
-                  activeTab === tab ? 'border-[#0D9488] text-[#0D9488]' : 'border-transparent text-gray-400'
+                  activeTab === tab ? 'border-[var(--ns-forest)] text-[var(--ns-forest)]' : 'border-transparent text-gray-400'
                 }`}>
                 {tab === 'today' ? 'Today' : tab === 'week' ? 'This Week' : 'Recipes'}
               </button>
@@ -181,7 +181,7 @@ export default function NutritionClient() {
               Choose a plan first to unlock personalised fuel guidance.
             </p>
             <a href="/onboarding"
-              className="inline-block bg-[#0D9488] text-white px-6 py-2.5 rounded-xl text-sm font-semibold">
+              className="inline-block bg-[var(--ns-forest)] text-white px-6 py-2.5 rounded-xl text-sm font-semibold">
               Choose a plan →
             </a>
           </div>
@@ -259,7 +259,7 @@ export default function NutritionClient() {
                           {slot.emoji} {slot.label}
                         </span>
                         <button onClick={() => setAssigningSlot({ date: todayDate, slot: slot.id as MealSlotId })}
-                          className="text-[11px] font-semibold text-[#0D9488]">+ Add</button>
+                          className="text-[11px] font-semibold text-[var(--ns-forest)]">+ Add</button>
                       </div>
                       {slotEntries.length === 0 ? (
                         <p className="text-[10px] text-gray-300 italic">Nothing planned</p>
@@ -342,7 +342,7 @@ export default function NutritionClient() {
         {activeTab === 'recipes' && (
           <>
             <button onClick={() => { setEditingRecipe(null); setShowRecipeForm(true) }}
-              className="w-full py-3 rounded-2xl bg-[#0D9488] text-white text-sm font-semibold active:scale-95 transition-transform">
+              className="w-full py-3 rounded-2xl bg-[var(--ns-forest)] text-white text-sm font-semibold active:scale-95 transition-transform">
               + New recipe
             </button>
             {recipes.length === 0 ? (
@@ -355,7 +355,7 @@ export default function NutritionClient() {
                 </p>
                 <button
                   onClick={() => { setEditingRecipe(null); setShowRecipeForm(true) }}
-                  className="inline-block bg-[#0D9488] text-white px-5 py-2 rounded-xl text-sm font-semibold">
+                  className="inline-block bg-[var(--ns-forest)] text-white px-5 py-2 rounded-xl text-sm font-semibold">
                   Add first recipe →
                 </button>
               </div>

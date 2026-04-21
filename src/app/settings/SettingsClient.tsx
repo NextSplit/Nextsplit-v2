@@ -55,7 +55,7 @@ function ToggleRow({ label, sublabel, value, onChange }: {
     <SettingRow label={label} sublabel={sublabel}>
       <button
         onClick={() => onChange(!value)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? 'bg-[#0D9488]' : 'bg-gray-200'}`}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? 'bg-[var(--ns-forest)]' : 'bg-gray-200'}`}
         role="switch"
         aria-checked={value}
         aria-label={label}
@@ -76,7 +76,7 @@ function SelectRow<T extends string>({ label, sublabel, value, options, onChange
       <select
         value={value}
         onChange={e => onChange(e.target.value as T)}
-        className="text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+        className="text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
         aria-label={label}
       >
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -97,7 +97,7 @@ function ButtonRow({ label, sublabel, buttonLabel, onClick, danger, disabled }: 
         className={`text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40 transition-all ${
           danger
             ? 'text-red-500 bg-red-50 border border-red-200 hover:bg-red-100'
-            : 'text-[#0D9488] bg-teal-50 border border-teal-200 hover:bg-teal-100'
+            : 'text-[var(--ns-forest)] bg-teal-50 border border-teal-200 hover:bg-teal-100'
         }`}
         aria-label={buttonLabel}
       >
@@ -130,7 +130,7 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
         <span className="text-sm font-medium text-gray-900">{label}</span>
         {!editing && (
           <button onClick={() => { setDraft(value); setEditing(true) }}
-            className="text-[11px] font-semibold text-[#0D9488]" aria-label={`Edit ${label}`}>
+            className="text-[11px] font-semibold text-[var(--ns-forest)]" aria-label={`Edit ${label}`}>
             Edit
           </button>
         )}
@@ -143,12 +143,12 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
             value={draft}
             onChange={e => setDraft(e.target.value)}
             placeholder={placeholder}
-            className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+            className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
             autoFocus
             aria-label={`${label} input`}
           />
           <button onClick={handleSave} disabled={saving}
-            className="px-3 py-2 bg-[#0D9488] text-white text-xs font-bold rounded-xl disabled:opacity-50">
+            className="px-3 py-2 bg-[var(--ns-forest)] text-white text-xs font-bold rounded-xl disabled:opacity-50">
             {saving ? '…' : 'Save'}
           </button>
           <button onClick={() => setEditing(false)}
@@ -615,7 +615,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
                   type="time"
                   defaultValue={p.notification_time?.slice(0, 5) ?? '07:00'}
                   onChange={e => saveNotificationTime(e.target.value)}
-                  className="text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+                  className="text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
                   aria-label="Notification time"
                 />
               </div>

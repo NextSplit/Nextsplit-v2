@@ -55,7 +55,7 @@ const defaultCharacter: CharacterConfig = {
   hairStyle:     'short',
   hairColour:    '#3b2314',
   faceShape:     'oval',
-  kitColour:     '#0d9488',
+  kitColour:     'var(--ns-forest)',
   shoeColour:    '#1e293b',
   accessories:   [],
   startingTitle: 'The Newcomer',

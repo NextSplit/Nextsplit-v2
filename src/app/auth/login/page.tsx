@@ -72,13 +72,13 @@ export default function LoginPage() {
             <div>
               <label className="text-xs font-semibold text-gray-500 block mb-1.5">Email</label>
               <input name="email" type="email" required autoComplete="email"
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100 transition-colors"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100 transition-colors"
                 placeholder="you@example.com" />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 block mb-1.5">Password</label>
               <input name="password" type="password" required autoComplete="current-password"
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100 transition-colors"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100 transition-colors"
                 placeholder="••••••••" />
             </div>
 
@@ -87,7 +87,7 @@ export default function LoginPage() {
             )}
 
             <button type="submit" disabled={loading}
-              className="w-full bg-[#0D9488] text-white py-3 rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50">
+              className="w-full bg-[var(--ns-forest)] text-white py-3 rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50">
               {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
@@ -95,7 +95,7 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-gray-400 mt-6">
           Don&apos;t have an account?{' '}
-          <Link href="/auth/signup" className="text-[#0D9488] font-semibold hover:underline">
+          <Link href="/auth/signup" className="text-[var(--ns-forest)] font-semibold hover:underline">
             Sign up free
           </Link>
         </p>

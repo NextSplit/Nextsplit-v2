@@ -44,7 +44,7 @@ export default function OfflinePage() {
           }
           .btn {
             display: inline-block;
-            background: #0D9488;
+            background: var(--ns-forest);
             color: white;
             font-size: 15px;
             font-weight: 600;
@@ -66,7 +66,7 @@ export default function OfflinePage() {
       </head>
       <body>
         <div className="icon">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0D9488" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--ns-forest)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M1 6l5 6 4-4 4 6 4-4 5 6"/>
             <line x1="1" y1="1" x2="23" y2="23" stroke="#ef4444" strokeWidth="2.5"/>
           </svg>

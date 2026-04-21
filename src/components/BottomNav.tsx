@@ -80,11 +80,11 @@ export default function BottomNav() {
               aria-label={tab.label}
               aria-current={active ? 'page' : undefined}
               className={`flex-1 flex flex-col items-center gap-0.5 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 rounded-lg ${
-                active ? 'text-[#0D9488]' : 'text-[#aaa]'
+                active ? 'text-[var(--ns-forest)]' : 'text-[#aaa]'
               }`}
             >
               {tab.icon(active)}
-              <span className={`text-[9px] font-semibold tracking-wide ${active ? 'text-[#0D9488]' : 'text-[#aaa]'}`}>
+              <span className={`text-[9px] font-semibold tracking-wide ${active ? 'text-[var(--ns-forest)]' : 'text-[#aaa]'}`}>
                 {tab.label}
               </span>
             </Link>

@@ -48,8 +48,8 @@ function DayRow({ day, dayIndex, weekN, logs, gymLogs, isToday, isPast, onOpen }
       className={`w-full px-4 py-2.5 border-b border-gray-50 last:border-0 text-left flex items-center gap-3 active:bg-gray-50 transition-colors ${isToday ? 'bg-teal-50/50' : ''}`}
     >
       <div className="w-9 flex-shrink-0 text-center">
-        <div className={`text-xs font-bold ${isToday ? 'text-[#0D9488]' : isPast ? 'text-gray-300' : 'text-gray-400'}`}>{day.d}</div>
-        {isToday && <div className="w-1.5 h-1.5 bg-[#0D9488] rounded-full mx-auto mt-0.5" />}
+        <div className={`text-xs font-bold ${isToday ? 'text-[var(--ns-forest)]' : isPast ? 'text-gray-300' : 'text-gray-400'}`}>{day.d}</div>
+        {isToday && <div className="w-1.5 h-1.5 bg-[var(--ns-forest)] rounded-full mx-auto mt-0.5" />}
       </div>
 
       <div className="flex-1 min-w-0">

@@ -23,7 +23,7 @@ export default function Error({
       <div className="flex gap-3">
         <button
           onClick={reset}
-          className="bg-[#0D9488] text-white px-5 py-3 rounded-xl text-sm font-semibold"
+          className="bg-[var(--ns-forest)] text-white px-5 py-3 rounded-xl text-sm font-semibold"
         >
           Try again
         </button>

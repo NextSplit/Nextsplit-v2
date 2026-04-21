@@ -72,14 +72,14 @@ function WeightTrend() {
           {/* Weight line */}
           <polyline
             points={weights.map((w, i) => `${i * 20 + 10},${60 - ((w - min) / range) * 52}`).join(' ')}
-            fill="none" stroke="#0D9488" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"
+            fill="none" stroke="var(--ns-forest)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"
           />
           {/* Dots */}
           {weights.map((w, i) => (
             <circle key={i} cx={i * 20 + 10} cy={60 - ((w - min) / range) * 52}
               r={i === weights.length - 1 ? 3.5 : 2}
-              fill={i === weights.length - 1 ? '#0D9488' : '#CCFBF1'}
-              stroke="#0D9488" strokeWidth="1.5"
+              fill={i === weights.length - 1 ? 'var(--ns-forest)' : '#CCFBF1'}
+              stroke="var(--ns-forest)" strokeWidth="1.5"
             />
           ))}
         </svg>

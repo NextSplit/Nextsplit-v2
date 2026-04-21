@@ -60,13 +60,13 @@ export default function PlanBrowserClient({ templates }: Props) {
             <button
               onClick={() => setSelectedDistance('all')}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap flex-shrink-0 ${
-                selectedDistance === 'all' ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-600'
+                selectedDistance === 'all' ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-600'
               }`}
             >All distances</button>
             {distances.map(d => (
               <button key={d} onClick={() => setSelectedDistance(d)}
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap flex-shrink-0 ${
-                  selectedDistance === d ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-600'
+                  selectedDistance === d ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-600'
                 }`}
               >{DISTANCE_LABEL[d]}</button>
             ))}
@@ -77,7 +77,7 @@ export default function PlanBrowserClient({ templates }: Props) {
             {['all', ...LEVEL_ORDER].map(l => (
               <button key={l} onClick={() => setSelectedLevel(l)}
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors capitalize ${
-                  selectedLevel === l ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-600'
+                  selectedLevel === l ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-600'
                 }`}
               >{l === 'all' ? 'All levels' : l}</button>
             ))}
@@ -92,7 +92,7 @@ export default function PlanBrowserClient({ templates }: Props) {
             <div className="text-4xl mb-3">🔍</div>
             <p className="text-sm font-semibold text-gray-700 mb-1">No plans match those filters</p>
             <button onClick={() => { setSelectedDistance('all'); setSelectedLevel('all') }}
-              className="text-xs text-[#0D9488] font-semibold mt-2">
+              className="text-xs text-[var(--ns-forest)] font-semibold mt-2">
               Clear filters
             </button>
           </div>
@@ -148,7 +148,7 @@ function PlanCard({ plan, onClick }: { plan: PlanTemplate; onClick: () => void }
         <Stat label="runs/wk" value={String(plan.runs_per_week)} />
         {plan.peak_km_week && <Stat label="peak km" value={`${plan.peak_km_week}`} />}
         {plan.longest_run_km && <Stat label="long run" value={`${plan.longest_run_km}km`} />}
-        <div className="ml-auto text-[#0D9488]">
+        <div className="ml-auto text-[var(--ns-forest)]">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
@@ -289,7 +289,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           <div>
             <label className="text-xs font-semibold text-gray-500 block mb-1.5">Plan name</label>
             <input type="text" value={planName} onChange={e => setPlanName(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100 transition-colors" />
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100 transition-colors" />
           </div>
 
           <div>
@@ -297,7 +297,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
               Race date <span className="text-gray-300 font-normal">(optional)</span>
             </label>
             <input type="date" value={raceDateInput} onChange={e => setRaceDateInput(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100 transition-colors" />
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100 transition-colors" />
             <p className="text-[10px] text-gray-400 mt-1">
               We&apos;ll align your training weeks to build up to race day.
             </p>
@@ -331,7 +331,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           )}
 
           <button onClick={handleActivate} disabled={activating || !planName.trim()}
-            className="w-full bg-[#0D9488] text-white py-3.5 rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50">
+            className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50">
             {activating ? 'Starting your plan…' : 'Start this plan →'}
           </button>
         </div>

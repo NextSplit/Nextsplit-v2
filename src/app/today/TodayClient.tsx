@@ -171,6 +171,9 @@ export default function TodayClient() {
           effort:       params.effort,
         }),
       }).catch(() => {}) // non-blocking
+
+      // Recompute runner class after every session (non-blocking)
+      fetch('/api/runner-class', { method: 'POST' }).catch(() => {})
     }
 
     if (undoInfo) clearTimeout(undoInfo.timer)
@@ -345,7 +348,7 @@ export default function TodayClient() {
                   ? 'Amazing work finishing your plan. Ready to pick your next challenge?'
                   : 'Choose a training plan to get started.'}
               </p>
-              <a href="/onboarding" className="inline-block bg-[#0D9488] text-white px-6 py-3 rounded-xl text-sm font-semibold">
+              <a href="/onboarding" className="inline-block bg-[var(--ns-forest)] text-white px-6 py-3 rounded-xl text-sm font-semibold">
                 {hadPlan ? 'Start next plan →' : 'Choose a plan →'}
               </a>
               {hadPlan && (

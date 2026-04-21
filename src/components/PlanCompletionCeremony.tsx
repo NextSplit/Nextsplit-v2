@@ -16,7 +16,7 @@ interface Particle {
   color: string; size: number; rotation: number; rotSpeed: number; opacity: number
 }
 
-const COLORS = ['#0D9488','#34D399','#FCD34D','#F87171','#A78BFA','#60A5FA','#FB923C']
+const COLORS = ['var(--ns-forest)','#34D399','#FCD34D','#F87171','#A78BFA','#60A5FA','#FB923C']
 
 function useConfetti(canvasRef: React.RefObject<HTMLCanvasElement | null>, active: boolean) {
   const particles = useRef<Particle[]>([])
@@ -112,7 +112,7 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
   return (
     <div
       className={`fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0'}`}
-      style={{ background: 'linear-gradient(160deg, #0f172a 0%, #0D9488 60%, #065F46 100%)' }}
+      style={{ background: 'linear-gradient(160deg, #0f172a 0%, var(--ns-forest) 60%, #065F46 100%)' }}
     >
       {/* Confetti canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />

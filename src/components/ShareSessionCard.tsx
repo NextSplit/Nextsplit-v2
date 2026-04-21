@@ -79,7 +79,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
       // ── Top bar ─────────────────────────────────────────────────────────
       ctx.fillStyle = 'rgba(255,255,255,0.08)'
       ctx.fillRect(0, 0, 1080, 90)
-      ctx.fillStyle = '#0D9488'
+      ctx.fillStyle = 'var(--ns-forest)'
       ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
       ctx.fillText('NEXTSPLIT', 60, 58)
       ctx.fillStyle = 'rgba(255,255,255,0.3)'
@@ -100,7 +100,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
       ctx.beginPath()
       ctx.roundRect(60, 140, 280, 56, 28)
       ctx.fill()
-      ctx.fillStyle = '#0D9488'
+      ctx.fillStyle = 'var(--ns-forest)'
       ctx.font = 'bold 26px system-ui'
       ctx.fillText(`${cfg.emoji}  ${cfg.label.toUpperCase()}`, 85, 177)
 
@@ -159,7 +159,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
       ctx.beginPath()
       ctx.roundRect(60, y, xpW, 64, 32)
       ctx.fill()
-      ctx.strokeStyle = '#0D9488'
+      ctx.strokeStyle = 'var(--ns-forest)'
       ctx.lineWidth = 2
       ctx.stroke()
       ctx.fillStyle = '#5eead4'
@@ -224,7 +224,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
           }} />
           {/* Glow */}
           <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-30"
-            style={{ background: 'radial-gradient(circle, #0D9488, transparent)', transform: 'translate(25%, -25%)' }} />
+            style={{ background: 'radial-gradient(circle, var(--ns-forest), transparent)', transform: 'translate(25%, -25%)' }} />
 
           <div className="relative z-10 p-5 h-full flex flex-col">
             {/* Top bar */}
@@ -273,7 +273,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
         <canvas ref={canvasRef} className="hidden" />
 
         <button onClick={handleShare} disabled={sharing}
-          className="w-full py-3.5 bg-[#0D9488] text-white font-bold text-sm rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full py-3.5 bg-[var(--ns-forest)] text-white font-bold text-sm rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
           {sharing ? 'Preparing…' : (
             <>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

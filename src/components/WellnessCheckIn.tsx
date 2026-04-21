@@ -34,11 +34,11 @@ function SliderRow({ label, emoji, value, onChange, lowLabel, highLabel }: {
     <div>
       <div className="flex items-center justify-between mb-1.5">
         <span className="text-xs font-semibold text-gray-700">{emoji} {label}</span>
-        <span className="text-sm font-bold text-[#0D9488]">{value}/5</span>
+        <span className="text-sm font-bold text-[var(--ns-forest)]">{value}/5</span>
       </div>
       <input type="range" min={1} max={5} step={1} value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#0D9488]" />
+        className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[var(--ns-forest)]" />
       <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
         <span>{lowLabel}</span><span>{highLabel}</span>
       </div>
@@ -125,7 +125,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-black text-[#0D9488]">{existScore}</div>
+          <div className="text-2xl font-black text-[var(--ns-forest)]">{existScore}</div>
           <div className="text-[10px] text-gray-400">/10 · edit</div>
         </div>
       </button>
@@ -149,7 +149,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
             <div className="text-xs text-gray-400">Tap to log readiness</div>
           </div>
           <div className="ml-auto">
-            <span className="text-[11px] font-semibold text-[#0D9488] bg-teal-50 px-2.5 py-1 rounded-full">Log</span>
+            <span className="text-[11px] font-semibold text-[var(--ns-forest)] bg-teal-50 px-2.5 py-1 rounded-full">Log</span>
           </div>
         </button>
         <button
@@ -187,7 +187,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
               value={weightKg}
               onChange={e => setWeightKg(e.target.value)}
               placeholder="kg"
-              className="w-16 text-right border border-gray-200 rounded-lg px-2 py-1 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+              className="w-16 text-right border border-gray-200 rounded-lg px-2 py-1 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
             />
             <span className="text-xs text-gray-400">kg</span>
           </div>
@@ -200,7 +200,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
         </div>
       </div>
       <button onClick={handleSave} disabled={saving}
-        className="w-full py-3 bg-[#0D9488] text-white rounded-xl text-sm font-semibold disabled:opacity-50">
+        className="w-full py-3 bg-[var(--ns-forest)] text-white rounded-xl text-sm font-semibold disabled:opacity-50">
         {saving ? 'Saving…' : 'Save check-in'}
       </button>
     </div>

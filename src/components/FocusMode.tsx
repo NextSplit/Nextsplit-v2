@@ -87,7 +87,7 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
 
         {/* km */}
         {session.km > 0 && (
-          <div className="text-4xl font-black text-[#0D9488] mb-4">
+          <div className="text-4xl font-black text-[var(--ns-forest)] mb-4">
             {session.km}<span className="text-xl font-bold text-gray-400">km</span>
           </div>
         )}
@@ -110,7 +110,7 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
               className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-colors ${
                 running
                   ? 'bg-amber-100 text-amber-700 border border-amber-200'
-                  : 'bg-[#0D9488] text-white'
+                  : 'bg-[var(--ns-forest)] text-white'
               }`}
             >
               {running ? '⏸ Pause' : elapsed === 0 ? '▶ Start' : '▶ Resume'}
@@ -132,7 +132,7 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
         {!isLogged ? (
           <button
             onClick={() => onLog(elapsed > 0 ? elapsed : undefined)}
-            className="w-full py-4 bg-[#0D9488] text-white rounded-2xl text-base font-bold"
+            className="w-full py-4 bg-[var(--ns-forest)] text-white rounded-2xl text-base font-bold"
           >
             {elapsed > 0 ? `Log session (${formatElapsed(elapsed)})` : 'Log this session'}
           </button>

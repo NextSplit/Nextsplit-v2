@@ -158,7 +158,7 @@ export default function PlanClient() {
         <div className="text-center px-4">
           <div className="text-5xl mb-4">📋</div>
           <h2 className="text-base font-bold text-gray-900 mb-2">No active plan</h2>
-          <a href="/onboarding" className="inline-block bg-[#0D9488] text-white px-6 py-3 rounded-xl text-sm font-semibold mt-4">Choose a plan →</a>
+          <a href="/onboarding" className="inline-block bg-[var(--ns-forest)] text-white px-6 py-3 rounded-xl text-sm font-semibold mt-4">Choose a plan →</a>
         </div>
       </div>
     )
@@ -181,7 +181,7 @@ export default function PlanClient() {
             {plan.race_date && ` · Race: ${new Date(plan.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
           </p>
           <div className="mt-2.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[#0D9488] rounded-full transition-all" style={{ width: `${(plan.current_week / plan.total_weeks) * 100}%` }} />
+            <div className="h-full bg-[var(--ns-forest)] rounded-full transition-all" style={{ width: `${(plan.current_week / plan.total_weeks) * 100}%` }} />
           </div>
           <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
             <span>Week 1</span>

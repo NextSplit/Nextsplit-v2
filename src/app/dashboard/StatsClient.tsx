@@ -76,27 +76,27 @@ function AddRaceModal({ onClose, onAdd }: {
         <div className="mb-4">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Race name *</label>
           <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. London Marathon 2027"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
         </div>
         <div className="mb-4">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Race date *</label>
           <input type="date" value={date} onChange={e => setDate(e.target.value)}
             min={new Date().toISOString().split('T')[0]}
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
         </div>
         <div className="mb-4">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Distance</label>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {COMMON_DISTANCES.map(d => (
               <button key={d.label} onClick={() => { setDistKm(d.km); setDistLabel(d.label) }}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-colors ${distLabel === d.label ? 'bg-[#0D9488] text-white border-transparent' : 'bg-white text-gray-600 border-gray-200'}`}>
+                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-colors ${distLabel === d.label ? 'bg-[var(--ns-forest)] text-white border-transparent' : 'bg-white text-gray-600 border-gray-200'}`}>
                 {d.label}
               </button>
             ))}
           </div>
           <input type="number" value={distKm} onChange={e => { setDistKm(e.target.value === '' ? '' : Number(e.target.value)); setDistLabel('') }}
             placeholder="Custom km"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
         </div>
         <div className="mb-4">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Priority</label>
@@ -114,19 +114,19 @@ function AddRaceModal({ onClose, onAdd }: {
           <div className="flex items-center gap-2">
             {[['H', goalH, setGoalH], ['MM', goalM, setGoalM], ['SS', goalS, setGoalS]].map(([ph, val, set]) => (
               <input key={ph as string} value={val as string} onChange={e => (set as (v:string)=>void)(e.target.value)} placeholder={ph as string}
-                className="w-14 border border-gray-200 rounded-xl px-2 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+                className="w-14 border border-gray-200 rounded-xl px-2 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
             ))}
           </div>
         </div>
         <div className="mb-5">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Location (optional)</label>
           <input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. London, UK"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
         </div>
         {err && <p className="text-xs text-red-500 mb-3">{err}</p>}
         <div className="flex gap-3">
           <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">Cancel</button>
-          <button onClick={handleSave} disabled={saving} className="flex-1 py-3 rounded-xl bg-[#0D9488] text-white text-sm font-semibold disabled:opacity-50">{saving ? 'Saving…' : 'Add Race'}</button>
+          <button onClick={handleSave} disabled={saving} className="flex-1 py-3 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-semibold disabled:opacity-50">{saving ? 'Saving…' : 'Add Race'}</button>
         </div>
       </div>
     </div>
@@ -152,7 +152,7 @@ function LogResultModal({ race, onClose, onLog }: { race: Race; onClose: () => v
         <div className="flex items-center gap-2 mb-4">
           {[['H', h, setH], ['MM', m, setM], ['SS', s, setS]].map(([ph, val, set]) => (
             <input key={ph as string} value={val as string} onChange={e => (set as (v:string)=>void)(e.target.value)} placeholder={ph as string}
-              className="w-16 border border-gray-200 rounded-xl px-2 py-3 text-lg text-center font-bold focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
+              className="w-16 border border-gray-200 rounded-xl px-2 py-3 text-lg text-center font-bold focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
           ))}
         </div>
         {pace && <div className="bg-gray-50 rounded-xl px-4 py-3 flex items-center justify-between mb-3"><span className="text-xs text-gray-500">Avg pace</span><span className="text-sm font-bold text-gray-900">{pace}</span></div>}
@@ -164,7 +164,7 @@ function LogResultModal({ race, onClose, onLog }: { race: Race; onClose: () => v
         )}
         <div className="flex gap-3">
           <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">Cancel</button>
-          <button onClick={handleSave} disabled={saving || !totalSecs} className="flex-1 py-3 rounded-xl bg-[#0D9488] text-white text-sm font-semibold disabled:opacity-50">{saving ? 'Saving…' : 'Save result'}</button>
+          <button onClick={handleSave} disabled={saving || !totalSecs} className="flex-1 py-3 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-semibold disabled:opacity-50">{saving ? 'Saving…' : 'Save result'}</button>
         </div>
       </div>
     </div>
@@ -192,7 +192,7 @@ function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: ()
               <div><div className="text-sm font-bold text-emerald-600">{secsToHMS(race.actual_time_secs)}</div><div className="text-[10px] text-gray-400">result</div></div>
             ) : days < 0 ? <div className="text-xs text-gray-400 font-medium">Past</div>
               : days === 0 ? <div className="text-sm font-bold text-red-500">Today!</div>
-              : <div><div className="text-xl font-black text-[#0D9488]">{days}</div><div className="text-[10px] text-gray-400">days</div></div>}
+              : <div><div className="text-xl font-black text-[var(--ns-forest)]">{days}</div><div className="text-[10px] text-gray-400">days</div></div>}
           </div>
         </div>
       </button>
@@ -220,7 +220,7 @@ function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: ()
           <div className="flex gap-2">
             {!race.actual_time_secs && (
               <button onClick={onLogResult}
-                className="flex-1 py-2 rounded-xl bg-[#0D9488] text-white text-xs font-semibold">
+                className="flex-1 py-2 rounded-xl bg-[var(--ns-forest)] text-white text-xs font-semibold">
                 Log result
               </button>
             )}
@@ -262,13 +262,13 @@ function RacesSection() {
         <div className="flex gap-1">
           {(['upcoming','past'] as const).map(v => (
             <button key={v} onClick={() => setView(v)}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${view === v ? 'bg-[#0D9488] text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>
+              className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${view === v ? 'bg-[var(--ns-forest)] text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>
               {v === 'upcoming' ? `Upcoming${upcoming.length ? ` (${upcoming.length})` : ''}` : `Past${past.length ? ` (${past.length})` : ''}`}
             </button>
           ))}
         </div>
         <button onClick={() => setShowAdd(true)}
-          className="w-8 h-8 rounded-full bg-[#0D9488] text-white flex items-center justify-center text-xl font-light leading-none">+</button>
+          className="w-8 h-8 rounded-full bg-[var(--ns-forest)] text-white flex items-center justify-center text-xl font-light leading-none">+</button>
       </div>
 
       {loading && [1,2].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />)}
@@ -278,7 +278,7 @@ function RacesSection() {
           <div className="text-4xl mb-3">🏁</div>
           <p className="text-sm font-semibold text-gray-700">{view === 'upcoming' ? 'No upcoming races' : 'No past races'}</p>
           {view === 'upcoming' && <p className="text-xs text-gray-400 mt-1 mb-4">Add your next race to track the countdown.</p>}
-          {view === 'upcoming' && <button onClick={() => setShowAdd(true)} className="inline-block bg-[#0D9488] text-white px-5 py-2.5 rounded-xl text-sm font-semibold">Add a race</button>}
+          {view === 'upcoming' && <button onClick={() => setShowAdd(true)} className="inline-block bg-[var(--ns-forest)] text-white px-5 py-2.5 rounded-xl text-sm font-semibold">Add a race</button>}
         </div>
       )}
 
@@ -345,7 +345,7 @@ export default function StatsClient() {
           <div className="flex gap-1">
             {([['stats','📊 Stats'],['races','🏁 Races'],['pace','⏱ Pace']] as const).map(([id, label]) => (
               <button key={id} onClick={() => setActiveTab(id)}
-                className={`flex-1 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${activeTab === id ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-500'}`}>
+                className={`flex-1 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${activeTab === id ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-500'}`}>
                 {label}
               </button>
             ))}
@@ -363,7 +363,7 @@ export default function StatsClient() {
                 <div className="text-5xl mb-4">🧠</div>
                 <h2 className="text-base font-bold text-gray-900 mb-2">Your coach is ready</h2>
                 <p className="text-sm text-gray-400 mb-5 leading-relaxed">Start a training plan and your AI coach will analyse your sessions, spot patterns, and give you weekly insights.</p>
-                <a href="/onboarding" className="inline-block bg-[#0D9488] text-white px-6 py-3 rounded-xl text-sm font-semibold">Choose a plan →</a>
+                <a href="/onboarding" className="inline-block bg-[var(--ns-forest)] text-white px-6 py-3 rounded-xl text-sm font-semibold">Choose a plan →</a>
               </div>
             ) : (
               <>
@@ -442,7 +442,7 @@ export default function StatsClient() {
                           return (
                             <div key={label} className={`px-4 py-3 flex items-center justify-between ${isTarget ? 'bg-teal-50/50' : ''}`}>
                               <div className="flex items-center gap-2.5">
-                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold ${isTarget ? 'bg-[#0D9488] text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold ${isTarget ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-500'}`}>
                                   {label}
                                 </div>
                                 <div>

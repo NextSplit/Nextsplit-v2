@@ -92,7 +92,7 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
               <div className="flex items-center gap-1.5 flex-1">
                 <input type="number" inputMode="numeric" value={duration} onChange={e => setDuration(e.target.value)}
                   placeholder="e.g. 45"
-                  className="w-24 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100" />
+                  className="w-24 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100" />
                 <span className="text-xs text-gray-400">min</span>
               </div>
             </div>
@@ -108,7 +108,7 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
               <textarea value={notes} onChange={e => setNotes(e.target.value)}
                 placeholder="Optional — what did you do?"
                 rows={2}
-                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100 resize-none" />
+                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-teal-100 resize-none" />
             </div>
           </div>
         )}
@@ -119,7 +119,7 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
             Cancel
           </button>
           <button onClick={handleSave} disabled={!selected || saving}
-            className="flex-1 py-3 rounded-xl bg-[#0D9488] text-white text-sm font-bold disabled:opacity-40">
+            className="flex-1 py-3 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-bold disabled:opacity-40">
             {saving ? 'Saving…' : 'Log it ✓'}
           </button>
         </div>

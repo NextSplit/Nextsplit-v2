@@ -64,8 +64,8 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className={`text-base font-bold ${isToday ? 'text-[#0D9488]' : 'text-gray-900'}`}>{day.d}</span>
-                {isToday && <span className="text-[10px] font-bold text-[#0D9488] bg-teal-50 px-2 py-0.5 rounded-full">Today</span>}
+                <span className={`text-base font-bold ${isToday ? 'text-[var(--ns-forest)]' : 'text-gray-900'}`}>{day.d}</span>
+                {isToday && <span className="text-[10px] font-bold text-[var(--ns-forest)] bg-teal-50 px-2 py-0.5 rounded-full">Today</span>}
                 {isPast && <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Past</span>}
               </div>
               <p className="text-[11px] text-gray-400 mt-0.5">{weekTitle}</p>
@@ -153,7 +153,7 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
                             className={`flex-shrink-0 text-[10px] font-bold px-2.5 py-1.5 rounded-lg ${
                               isDone ? 'bg-emerald-100 text-emerald-700' :
                               session.c?.startsWith('gym') ? 'bg-amber-500 text-white' :
-                              'bg-[#0D9488] text-white'
+                              'bg-[var(--ns-forest)] text-white'
                             }`}
                           >
                             {isDone ? '✓ Done' : session.c?.startsWith('gym') ? 'Start →' : 'Log'}

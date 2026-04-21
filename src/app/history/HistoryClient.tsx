@@ -257,7 +257,7 @@ function PlanCard({ summary, onView }: { summary: ArchivedPlanSummary; onView: (
       </div>
 
       <div className="flex items-center justify-end mt-2">
-        <span className="text-[10px] text-[#0D9488] font-semibold">View full plan →</span>
+        <span className="text-[10px] text-[var(--ns-forest)] font-semibold">View full plan →</span>
       </div>
     </button>
   )

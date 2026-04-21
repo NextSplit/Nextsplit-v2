@@ -47,7 +47,7 @@ function WeeklyVolumeChart({ logs, weeks }: { logs: Record<string, TrainingLog>;
                 {actual > 0 && (
                   <div
                     className={`absolute bottom-0 w-full rounded-t-lg transition-all ${
-                      week.b === 'd' ? 'bg-orange-300' : week.b === 'r' ? 'bg-yellow-400' : 'bg-[#0D9488]'
+                      week.b === 'd' ? 'bg-orange-300' : week.b === 'r' ? 'bg-yellow-400' : 'bg-[var(--ns-forest)]'
                     }`}
                     style={{ height: `${actualH}%` }}
                   />
@@ -64,7 +64,7 @@ function WeeklyVolumeChart({ logs, weeks }: { logs: Record<string, TrainingLog>;
 
       <div className="flex items-center gap-3 mt-3">
         <div className="flex items-center gap-1">
-          <div className="w-3 h-2 rounded-sm bg-[#0D9488]" />
+          <div className="w-3 h-2 rounded-sm bg-[var(--ns-forest)]" />
           <span className="text-[10px] text-gray-400">Logged</span>
         </div>
         <div className="flex items-center gap-1">

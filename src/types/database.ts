@@ -299,6 +299,23 @@ export interface ProfileWithStripe extends Profile {
   stripe_customer_id: string | null
 }
 
+/** Runner class migration fields — added April 2026 */
+export type RunnerClassId =
+  | 'warming_up'
+  | 'marathon_runner'
+  | 'speed_merchant'
+  | 'trail_blazer'
+  | 'base_builder'
+  | 'all_rounder'
+  | 'comeback_runner'
+
+export interface ProfileWithRunnerClass extends Profile {
+  runner_class: RunnerClassId | null
+  runner_class_updated_at: string | null
+  runner_class_revealed: boolean
+  first_session_logged_at: string | null
+}
+
 // ── Coach Platform Types (Phase 2-3) ─────────────────────────────────────────
 
 export interface CoachProfile {

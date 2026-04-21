@@ -46,7 +46,7 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
     <div className="bg-white rounded-2xl border border-gray-100 p-5">
       <div className="flex items-baseline justify-between mb-3">
         <div className="text-sm font-bold text-gray-900">Pace Trend</div>
-        <div className={`text-xs font-semibold ${improving ? 'text-[#0D9488]' : 'text-orange-500'}`}>
+        <div className={`text-xs font-semibold ${improving ? 'text-[var(--ns-forest)]' : 'text-orange-500'}`}>
           {improving ? '↗ Getting faster' : '↘ Slower recently'}
         </div>
       </div>
@@ -55,7 +55,7 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
         <polyline
           points={points}
           fill="none"
-          stroke="#0D9488"
+          stroke="var(--ns-forest)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -63,7 +63,7 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
         {paceData.map((d, i) => {
           const x = (i / (paceData.length - 1)) * w
           const y = h - ((d.pace - minPace) / range) * h
-          return <circle key={i} cx={x} cy={y} r="3" fill="#0D9488" />
+          return <circle key={i} cx={x} cy={y} r="3" fill="var(--ns-forest)" />
         })}
       </svg>
 

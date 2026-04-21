@@ -44,7 +44,7 @@ function PWAProfileCard() {
             <p className="text-sm font-semibold text-gray-900">App installed</p>
             <p className="text-xs text-gray-400 mt-0.5">Running in standalone mode</p>
           </div>
-          <span className="ml-auto text-[#0D9488] text-lg">✓</span>
+          <span className="ml-auto text-[var(--ns-forest)] text-lg">✓</span>
         </div>
       </div>
     )
@@ -61,7 +61,7 @@ function PWAProfileCard() {
         {isIOS ? (
           <button
             onClick={() => setShowIOSSteps(s => !s)}
-            className="bg-[#0D9488] text-white text-xs font-semibold px-3 py-1.5 rounded-lg"
+            className="bg-[var(--ns-forest)] text-white text-xs font-semibold px-3 py-1.5 rounded-lg"
           >
             How to
           </button>
@@ -69,7 +69,7 @@ function PWAProfileCard() {
           <button
             onClick={handleInstall}
             disabled={installing || !_installPrompt}
-            className={`text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-opacity disabled:opacity-50 ${_installPrompt ? 'bg-[#0D9488]' : 'bg-gray-400'}`}
+            className={`text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-opacity disabled:opacity-50 ${_installPrompt ? 'bg-[var(--ns-forest)]' : 'bg-gray-400'}`}
           >
             {installing ? 'Installing…' : _installPrompt ? 'Install' : 'Open in Chrome'}
           </button>
