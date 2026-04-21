@@ -12,7 +12,6 @@ export default async function AthleteDetailPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Verify coach-athlete relationship
   const { data: rel } = await supabase
     .from('coach_athletes')
     .select('*')
@@ -23,38 +22,43 @@ export default async function AthleteDetailPage({
 
   if (!rel) redirect('/coach/squad')
 
-  // Fetch athlete profile
   const { data: profile } = await supabase
     .from('profiles')
-    .select('display_name, age, running_experience, weekly_km_current, handle')
+    .select('display_name, age, running_experience, weekly_km_current, handle, runner_class, season_xp')
     .eq('id', athleteId)
     .single()
 
-  // Fetch recent training logs (last 4 weeks)
-  const fourWeeksAgo = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString()
+  // 12 weeks for ACWR chart
+  const twelveWeeksAgo = new Date(Date.now() - 84 * 24 * 3600 * 1000).toISOString()
   const { data: logs } = await supabase
     .from('training_logs')
-    .select('week_n, day_i, session_i, done, km, pace, effort, duration_secs, logged_at')
+    .select('week_n, day_i, session_i, done, km, pace, effort, duration_secs, logged_at, notes')
     .eq('user_id', athleteId)
-    .gte('logged_at', fourWeeksAgo)
+    .gte('logged_at', twelveWeeksAgo)
     .order('logged_at', { ascending: false })
-    .limit(50)
+    .limit(200)
 
-  // Fetch recent wellness logs
   const { data: wellness } = await supabase
     .from('wellness_logs')
     .select('log_date, sleep, energy, mood, soreness, weight_kg')
     .eq('user_id', athleteId)
     .order('log_date', { ascending: false })
-    .limit(14)
+    .limit(30)
 
-  // Fetch active plan
   const { data: plans } = await supabase
     .from('user_plans')
-    .select('id, name, plan_type, total_weeks, current_week, status, race_date')
+    .select('id, name, plan_type, total_weeks, current_week, status, race_date, weeks_data')
     .eq('user_id', athleteId)
     .eq('status', 'active')
     .limit(1)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: messages } = await (supabase as any)
+    .from('coach_messages')
+    .select('id, sender_id, body, created_at, read_at')
+    .or(`coach_id.eq.${user.id},athlete_id.eq.${athleteId}`)
+    .order('created_at', { ascending: false })
+    .limit(20)
 
   return (
     <AthleteDetailClient
@@ -65,6 +69,7 @@ export default async function AthleteDetailPage({
       wellness={wellness ?? []}
       activePlan={plans?.[0] ?? null}
       relationship={rel}
+      messages={messages ?? []}
     />
   )
 }
