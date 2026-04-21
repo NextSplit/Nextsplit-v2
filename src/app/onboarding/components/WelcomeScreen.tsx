@@ -1,6 +1,7 @@
 'use client'
 
 import { useOnboarding } from '../context/OnboardingContext'
+import MedicalDisclaimer from '@/components/MedicalDisclaimer'
 
 export function WelcomeScreen() {
   const { next } = useOnboarding()
@@ -58,15 +59,19 @@ export function WelcomeScreen() {
       <div className="px-6 pb-12 pt-4">
         <button
           onClick={next}
-          className="w-full bg-teal-500 text-white py-4 rounded-2xl text-base font-black tracking-tight hover:bg-teal-400 transition-all active:scale-95"
+          className="w-full text-white py-4 rounded-2xl text-base font-black tracking-tight transition-all active:scale-95"
+          style={{ background: 'var(--ns-forest)' }}
         >
           Let&apos;s go →
         </button>
         <p className="text-center text-xs text-slate-600 mt-3">
           By continuing you agree to our{' '}
-          <span className="text-slate-500 underline">Terms</span> &{' '}
-          <span className="text-slate-500 underline">Privacy Policy</span>
+          <a href="/terms" className="text-slate-500 underline">Terms</a> &{' '}
+          <a href="/privacy" className="text-slate-500 underline">Privacy Policy</a>
         </p>
+        <div className="mt-3">
+          <MedicalDisclaimer variant="compact" />
+        </div>
       </div>
     </div>
   )

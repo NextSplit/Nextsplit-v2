@@ -8,6 +8,7 @@ import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
 import { PostHogProvider } from '@/components/analytics/PostHogProvider'
 import { FeedbackWidget } from '@/components/FeedbackWidget'
 import { Analytics } from '@vercel/analytics/next'
+import CookieConsentBanner from '@/components/CookieConsentBanner'
 
 export const metadata: Metadata = {
   title: 'NextSplit — Intelligent Running Training',
@@ -57,6 +58,7 @@ export default function RootLayout({
             <PWAInstallPrompt />
             <ServiceWorkerRegistrar />
             <Analytics />
+            <CookieConsentBanner />
           </ToastProvider>
         </ThemeWrapper>
       </body>

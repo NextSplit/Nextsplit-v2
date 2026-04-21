@@ -10,6 +10,7 @@ import { useToast } from '@/components/Toast'
 import { setThemePreference } from '@/components/ThemeWrapper'
 import { setUnits } from '@/lib/units'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
+import { useCookieConsent } from '@/hooks/useCookieConsent'
 import type { Profile } from '@/types/database'
 import { createClient } from '@/lib/supabase/client'
 import posthog from 'posthog-js'
@@ -427,6 +428,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
   const { success, error: toastError, warning } = useToast()
   const { subscribe: pushSubscribe, unsubscribe: pushUnsubscribe, status: pushStatus } = usePushNotifications()
   const { isPro } = useSubscription()
+  const { consent: cookieConsent, accept: acceptCookies, decline: declineCookies } = useCookieConsent()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const coachTier = (profile as any)?.coach_tier ?? null
@@ -836,6 +838,13 @@ export default function SettingsClient({ email, initialProfile }: Props) {
 
         {/* ── Account ── */}
         <Section title="Account">
+          {/* Analytics consent — manageable after initial choice */}
+          <ToggleRow
+            label="Analytics"
+            sublabel="Help us improve NextSplit by sharing anonymous usage data. No advertising, no third-party sharing."
+            value={cookieConsent === 'accepted'}
+            onChange={val => val ? acceptCookies() : declineCookies()}
+          />
           <ButtonRow label="Plan history" sublabel="View your completed and archived plans"
             buttonLabel="View" onClick={() => router.push('/history')} />
           <ButtonRow label="Export my data" sublabel="Download a copy of all your data (GDPR)"

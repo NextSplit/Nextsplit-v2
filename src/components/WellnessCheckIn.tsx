@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useWellness } from '@/hooks/useWellness'
-
+import MedicalDisclaimer from '@/components/MedicalDisclaimer'
 function readinessScore(sleep: number, soreness: number, motivation: number): number {
   return Math.round((sleep * 0.4 + motivation * 0.35 + (6 - soreness) * 0.25) * 2)
 }
@@ -203,6 +203,9 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
         className="w-full py-3 bg-[var(--ns-forest)] text-white rounded-xl text-sm font-semibold disabled:opacity-50">
         {saving ? 'Saving…' : 'Save check-in'}
       </button>
+      <div className="mt-3">
+        <MedicalDisclaimer variant="compact" />
+      </div>
     </div>
   )
 }

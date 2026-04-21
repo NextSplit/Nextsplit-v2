@@ -5,7 +5,7 @@ import { useUnits, fmtDistance, secsPerKmToDisplay } from '@/lib/units'
 import { secsToHMS, secsToMMSS } from '@/lib/sessionUtils'
 import { logsArray, weeklyKm, calcACWR, paceToSecs, daysUntil, dayLabel, hmsToSecs, paceMinsPerKm, fmtRaceDate } from '@/lib/statsUtils'
 import type { TrainingLog, PlanWeek } from '@/types/database'
-
+import MedicalDisclaimer from '@/components/MedicalDisclaimer'
 function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: PlanWeek[] }) {
   const data = useMemo(() => calcACWR(logsArray(logs), weeks), [logs, weeks])
 
@@ -89,6 +89,9 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
           </div>
         </div>
       )}
+      <div className="mt-3">
+        <MedicalDisclaimer variant="compact" />
+      </div>
     </div>
   )
 }
