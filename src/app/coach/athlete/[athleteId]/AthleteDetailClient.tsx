@@ -19,6 +19,7 @@ interface Props {
   activePlan:   AnyRecord | null
   relationship: AnyRecord
   messages:     AnyRecord[]
+  isCoachPro:   boolean
 }
 
 // Quick reaction options — B3 spec
@@ -67,12 +68,19 @@ function WeeklyACWRBar({ week, acwr }: { week: number; acwr: number }) {
 // ─── Main component ──────────────────────────────────────────────────────────
 
 export default function AthleteDetailClient({
-  athleteId, coachId, profile, logs, wellness, activePlan, relationship, messages,
+  athleteId, coachId, profile, logs, wellness, activePlan, relationship, messages, isCoachPro,
 }: Props) {
   const [tab, setTab]                         = useState<'overview' | 'sessions' | 'comms'>('overview')
   const [messageBody, setMessageBody]         = useState('')
   const [sendingMsg, setSendingMsg]           = useState(false)
   const [sentMsg, setSentMsg]                 = useState(false)
+  const [showSchedule, setShowSchedule]       = useState(false)
+  const [schedBody, setSchedBody]             = useState('')
+  const [schedDate, setSchedDate]             = useState('')
+  const [schedTime, setSchedTime]             = useState('08:00')
+  const [scheduling, setScheduling]           = useState(false)
+  const [scheduledMsgs, setScheduledMsgs]     = useState<AnyRecord[]>([])
+  const [scheduledLoaded, setScheduledLoaded] = useState(false)
   const [reactions, setReactions]             = useState<Record<string, string>>({})
   const [digestLoading, setDigestLoading]     = useState(false)
   const [digest, setDigest]                   = useState('')
@@ -406,23 +414,31 @@ export default function AthleteDetailClient({
         {tab === 'comms' && (
           <div className="space-y-4">
             {/* Message thread */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3 max-h-96 overflow-y-auto">
+            <div className="rounded-2xl p-4 space-y-3 max-h-96 overflow-y-auto" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
               {messages.length === 0 ? (
-                <p className="text-xs text-gray-400 text-center py-4">No messages yet</p>
+                <p className="text-xs text-center py-4" style={{ color: 'var(--color-text-tertiary)' }}>No messages yet</p>
               ) : (
                 [...messages].reverse().map((msg, i) => {
                   const isCoach = msg.sender_id === coachId
                   const time    = new Date(msg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
                   return (
                     <div key={i} className={`flex gap-2 ${isCoach ? 'flex-row-reverse' : ''}`}>
-                      <div className={`max-w-[80%] rounded-2xl px-3 py-2 ${
-                        isCoach
-                          ? 'text-white rounded-tr-sm'
-                          : 'bg-gray-100 text-gray-800 rounded-tl-sm'
-                      }`}
-                        style={isCoach ? { background: 'var(--ns-forest)' } : {}}>
-                        <p className="text-xs leading-relaxed">{msg.body}</p>
-                        <p className={`text-[9px] mt-0.5 ${isCoach ? 'text-white/60' : 'text-gray-400'}`}>{time}</p>
+                      <div className="max-w-[80%] space-y-1">
+                        <div className={`rounded-2xl px-3 py-2 ${isCoach ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}
+                          style={isCoach
+                            ? { background: '#1e3a5f', color: '#e8f5ee' }
+                            : { background: 'var(--color-surface-2)', color: 'var(--color-text-primary)' }}>
+                          <p className="text-xs leading-relaxed">{msg.body}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <p className="text-[9px] opacity-60">{time}</p>
+                            {isCoach && msg.read_at && (
+                              <p className="text-[9px] opacity-60">Read {new Date(msg.read_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
+                            )}
+                            {isCoach && msg.reaction && (
+                              <span className="text-sm">{msg.reaction}</span>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )
@@ -432,43 +448,129 @@ export default function AthleteDetailClient({
 
             {/* Compose */}
             {sentMsg ? (
-              <div className="bg-emerald-50 border border-emerald-100 rounded-2xl px-4 py-3 text-center">
-                <p className="text-sm font-bold text-emerald-700">Message sent ✓</p>
+              <div className="rounded-2xl px-4 py-3 text-center" style={{ background: '#2b5c3f20', border: '1px solid #2b5c3f40' }}>
+                <p className="text-sm font-bold" style={{ color: '#4ade80' }}>Message sent ✓</p>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">New message</p>
+              <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>New message</p>
+                  {isCoachPro && (
+                    <button onClick={() => setShowSchedule(s => !s)}
+                      className="text-xs px-2.5 py-1 rounded-lg font-bold transition-all"
+                      style={{ background: showSchedule ? '#1e3a5f' : 'var(--color-surface-2)', color: showSchedule ? '#7eb8e8' : 'var(--color-text-tertiary)' }}>
+                      📅 Schedule
+                    </button>
+                  )}
+                </div>
                 <textarea
                   value={messageBody}
                   onChange={e => setMessageBody(e.target.value)}
                   placeholder="Write a coaching note…"
                   rows={3}
-                  className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-forest)] resize-none"
+                  className="w-full text-sm rounded-xl px-3 py-2.5 outline-none resize-none"
+                  style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}
                 />
-                {/* Quick template messages */}
+                {/* Quick templates */}
                 <div className="flex flex-wrap gap-1.5">
-                  {[
-                    'Great session today 🔥',
-                    'Brilliant consistency this week',
-                    'Keep the easy runs genuinely easy',
-                    'Rest up — big session tomorrow',
-                  ].map(t => (
-                    <button key={t}
-                      onClick={() => setMessageBody(t)}
-                      className="text-[10px] px-2 py-1 rounded-lg bg-gray-50 border border-gray-200 text-gray-600 hover:border-gray-300"
-                    >
+                  {['Great session today 🔥', 'Brilliant consistency this week', 'Keep easy runs genuinely easy', 'Rest up — big session tomorrow'].map(t => (
+                    <button key={t} onClick={() => setMessageBody(t)}
+                      className="text-[10px] px-2 py-1 rounded-lg transition-all"
+                      style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>
                       {t}
                     </button>
                   ))}
                 </div>
+
+                {/* Schedule panel — Coach Pro */}
+                {showSchedule && (
+                  <div className="rounded-xl p-3 space-y-2" style={{ background: '#1e3a5f20', border: '1px solid #1e3a5f40' }}>
+                    <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#7eb8e8' }}>📅 Schedule for later</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input type="date" value={schedDate} onChange={e => setSchedDate(e.target.value)}
+                        min={new Date().toISOString().slice(0,10)}
+                        className="px-2 py-1.5 rounded-lg text-xs outline-none"
+                        style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }} />
+                      <input type="time" value={schedTime} onChange={e => setSchedTime(e.target.value)}
+                        className="px-2 py-1.5 rounded-lg text-xs outline-none font-data"
+                        style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }} />
+                    </div>
+                    <button onClick={async () => {
+                      if (!messageBody.trim() || !schedDate) return
+                      setScheduling(true)
+                      try {
+                        const iso = new Date(`${schedDate}T${schedTime}:00`).toISOString()
+                        const res = await fetch('/api/coach/scheduled-messages', {
+                          method: 'POST', headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ athlete_id: athleteId, body: messageBody, scheduled_at: iso }),
+                        })
+                        if (res.ok) {
+                          const d = await res.json()
+                          setScheduledMsgs(prev => [...prev, d.scheduled])
+                          setMessageBody(''); setSchedDate(''); setShowSchedule(false)
+                        }
+                      } finally { setScheduling(false) }
+                    }} disabled={scheduling || !schedDate || !messageBody.trim()}
+                      className="w-full py-2 rounded-lg text-xs font-bold text-white disabled:opacity-40"
+                      style={{ background: '#1e3a5f' }}>
+                      {scheduling ? 'Scheduling…' : 'Schedule message'}
+                    </button>
+                  </div>
+                )}
+
+                {!isCoachPro && (
+                  <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
+                    💡 <a href="/coach/settings" style={{ color: '#7eb8e8' }}>Upgrade to Coach Pro</a> to schedule messages for race day, post-race check-ins, and plan milestones.
+                  </p>
+                )}
+
                 <button
                   onClick={sendMessage}
                   disabled={sendingMsg || !messageBody.trim()}
-                  className="w-full py-3 rounded-2xl text-white text-sm font-bold disabled:opacity-40 transition-all"
-                  style={{ background: 'var(--ns-forest)' }}
+                  className="w-full py-3 rounded-2xl text-white text-sm font-bold disabled:opacity-40 transition-all active:scale-95"
+                  style={{ background: '#2b5c3f' }}
                 >
                   {sendingMsg ? 'Sending…' : 'Send message'}
                 </button>
+              </div>
+            )}
+
+            {/* Scheduled messages queue */}
+            {isCoachPro && (
+              <div>
+                <button onClick={async () => {
+                  if (scheduledLoaded) return
+                  const res = await fetch(`/api/coach/scheduled-messages?athlete_id=${athleteId}`)
+                  const d = await res.json()
+                  setScheduledMsgs(d.scheduled ?? [])
+                  setScheduledLoaded(true)
+                }} className="text-xs font-bold mb-2 flex items-center gap-1"
+                  style={{ color: 'var(--color-text-tertiary)' }}>
+                  📅 Scheduled messages {scheduledMsgs.length > 0 ? `(${scheduledMsgs.length})` : ''}
+                </button>
+                {scheduledLoaded && scheduledMsgs.length === 0 && (
+                  <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>No scheduled messages</p>
+                )}
+                <div className="space-y-2">
+                  {scheduledMsgs.map(s => (
+                    <div key={s.id} className="rounded-xl px-3 py-2.5 flex items-start justify-between gap-2"
+                      style={{ background: '#1e3a5f15', border: '1px solid #1e3a5f30' }}>
+                      <div className="min-w-0">
+                        <p className="text-xs line-clamp-1" style={{ color: 'var(--color-text-primary)' }}>{s.body}</p>
+                        <p className="text-[10px] mt-0.5" style={{ color: '#7eb8e8' }}>
+                          📅 {new Date(s.scheduled_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                      <button onClick={async () => {
+                        await fetch(`/api/coach/scheduled-messages?id=${s.id}`, { method: 'DELETE' })
+                        setScheduledMsgs(prev => prev.filter(m => m.id !== s.id))
+                      }} className="text-[10px] px-2 py-0.5 rounded flex-shrink-0"
+                        style={{ background: '#e85d2615', color: '#e85d26' }}>
+                        Cancel
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

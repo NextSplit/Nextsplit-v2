@@ -53,12 +53,24 @@ export default async function AthleteDetailPage({
     .limit(1)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: messages } = await (supabase as any)
+  const s = supabase as any
+  const { data: messages } = await s
     .from('coach_messages')
-    .select('id, sender_id, body, created_at, read_at')
+    .select('id, sender_id, body, created_at, read_at, reaction, reaction_at, is_scheduled')
     .or(`coach_id.eq.${user.id},athlete_id.eq.${athleteId}`)
+    .eq('is_scheduled', false)
     .order('created_at', { ascending: false })
     .limit(20)
+
+  // Check Coach Pro status
+  const { data: coachProfile } = await s
+    .from('coach_profiles')
+    .select('is_coach_pro, coach_pro_expires_at')
+    .eq('user_id', user.id)
+    .single()
+
+  const isCoachPro = coachProfile?.is_coach_pro === true &&
+    (!coachProfile.coach_pro_expires_at || new Date(coachProfile.coach_pro_expires_at) > new Date())
 
   return (
     <AthleteDetailClient
@@ -70,6 +82,7 @@ export default async function AthleteDetailPage({
       activePlan={plans?.[0] ?? null}
       relationship={rel}
       messages={messages ?? []}
+      isCoachPro={isCoachPro}
     />
   )
 }

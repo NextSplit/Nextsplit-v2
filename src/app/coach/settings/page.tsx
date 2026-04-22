@@ -21,7 +21,7 @@ export default async function CoachSettingsPage() {
       website_url, instagram_handle, strava_profile,
       specialty_tags, distance_tags, athlete_type_tags, language_tags,
       coach_pbs, group_coaching, group_max_size, group_price_gbp,
-      verification_tier, stripe_account_id, avg_rating, review_count
+      verification_tier, stripe_account_id, avg_rating, review_count, is_coach_pro, coach_pro_expires_at
     `)
     .eq('user_id', user.id)
     .single()
@@ -34,11 +34,15 @@ export default async function CoachSettingsPage() {
     .eq('coach_id', user.id)
     .eq('status', 'active')
 
+  const isCoachPro = coach?.is_coach_pro === true &&
+    (!coach.coach_pro_expires_at || new Date(coach.coach_pro_expires_at) > new Date())
+
   return (
     <CoachSettingsClient
       coach={coach}
       activeAthletes={activeCount ?? 0}
       userId={user.id}
+      isCoachPro={isCoachPro}
     />
   )
 }

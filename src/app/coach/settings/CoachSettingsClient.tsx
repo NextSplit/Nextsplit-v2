@@ -32,6 +32,7 @@ interface Props {
   coach:          CoachData
   activeAthletes: number
   userId:         string
+  isCoachPro:     boolean
 }
 
 const SPECIALTY_OPTS = ['Marathon', 'Half Marathon', '10K', '5K', 'Trail', 'Ultra', 'Track', 'Cross Country', 'Triathlon', 'Obstacle']
@@ -70,7 +71,7 @@ function Toggle({ value, onChange, label, sub }: { value: boolean; onChange: (v:
   )
 }
 
-export default function CoachSettingsClient({ coach, activeAthletes }: Props) {
+export default function CoachSettingsClient({ coach, activeAthletes, isCoachPro }: Props) {
   // Availability state
   const [accepting, setAccepting]     = useState(coach.accepting_athletes)
   const [maxAthletes, setMaxAthletes] = useState(coach.max_athletes ?? 10)
@@ -92,6 +93,7 @@ export default function CoachSettingsClient({ coach, activeAthletes }: Props) {
   const [distanceTags, setDistanceTags]     = useState<string[]>(coach.distance_tags ?? [])
   const [athleteTypeTags, setAthleteTypeTags] = useState<string[]>(coach.athlete_type_tags ?? [])
 
+  const [digestPref, setDigestPref] = useState<'immediate'|'daily'|'weekly'>('daily')
   const [saving, setSaving]   = useState(false)
   const [saved, setSaved]     = useState(false)
   const [error, setError]     = useState<string | null>(null)
@@ -371,6 +373,57 @@ export default function CoachSettingsClient({ coach, activeAthletes }: Props) {
                 </button>
               ))}
             </div>
+          </div>
+        </Section>
+
+        {/* Coach Pro */}
+        <Section title="Coach Pro">
+          {isCoachPro ? (
+            <div className="rounded-xl p-3 flex items-center gap-3" style={{ background: '#1e3a5f20', border: '1px solid #1e3a5f40' }}>
+              <span className="text-2xl">⭐</span>
+              <div>
+                <p className="text-sm font-black" style={{ color: '#7eb8e8' }}>Coach Pro active</p>
+                <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Scheduled messages, advanced analytics, bulk tools</p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="rounded-xl p-3" style={{ background: 'var(--color-surface-2)' }}>
+                <p className="text-xs font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>Coach Pro — £19.99/month</p>
+                <div className="space-y-1 mb-3">
+                  {['Scheduled messages (race day, check-ins, milestones)', 'Advanced athlete analytics', 'Bulk plan management', 'Priority support', 'Coach referral programme (£100/referral)'].map(f => (
+                    <p key={f} className="text-xs flex items-start gap-1.5" style={{ color: 'var(--color-text-secondary)' }}>
+                      <span className="text-[10px] mt-0.5" style={{ color: '#4ade80' }}>✓</span>{f}
+                    </p>
+                  ))}
+                </div>
+                <button onClick={async () => {
+                  const res = await fetch('/api/stripe/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product: 'coach_pro', interval: 'month' }) })
+                  const d = await res.json()
+                  if (d.url) window.location.href = d.url
+                }} className="w-full py-2.5 rounded-xl text-sm font-bold text-white" style={{ background: '#1e3a5f' }}>
+                  Upgrade to Coach Pro →
+                </button>
+              </div>
+            </div>
+          )}
+        </Section>
+
+        {/* Email digest */}
+        <Section title="Email digest">
+          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+            How often to receive digest emails (new messages, completions, reviews, earnings).
+          </p>
+          <div className="flex gap-2">
+            {([['immediate','Immediate'],['daily','Daily 8am'],['weekly','Weekly']] as const).map(([val, label]) => (
+              <button key={val} onClick={() => {
+                setDigestPref(val)
+                fetch('/api/coach/digest', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ digest_preference: val }) })
+              }} className="flex-1 py-2 rounded-xl text-xs font-bold transition-all"
+                style={{ background: digestPref === val ? '#1e3a5f' : 'var(--color-surface-2)', color: digestPref === val ? '#7eb8e8' : 'var(--color-text-tertiary)' }}>
+                {label}
+              </button>
+            ))}
           </div>
         </Section>
 
