@@ -41,10 +41,10 @@ export default function CreateSquadClient() {
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error); setSaving(false); return }
-      // Small delay to allow Supabase RLS to propagate the new row
-      await new Promise(r => setTimeout(r, 500))
-      router.push('/squad?created=1')
-      router.refresh()
+      // Delay + hard navigation to bust Next.js cache on /squad
+      await new Promise(r => setTimeout(r, 800))
+      // Use window.location for hard navigation — bypasses Next.js cache
+      window.location.href = '/squad'
     } catch {
       setError('Something went wrong')
       setSaving(false)
