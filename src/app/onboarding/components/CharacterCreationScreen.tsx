@@ -41,7 +41,7 @@ function randomCharacter(): CharacterConfig {
 }
 
 // ── Preview sprite (larger version for character builder) ─────────────────────
-function CharacterPreview({ config }: { config: CharacterConfig }) {
+function CharacterPreview({ config, size = 160 }: { config: CharacterConfig; size?: number }) {
   const skin = SKIN_COLOURS[config.skinTone] ?? SKIN_COLOURS['tone-3']
   const kit  = config.kitColour
   const hair = config.hairColour
@@ -53,7 +53,7 @@ function CharacterPreview({ config }: { config: CharacterConfig }) {
   return (
     <div className="flex flex-col items-center gap-3">
       {/* Large runner SVG — mid-stride pose */}
-      <svg width="180" height="220" viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width={size} height={Math.round(size * 220 / 180)} viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Shadow/ground */}
         <ellipse cx="30" cy="77" rx="14" ry="2.5" fill="rgba(0,0,0,0.25)" />
 
@@ -278,17 +278,64 @@ export function CharacterCreationScreen() {
 
   const canContinue = handle.length >= 3 && !handleError && !checkingHandle
 
+  const [showWelcome, setShowWelcome] = useState(false)
+
   const handleContinue = async () => {
     if (!canContinue) return
     setSaving(true)
     update({ characterConfig: config, handle })
+    // Persist character to profile
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('profiles').update({
+        handle,
+        character_config: config,
+        display_name: handle,
+        onboarding_step: 2,
+      }).eq('id', user.id)
+    }
     setSaving(false)
-    next()
+    setShowWelcome(true)
   }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-bg)' }}>
       <OnboardingProgressBar step={step} character={config} showFinishLine />
+
+      {/* Character completion welcome modal */}
+      {showWelcome && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center"
+          style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="w-full max-w-sm rounded-t-3xl px-6 pt-6 pb-10 animate-slide-up"
+            style={{ background: 'var(--color-surface)' }}>
+            {/* Character headshot */}
+            <div className="flex justify-center mb-4">
+              <div className="w-24 h-24 rounded-full flex items-center justify-center overflow-hidden"
+                style={{ background: 'var(--color-surface-2)', border: '3px solid var(--ns-forest)' }}>
+                <CharacterPreview config={config} size={80} />
+              </div>
+            </div>
+            {/* Handle badge */}
+            <p className="text-center text-xs font-bold mb-1" style={{ color: 'var(--ns-track)' }}>
+              @{handle}
+            </p>
+            <h2 className="text-center text-2xl font-black mb-2" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}>
+              Welcome to NextSplit
+            </h2>
+            <p className="text-center text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+              Your runner is ready. We just need a few more details before your journey begins.
+            </p>
+            <button
+              onClick={() => { setShowWelcome(false); next() }}
+              className="w-full py-4 rounded-2xl text-white font-black text-base active:scale-95 transition-all"
+              style={{ background: 'var(--ns-forest)' }}>
+              Let&apos;s go →
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto pb-32">
         {/* Header */}

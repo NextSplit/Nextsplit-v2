@@ -23,7 +23,7 @@ export function SportSelectScreen() {
   }
 
   const handleNotify = async (sport: string) => {
-    if (notified.includes(sport)) return
+    if (notified.includes(sport)) { setNotified(prev => prev.filter(s => s !== sport)); return }
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -50,7 +50,7 @@ export function SportSelectScreen() {
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6">
         <div className="mb-6">
-          <h1 className="text-xl font-black text-gray-900">What are you training for?</h1>
+          <h1 className="text-xl font-black" style={{ color: "var(--color-text-primary)" }}>What are you training for?</h1>
           <p className="text-sm text-gray-500 mt-1">Running is your foundation. Add more anytime.</p>
         </div>
 
@@ -62,26 +62,24 @@ export function SportSelectScreen() {
             return (
               <div
                 key={sport.id}
-                className={`rounded-2xl border p-4 transition-all ${
-                  sport.active
-                    ? isSelected
-                      ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] shadow-sm'
-                      : 'bg-white border-gray-200 hover:border-[var(--ns-forest-light)]'
-                    : 'bg-gray-100 border-gray-200 opacity-70'
-                }`}
+                className="rounded-2xl border p-4 transition-all"
+                style={{
+                  background: isSelected ? 'var(--color-surface-2)' : 'var(--color-surface)',
+                  borderColor: isSelected ? 'var(--ns-forest)' : 'var(--color-border)',
+                  opacity: sport.active ? 1 : 0.6,
+                }}
               >
                 <div className="flex items-center gap-3">
                   {/* Emoji */}
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${
-                    isSelected ? 'bg-[var(--ns-forest-light)]' : 'bg-gray-100'
-                  }`}>
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
+                    style={{ background: isSelected ? 'rgba(43,92,63,0.3)' : 'var(--color-surface-2)' }}>
                     {sport.emoji}
                   </div>
 
                   {/* Label */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold text-gray-800">{sport.label}</p>
+                      <p className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>{sport.label}</p>
                       {sport.id === 'running' && (
                         <span className="text-[9px] font-bold text-white bg-[var(--ns-forest)] px-1.5 py-0.5 rounded-full">
                           Core
@@ -94,10 +92,10 @@ export function SportSelectScreen() {
                       )}
                     </div>
                     {sport.id === 'gym' && (
-                      <p className="text-xs text-gray-400 mt-0.5">Included in all plans by default</p>
+                      <p className="text-xs mt-0.5" style={{ color: "var(--color-text-tertiary)" }}>Included in all plans by default</p>
                     )}
                     {sport.id === 'running' && (
-                      <p className="text-xs text-gray-400 mt-0.5">Always included as your primary sport</p>
+                      <p className="text-xs mt-0.5" style={{ color: "var(--color-text-tertiary)" }}>Always included as your primary sport</p>
                     )}
                   </div>
 
@@ -132,7 +130,7 @@ export function SportSelectScreen() {
           })}
         </div>
 
-        <p className="text-xs text-gray-400 mt-4 text-center">
+        <p className="text-xs mt-4 text-center" style={{ color: "var(--color-text-tertiary)" }}>
           You can add more sports to your profile at any time
         </p>
       </div>

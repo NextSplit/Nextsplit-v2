@@ -438,7 +438,7 @@ export default function TodayClient() {
                     ? 'Great work finishing your plan. Pick your next challenge whenever you\'re ready — no rush.'
                     : 'Choose a training plan and it\'ll show up here. Your first session could be today.'}
                 </p>
-                <a href="/onboarding"
+                <a href="/plan/browse"
                   className="inline-block text-white px-6 py-3 rounded-xl text-sm font-bold"
                   style={{ background: 'var(--ns-forest)' }}>
                   {hadPlan ? 'Start next plan →' : 'Choose a plan →'}
