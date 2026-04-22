@@ -7,69 +7,67 @@ export function WelcomeScreen() {
   const { next } = useOnboarding()
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0f172a] via-[#0d3d38] to-[#0f172a] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-bg)' }}>
+      {/* Atmospheric gradient overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(43,92,63,0.18) 0%, transparent 70%)',
+      }} />
 
-      {/* Top section */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center gap-6 pt-16">
+      <div className="relative flex-1 flex flex-col items-center justify-center px-6 text-center pt-20 pb-6">
 
-        {/* Logo mark */}
-        <div className="relative">
-          <div className="w-20 h-20 rounded-3xl bg-[var(--ns-forest)]/20 border border-[var(--ns-forest)]/30 flex items-center justify-center">
-            <span className="text-4xl">🏃</span>
-          </div>
-          <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[var(--ns-forest)] rounded-full flex items-center justify-center">
-            <span className="text-xs">✓</span>
-          </div>
+        {/* NextSplit wordmark — large Cormorant display */}
+        <div className="mb-8">
+          <h1 className="font-display text-5xl tracking-tight mb-1" style={{ color: 'var(--ns-forest)', letterSpacing: '-0.03em', fontStyle: 'italic' }}>
+            NextSplit
+          </h1>
+          <div className="w-12 h-0.5 mx-auto rounded-full" style={{ background: 'var(--ns-forest)', opacity: 0.4 }} />
         </div>
 
-        {/* Headline */}
-        <div className="space-y-2">
-          <h1 className="font-display text-display-lg text-white">
-            Your coach is ready.
-          </h1>
-          <p className="text-base" style={{ color: 'var(--ns-forest-light)' }}>
-            Let&apos;s build something great together.
+        {/* Hero statement — direct, confident */}
+        <div className="mb-8 max-w-xs">
+          <p className="font-display text-2xl leading-snug mb-3" style={{ color: 'var(--color-text-primary)', fontStyle: 'italic', letterSpacing: '-0.01em' }}>
+            Training that actually fits your life.
+          </p>
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+            Plans built around your schedule, your goals, and how your body responds. Not a template — you.
           </p>
         </div>
 
-        {/* Value props */}
-        <div className="w-full max-w-xs space-y-3 text-left">
-          {[
-            { icon: '🧠', title: 'AI coaching', desc: 'Plans that adapt to your data, not generic templates' },
-            { icon: '🏆', title: 'Real goals', desc: 'Race targets, PBs, or just building a habit — you decide' },
-            { icon: '👥', title: 'Community', desc: 'Coaches, split leaders, clubs — find your people' },
-          ].map(v => (
-            <div key={v.title} className="flex items-start gap-3 bg-white/5 rounded-2xl p-3 border border-white/10">
-              <span className="text-xl mt-0.5">{v.icon}</span>
-              <div>
-                <p className="text-white text-sm font-bold">{v.title}</p>
-                <p className="text-gray-400 text-xs mt-0.5">{v.desc}</p>
+        {/* Three pillars — horizontal, compact */}
+        <div className="w-full max-w-xs mb-10">
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { emoji: '🎯', label: 'Your goals' },
+              { emoji: '🧠', label: 'AI-adapted' },
+              { emoji: '👥', label: 'Community' },
+            ].map(v => (
+              <div key={v.label} className="rounded-2xl p-3 text-center"
+                style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+                <div className="text-2xl mb-1">{v.emoji}</div>
+                <p className="text-[10px] font-bold" style={{ color: 'var(--color-text-secondary)' }}>{v.label}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Social proof */}
-        <p className="text-gray-500 text-xs">
-          Takes about 3 minutes · Your data stays private
+        <p className="text-[10px] mb-6" style={{ color: 'var(--color-text-tertiary)' }}>
+          3 minutes to set up · Your data stays private
         </p>
       </div>
 
-      {/* CTA */}
-      <div className="px-6 pb-12 pt-4">
-        <button
-          onClick={next}
-          className="w-full text-white py-4 rounded-2xl text-base font-black tracking-tight transition-all active:scale-95"
-          style={{ background: 'var(--ns-forest)' }}
-        >
-          Let&apos;s go →
+      {/* CTA — ember primary */}
+      <div className="relative px-6 pb-12 pt-2 space-y-3">
+        <button onClick={next}
+          className="w-full text-white py-4 rounded-2xl text-base font-black tracking-tight transition-all active:scale-95 btn-ember-pulse"
+          style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #d44a12 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.35)' }}>
+          Get started →
         </button>
-        <p className="text-center text-xs text-gray-600 mt-3">
+        <p className="text-center text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
           By continuing you agree to our{' '}
-          <a href="/terms" className="text-gray-500 underline">Terms</a> &{' '}
-          <a href="/privacy" className="text-gray-500 underline">Privacy Policy</a>
+          <a href="/terms" style={{ color: 'var(--color-text-secondary)' }}>Terms</a> &{' '}
+          <a href="/privacy" style={{ color: 'var(--color-text-secondary)' }}>Privacy</a>
         </p>
-        <div className="mt-3">
+        <div className="mt-1">
           <MedicalDisclaimer variant="compact" />
         </div>
       </div>

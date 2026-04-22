@@ -173,9 +173,9 @@ input[type="range"]::-webkit-slider-thumb {
   box-shadow: 0 1px 4px rgba(0,0,0,0.15);
 }
 input[type="range"]::-webkit-slider-runnable-track {
-  height: 6px;
-  border-radius: 3px;
-  background: #E5E7EB;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-surface-2);
 }
 
 /* ─── Dark mode global overrides ────────────────────────────────────────────
@@ -420,4 +420,104 @@ button.no-tap-scale:active { transform: none; }
 }
 .animate-xp-float {
   animation: xp-float 1.2s ease-out forwards;
+}
+
+
+/* ─── Design lift — Phase UI-6 ──────────────────────────────────────────────
+   Targeted refinements: card depth, ember CTAs, noise texture, typography.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* Subtle noise texture on page background — adds premium feel */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* Ensure content renders above noise */
+body > * { position: relative; z-index: 1; }
+
+/* Range slider thumb — larger for touch */
+input[type="range"]::-webkit-slider-thumb {
+  width: 24px;
+  height: 24px;
+  box-shadow: 0 2px 8px rgba(43,92,63,0.35);
+}
+
+/* Card hover lift — subtle depth on interactive cards */
+.card-interactive {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* Ember CTA pulse — draw attention to primary actions */
+@keyframes ember-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,93,38,0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(232,93,38,0); }
+}
+.btn-ember-pulse { animation: ember-pulse 2s ease-in-out infinite; }
+
+/* Forest glow — selected/active states */
+@keyframes forest-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(43,92,63,0.5); }
+  50%       { box-shadow: 0 0 0 4px rgba(43,92,63,0); }
+}
+
+/* Track gold shimmer — premium moments */
+@keyframes track-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.shimmer-gold {
+  background: linear-gradient(90deg, var(--ns-track) 0%, #e8c45a 40%, var(--ns-track) 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: track-shimmer 2.5s linear infinite;
+}
+
+/* Session card accent border — top bar uses border-l replacement */
+.session-accent-bar {
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+}
+
+/* Bottom sheet backdrop blur */
+.backdrop-blur-sheet {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Stat number display — monospaced with display weight */
+.stat-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Loading shimmer */
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.loading-shimmer {
+  overflow: hidden;
+  position: relative;
+}
+.loading-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  animation: shimmer-sweep 1.5s ease-in-out infinite;
 }
