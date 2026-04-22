@@ -41,7 +41,10 @@ export default function CreateSquadClient() {
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error); setSaving(false); return }
-      router.push('/squad')
+      // Small delay to allow Supabase RLS to propagate the new row
+      await new Promise(r => setTimeout(r, 500))
+      router.push('/squad?created=1')
+      router.refresh()
     } catch {
       setError('Something went wrong')
       setSaving(false)

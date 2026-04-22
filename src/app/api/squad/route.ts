@@ -157,7 +157,8 @@ export async function POST(req: NextRequest) {
 
     // Mark user as Split Leader
     await s.from('profiles').update({
-      is_split_leader: true,
+      is_split_leader:       true,
+      split_leader_squad_id: squad.id,
     }).eq('id', user.id)
 
     return NextResponse.json({ squad: { ...squad, invite_code: inviteCode } }, { status: 201 })
