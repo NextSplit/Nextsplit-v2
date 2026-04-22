@@ -108,6 +108,26 @@ export function useTrainingLog(planId: string | null): UseTrainingLogReturn {
       .single()
 
     if (upsertErr) throw new Error(upsertErr.message)
+
+    // Set first_session_logged_at on profile if this is the first completed session
+    if (row.done) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const sb = supabase as any
+        const { data: prof } = await sb
+          .from('profiles')
+          .select('first_session_logged_at')
+          .eq('id', user.id)
+          .single()
+        if (prof && !prof.first_session_logged_at) {
+          await sb
+            .from('profiles')
+            .update({ first_session_logged_at: new Date().toISOString() })
+            .eq('id', user.id)
+        }
+      } catch { /* non-blocking */ }
+    }
+
     refresh()
     return data as TrainingLog
   }, [supabase, refresh])
