@@ -78,7 +78,13 @@ export default async function SquadPage() {
 
   return (
     <main className="min-h-screen pb-28" style={{ background: 'var(--color-bg)' }}>
-      <div className="px-4 pt-14" style={{ background: 'linear-gradient(180deg, #c49a3c18 0%, var(--color-bg) 100%)' }}>
+      {/* Back nav */}
+      <div className="px-4 pt-12 pb-2 flex items-center gap-3">
+        <Link href="/today" className="text-sm font-medium" style={{ color: 'var(--color-text-tertiary)' }}>
+          ← Today
+        </Link>
+      </div>
+      <div className="px-4 pt-2" style={{ background: 'linear-gradient(180deg, #c49a3c18 0%, var(--color-bg) 100%)' }}>
         <div className="max-w-lg mx-auto pb-6">
           <div className="text-5xl mb-3">👑</div>
           <h1 className="font-display text-2xl font-black mb-1" style={{ color: 'var(--color-text-primary)' }}>
