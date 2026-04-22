@@ -498,7 +498,7 @@ export function CharacterCreationScreen() {
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}
-          className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 transition-all hover:bg-[var(--ns-forest)] active:scale-95"
+          className="w-full py-3.5 rounded-2xl text-sm font-bold text-white disabled:opacity-40 transition-all active:scale-95" style={{ background: 'var(--ns-ember)' }}
         >
           {saving ? 'Saving…' : canContinue ? `Let's go, @${handle} →` : 'Choose a handle to continue'}
         </button>

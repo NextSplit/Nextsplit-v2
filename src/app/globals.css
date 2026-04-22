@@ -439,8 +439,8 @@ body::before {
   background-size: 128px 128px;
 }
 
-/* Ensure content renders above noise */
-body > * { position: relative; z-index: 1; }
+/* Ensure content renders above noise — use isolation not z-index to avoid breaking fixed children */
+#__next, main, [data-nextjs-scroll-focus-boundary] { isolation: isolate; }
 
 /* Range slider thumb — larger for touch */
 input[type="range"]::-webkit-slider-thumb {

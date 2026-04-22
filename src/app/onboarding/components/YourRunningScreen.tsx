@@ -278,7 +278,7 @@ export function YourRunningScreen() {
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}
-          className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-[var(--ns-forest)] active:scale-95"
+          className="flex-1 py-3 rounded-2xl text-sm font-bold text-white disabled:opacity-50 transition-all active:scale-95" style={{ background: 'var(--ns-ember)' }}
         >
           {saving ? 'Saving…' : canContinue ? 'Continue →' : 'Select your experience level'}
         </button>

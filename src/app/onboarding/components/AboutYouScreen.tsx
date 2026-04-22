@@ -297,7 +297,7 @@ export function AboutYouScreen() {
         </button>
         <button onClick={handleContinue} disabled={saving}
           className="flex-1 py-3 rounded-2xl text-sm font-bold text-white disabled:opacity-50 active:scale-95 transition-all"
-          style={{ background: 'var(--ns-forest)' }}>
+          style={{ background: 'var(--ns-ember)' }}>
           {saving ? 'Saving…' : 'Continue →'}
         </button>
       </div>

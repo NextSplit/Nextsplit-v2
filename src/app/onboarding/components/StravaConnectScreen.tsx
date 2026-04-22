@@ -251,7 +251,7 @@ export function StravaConnectScreen() {
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 space-y-2">
           <button
             onClick={handleUsePrefill}
-            className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold active:scale-95 transition-all"
+            className="w-full py-3.5 rounded-2xl text-sm font-bold text-white active:scale-95 transition-all" style={{ background: 'var(--ns-ember)' }}
           >
             Use this data → skip ahead
           </button>

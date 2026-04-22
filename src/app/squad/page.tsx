@@ -71,7 +71,10 @@ export default async function SquadPage() {
     .eq('id', user.id)
     .single()
 
-  const isPremium = profile?.subscription_tier === 'premium'
+  // ALPHA: Squad/Split Leader open to all users during alpha testing.
+  // Set NEXT_PUBLIC_PREMIUM_ENFORCED=true at go-live to re-enable paywall.
+  const premiumEnforced = process.env.NEXT_PUBLIC_PREMIUM_ENFORCED === 'true'
+  const isPremium = !premiumEnforced || profile?.subscription_tier === 'premium'
 
   return (
     <main className="min-h-screen pb-28" style={{ background: 'var(--color-bg)' }}>

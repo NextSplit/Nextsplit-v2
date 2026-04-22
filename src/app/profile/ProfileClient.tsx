@@ -331,7 +331,7 @@ export default function ProfileClient({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-gray-900">{displayName || 'Character'}</h1>
+                <h1 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>{displayName || 'Character'}</h1>
                 <button onClick={() => { setNameInput(displayName); setEditingName(true) }}
                   className="text-gray-300 text-sm">✎</button>
               </div>
@@ -493,49 +493,6 @@ export default function ProfileClient({
 
         {/* Weekly XP chart */}
         <WeeklyXPChart logs={logs} weeks={weeks} />
-
-        {/* Streak + consistency */}
-        {(streak.current > 0 || streak.totalDaysLogged > 0) && (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-            <div className="grid grid-cols-2 divide-x divide-gray-50">
-              <div className="px-4 py-4 text-center">
-                <div className={`text-3xl font-black ${streak.current >= 7 ? 'text-amber-500' : streak.current >= 3 ? 'text-orange-500' : 'text-gray-700'}`}>
-                  {streak.current > 0 ? `🔥 ${streak.current}` : '—'}
-                </div>
-                <div className="text-[10px] text-gray-400 mt-1">day streak</div>
-                {streak.longest > streak.current && (
-                  <div className="text-[9px] text-gray-300 mt-0.5">best: {streak.longest}</div>
-                )}
-              </div>
-              <div className="px-4 py-4 text-center">
-                <div className={`text-3xl font-black ${consistency.last4WeekPct >= 80 ? 'text-emerald-600' : consistency.last4WeekPct >= 60 ? 'text-amber-500' : 'text-gray-500'}`}>
-                  {consistency.last4WeekPct}%
-                </div>
-                <div className="text-[10px] text-gray-400 mt-1">4-week consistency</div>
-                <div className="text-[9px] text-gray-300 mt-0.5">this week: {consistency.thisWeekPct}%</div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Personal bests */}
-        {personalBests.length > 0 && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
-            <p className="text-sm font-bold text-gray-900 mb-3">Personal Bests</p>
-            <div className="grid grid-cols-2 gap-2">
-              {personalBests.map(pb => (
-                <div key={pb.distanceKm} className="bg-gray-50 rounded-xl p-3">
-                  <div className="text-[10px] text-gray-400">{RACE_DISTANCES.find(d => Math.abs(d.km - pb.distanceKm) < 0.1)?.label ?? `${pb.distanceKm}km`}</div>
-                  <div className="text-sm font-black text-gray-900">{pb.timeStr}</div>
-                  <div className="text-[9px] text-gray-400">{pb.pacePerKm}/km</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Training summary */}
-        <TrainingSummary logs={logs} />
 
         {/* ── Account & Integrations ─────────────────────────────────── */}
         <div className="flex items-center gap-3 px-1 pt-2">

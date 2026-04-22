@@ -220,7 +220,7 @@ export function TrainingPathScreen() {
           onClick={handleContinue}
           disabled={!canContinue}
           className="flex-1 text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all active:scale-95"
-          style={{ background: canContinue ? 'var(--ns-forest)' : '#9ca3af' }}
+          style={{ background: canContinue ? 'var(--ns-ember)' : '#9ca3af' }}
         >
           {canContinue
             ? selected === 'coach_marketplace'
