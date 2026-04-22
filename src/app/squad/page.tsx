@@ -14,7 +14,7 @@ export default async function SquadPage() {
   const s = supabase as any
 
   // Check if leader
-  const { data: ledSquad } = await s
+  const { data: ledSquad, error: ledSquadErr } = await s
     .from('squads')
     .select(`
       *, 
@@ -27,6 +27,9 @@ export default async function SquadPage() {
     .eq('leader_id', user.id)
     .is('disbanded_at', null)
     .maybeSingle()
+
+  if (ledSquadErr) console.error('[squad/page] ledSquad error:', JSON.stringify(ledSquadErr))
+  console.log('[squad/page] user:', user.id, 'ledSquad:', ledSquad?.id ?? 'null')
 
   if (ledSquad) {
     ledSquad.squad_members = (ledSquad.squad_members ?? []).filter(
