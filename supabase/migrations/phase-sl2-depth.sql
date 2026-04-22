@@ -49,13 +49,14 @@ BEGIN
   SELECT * INTO v_squad FROM squads WHERE id = p_squad_id;
 
   SELECT
-    COALESCE(SUM(tl.distance_km), 0),
+    COALESCE(SUM(tl.km), 0),
     COUNT(*)
   INTO v_km, v_sessions
   FROM training_logs tl
   JOIN squad_members sm ON sm.user_id = tl.user_id
   WHERE sm.squad_id = p_squad_id
     AND sm.removed_at IS NULL
+    AND tl.done = true
     AND to_char(tl.logged_at, 'YYYY-MM') = p_period;
 
   SELECT COUNT(*) INTO v_members
@@ -92,10 +93,11 @@ RETURNS numeric
 LANGUAGE sql
 SECURITY DEFINER
 AS $$
-  SELECT COALESCE(SUM(tl.distance_km), 0)
+  SELECT COALESCE(SUM(tl.km), 0)
   FROM training_logs tl
   JOIN squad_members sm ON sm.user_id = tl.user_id
-  WHERE sm.squad_id = p_squad_id;
+  WHERE sm.squad_id = p_squad_id
+    AND tl.done = true;
 $$;
 
 -- ── RLS: squad_achievements ───────────────────────────────────────────────────
