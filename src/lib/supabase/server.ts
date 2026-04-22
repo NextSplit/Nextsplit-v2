@@ -26,3 +26,14 @@ export async function createClient() {
     }
   )
 }
+
+// Service role client — bypasses RLS for server-side admin reads
+// Only use when auth.uid() is not available in server context
+export function createServiceClient() {
+  const { createClient } = require('@supabase/supabase-js')
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
+}

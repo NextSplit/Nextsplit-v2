@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 export const revalidate = 0 // Never cache — squad state changes frequently
 import { redirect } from 'next/navigation'
@@ -12,23 +12,22 @@ export default async function SquadPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
+  // Use service client for squad reads — RLS on squads/squad_members
+  // uses auth.uid() which doesn't resolve correctly in server components
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const s = supabase as any
+  const svc = createServiceClient() as any
 
-  // Check if leader — simple query first to avoid join RLS issues
-  const { data: mySquad, error: mySquadErr } = await s
+  // Check if leader using service client (bypasses RLS)
+  const { data: mySquad } = await svc
     .from('squads')
     .select('id')
     .eq('leader_id', user.id)
     .is('disbanded_at', null)
     .maybeSingle()
 
-  if (mySquadErr) console.error('[squad/page] mySquad error:', JSON.stringify(mySquadErr))
-  console.log('[squad/page] user:', user.id, 'mySquad:', mySquad?.id ?? 'null')
-
   if (mySquad?.id) {
-    // Fetch full squad data now we know it exists
-    const { data: ledSquad, error: ledFullErr } = await s
+    const { data: ledSquad } = await svc
       .from('squads')
       .select(`
         *, 
@@ -41,13 +40,11 @@ export default async function SquadPage() {
       .eq('id', mySquad.id)
       .single()
 
-    if (ledFullErr) console.error('[squad/page] ledFull error:', JSON.stringify(ledFullErr))
-
     if (ledSquad) {
       ledSquad.squad_members = (ledSquad.squad_members ?? []).filter(
         (m: { removed_at: string | null }) => !m.removed_at
       )
-      const { data: km } = await s.rpc('squad_monthly_km', { p_squad_id: ledSquad.id })
+      const { data: km } = await svc.rpc('squad_monthly_km', { p_squad_id: ledSquad.id })
       return <SquadDashboardClient squad={ledSquad} role="leader" monthlyKm={km ?? 0} userId={user.id} />
     }
   }
