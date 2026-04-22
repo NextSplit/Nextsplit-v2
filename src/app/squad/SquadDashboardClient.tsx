@@ -88,6 +88,94 @@ function MemberCard({
   )
 }
 
+function LeaderTransferButton({ squadId, squadColour }: { squadId: string; squadColour: string }) {
+  const [status, setStatus] = useState<'idle' | 'checking' | 'eligible' | 'ineligible' | 'transferring' | 'done'>('idle')
+  const [reason, setReason]   = useState<string | null>(null)
+
+  async function checkAndClaim() {
+    setStatus('checking')
+    try {
+      const res  = await fetch('/api/squad/inactivity')
+      const data = await res.json()
+      if (!res.ok || data.disbanded) { setStatus('ineligible'); setReason('Squad not found'); return }
+      if (data.leaderInactiveDays >= 30) {
+        setStatus('eligible')
+      } else {
+        setStatus('ineligible')
+        setReason(`Leader was active ${data.leaderInactiveDays} days ago. Need 30+ days inactivity.`)
+      }
+    } catch {
+      setStatus('ineligible'); setReason('Could not check')
+    }
+  }
+
+  async function confirmTransfer() {
+    setStatus('transferring')
+    try {
+      const res = await fetch('/api/squad/transfer', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ squad_id: squadId }),
+      })
+      if (res.ok) { setStatus('done'); setTimeout(() => window.location.reload(), 1500) }
+      else { const d = await res.json(); setStatus('ineligible'); setReason(d.error) }
+    } catch {
+      setStatus('ineligible'); setReason('Transfer failed')
+    }
+  }
+
+  if (status === 'idle') return (
+    <button onClick={checkAndClaim}
+      className="w-full py-3 rounded-2xl text-sm font-bold border"
+      style={{ borderColor: squadColour + '40', color: squadColour }}>
+      👑 Claim leadership
+    </button>
+  )
+  if (status === 'checking') return (
+    <div className="w-full py-3 rounded-2xl text-sm text-center" style={{ color: 'var(--color-text-tertiary)' }}>
+      Checking eligibility…
+    </div>
+  )
+  if (status === 'eligible') return (
+    <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)', border: `1px solid ${squadColour}40` }}>
+      <p className="text-sm font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>
+        👑 Take over as leader?
+      </p>
+      <p className="text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>
+        The current leader has been inactive for 30+ days. You can claim leadership of this squad.
+      </p>
+      <div className="flex gap-2">
+        <button onClick={confirmTransfer}
+          className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white"
+          style={{ background: squadColour }}>
+          Claim leadership
+        </button>
+        <button onClick={() => setStatus('idle')}
+          className="px-4 py-2.5 rounded-xl text-sm border"
+          style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-tertiary)' }}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  )
+  if (status === 'ineligible') return (
+    <div className="rounded-2xl p-3 text-xs" style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
+      {reason ?? 'Not eligible to claim leadership yet.'}
+    </div>
+  )
+  if (status === 'transferring') return (
+    <div className="w-full py-3 rounded-2xl text-sm text-center" style={{ color: squadColour }}>
+      Transferring leadership…
+    </div>
+  )
+  if (status === 'done') return (
+    <div className="w-full py-3 rounded-2xl text-sm text-center font-bold" style={{ color: squadColour }}>
+      👑 You are now the leader!
+    </div>
+  )
+  return null
+}
+
 export default function SquadDashboardClient({ squad, role, monthlyKm, userId }: Props) {
   const colour = squad.colour ?? '#c49a3c'
   const isLeader = role === 'leader'
@@ -98,6 +186,7 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
   const [nudgeSending, setNudgeSending] = useState(false)
   const [nudgeSent, setNudgeSent]       = useState<string | null>(null)
   const [showShare, setShowShare]       = useState(false)
+  const [coachPromptDismissed, setCoachPromptDismissed] = useState(false)
   const [copied, setCopied]             = useState(false)
 
   const inviteCode = squad.squad_invites?.[0]?.code
@@ -107,6 +196,13 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
   const goalProgress  = squad.goal_type && squad.goal_value
     ? Math.min(100, (monthlyKm / squad.goal_value) * 100)
     : null
+
+  // Coach pipeline prompt: show when squad is full (5 members) or leader for 30+ days
+  const squadAgeDays = Math.floor((Date.now() - new Date(squad.created_at).getTime()) / (1000 * 3600 * 24))
+  const showCoachPrompt = isLeader && !coachPromptDismissed && (
+    activeMembers.length >= 5 || squadAgeDays >= 30
+  )
+  const collectiveKm = monthlyKm
 
   async function sendNudge() {
     if (!nudgeTarget) return
@@ -294,19 +390,23 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
           </div>
         )}
 
-        {/* Non-leader: leave squad */}
+        {/* Non-leader actions */}
         {!isLeader && (
-          <button
-            onClick={() => {
-              if (confirm('Leave this squad?')) {
-                fetch('/api/squad/members', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: '{}' })
-                  .then(() => window.location.reload())
-              }
-            }}
-            className="w-full py-3 rounded-2xl text-sm border"
-            style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-tertiary)' }}>
-            Leave squad
-          </button>
+          <div className="space-y-2">
+            {/* Leadership transfer — shown if leader inactive 30+ days */}
+            <LeaderTransferButton squadId={squad.id} squadColour={colour} />
+            <button
+              onClick={() => {
+                if (confirm('Leave this squad?')) {
+                  fetch('/api/squad/members', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+                    .then(() => window.location.reload())
+                }
+              }}
+              className="w-full py-3 rounded-2xl text-sm border"
+              style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-tertiary)' }}>
+              Leave squad
+            </button>
+          </div>
         )}
       </div>
 
@@ -380,6 +480,50 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Trophy Room link */}
+      <div className="max-w-lg mx-auto px-4 mt-2">
+        <a href="/squad/trophies"
+          className="flex items-center justify-between w-full rounded-2xl px-4 py-3 transition-all active:scale-95"
+          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">🏆</span>
+            <div>
+              <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Trophy Room</p>
+              <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>Achievements &amp; season history</p>
+            </div>
+          </div>
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ color: 'var(--color-text-tertiary)' }}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+
+      {/* Coach pipeline prompt */}
+      {showCoachPrompt && (
+        <div className="max-w-lg mx-auto px-4 mt-2">
+          <div className="rounded-2xl p-4 relative"
+            style={{ background: 'var(--color-surface)', border: '1px solid #1e3a5f40' }}>
+            <button
+              onClick={() => setCoachPromptDismissed(true)}
+              className="absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center text-xs"
+              style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
+              ✕
+            </button>
+            <p className="text-sm font-black mb-1 pr-8" style={{ color: 'var(--color-text-primary)' }}>
+              🎓 You could be a coach
+            </p>
+            <p className="text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>
+              You've led your squad to {Math.round(collectiveKm)}km together. Some coaches started exactly like this. Want to explore becoming a NextSplit coach?
+            </p>
+            <a href="/coach/setup"
+              className="inline-block px-4 py-2 rounded-xl text-xs font-bold text-white"
+              style={{ background: '#1e3a5f' }}>
+              Explore coaching →
+            </a>
           </div>
         </div>
       )}

@@ -267,3 +267,7 @@ export const AiRecommendSchema = z.object({
   weeksAvailable: z.number().int().min(1).max(52).optional(),
   daysPerWeek:    z.number().int().min(1).max(7).optional(),
 })
+
+export const SquadTransferSchema = z.object({
+  squad_id: z.string().uuid(),
+})

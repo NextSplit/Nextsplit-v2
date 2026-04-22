@@ -547,6 +547,9 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                     <p className={`text-sm font-bold truncate ${isMe ? '' : 'text-gray-900'}`}
                       style={isMe ? { color: 'var(--ns-forest)' } : {}}>
                       {name} {isMe && '(you)'}
+                      {entry.is_split_leader && (
+                        <span title="Split Leader" className="ml-1 inline-block leading-none">👑</span>
+                      )}
                     </p>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <span className="text-[10px] text-gray-400">{lCfg.emoji} {lCfg.label}</span>

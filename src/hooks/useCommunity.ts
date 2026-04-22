@@ -33,7 +33,7 @@ interface Race {
 interface LeaderboardEntry {
   user_id: string; display_name: string | null; handle: string | null
   season_xp: number; current_league: string; weekly_km: number
-  runner_class: string | null
+  runner_class: string | null; is_split_leader: boolean | null
 }
 
 interface CommunityState {
@@ -66,7 +66,7 @@ export function useCommunity() {
           fetch('/api/community/races'),
           // Top 20 by season XP
           supabase.from('profiles')
-            .select('id, display_name, handle, season_xp, current_league, runner_class')
+            .select('id, display_name, handle, season_xp, current_league, runner_class, is_split_leader')
             .order('season_xp', { ascending: false })
             .limit(20),
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

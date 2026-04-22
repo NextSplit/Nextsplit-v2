@@ -85,6 +85,20 @@ function CharacterPreview({ config }: { config: CharacterConfig }) {
         )}
 
         {/* ── CAP ── */}
+
+        {/* ── CROWN (Split Leader) ── */}
+        {config.accessories?.includes('crown') && (
+          <>
+            <rect x="21" y="4" width="18" height="3.5" rx="1" fill="#c49a3c" />
+            <polygon points="21,4 23,0 25,4" fill="#c49a3c" />
+            <polygon points="25,4 27,1 29,4" fill="#c49a3c" />
+            <polygon points="29,4 30,0 31,4" fill="#e8b84b" />
+            <polygon points="31,4 33,1 35,4" fill="#c49a3c" />
+            <polygon points="35,4 37,0 39,4" fill="#c49a3c" />
+            <circle cx="30" cy="1.5" r="1" fill="#e85d26" opacity="0.9" />
+            <rect x="22" y="4.5" width="16" height="1" rx="0.5" fill="white" opacity="0.2" />
+          </>
+        )}
         {config.accessories?.includes('cap') && (
           <>
             <ellipse cx="30" cy="6" rx="9" ry="4" fill={kit} />

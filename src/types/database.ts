@@ -527,7 +527,7 @@ export interface CharacterConfig {
   kitColour:     string   // primary kit hex
   shoeColour:    string   // shoe hex
   // Accessories (optional)
-  accessories:   Array<'cap' | 'sunglasses' | 'watch' | 'none'>
+  accessories:   Array<'cap' | 'sunglasses' | 'watch' | 'crown' | 'none'>
   // Identity
   startingTitle: string   // e.g. "The Newcomer", "The Determined"
 }

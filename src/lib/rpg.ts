@@ -634,7 +634,7 @@ export function checkNewBadges(stats: RPGStats, alreadyUnlocked: string[]): RPGB
 
 // ─── SVG Character Renderer ───────────────────────────────────────────────────
 
-export function renderCharSVG(charId: string, level: number, w: number, h: number, kitColourOverride?: string): string {
+export function renderCharSVG(charId: string, level: number, w: number, h: number, kitColourOverride?: string, showCrown?: boolean): string {
   const ch = RPG_CHARS.find(c => c.id === charId) ?? RPG_CHARS[0]
   const { skin, hair } = ch
   const isFemale = charId.startsWith('f')
@@ -727,6 +727,31 @@ export function renderCharSVG(charId: string, level: number, w: number, h: numbe
   const shY = legY + legH - s
   svg += `<rect x="${leg1X - s}" y="${shY}" width="${9 * s}" height="${5 * s}" rx="${2 * s}" fill="${shoeCol}" transform="rotate(${legA1},${cx},${legY})"/>`
   svg += `<rect x="${leg2X - s}" y="${shY}" width="${9 * s}" height="${5 * s}" rx="${2 * s}" fill="${shoeCol}" transform="rotate(${legA2},${cx},${legY})"/>`
+
+  // Crown (Split Leader accessory)
+  if (showCrown) {
+    const crownY = cy - headR * 1.1
+    const crownH = headR * 0.9
+    const crownW = headR * 2.2
+    const crownX = cx - crownW / 2
+    // Base band
+    svg += `<rect x="${crownX}" y="${crownY}" width="${crownW}" height="${crownH * 0.4}" rx="${s}" fill="#c49a3c"/>`
+    // Points
+    const pts = [0, 0.25, 0.5, 0.75, 1]
+    pts.forEach((t, i) => {
+      const px = crownX + t * crownW
+      const peakY = crownY - (i === 2 ? crownH * 0.85 : crownH * 0.6)
+      const nextT = pts[i + 1]
+      if (nextT !== undefined) {
+        const nx = crownX + nextT * crownW
+        svg += `<polygon points="${px},${crownY} ${(px + nx) / 2},${peakY} ${nx},${crownY}" fill="${i === 2 ? '#e8b84b' : '#c49a3c'}"/>`
+      }
+    })
+    // Centre gem
+    svg += `<circle cx="${cx}" cy="${crownY - crownH * 0.7}" r="${s * 1.2}" fill="#e85d26" opacity="0.9"/>`
+    // Shine
+    svg += `<rect x="${crownX + s}" y="${crownY + s * 0.5}" width="${crownW - s * 2}" height="${s}" rx="${s * 0.5}" fill="white" opacity="0.25"/>`
+  }
 
   svg += `</svg>`
   return svg
