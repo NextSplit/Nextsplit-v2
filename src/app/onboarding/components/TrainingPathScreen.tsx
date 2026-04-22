@@ -94,8 +94,8 @@ export function TrainingPathScreen() {
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
         <div className="mb-2">
-          <h1 className="text-xl font-black text-gray-900">How do you want to train?</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>How do you want to train?</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
             Based on your profile, we think{' '}
             <span className="text-[var(--ns-forest)] font-semibold">
               {PATHS.find(p => p.id === recommended)?.label}
@@ -148,7 +148,7 @@ export function TrainingPathScreen() {
                           </span>
                         )}
                       </div>
-                      <span className="text-sm font-bold text-gray-900">{path.label}</span>
+                      <span className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{path.label}</span>
                       <p className="text-xs text-gray-400 mt-0.5">{path.desc}</p>
                       {/* Methodology — credibility layer visible without expansion */}
                       {path.methodology && isSelected && (
@@ -214,7 +214,7 @@ export function TrainingPathScreen() {
         </p>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
+      <div className="fixed bottom-0 left-0 right-0 px-4 py-4 flex gap-3 border-t" style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
         <button
           onClick={handleContinue}

@@ -107,9 +107,9 @@ function LogModal({
     return (
       <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
         <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl p-6 text-center" style={{ background: "var(--color-surface)", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+          <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: 'var(--color-border-2)' }} />
           <div className="text-4xl mb-3">😴</div>
-          <h2 className="text-base font-bold text-gray-900 mb-1">Rest day</h2>
+          <h2 className="text-base font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>Rest day</h2>
           <p className="text-sm text-gray-500 mb-6 leading-relaxed">
             Your body is adapting today. Rest is training.
           </p>
@@ -128,14 +128,14 @@ function LogModal({
   if (mode === 'one-tap' && !existingLog) {
     return (
       <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
-        <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl"
-          style={{ marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
+        <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl"
+          style={{ background: 'var(--color-surface)', marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
           <div className="p-6">
-            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+            <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ background: 'var(--color-border-2)' }} />
             <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${cfg.colour} ${cfg.textColour} text-xs font-semibold mb-3`}>
               <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
             </div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">{session.n}</h2>
+            <h2 className="text-lg font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>{session.n}</h2>
             {technical && <p className="text-sm text-gray-500 mb-4 leading-relaxed">{technical}</p>}
 
             {/* One-tap done */}
@@ -177,13 +177,13 @@ function LogModal({
       <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
         <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col" style={{ background: "var(--color-surface)", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
           <div className="overflow-y-auto flex-1 px-6 pt-6 pb-2 space-y-5">
-            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+            <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--color-border-2)' }} />
 
             <div>
               <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${cfg.colour} ${cfg.textColour} text-xs font-semibold mb-2`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
               </div>
-              <h2 className="text-lg font-bold text-gray-900">{session.n}</h2>
+              <h2 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>{session.n}</h2>
               {technical && <p className="text-sm text-gray-500 mt-1 leading-relaxed">{technical}</p>}
               {rationale && (
                 <div className="flex items-start gap-2 bg-[var(--ns-forest-light)] border border-[var(--ns-forest)]20 rounded-xl px-3 py-2.5 mt-2">
@@ -196,7 +196,7 @@ function LogModal({
             {/* Reps completed — intervals key question */}
             {targetReps && (
               <div>
-                <label className="text-sm font-bold text-gray-800 block mb-2">
+                <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>
                   Reps completed <span className="text-gray-400 font-normal">of {targetReps}</span>
                 </label>
                 <div className="flex gap-2 flex-wrap">
@@ -223,7 +223,7 @@ function LogModal({
 
             {/* Pacing feel — intervals specific */}
             <div>
-              <label className="text-sm font-bold text-gray-800 block mb-2">How did the pacing feel?</label>
+              <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>How did the pacing feel?</label>
               <div className="flex gap-2">
                 {(['too-easy', 'spot-on', 'too-hard'] as const).map(opt => (
                   <button key={opt} onClick={() => setPacingFeel(opt)}
@@ -260,7 +260,7 @@ function LogModal({
             <DiscardWarning show={showDiscardWarning} onKeep={() => setShowDiscardWarning(false)} onDiscard={onClose} />
             <div className="flex gap-3">
               <button onClick={handleBackdropClick}
-                className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">
+                className="flex-1 py-3 rounded-xl text-sm font-semibold" style={{ border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)' }}>
                 Cancel
               </button>
               <button onClick={() => handleSave(true)} disabled={saving}
@@ -280,13 +280,13 @@ function LogModal({
     <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
       <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col" style={{ background: "var(--color-surface)", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
         <div className="overflow-y-auto flex-1 px-6 pt-6 pb-2 space-y-5">
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+          <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--color-border-2)' }} />
 
           <div>
             <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${cfg.colour} ${cfg.textColour} text-xs font-semibold mb-2`}>
               <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
             </div>
-            <h2 className="text-lg font-bold text-gray-900">{session.n}</h2>
+            <h2 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>{session.n}</h2>
             {technical && <p className="text-sm text-gray-500 mt-1 leading-relaxed">{technical}</p>}
             {rationale && (
               <div className="flex items-start gap-2 bg-[var(--ns-forest-light)] rounded-xl px-3 py-2.5 mt-2">
@@ -302,7 +302,7 @@ function LogModal({
           {/* Feel — 1-5 for standard sessions */}
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="text-sm font-bold text-gray-800">How did it feel?</label>
+              <label className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>How did it feel?</label>
               <span className="text-sm font-bold text-gray-500">{
                 feelRating === 1 ? '😩 Rough' :
                 feelRating === 2 ? '😕 Hard' :
@@ -348,7 +348,7 @@ function LogModal({
           <DiscardWarning show={showDiscardWarning} onKeep={() => setShowDiscardWarning(false)} onDiscard={onClose} />
           <div className="flex gap-3">
             <button onClick={handleBackdropClick}
-              className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">
+              className="flex-1 py-3 rounded-xl text-sm font-semibold" style={{ border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)' }}>
               Cancel
             </button>
             <button onClick={() => handleSave(true)} disabled={saving}
@@ -369,7 +369,7 @@ function EffortSlider({ effort, setEffort }: { effort: number; setEffort: (n: nu
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <label className="text-sm font-bold text-gray-800">Effort (RPE)</label>
+        <label className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Effort (RPE)</label>
         <span className="text-2xl font-bold" style={{ color: 'var(--ns-forest)' }}>
           {effort}<span className="text-sm text-gray-400">/10</span>
         </span>
@@ -387,10 +387,10 @@ function EffortSlider({ effort, setEffort }: { effort: number; setEffort: (n: nu
 function KmPicker({ km, setKm, planned }: { km: number; setKm: (n: number) => void; planned?: number }) {
   return (
     <div>
-      <label className="text-sm font-bold text-gray-800 block mb-2">Distance (km)</label>
+      <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>Distance (km)</label>
       <div className="flex items-center gap-3">
         <button onClick={() => setKm(Math.max(0, Math.round((km - 0.5) * 10) / 10))}
-          className="w-10 h-10 rounded-full bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center">−</button>
+          className="w-10 h-10 rounded-full font-bold text-lg flex items-center justify-center" style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>−</button>
         <div className="flex-1 text-center">
           <span className="font-data text-3xl text-gray-900">{km.toFixed(1)}</span>
           <span className="text-sm text-gray-400 ml-1">km</span>
@@ -408,10 +408,10 @@ function KmPicker({ km, setKm, planned }: { km: number; setKm: (n: number) => vo
 function DurationPicker({ mins, setMins }: { mins: number; setMins: (n: number) => void }) {
   return (
     <div>
-      <label className="text-sm font-bold text-gray-800 block mb-2">Duration (optional)</label>
+      <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>Duration (optional)</label>
       <div className="flex items-center gap-3">
         <button onClick={() => setMins(Math.max(0, mins - 5))}
-          className="w-10 h-10 rounded-full bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center">−</button>
+          className="w-10 h-10 rounded-full font-bold text-lg flex items-center justify-center" style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>−</button>
         <div className="flex-1 text-center">
           <span className="font-data text-3xl text-gray-900">{mins}</span>
           <span className="text-sm text-gray-400 ml-1">min</span>
@@ -430,7 +430,7 @@ function PaceInput({ paceInput, setPaceInput, autoPace, onBlur, showKm }: {
   if (!showKm) return null
   return (
     <div>
-      <label className="text-sm font-bold text-gray-800 block mb-2">
+      <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>
         Pace <span className="text-[10px] text-gray-400 font-normal">format: m:ss</span>
       </label>
       <div className="relative">
@@ -450,7 +450,7 @@ function PaceInput({ paceInput, setPaceInput, autoPace, onBlur, showKm }: {
 function NotesInput({ notes, setNotes, placeholder }: { notes: string; setNotes: (s: string) => void; placeholder?: string }) {
   return (
     <div>
-      <label className="text-sm font-bold text-gray-800 block mb-2">Notes</label>
+      <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>Notes</label>
       <textarea value={notes} onChange={e => setNotes(e.target.value)}
         placeholder={placeholder ?? 'How did it feel? Any issues?'} rows={2}
         className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />

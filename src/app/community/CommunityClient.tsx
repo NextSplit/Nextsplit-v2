@@ -44,7 +44,7 @@ function JoinClubModal({ onClose, onJoined }: { onClose: () => void; onJoined: (
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl px-4 pt-4 pb-8 space-y-4 max-w-lg mx-auto" style={{ background: "var(--color-surface)" }}>
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
-        <h2 className="text-base font-black text-gray-900">Join a club</h2>
+        <h2 className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>Join a club</h2>
         <p className="text-sm text-gray-500">Enter the 6-character join code from your club admin.</p>
         <input value={code} onChange={e => setCode(e.target.value.toUpperCase())}
           placeholder="e.g. A3F9C2" maxLength={6}
@@ -89,7 +89,7 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl px-4 pt-4 pb-8 max-h-[85dvh] overflow-y-auto space-y-4 max-w-lg mx-auto" style={{ background: "var(--color-surface)" }}>
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
-        <h2 className="text-base font-black text-gray-900">Create a club</h2>
+        <h2 className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>Create a club</h2>
 
         <div className="flex gap-2 flex-wrap">
           {EMOJIS.map(e => (
@@ -188,7 +188,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         <div className="max-w-lg mx-auto space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-black text-gray-900">Community</h1>
+              <h1 className="font-display text-xl italic" style={{ color: 'var(--color-text-primary)' }}>Community</h1>
               {season && (
                 <p className="text-xs text-gray-400">{season.name} · {daysLeft}d remaining</p>
               )}
@@ -281,7 +281,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-bold text-gray-900">{name}</p>
+                        <p className="text-xs font-bold text-gray-900" style={{ color: 'var(--color-text-primary)' }}>{name}</p>
                         <span className="text-[10px] text-gray-400 flex-shrink-0">{timeAgo}</span>
                       </div>
                       <p className="text-xs text-gray-600 mt-0.5">
@@ -347,7 +347,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                   <span className="text-2xl">{club.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold text-gray-900 truncate">{club.name}</p>
+                      <p className="text-sm font-bold truncate" style={{ color: 'var(--color-text-primary)' }}>{club.name}</p>
                       {role === 'owner' && <span className="text-[10px] text-[var(--ns-forest)] font-bold">Owner</span>}
                     </div>
                     <p className="text-xs text-gray-400">{club.member_count} members</p>
@@ -386,7 +386,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                 <div key={c.id} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-gray-900">{c.title}</p>
+                      <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{c.title}</p>
                       <p className="text-xs text-gray-400 mt-0.5">{c.description}</p>
                     </div>
                     <div className="text-right shrink-0 ml-3">

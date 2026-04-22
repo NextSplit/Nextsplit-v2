@@ -64,15 +64,15 @@ export function GymConfigScreen() {
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
         <div className="mb-2">
-          <h1 className="text-xl font-black text-gray-900">Gym & strength</h1>
-          <p className="text-sm text-gray-500 mt-1">Strength training is built into every plan — it makes you a better, more resilient runner.</p>
+          <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Gym & strength</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>Strength training is built into every plan — it makes you a better, more resilient runner.</p>
         </div>
 
         {/* Toggle */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+        <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-bold text-gray-800">Include gym sessions?</p>
+              <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Include gym sessions?</p>
               <p className="text-xs text-gray-400 mt-0.5">You can turn this on or off any time</p>
             </div>
             <button
@@ -92,8 +92,8 @@ export function GymConfigScreen() {
         {gymEnabled && (
           <>
             {/* Sessions per week */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Gym sessions per week</label>
+            <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+              <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Gym sessions per week</label>
               <div className="flex gap-3">
                 {[1, 2, 3].map(n => (
                   <button
@@ -107,7 +107,7 @@ export function GymConfigScreen() {
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
                 {sessionsPerWeek === 1 && 'One session covers the essentials without adding too much fatigue'}
                 {sessionsPerWeek === 2 && 'Two sessions is the sweet spot for most runners — recommended'}
                 {sessionsPerWeek === 3 && 'Three sessions for those who want to prioritise strength alongside running'}
@@ -115,9 +115,9 @@ export function GymConfigScreen() {
             </div>
 
             {/* Equipment */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+            <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
               <div>
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">What equipment do you have?</label>
+                <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>What equipment do you have?</label>
                 <p className="text-xs text-gray-400 mt-1">Select all that apply — we&apos;ll build sessions around what you have</p>
               </div>
               <div className="space-y-2">
@@ -129,7 +129,7 @@ export function GymConfigScreen() {
                       equipment.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-gray-200'
                     }`}
                   >
-                    <p className={`text-sm font-bold ${equipment.includes(o.id) ? 'text-teal-800' : 'text-gray-700'}`}>
+                    <p className={`text-sm font-bold ${equipment.includes(o.id) ? 'text-white' : 'text-gray-700'}`}>
                       {o.label}
                     </p>
                     <p className="text-xs text-gray-400 mt-0.5">{o.desc}</p>
@@ -139,8 +139,8 @@ export function GymConfigScreen() {
             </div>
 
             {/* Focus */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Training focus</label>
+            <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+              <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Training focus</label>
               <div className="space-y-2">
                 {FOCUS_OPTIONS.map(o => (
                   <button
@@ -150,7 +150,7 @@ export function GymConfigScreen() {
                       focus === o.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-gray-200'
                     }`}
                   >
-                    <p className={`text-sm font-bold ${focus === o.id ? 'text-teal-800' : 'text-gray-700'}`}>{o.label}</p>
+                    <p className={`text-sm font-bold ${focus === o.id ? 'text-white' : 'text-gray-700'}`}>{o.label}</p>
                     <p className="text-xs text-gray-400 mt-0.5">{o.desc}</p>
                   </button>
                 ))}
@@ -161,7 +161,7 @@ export function GymConfigScreen() {
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
+      <div className="fixed bottom-0 left-0 right-0 px-4 py-4 flex gap-3 border-t" style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
         <button
           onClick={handleContinue}

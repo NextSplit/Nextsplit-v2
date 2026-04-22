@@ -297,8 +297,8 @@ export function PlanPreviewScreen() {
         </div>
 
         {/* What happens next */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">What happens next</p>
+        <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+          <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>What happens next</p>
           {[
             { emoji: '📅', text: 'Your Today tab shows today\'s sessions — no setup needed' },
             { emoji: '📊', text: 'Log runs and gym sessions to earn XP and level up' },

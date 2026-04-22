@@ -240,7 +240,7 @@ function PillPicker<T extends string>({ options, value, onChange }: {
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{label}</p>
+      <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>{label}</p>
       {children}
     </div>
   )
@@ -398,11 +398,11 @@ export function CharacterCreationScreen() {
                 <p className="text-xs text-amber-600">Minimum 3 characters</p>
               )}
               {handleError && <p className="text-xs text-red-500">{handleError}</p>}
-              {checkingHandle && <p className="text-xs text-gray-400">Checking…</p>}
+              {checkingHandle && <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Checking…</p>}
               {handle.length >= 3 && !handleError && !checkingHandle && (
                 <p className="text-xs text-[var(--ns-forest)]">✓ @{handle} is available</p>
               )}
-              <p className="text-xs text-gray-400">This is how other runners will find and follow you</p>
+              <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>This is how other runners will find and follow you</p>
             </Section>
           </div>
 

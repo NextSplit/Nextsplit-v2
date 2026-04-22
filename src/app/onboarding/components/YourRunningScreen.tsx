@@ -173,7 +173,7 @@ export function YourRunningScreen() {
 
         {/* Experience */}
         <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">How long have you been running?</label>
+          <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>How long have you been running?</label>
           <div className="space-y-2">
             {EXPERIENCE_OPTIONS.map(o => (
               <button
@@ -184,7 +184,7 @@ export function YourRunningScreen() {
                   ? { background: 'var(--ns-forest-light)', borderColor: 'var(--ns-forest)' }
                   : { background: 'white', borderColor: '#e5e7eb' }}
               >
-                <p className={`text-sm font-bold ${experience === o.id ? 'text-teal-800' : 'text-gray-700'}`}>{o.label}</p>
+                <p className={`text-sm font-bold ${experience === o.id ? 'text-white' : 'text-gray-700'}`}>{o.label}</p>
                 <p className="text-xs text-gray-400 mt-0.5">{o.desc}</p>
               </button>
             ))}
@@ -208,14 +208,14 @@ export function YourRunningScreen() {
             <span>0km</span><span>60km</span><span>120km</span>
           </div>
           {weeklyKm === 0 && (
-            <p className="text-xs text-gray-400">No worries — we&apos;ll build you up from scratch</p>
+            <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>No worries — we&apos;ll build you up from scratch</p>
           )}
         </div>
 
         {/* Recent race times */}
         <div className="rounded-2xl p-4 space-y-4" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Recent race times</label>
+            <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Recent race times</label>
             <p className="text-xs text-gray-400 mt-1">Optional but powerful — we use this to set your pace zones precisely. Fill in what you know.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -255,14 +255,14 @@ export function YourRunningScreen() {
 
         {/* Surfaces */}
         <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Where do you typically run?</label>
+          <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Where do you typically run?</label>
           <div className="grid grid-cols-2 gap-2">
             {SURFACE_OPTIONS.map(o => (
               <button
                 key={o.id}
                 onClick={() => toggleSurface(o.id)}
                 className={`py-2.5 px-3 rounded-xl text-sm font-semibold border transition-all text-left ${
-                  surfaces.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-teal-800' : 'bg-white border-gray-200 text-gray-700'
+                  surfaces.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-white' : 'bg-white border-gray-200 text-gray-700'
                 }`}
               >
                 {o.label}

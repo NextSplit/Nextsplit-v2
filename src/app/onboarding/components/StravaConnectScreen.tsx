@@ -199,13 +199,13 @@ export function StravaConnectScreen() {
         <div className="flex-1 px-4 pt-4 pb-32 space-y-4">
           <div className="text-center py-2">
             <div className="text-3xl mb-2">✅</div>
-            <h1 className="text-xl font-black text-gray-900">Strava connected</h1>
-            <p className="text-sm text-gray-500 mt-1">Here&apos;s what we found from your recent training</p>
+            <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Strava connected</h1>
+            <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>Here&apos;s what we found from your recent training</p>
           </div>
 
           {/* Prefill summary */}
           <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">We&apos;ll pre-fill these for you</p>
+            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>We&apos;ll pre-fill these for you</p>
             <div className="space-y-2">
               {[
                 { label: 'Weekly mileage',    value: `~${prefill.weeklyKmCurrent} km/week` },
@@ -232,7 +232,7 @@ export function StravaConnectScreen() {
                     return (
                       <div key={dist} className="bg-[var(--ns-forest-light)] rounded-xl p-2 text-center">
                         <p className="text-xs text-[var(--ns-forest)] font-bold uppercase">{dist}</p>
-                        <p className="text-sm font-black text-teal-800">
+                        <p className="text-sm font-black text-white">
                           {`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
                         </p>
                       </div>
@@ -279,7 +279,7 @@ export function StravaConnectScreen() {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-xl font-black text-gray-900">Connect Strava</h1>
+          <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Connect Strava</h1>
           <p className="text-sm text-gray-500 max-w-xs">
             Skip most of the setup — we&apos;ll pull your training history and pre-fill your profile automatically.
           </p>

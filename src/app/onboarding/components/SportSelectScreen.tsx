@@ -51,7 +51,7 @@ export function SportSelectScreen() {
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6">
         <div className="mb-6">
           <h1 className="text-xl font-black" style={{ color: "var(--color-text-primary)" }}>What are you training for?</h1>
-          <p className="text-sm text-gray-500 mt-1">Running is your foundation. Add more anytime.</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>Running is your foundation. Add more anytime.</p>
         </div>
 
         <div className="space-y-3">
@@ -136,7 +136,7 @@ export function SportSelectScreen() {
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
+      <div className="fixed bottom-0 left-0 right-0 px-4 py-4 flex gap-3 border-t" style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">
           ←
         </button>

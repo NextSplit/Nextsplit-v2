@@ -77,14 +77,14 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
 
       {/* Goal type */}
       <div className="space-y-2">
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Goal type</p>
+        <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Goal type</p>
         <div className="space-y-1.5">
           {GOAL_TYPES.map(t => (
             <button
               key={t.id}
               onClick={() => onUpdate({ ...goal, goal_type: t.id as UserGoal['goal_type'] })}
               className={`w-full text-left px-3 py-2 rounded-xl border text-xs transition-all ${
-                goal.goal_type === t.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-teal-800' : 'border-[var(--color-border)] text-[var(--color-text-secondary)]'
+                goal.goal_type === t.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-white' : 'border-[var(--color-border)] text-[var(--color-text-secondary)]'
               }`}
               style={goal.goal_type !== t.id ? { background: 'var(--color-surface-2)' } : {}}
             >
@@ -100,7 +100,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
       {goal.goal_type === 'race' && (
         <div className="space-y-3 pt-1 border-t border-gray-100">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Race name</label>
+            <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Race name</label>
             <input
               value={goal.race_name ?? ''}
               onChange={e => onUpdate({ ...goal, race_name: e.target.value })}
@@ -110,7 +110,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Race date</label>
+              <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Race date</label>
               <input
                 type="date"
                 value={goal.race_date ?? ''}
@@ -119,7 +119,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Distance</label>
+              <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Distance</label>
               <select
                 value={goal.race_distance_label ?? ''}
                 onChange={e => onUpdate({ ...goal, race_distance_label: e.target.value })}
@@ -144,7 +144,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
         <div className="space-y-3 pt-1 border-t border-gray-100">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Distance</label>
+              <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Distance</label>
               <select
                 value={goal.race_distance_label ?? ''}
                 onChange={e => onUpdate({ ...goal, race_distance_label: e.target.value })}
@@ -209,7 +209,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
       {/* Notes */}
       {(goal.goal_type === 'general_fitness' || goal.goal_type === 'continuous') && (
         <div className="space-y-1.5 pt-1 border-t border-gray-100">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">What does success look like?</label>
+          <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>What does success look like?</label>
           <textarea
             value={goal.notes ?? ''}
             onChange={e => onUpdate({ ...goal, notes: e.target.value })}
