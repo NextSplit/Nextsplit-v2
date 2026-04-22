@@ -57,31 +57,32 @@ export default async function SquadPage() {
     }
   }
 
-  // Check if member
-  const { data: membership } = await s
+  // Check if member — use service client, avoid nested joins
+  const { data: myMembership } = await svc
     .from('squad_members')
-    .select(`
-      *,
-      squads(
-        *,
-        squad_members!squad_id(
-          id, user_id, joined_at, last_active_at, removed_at,
-          profiles(display_name, handle, runner_class)
-        ),
-        profiles!leader_id(display_name, handle, runner_class)
-      )
-    `)
+    .select('squad_id')
     .eq('user_id', user.id)
     .is('removed_at', null)
     .maybeSingle()
 
-  if (membership?.squads) {
-    const sq = membership.squads
-    sq.squad_members = (sq.squad_members ?? []).filter(
-      (m: { removed_at: string | null }) => !m.removed_at
-    )
-    const { data: km } = await s.rpc('squad_monthly_km', { p_squad_id: sq.id })
-    return <SquadDashboardClient squad={sq} role="member" monthlyKm={km ?? 0} userId={user.id} />
+  if (myMembership?.squad_id) {
+    const { data: sq } = await svc
+      .from('squads')
+      .select('*, squad_members!squad_id(id, user_id, joined_at, last_active_at, removed_at), squad_invites(id, code, uses, max_uses, expires_at)')
+      .eq('id', myMembership.squad_id)
+      .single()
+
+    if (sq) {
+      const activeMembers = (sq.squad_members ?? []).filter((m: { removed_at: string | null }) => !m.removed_at)
+      const memberIds = activeMembers.map((m: { user_id: string }) => m.user_id)
+      const { data: memberProfiles } = memberIds.length > 0
+        ? await svc.from('profiles').select('id, display_name, handle, runner_class').in('id', memberIds)
+        : { data: [] }
+      const profileMap = Object.fromEntries((memberProfiles ?? []).map((p: { id: string }) => [p.id, p]))
+      sq.squad_members = activeMembers.map((m: { user_id: string }) => ({ ...m, profiles: profileMap[m.user_id] ?? null }))
+      const { data: km } = await svc.rpc('squad_monthly_km', { p_squad_id: sq.id })
+      return <SquadDashboardClient squad={sq} role="member" monthlyKm={km ?? 0} userId={user.id} />
+    }
   }
 
   // Not in a squad — show options
