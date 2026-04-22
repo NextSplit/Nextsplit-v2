@@ -43,7 +43,7 @@ function SettingRow({ label, sublabel, children, danger }: {
   return (
     <div className="flex items-center justify-between px-4 py-3.5 gap-3">
       <div className="flex-1 min-w-0">
-        <div className={`text-sm font-medium ${danger ? 'text-red-500' : 'text-gray-900'}`}>{label}</div>
+        <div className={`text-sm font-medium ${danger ? 'text-red-500' : ''}`} style={danger ? {} : { color: 'var(--color-text-primary)' }}>{label}</div>
         {sublabel && <div className="text-[11px] text-gray-400 mt-0.5">{sublabel}</div>}
       </div>
       {children && <div className="flex-shrink-0">{children}</div>}
@@ -130,7 +130,7 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
   return (
     <div className="px-4 py-3.5">
       <div className="flex items-center justify-between mb-0.5">
-        <span className="text-sm font-medium text-gray-900">{label}</span>
+        <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>{label}</span>
         {!editing && (
           <button onClick={() => { setDraft(value); setEditing(true) }}
             className="text-[11px] font-semibold text-[var(--ns-forest)]" aria-label={`Edit ${label}`}>
@@ -146,7 +146,7 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
             value={draft}
             onChange={e => setDraft(e.target.value)}
             placeholder={placeholder}
-            className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
+            className="flex-1 rounded-xl px-3 py-2 text-sm outline-none" style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}
             autoFocus
             aria-label={`${label} input`}
           />
@@ -155,7 +155,7 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
             {saving ? '…' : 'Save'}
           </button>
           <button onClick={() => setEditing(false)}
-            className="px-3 py-2 bg-gray-100 text-gray-600 text-xs font-semibold rounded-xl">
+            className="px-3 py-2 text-xs font-semibold rounded-xl" style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
             Cancel
           </button>
         </div>
@@ -636,12 +636,12 @@ export default function SettingsClient({ email, initialProfile }: Props) {
       <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button onClick={() => router.back()} aria-label="Go back"
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 flex-shrink-0">
+            className="w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-tertiary)' }}>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-lg font-bold text-gray-900">Settings</h1>
+          <h1 className="font-display text-xl italic" style={{ color: 'var(--color-text-primary)' }}>Settings</h1>
         </div>
       </div>
 
@@ -651,15 +651,15 @@ export default function SettingsClient({ email, initialProfile }: Props) {
         <Section title="Profile">
           <EditableRow label="Name" value={p?.display_name ?? ''} placeholder="Your name"
             sublabel="Shown on your profile and share cards" onSave={saveName} />
-          <div className="border-t border-gray-50">
+          <div className="border-t" style={{ borderColor: 'var(--color-border)' }}>
             <EditableRow label="Weight" type="number" value={p?.weight_kg?.toString() ?? ''}
               placeholder="kg" sublabel="Used to calculate your calorie targets" onSave={saveWeight} />
           </div>
-          <div className="border-t border-gray-50">
+          <div className="border-t" style={{ borderColor: 'var(--color-border)' }}>
             <EditableRow label="Age" type="number" value={p?.age?.toString() ?? ''}
               placeholder="Years" sublabel="Used for training zones and BMR" onSave={saveAge} />
           </div>
-          <div className="border-t border-gray-50">
+          <div className="border-t" style={{ borderColor: 'var(--color-border)' }}>
             <SettingRow label="Email" sublabel="Your login email">
               <span className="text-xs text-gray-400 max-w-[160px] truncate">{email}</span>
             </SettingRow>
@@ -766,7 +766,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
           />
           {p?.notifications_enabled && (
             <>
-              <div className="px-4 py-3.5 border-t border-gray-50">
+              <div className="px-4 py-3.5 border-t" style={{ borderColor: 'var(--color-border)' }}>
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium text-gray-900">Reminder time</div>
@@ -782,7 +782,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
                 </div>
               </div>
               {/* Per-type notification preferences */}
-              <div className="border-t border-gray-50">
+              <div className="border-t" style={{ borderColor: 'var(--color-border)' }}>
                 <div className="px-4 py-2.5">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                     Notification types
@@ -814,7 +814,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
                     />
                   )
                 })}
-                <div className="px-4 py-3 border-t border-gray-50">
+                <div className="px-4 py-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
                   <p className="text-[10px] text-gray-400 leading-relaxed">
                     Quiet hours (10pm–7am) are always respected regardless of these settings.
                     Maximum one notification per day.

@@ -30,6 +30,7 @@ import AICoachingNote from '@/components/AICoachingNote'
 import LeadDashboard from '@/components/LeadDashboard'
 import { useLeadMode } from '@/hooks/useLeadMode'
 import NPSPrompt from '@/components/NPSPrompt'
+import PushPrompt from '@/components/PushPrompt'
 
 
 export default function TodayClient() {
@@ -917,6 +918,10 @@ export default function TodayClient() {
 
       {/* NPS prompt — Day 7 and Day 30 triggers */}
       <NPSPrompt firstSessionAt={(profile as { first_session_logged_at?: string | null })?.first_session_logged_at ?? null} />
+      <PushPrompt
+        firstSessionAt={(profile as { first_session_logged_at?: string | null })?.first_session_logged_at ?? null}
+        displayName={profile?.display_name ?? null}
+      />
     </div>
   )
 }
