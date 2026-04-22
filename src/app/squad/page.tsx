@@ -1,6 +1,7 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 
-export const revalidate = 0 // Never cache — squad state changes frequently
+export const dynamic = 'force-dynamic' // Prevent all caching — squad state is user-specific
+export const revalidate = 0
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import SquadDashboardClient from './SquadDashboardClient'
