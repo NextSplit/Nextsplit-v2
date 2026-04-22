@@ -101,9 +101,13 @@ export default function AIOnboardingClient() {
         body: JSON.stringify({ goal, level, raceDate: raceDate || null, slug, includeGym: gymPreference === 'yes' }),
       })
       const data = await res.json()
-      if (!res.ok || !data.recommendation) throw new Error(data.error || 'Failed')
-      setRecommendation(data.recommendation)
-      if (!planName) setPlanName(data.suggestedName || `${selectedGoal?.label} ${new Date().getFullYear()}`)
+      // API returns { slug, reason } — use the AI-recommended slug if valid
+      if (res.ok && data.slug && SLUG_MAP[data.slug] !== undefined) {
+        setChosenSlug(data.slug)
+      }
+      const reason = data.reason || data.recommendation || null
+      setRecommendation(reason || `Based on your ${selectedLevel?.label.toLowerCase()} experience and ${selectedGoal?.label} goal, I've selected the **${SLUG_LABELS[slug]}** plan.`)
+      if (!planName) setPlanName(`${selectedGoal?.label} ${new Date().getFullYear()}`)
     } catch {
       setRecommendation(`Based on your ${selectedLevel?.label.toLowerCase()} experience and ${selectedGoal?.label} goal, I've selected the **${SLUG_LABELS[slug]}** plan. This gives you the right structure and volume to hit your target.`)
       if (!planName) setPlanName(`${selectedGoal?.label} ${new Date().getFullYear()}`)

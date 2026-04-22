@@ -14,10 +14,12 @@ export async function POST(req: Request) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: profile } = await (supabaseAuth as any)
-    .from('profiles').select('is_admin, email').eq('id', user.id).single()
+    .from('profiles').select('is_admin').eq('id', user.id).single()
 
+  // Use email from auth.users (not profiles table which may not have email column)
+  const userEmail = user.email ?? ''
   const isAdmin = profile?.is_admin === true ||
-    process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()).includes(profile?.email ?? '')
+    process.env.ADMIN_EMAILS?.split(',').map((e: string) => e.trim()).includes(userEmail)
 
   if (!isAdmin) return NextResponse.json({ error: 'Admin only' }, { status: 403 })
 
