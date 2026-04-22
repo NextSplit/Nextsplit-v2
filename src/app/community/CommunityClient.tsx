@@ -52,7 +52,7 @@ function JoinClubModal({ onClose, onJoined }: { onClose: () => void; onJoined: (
         {error && <p className="text-xs text-red-500 text-center">{error}</p>}
         {success && <p className="text-xs text-emerald-600 text-center font-bold">{success}</p>}
         <button onClick={join} disabled={code.length < 6 || loading}
-          className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
+          className="w-full py-3.5 rounded-2xl text-sm font-bold text-white disabled:opacity-40 active:scale-95" style={{ background: 'var(--ns-ember)' }}>
           {loading ? 'Joining…' : 'Join club →'}
         </button>
       </div>
@@ -113,7 +113,7 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
 
         {error && <p className="text-xs text-red-500">{error}</p>}
         <button onClick={create} disabled={!name.trim() || loading}
-          className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
+          className="w-full py-3.5 rounded-2xl text-sm font-bold text-white disabled:opacity-40 active:scale-95" style={{ background: 'var(--ns-ember)' }}>
           {loading ? 'Creating…' : 'Create club →'}
         </button>
       </div>
@@ -327,7 +327,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                 Enter code
               </button>
               <button onClick={() => setShowCreate(true)}
-                className="flex-1 bg-[var(--ns-forest)] text-white rounded-2xl py-3 text-sm font-bold active:scale-95">
+                className="flex-1 rounded-2xl py-3 text-sm font-bold text-white active:scale-95" style={{ background: 'var(--ns-ember)' }}>
                 + Create club
               </button>
             </div>
@@ -493,7 +493,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                   ) : (
                     <button onClick={() => !isFull && isActive && enterRace(r.id)}
                       disabled={isFull || !isActive}
-                      className="w-full bg-[var(--ns-forest)] text-white py-2.5 rounded-xl text-sm font-bold disabled:opacity-40 active:scale-95">
+                      className="w-full py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 active:scale-95" style={{ background: 'var(--ns-ember)' }}>
                       {isFull ? 'Race full' : !isActive ? 'Opens soon' : 'Enter race →'}
                     </button>
                   )}

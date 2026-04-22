@@ -158,7 +158,7 @@ export default function PlanClient() {
         <div className="text-center px-4">
           <div className="text-5xl mb-4">📋</div>
           <h2 className="text-base font-bold text-gray-900 mb-2">No active plan</h2>
-          <a href="/onboarding" className="inline-block bg-[var(--ns-forest)] text-white px-6 py-3 rounded-xl text-sm font-semibold mt-4">Choose a plan →</a>
+          <a href="/plan/browse" className="inline-block text-white px-6 py-3 rounded-xl text-sm font-semibold mt-4" style={{ background: 'var(--ns-ember)' }}>Choose a plan →</a>
         </div>
       </div>
     )
@@ -245,7 +245,7 @@ export default function PlanClient() {
               </p>
               <a href="/nutrition"
                 className="block w-full py-3 rounded-2xl text-center text-sm font-bold text-white"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 Open full nutrition dashboard →
               </a>
             </div>

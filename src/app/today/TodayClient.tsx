@@ -395,7 +395,7 @@ export default function TodayClient() {
                 : "Your plan is building — check the Plan tab for your full schedule."}
             </p>
             <a href="/plan"
-              className="inline-block bg-[var(--ns-forest)] text-white text-xs font-bold px-5 py-2.5 rounded-xl">
+              className="inline-block text-white text-xs font-bold px-5 py-2.5 rounded-xl" style={{ background: 'var(--ns-ember)' }}>
               Go to Plan →
             </a>
           </div>
@@ -403,11 +403,11 @@ export default function TodayClient() {
 
         {/* Welcome banner — shown once after onboarding */}
         {showWelcome && !loading && plan && (
-          <div className="bg-gradient-to-r from-teal-500 to-teal-400 rounded-2xl p-4 flex items-start gap-3">
+          <div className="rounded-2xl p-4 flex items-start gap-3" style={{ background: 'linear-gradient(135deg, var(--color-surface) 0%, rgba(43,92,63,0.2) 100%)', border: '1px solid var(--color-border)' }}>
             <span className="text-2xl shrink-0">👋</span>
             <div className="flex-1">
-              <p className="text-sm font-black text-white">Welcome to NextSplit!</p>
-              <p className="text-xs text-teal-100 mt-0.5 leading-relaxed">
+              <p className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>Welcome to NextSplit!</p>
+              <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
                 Your plan is ready. Tap any session to log it — swipe left or right to move between days.
               </p>
             </div>
@@ -416,7 +416,7 @@ export default function TodayClient() {
                 setShowWelcome(false)
                 try { localStorage.setItem('nextsplit_welcome_dismissed', '1') } catch {}
               }}
-              className="text-teal-200 text-lg shrink-0 leading-none"
+              className="text-lg shrink-0 leading-none" style={{ color: 'var(--color-text-tertiary)' }}
             >
               ×
             </button>
@@ -428,26 +428,33 @@ export default function TodayClient() {
           const hadPlan = typeof window !== 'undefined' && !!localStorage.getItem('nextsplit_plan_completed')
           return (
             <div className="space-y-3">
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
-                <div className="text-4xl mb-3">{hadPlan ? '🎉' : '🌅'}</div>
-                <h2 className="text-base font-bold text-gray-900 mb-2">
-                  {hadPlan ? 'Plan complete — what\'s next?' : 'Your plan is waiting'}
-                </h2>
-                <p className="text-sm text-gray-500 mb-5 leading-relaxed">
-                  {hadPlan
-                    ? 'Great work finishing your plan. Pick your next challenge whenever you\'re ready — no rush.'
-                    : 'Choose a training plan and it\'ll show up here. Your first session could be today.'}
-                </p>
-                <a href="/plan/browse"
-                  className="inline-block text-white px-6 py-3 rounded-xl text-sm font-bold"
-                  style={{ background: 'var(--ns-forest)' }}>
-                  {hadPlan ? 'Start next plan →' : 'Choose a plan →'}
-                </a>
-                {hadPlan && (
-                  <div className="mt-3">
-                    <a href="/profile" className="text-xs text-gray-400 underline">View your history</a>
-                  </div>
-                )}
+              <div className="rounded-2xl p-6 text-center overflow-hidden relative"
+                style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+                {/* Subtle glow */}
+                <div className="absolute inset-0 pointer-events-none"
+                  style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(232,93,38,0.06) 0%, transparent 70%)' }} />
+                <div className="relative">
+                  <div className="text-4xl mb-3">{hadPlan ? '🎉' : '🌅'}</div>
+                  <h2 className="font-display text-xl italic mb-2"
+                    style={{ color: 'var(--color-text-primary)' }}>
+                    {hadPlan ? "What's your next challenge?" : 'Your journey starts here.'}
+                  </h2>
+                  <p className="text-sm mb-5 leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+                    {hadPlan
+                      ? "You finished your plan. Pick your next target whenever you're ready. No rush."
+                      : 'Choose a plan and your first session could be today. No catch-up required.'}
+                  </p>
+                  <a href="/plan/browse"
+                    className="inline-block text-white px-6 py-3 rounded-xl text-sm font-black active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #d44a12 100%)', boxShadow: '0 4px 16px rgba(232,93,38,0.3)' }}>
+                    {hadPlan ? 'Start next plan →' : 'Choose a plan →'}
+                  </a>
+                  {hadPlan && (
+                    <div className="mt-3">
+                      <a href="/profile" className="text-xs underline" style={{ color: 'var(--color-text-tertiary)' }}>View your history</a>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Warm reassurance — reduces anxiety about "falling behind" */}

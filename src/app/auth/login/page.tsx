@@ -99,7 +99,7 @@ export default function LoginPage() {
 
             <button type="submit" disabled={loading}
               className="w-full text-white py-3 rounded-xl text-sm font-bold disabled:opacity-50 transition-all active:scale-95"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               {loading ? 'Signing in…' : 'Sign in →'}
             </button>
           </form>
