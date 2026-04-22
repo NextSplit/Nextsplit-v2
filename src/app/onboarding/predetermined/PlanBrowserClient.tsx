@@ -335,7 +335,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
   }
 
   return (
-    <main className="min-h-screen bg-[#f8f8f6] pb-24">
+    <main className="min-h-screen pb-24">
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
         <div className="max-w-lg mx-auto flex items-center gap-3">

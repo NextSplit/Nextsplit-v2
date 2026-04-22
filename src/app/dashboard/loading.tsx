@@ -1,6 +1,6 @@
 export default function StatsLoading() {
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div className="min-h-screen pb-24">
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3">
         <div className="max-w-lg mx-auto">
           <div className="h-5 w-16 bg-gray-200 rounded animate-pulse mb-3" />

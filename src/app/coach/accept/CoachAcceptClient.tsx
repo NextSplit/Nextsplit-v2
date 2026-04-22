@@ -40,7 +40,7 @@ export default function CoachAcceptClient({
   }
 
   return (
-    <main className="min-h-screen bg-[#f8f8f6] flex flex-col">
+    <main className="min-h-screen flex flex-col">
       <div className="max-w-lg mx-auto w-full px-4 py-10 space-y-5">
 
         {/* Header */}

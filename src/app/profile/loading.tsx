@@ -1,6 +1,6 @@
 export default function ProfileLoading() {
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div className="min-h-screen pb-24">
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-5">
         <div className="max-w-lg mx-auto flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-gray-200 animate-pulse" />

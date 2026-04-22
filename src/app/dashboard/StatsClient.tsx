@@ -320,7 +320,7 @@ export default function StatsClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8f8f6] pb-24 pt-16">
+      <div className="min-h-screen pb-24 pt-16">
         <div className="max-w-lg mx-auto px-4 space-y-3">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="h-32 bg-white rounded-2xl border border-gray-100 animate-pulse" />
@@ -331,7 +331,7 @@ export default function StatsClient() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div className="min-h-screen pb-24">
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">

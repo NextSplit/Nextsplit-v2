@@ -62,7 +62,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
   }
 
   return (
-    <main className="min-h-screen bg-[#f8f8f6] pb-20">
+    <main className="min-h-screen pb-20">
       <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
 
         {/* Header */}

@@ -1,6 +1,6 @@
 export default function NutritionLoading() {
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div className="min-h-screen pb-24">
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
