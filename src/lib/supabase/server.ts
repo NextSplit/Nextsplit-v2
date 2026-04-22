@@ -30,10 +30,14 @@ export async function createClient() {
 // Service role client — bypasses RLS for server-side admin reads
 // Only use when auth.uid() is not available in server context
 export function createServiceClient() {
-  const { createClient } = require('@supabase/supabase-js')
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
+  // Dynamic import to avoid ESM/CJS issues
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { createClient: createSupabaseClient } = require('@supabase/supabase-js')
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) {
+    console.error('[createServiceClient] Missing env vars - URL:', !!url, 'KEY:', !!key)
+    throw new Error('Missing Supabase service role configuration')
+  }
+  return createSupabaseClient(url, key, { auth: { persistSession: false } })
 }

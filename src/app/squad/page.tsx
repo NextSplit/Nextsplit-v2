@@ -19,12 +19,14 @@ export default async function SquadPage() {
   const svc = createServiceClient() as any
 
   // Check if leader using service client (bypasses RLS)
-  const { data: mySquad } = await svc
+  const { data: mySquad, error: mySquadErr } = await svc
     .from('squads')
     .select('id')
     .eq('leader_id', user.id)
     .is('disbanded_at', null)
     .maybeSingle()
+
+  console.log('[squad] user.id:', user.id, '| mySquad:', mySquad?.id ?? 'null', '| err:', mySquadErr?.message ?? 'none')
 
   if (mySquad?.id) {
     const { data: ledSquad } = await svc
