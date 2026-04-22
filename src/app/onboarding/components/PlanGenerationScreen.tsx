@@ -326,20 +326,92 @@ export function PlanGenerationScreen() {
     }
   }, [done, data.trainingPath, next, router])
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0f172a] via-[#0d3d38] to-[#0f172a] flex flex-col items-center justify-center px-6 text-center">
+  const cfg = data.characterConfig
+  const skin = { 'tone-1': '#FDDBB4','tone-2': '#F1C27D','tone-3': '#E0AC69','tone-4': '#C68642','tone-5': '#8D5524','tone-6': '#4A2912' }[cfg.skinTone] ?? '#E0AC69'
+  const kit  = cfg.kitColour ?? '#2b5c3f'
+  const hair = cfg.hairColour ?? '#3b2314'
+  const shoe = cfg.shoeColour ?? '#1e293b'
 
-      <div className="relative mb-8">
-        <div className="w-24 h-24 rounded-full bg-[var(--ns-forest)]/10 border border-[var(--ns-forest)]/20 flex items-center justify-center">
-          <span className="text-5xl animate-bounce">🏃</span>
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#0a120d] via-[#0d1f15] to-[#0a120d] flex flex-col items-center justify-center px-6 text-center">
+
+      {/* Running track */}
+      <div className="w-full max-w-xs mb-10 relative" style={{ height: 80 }}>
+        {/* Track surface */}
+        <div className="absolute bottom-6 left-0 right-0 h-3 rounded-full" style={{ background: '#1a3520', border: '1px solid #2b5c3f40' }} />
+        {/* Lane lines */}
+        <div className="absolute bottom-7 left-0 right-0 flex gap-2 px-4">
+          {Array.from({length: 16}).map((_,i) => <div key={i} className="flex-1 h-1 rounded-full" style={{ background: 'rgba(43,92,63,0.3)' }} />)}
         </div>
-        <div className="absolute inset-0 animate-spin" style={{ animationDuration: '3s' }}>
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[var(--ns-forest-mid)] opacity-60" />
+        {/* Ground shadow */}
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2" style={{ width: 50, height: 6, background: 'rgba(0,0,0,0.4)', borderRadius: '50%', filter: 'blur(2px)' }} />
+
+        {/* Running character — CSS keyframe animation */}
+        <style>{`
+          @keyframes run-across {
+            0%   { left: 5% }
+            100% { left: 85% }
+          }
+          @keyframes stride-L {
+            0%, 100% { transform: rotate(-20deg) }
+            50%       { transform: rotate(20deg) }
+          }
+          @keyframes stride-R {
+            0%, 100% { transform: rotate(20deg) }
+            50%       { transform: rotate(-20deg) }
+          }
+          @keyframes arm-swing {
+            0%, 100% { transform: rotate(30deg) }
+            50%       { transform: rotate(-30deg) }
+          }
+          .ns-runner { animation: run-across 1.4s linear infinite alternate; position: absolute; bottom: 12px; }
+        `}</style>
+
+        <div className="ns-runner">
+          <svg width="42" height="56" viewBox="0 0 42 56" fill="none">
+            {/* Shadow */}
+            {/* Hair */}
+            {cfg.hairStyle !== 'none' && <ellipse cx="21" cy="6" rx="7" ry="4" fill={hair} />}
+            {/* Head */}
+            <ellipse cx="21" cy="9" rx="6" ry="7" fill={skin} />
+            {/* Eyes */}
+            <circle cx="19" cy="8" r="0.9" fill="#1e293b" />
+            <circle cx="23" cy="8" r="0.9" fill="#1e293b" />
+            {/* Torso */}
+            <path d="M14 17 Q15 15 21 15 Q27 15 28 17 L29 30 Q27 31 21 31 Q15 31 13 30 Z" fill={kit} />
+            {/* Neck */}
+            <rect x="19" y="15" width="4" height="3" rx="1" fill={skin} />
+            {/* Left arm (animated) */}
+            <g style={{ transformOrigin: '14px 18px', animation: 'arm-swing 0.4s ease-in-out infinite' }}>
+              <line x1="14" y1="18" x2="8" y2="26" stroke={skin} strokeWidth="3" strokeLinecap="round" />
+              <circle cx="8" cy="27" r="2" fill={skin} />
+            </g>
+            {/* Right arm */}
+            <g style={{ transformOrigin: '28px 18px', animation: 'arm-swing 0.4s ease-in-out infinite reverse' }}>
+              <line x1="28" y1="18" x2="34" y2="24" stroke={skin} strokeWidth="3" strokeLinecap="round" />
+              <circle cx="34" cy="25" r="2" fill={skin} />
+            </g>
+            {/* Shorts */}
+            <path d="M15 29 Q17 34 19 39 L23 39 Q25 34 27 29 Z" fill={kit} opacity="0.9" />
+            {/* Left leg */}
+            <g style={{ transformOrigin: '19px 39px', animation: 'stride-L 0.4s ease-in-out infinite' }}>
+              <line x1="19" y1="39" x2="13" y2="49" stroke={skin} strokeWidth="3.5" strokeLinecap="round" />
+              <path d="M11 48 Q9 51 7 52 Q11 53 14 52 Q14 49 13 49 Z" fill={shoe} />
+            </g>
+            {/* Right leg */}
+            <g style={{ transformOrigin: '23px 39px', animation: 'stride-R 0.4s ease-in-out infinite' }}>
+              <line x1="23" y1="39" x2="29" y2="48" stroke={skin} strokeWidth="3.5" strokeLinecap="round" />
+              <path d="M29 48 Q32 47 34 48 Q32 51 29 51 Q27 50 29 48 Z" fill={shoe} />
+            </g>
+            {/* Bib */}
+            <rect x="17" y="20" width="8" height="6" rx="1" fill="white" opacity="0.9" />
+            <text x="21" y="25" textAnchor="middle" fontSize="3.5" fontWeight="bold" fill={kit}>NS</text>
+          </svg>
         </div>
       </div>
 
       <h1 className="text-2xl font-black text-white mb-2">Building your plan</h1>
-      <p className="text-[var(--ns-forest-light)] text-sm mb-8">Our coaches are working through your requirements</p>
+      <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.5)' }}>Personalising every session for you</p>
 
       <div className="h-6 mb-6">
         <p className="text-gray-400 text-sm">{MESSAGES[msgIndex]}</p>

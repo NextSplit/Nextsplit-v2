@@ -21,9 +21,6 @@ const SURFACE_OPTIONS = [
   { id: 'treadmill', label: '⚙️ Treadmill' },
 ]
 
-const LONGEST_RUN_OPTIONS = [
-  '< 5km', '5–10km', '10–15km', '15–21km', '21–30km', '30km+'
-]
 
 // Format seconds as MM:SS pace string
 function secsToMMSS(secs: number): string {
@@ -85,7 +82,7 @@ export function YourRunningScreen() {
   const [experience, setExperience]   = useState(data.runningExperience)
   const [weeklyKm, setWeeklyKm]       = useState(data.weeklyKmCurrent)
   const [raceTimes, setRaceTimes]     = useState(data.recentRaceTimes)
-  const [longestRun, setLongestRun]   = useState<string | null>(null)
+  const [longestRun, setLongestRun]   = useState<number>(data.longestRecentRun ?? 0)
   const [surfaces, setSurfaces]       = useState<string[]>(data.runSurfaces)
   const [saving, setSaving]           = useState(false)
 
@@ -102,7 +99,7 @@ export function YourRunningScreen() {
       runningExperience: experience,
       weeklyKmCurrent: weeklyKm,
       recentRaceTimes: raceTimes,
-      longestRecentRun: longestRun ? LONGEST_RUN_OPTIONS.indexOf(longestRun) * 5 : null,
+      longestRecentRun: longestRun > 0 ? longestRun : null,
       runSurfaces: surfaces,
     })
     const supabase = createClient()
@@ -128,15 +125,15 @@ export function YourRunningScreen() {
         <div className="mb-2">
           {data.trainingPath === 'ai_bespoke' ? (
             <>
-              <h1 className="text-xl font-black text-gray-900">Tell us about your training</h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Tell us about your training</h1>
+              <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
                 The more specific you are, the better the plan. These questions are more detailed than other paths — because they need to be.
               </p>
             </>
           ) : (
             <>
-              <h1 className="text-xl font-black text-gray-900">Your running</h1>
-              <p className="text-sm text-gray-500 mt-1">Helps us set the right starting point for your plan.</p>
+              <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Your running</h1>
+              <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>Helps us set the right starting point for your plan.</p>
             </>
           )}
         </div>
@@ -175,7 +172,7 @@ export function YourRunningScreen() {
         )}
 
         {/* Experience */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+        <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">How long have you been running?</label>
           <div className="space-y-2">
             {EXPERIENCE_OPTIONS.map(o => (
@@ -195,8 +192,8 @@ export function YourRunningScreen() {
         </div>
 
         {/* Weekly km */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Current weekly mileage</label>
+        <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+          <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Average weekly km (last 4 weeks)</label>
           <div className="flex items-center gap-4">
             <input
               type="range"
@@ -216,39 +213,48 @@ export function YourRunningScreen() {
         </div>
 
         {/* Recent race times */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4">
+        <div className="rounded-2xl p-4 space-y-4" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
           <div>
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Recent race times</label>
             <p className="text-xs text-gray-400 mt-1">Optional but powerful — we use this to set your pace zones precisely. Fill in what you know.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <SmartTimeInput label="5K" value={raceTimes['5k'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, '5k': v ?? undefined }))} hint="e.g. 02000 → 0:20:00" />
-            <SmartTimeInput label="10K" value={raceTimes['10k'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, '10k': v ?? undefined }))} hint="e.g. 04500 → 0:45:00" />
-            <SmartTimeInput label="Half Marathon" value={raceTimes['half'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, half: v ?? undefined }))} hint="e.g. 13000 → 1:30:00" />
-            <SmartTimeInput label="Marathon" value={raceTimes['marathon'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, marathon: v ?? undefined }))} hint="e.g. 34500 → 3:45:00" />
+            <SmartTimeInput label="5K" value={raceTimes['5k'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, '5k': v ?? undefined }))} />
+            <SmartTimeInput label="10K" value={raceTimes['10k'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, '10k': v ?? undefined }))} />
+            <SmartTimeInput label="Half Marathon" value={raceTimes['half'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, half: v ?? undefined }))} />
+            <SmartTimeInput label="Marathon" value={raceTimes['marathon'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, marathon: v ?? undefined }))} />
           </div>
         </div>
 
-        {/* Longest recent run */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Longest run in last 4 weeks</label>
-          <div className="grid grid-cols-3 gap-2">
-            {LONGEST_RUN_OPTIONS.map(o => (
-              <button
-                key={o}
-                onClick={() => setLongestRun(o)}
-                className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
-                  longestRun === o ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-gray-600 border-gray-200'
-                }`}
-              >
-                {o}
-              </button>
-            ))}
+        {/* Longest recent run — slider 0-50km+ */}
+        <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>
+              Longest run in last 4 weeks
+            </label>
+            <span className="text-lg font-black font-data" style={{ color: 'var(--ns-forest)' }}>
+              {longestRun === 0 ? '—' : longestRun >= 50 ? '50km+' : `${longestRun}km`}
+            </span>
           </div>
+          <input
+            type="range"
+            min={0} max={50} step={0.5}
+            value={longestRun}
+            onChange={e => setLongestRun(Number(e.target.value))}
+            className="w-full accent-teal-500"
+          />
+          <div className="flex justify-between text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
+            <span>0</span><span>10km</span><span>21km</span><span>42km</span><span>50km+</span>
+          </div>
+          {longestRun === 0 && (
+            <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
+              Slide to set — or leave at 0 if you haven&apos;t run recently
+            </p>
+          )}
         </div>
 
         {/* Surfaces */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
+        <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Where do you typically run?</label>
           <div className="grid grid-cols-2 gap-2">
             {SURFACE_OPTIONS.map(o => (
@@ -267,8 +273,8 @@ export function YourRunningScreen() {
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
+      <div className="fixed bottom-0 left-0 right-0 px-4 py-4 flex gap-3 border-t" style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
+        <button onClick={back} className="px-5 py-3 rounded-2xl border text-sm font-semibold" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>←</button>
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}

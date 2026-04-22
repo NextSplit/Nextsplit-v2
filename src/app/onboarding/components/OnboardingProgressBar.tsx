@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { TOTAL_STEPS } from '../context/OnboardingContext'
 import type { CharacterConfig } from '@/types/database'
 
@@ -49,6 +50,70 @@ const STEP_LABELS: Record<number, string> = {
   4: 'Sport', 5: 'About You', 6: 'Running History',
   7: 'Goals', 8: 'Your Life', 9: 'Gym & Strength',
   10: 'Training Path', 11: 'Building plan…', 12: 'Plan preview',
+}
+
+function BugReportButton() {
+  const [open, setOpen] = useState(false)
+  const [msg, setMsg]   = useState('')
+  const [sent, setSent] = useState(false)
+
+  const submit = async () => {
+    if (!msg.trim()) return
+    try {
+      await fetch('/api/feedback/bug', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, context: 'onboarding', url: window.location.href }),
+      })
+    } catch { /* best effort */ }
+    setSent(true)
+    setTimeout(() => { setOpen(false); setSent(false); setMsg('') }, 1500)
+  }
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}
+        className="text-[10px] opacity-40 hover:opacity-70 transition-opacity"
+        style={{ color: 'var(--color-text-tertiary)' }}
+        title="Report a problem">
+        🐛
+      </button>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center"
+          style={{ background: 'rgba(0,0,0,0.6)' }}
+          onClick={e => e.target === e.currentTarget && setOpen(false)}>
+          <div className="w-full max-w-sm rounded-t-3xl p-6 space-y-4"
+            style={{ background: 'var(--color-surface)' }}>
+            <h3 className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>Report a problem</h3>
+            {sent ? (
+              <p className="text-sm text-center py-2" style={{ color: 'var(--ns-forest)' }}>✓ Thanks — we&apos;ll look into it</p>
+            ) : (
+              <>
+                <textarea value={msg} onChange={e => setMsg(e.target.value)}
+                  placeholder="What happened? What were you expecting?"
+                  rows={3}
+                  className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none"
+                  style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}
+                />
+                <div className="flex gap-2">
+                  <button onClick={() => setOpen(false)}
+                    className="flex-1 py-2.5 rounded-xl text-sm font-bold"
+                    style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+                    Cancel
+                  </button>
+                  <button onClick={submit} disabled={!msg.trim()}
+                    className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40"
+                    style={{ background: 'var(--ns-forest)' }}>
+                    Send
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  )
 }
 
 export function OnboardingProgressBar({ step, character, showFinishLine = false }: Props) {

@@ -4,32 +4,58 @@ import { useState } from 'react'
 import { useOnboarding } from '../context/OnboardingContext'
 import { OnboardingProgressBar } from './OnboardingProgressBar'
 import { createClient } from '@/lib/supabase/client'
-import { db } from '@/lib/supabase/db'
 
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-const LONG_RUN_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-const RUN_TIMES = [
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const
+type Day = typeof DAYS[number]
+
+const TIME_SLOTS = [
   { id: 'morning',   label: '🌅 Morning',   desc: 'Before 10am' },
-  { id: 'lunchtime', label: '☀️ Lunchtime',  desc: '11am – 2pm' },
+  { id: 'lunch',     label: '☀️ Lunch',      desc: '11am–2pm' },
   { id: 'evening',   label: '🌆 Evening',    desc: 'After 5pm' },
-  { id: 'varies',    label: '🔀 Varies',     desc: 'Different each day' },
+  { id: 'flexible',  label: '🔀 Flexible',   desc: 'Any time' },
 ] as const
+
+const LONG_RUN_DAYS = ['Saturday', 'Sunday', 'Monday', 'Friday'] as const
+
+const COMMITMENT_OPTIONS = [
+  { id: 'office',   label: '🏢 Office day' },
+  { id: 'wfh',      label: '💻 Work from home' },
+  { id: 'travel',   label: '✈️ Travel / away' },
+  { id: 'family',   label: '👨‍👩‍👧 Family commitments' },
+  { id: 'free',     label: '✓ Free day' },
+]
 
 export function YourLifeScreen() {
   const { step, data, update, next, back } = useOnboarding()
 
-  const [trainingDays, setTrainingDays] = useState<string[]>(
-    // Pre-fill default days based on data.trainingDays count
-    DAYS.slice(0, data.trainingDays)
+  // Which days to train
+  const [trainingDays, setTrainingDays] = useState<Day[]>(
+    (data.trainingDays > 0 ? DAYS.slice(0, data.trainingDays) : ['Tue', 'Thu', 'Sat', 'Sun']) as Day[]
   )
-  const [longRunDay, setLongRunDay]     = useState(data.preferredLongRunDay)
-  const [runTime, setRunTime]           = useState(data.preferredRunTime)
-  const [saving, setSaving]             = useState(false)
+  // Best time per training day
+  const [dayTimes, setDayTimes] = useState<Partial<Record<Day, string>>>({})
+  // Long run day preference
+  const [longRunDay, setLongRunDay] = useState(data.preferredLongRunDay ?? 'Sunday')
+  // Work/life context per day
+  const [dayContext, setDayContext] = useState<Partial<Record<Day, string>>>({})
+  // Overall run time preference (fallback)
+  const [runTime, setRunTime]     = useState(data.preferredRunTime ?? 'morning')
+  // Expanded sections
+  const [showDetails, setShowDetails] = useState(false)
+  const [saving, setSaving]       = useState(false)
 
-  const toggleDay = (day: string) => {
+  const toggleDay = (day: Day) => {
     setTrainingDays(prev =>
       prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
     )
+  }
+
+  const setDayTime = (day: Day, time: string) => {
+    setDayTimes(prev => ({ ...prev, [day]: time }))
+  }
+
+  const setContext = (day: Day, ctx: string) => {
+    setDayContext(prev => ({ ...prev, [day]: ctx }))
   }
 
   const canContinue = trainingDays.length >= 1
@@ -37,160 +63,221 @@ export function YourLifeScreen() {
   const handleContinue = async () => {
     if (!canContinue) return
     setSaving(true)
+
+    // Build a rich schedule object
+    const scheduleDetail = DAYS.reduce((acc, d) => {
+      acc[d] = {
+        training: trainingDays.includes(d),
+        bestTime: dayTimes[d] ?? runTime,
+        context: dayContext[d] ?? null,
+      }
+      return acc
+    }, {} as Record<string, { training: boolean; bestTime: string; context: string | null }>)
+
     update({
       trainingDays: trainingDays.length,
       preferredLongRunDay: longRunDay,
-      preferredRunTime: runTime,
+      preferredRunTime: runTime as typeof data.preferredRunTime,
     })
+
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
-      await db(supabase).from('profiles').update({
-        training_days: trainingDays.length,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('profiles').update({
+        training_days_per_week: trainingDays.length,
+        preferred_training_days: trainingDays,
         preferred_long_run_day: longRunDay,
         preferred_run_time: runTime,
-        onboarding_step: 7,
+        schedule_detail: scheduleDetail,
+        onboarding_step: 8,
       }).eq('id', user.id)
     }
     setSaving(false)
     next()
   }
 
+  const cardStyle = { background: 'var(--color-surface)', border: '1px solid var(--color-border)' }
+  const labelStyle = { color: 'var(--color-text-tertiary)' }
+
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-bg)' }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
         <div className="mb-2">
-          {data.trainingPath === 'lifestyle' ? (
-            <>
-              <h1 className="text-xl font-black text-gray-900">What works for your life?</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                No race goals, no pressure — just tell us when you can run and we&apos;ll build around that.
-              </p>
-            </>
-          ) : (
-            <>
-              <h1 className="text-xl font-black text-gray-900">Your life</h1>
-              <p className="text-sm text-gray-500 mt-1">We build your plan around your schedule — not the other way round.</p>
-            </>
-          )}
-        </div>
-
-        {/* Training days */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
-          <div>
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Which days can you train?</label>
-            <p className="text-xs text-gray-400 mt-1">Tap to select — we&apos;ll place rest days on the others</p>
-          </div>
-          <div className="grid grid-cols-7 gap-1.5">
-            {DAYS.map(day => (
-              <button
-                key={day}
-                onClick={() => toggleDay(day)}
-                className={`py-3 rounded-xl text-xs font-black transition-all ${
-                  trainingDays.includes(day)
-                    ? 'bg-[var(--ns-forest)] text-white'
-                    : 'bg-gray-100 text-gray-500'
-                }`}
-              >
-                {day.charAt(0)}
-              </button>
-            ))}
-          </div>
-          <p className="text-xs font-semibold text-center" style={{ color: 'var(--ns-forest)' }}>
-            {trainingDays.length} training {trainingDays.length === 1 ? 'day' : 'days'} selected
+          <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>
+            Your training week
+          </h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+            Tell us how your week looks — we&apos;ll fit training around your life, not the other way around.
           </p>
         </div>
 
-        {/* Enjoyment question — Lifestyle path only (Product Pillar spec) */}
-        {data.trainingPath === 'lifestyle' && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
-            <div>
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">What do you enjoy most?</label>
-              <p className="text-xs text-gray-400 mt-1">Shapes the type of sessions we suggest</p>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { id: 'easy_running',  label: '😌 Easy running',    desc: 'Comfortable, conversational' },
-                { id: 'variety',       label: '🔀 Variety',          desc: 'Mix of different sessions' },
-                { id: 'outdoors',      label: '🌿 Being outdoors',   desc: 'Nature over numbers' },
-                { id: 'structure',     label: '📋 Some structure',   desc: 'A plan to follow' },
-              ].map(opt => {
-                const isOn = (data as { runningEnjoyment?: string }).runningEnjoyment === opt.id
-                return (
-                  <button key={opt.id}
-                    onClick={() => update({ runningEnjoyment: opt.id } as never)}
-                    className="py-3 px-3 rounded-2xl border-2 text-left transition-all"
-                    style={isOn
-                      ? { background: 'var(--ns-forest-light)', borderColor: 'var(--ns-forest)' }
-                      : { background: 'white', borderColor: '#e5e7eb' }}>
-                    <p className="text-xs font-bold text-gray-800">{opt.label}</p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">{opt.desc}</p>
-                  </button>
-                )
-              })}
-            </div>
+        {/* Training days */}
+        <div className="rounded-2xl p-4 space-y-3" style={cardStyle}>
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold uppercase tracking-wider" style={labelStyle}>
+              Which days can you train?
+            </label>
+            <span className="text-xs font-black" style={{ color: 'var(--ns-forest)' }}>
+              {trainingDays.length}d / week
+            </span>
           </div>
-        )}
+          <div className="grid grid-cols-7 gap-1.5">
+            {DAYS.map(day => {
+              const active = trainingDays.includes(day)
+              return (
+                <button key={day} onClick={() => toggleDay(day)}
+                  className="aspect-square rounded-xl text-xs font-black transition-all active:scale-95"
+                  style={{
+                    background: active ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                    color:      active ? 'white' : 'var(--color-text-tertiary)',
+                    border:     `1px solid ${active ? 'var(--ns-forest)' : 'var(--color-border)'}`,
+                  }}>
+                  {day.slice(0, 1)}
+                </button>
+              )
+            })}
+          </div>
+          <div className="flex gap-1.5 flex-wrap">
+            {[3, 4, 5, 6].map(n => (
+              <button key={n}
+                onClick={() => setTrainingDays(DAYS.slice(0, n) as unknown as Day[])}
+                className="text-[10px] px-2.5 py-1 rounded-lg font-bold transition-all"
+                style={{
+                  background:  trainingDays.length === n ? 'var(--color-surface-2)' : 'transparent',
+                  color:       'var(--color-text-tertiary)',
+                  border:      '1px solid var(--color-border)',
+                }}>
+                {n}× week
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Default training time */}
+        <div className="rounded-2xl p-4 space-y-3" style={cardStyle}>
+          <label className="text-xs font-bold uppercase tracking-wider" style={labelStyle}>
+            When do you prefer to train?
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {TIME_SLOTS.map(t => (
+              <button key={t.id} onClick={() => setRunTime(t.id as typeof runTime)}
+                className="p-3 rounded-xl text-left transition-all"
+                style={{
+                  background:  runTime === t.id ? 'var(--color-surface-2)' : 'transparent',
+                  border:      `1px solid ${runTime === t.id ? 'var(--ns-forest)' : 'var(--color-border)'}`,
+                }}>
+                <p className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>{t.label}</p>
+                <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>{t.desc}</p>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Long run day */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
-          <div>
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              {data.trainingPath === 'lifestyle' ? 'Best day for a longer run?' : 'Preferred long run day'}
-            </label>
-            <p className="text-xs text-gray-400 mt-1">Usually a weekend — when you have the most time</p>
-          </div>
-          <div className="grid grid-cols-4 gap-2">
-            {LONG_RUN_DAYS.map(day => (
-              <button
-                key={day}
-                onClick={() => setLongRunDay(day)}
-                className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
-                  longRunDay === day ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-gray-600 border-gray-200'
-                }`}
-              >
-                {day.slice(0, 3)}
+        <div className="rounded-2xl p-4 space-y-3" style={cardStyle}>
+          <label className="text-xs font-bold uppercase tracking-wider" style={labelStyle}>
+            Preferred long run day
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {LONG_RUN_DAYS.map(d => (
+              <button key={d} onClick={() => setLongRunDay(d)}
+                className="px-3 py-2 rounded-xl text-xs font-bold transition-all"
+                style={{
+                  background:  longRunDay === d ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                  color:       longRunDay === d ? 'white' : 'var(--color-text-secondary)',
+                  border:      `1px solid ${longRunDay === d ? 'var(--ns-forest)' : 'var(--color-border)'}`,
+                }}>
+                {d}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Run time preference */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">When do you typically train?</label>
-          <div className="space-y-2">
-            {RUN_TIMES.map(t => (
-              <button
-                key={t.id}
-                onClick={() => setRunTime(t.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl border transition-all flex items-center gap-3 ${
-                  runTime === t.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-gray-200'
-                }`}
-              >
-                <span className="text-xl">{t.label.split(' ')[0]}</span>
-                <div>
-                  <p className={`text-sm font-bold ${runTime === t.id ? 'text-teal-800' : 'text-gray-700'}`}>
-                    {t.label.split(' ').slice(1).join(' ')}
-                  </p>
-                  <p className="text-xs text-gray-400">{t.desc}</p>
+        {/* Optional: per-day detail */}
+        <button
+          onClick={() => setShowDetails(s => !s)}
+          className="w-full py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2"
+          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)' }}>
+          {showDetails ? '▲ Hide day detail' : '＋ Add day-by-day detail (optional)'}
+          <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: 'var(--color-surface-2)', color: 'var(--ns-forest)' }}>
+            Improves plan accuracy
+          </span>
+        </button>
+
+        {showDetails && (
+          <div className="space-y-3">
+            {DAYS.map(day => {
+              const isTrain = trainingDays.includes(day)
+              return (
+                <div key={day} className="rounded-2xl p-4 space-y-3" style={{ ...cardStyle, opacity: isTrain ? 1 : 0.6 }}>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>{day}</p>
+                    {isTrain && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(43,92,63,0.2)', color: 'var(--ns-forest)' }}>
+                        Training day
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Context */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {COMMITMENT_OPTIONS.map(opt => (
+                      <button key={opt.id}
+                        onClick={() => setContext(day, opt.id)}
+                        className="text-[10px] px-2 py-1 rounded-lg font-semibold transition-all"
+                        style={{
+                          background:  dayContext[day] === opt.id ? 'var(--color-surface-2)' : 'transparent',
+                          color:       dayContext[day] === opt.id ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)',
+                          border:      `1px solid ${dayContext[day] === opt.id ? 'var(--color-border)' : 'transparent'}`,
+                        }}>
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Best time (only for training days) */}
+                  {isTrain && (
+                    <div>
+                      <p className="text-[10px] mb-1.5 font-bold uppercase tracking-wider" style={labelStyle}>
+                        Best time to train
+                      </p>
+                      <div className="flex gap-1.5">
+                        {TIME_SLOTS.map(t => (
+                          <button key={t.id}
+                            onClick={() => setDayTime(day, t.id)}
+                            className="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+                            style={{
+                              background:  (dayTimes[day] ?? runTime) === t.id ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                              color:       (dayTimes[day] ?? runTime) === t.id ? 'white' : 'var(--color-text-tertiary)',
+                            }}>
+                            {t.label.split(' ')[0]}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                {runTime === t.id && <span className="ml-auto text-[var(--ns-forest-mid)] font-bold">✓</span>}
-              </button>
-            ))}
+              )
+            })}
           </div>
-        </div>
+        )}
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 flex gap-3">
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
-        <button
-          onClick={handleContinue}
-          disabled={!canContinue || saving}
-          className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-50 transition-all hover:bg-[var(--ns-forest)] active:scale-95"
-        >
+      <div className="fixed bottom-0 left-0 right-0 px-4 py-4 flex gap-3 border-t"
+        style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
+        <button onClick={back}
+          className="px-5 py-3 rounded-2xl border text-sm font-semibold"
+          style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
+          ←
+        </button>
+        <button onClick={handleContinue} disabled={!canContinue || saving}
+          className="flex-1 py-3 rounded-2xl text-sm font-bold text-white disabled:opacity-50 active:scale-95 transition-all"
+          style={{ background: 'var(--ns-forest)' }}>
           {saving ? 'Saving…' : 'Continue →'}
         </button>
       </div>
