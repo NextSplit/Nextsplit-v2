@@ -9,6 +9,7 @@ import SquadDashboardClient from './SquadDashboardClient'
 export const metadata = { title: 'My Squad — NextSplit' }
 
 export default async function SquadPage() {
+  try {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
@@ -52,8 +53,7 @@ export default async function SquadPage() {
         ...m,
         profiles: profileMap[m.user_id] ?? null,
       }))
-      const { data: km } = await svc.rpc('squad_monthly_km', { p_squad_id: ledSquad.id })
-      return <SquadDashboardClient squad={ledSquad} role="leader" monthlyKm={km ?? 0} userId={user.id} />
+      return <SquadDashboardClient squad={ledSquad} role="leader" monthlyKm={0} userId={user.id} />
     }
   }
 
@@ -80,8 +80,7 @@ export default async function SquadPage() {
         : { data: [] }
       const profileMap = Object.fromEntries((memberProfiles ?? []).map((p: { id: string }) => [p.id, p]))
       sq.squad_members = activeMembers.map((m: { user_id: string }) => ({ ...m, profiles: profileMap[m.user_id] ?? null }))
-      const { data: km } = await svc.rpc('squad_monthly_km', { p_squad_id: sq.id })
-      return <SquadDashboardClient squad={sq} role="member" monthlyKm={km ?? 0} userId={user.id} />
+      return <SquadDashboardClient squad={sq} role="member" monthlyKm={0} userId={user.id} />
     }
   }
 
@@ -166,4 +165,8 @@ export default async function SquadPage() {
       </div>
     </main>
   )
+  } catch (err) {
+    console.error('[squad/page] unhandled error:', String(err))
+    throw err
+  }
 }
