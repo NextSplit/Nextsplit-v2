@@ -144,7 +144,7 @@ export default function PlanClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8f8f6] pb-24 pt-16">
+      <div className="min-h-screen pb-24 pt-16" style={{ background: 'var(--color-bg)' }}>
         <div className="max-w-lg mx-auto px-4 space-y-3">
           {[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />)}
         </div>
@@ -154,7 +154,7 @@ export default function PlanClient() {
 
   if (!plan) {
     return (
-      <div className="min-h-screen bg-[#f8f8f6] pb-24 pt-16 flex items-center justify-center">
+      <div className="min-h-screen pb-24 pt-16 flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
         <div className="text-center px-4">
           <div className="text-5xl mb-4">📋</div>
           <h2 className="text-base font-bold text-gray-900 mb-2">No active plan</h2>
@@ -167,38 +167,58 @@ export default function PlanClient() {
   const weeksRemaining = upcomingWeeks.length + 1
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--color-bg)' }}>
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3 sticky top-0 z-40">
+      <div className="border-b px-4 pt-12 pb-3 sticky top-0 z-40"
+        style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <div className="max-w-lg mx-auto">
-          <div className="flex items-center justify-between">
-            <h1 className="text-lg font-bold text-gray-900 truncate">{decodeHtml(plan.name)}</h1>
-            <DarkModeToggle />
+          <div className="flex items-center justify-between mb-1">
+            <h1 className="font-display text-xl italic truncate"
+              style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.01em' }}>
+              {decodeHtml(plan.name)}
+            </h1>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {plan.race_date && (() => {
+                const days = Math.ceil((new Date(plan.race_date).getTime() - Date.now()) / 86400000)
+                return days > 0 ? (
+                  <span className="font-data text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    style={{ background: days <= 14 ? 'rgba(232,93,38,0.12)' : 'var(--color-surface)', color: days <= 14 ? 'var(--ns-ember)' : 'var(--color-text-tertiary)', border: '1px solid var(--color-border)' }}>
+                    {days}d 🏁
+                  </span>
+                ) : null
+              })()}
+              <DarkModeToggle />
+            </div>
           </div>
-          <p className="text-[11px] text-gray-400 mt-0.5">
+          <p className="text-[10px] mb-2" style={{ color: 'var(--color-text-tertiary)' }}>
             Week {plan.current_week} of {plan.total_weeks}
-            {plan.race_date && ` · Race: ${new Date(plan.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
+            {plan.race_date && (
+              <span> · {new Date(plan.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+            )}
           </p>
-          <div className="mt-2.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[var(--ns-forest)] rounded-full transition-all" style={{ width: `${(plan.current_week / plan.total_weeks) * 100}%` }} />
-          </div>
-          <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
-            <span>Week 1</span>
-            <span>{Math.round((plan.current_week / plan.total_weeks) * 100)}% complete</span>
-            <span>Week {plan.total_weeks}</span>
+          {/* Thin progress bar */}
+          <div className="h-0.5 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-2)' }}>
+            <div className="h-full rounded-full transition-all duration-700"
+              style={{
+                width: `${(plan.current_week / plan.total_weeks) * 100}%`,
+                background: plan.current_week / plan.total_weeks >= 0.8
+                  ? 'linear-gradient(90deg, var(--ns-ember), #ff8c5a)'
+                  : 'linear-gradient(90deg, var(--ns-forest), var(--ns-forest-mid))',
+              }} />
           </div>
         </div>
       </div>
 
       {/* Plan | Fuel tab switcher */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-2 pb-0">
+      <div className="border-b px-4 pt-2 pb-0" style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <div className="max-w-lg mx-auto flex">
           {(['plan', 'fuel'] as const).map(t => (
             <button key={t} onClick={() => setPlanTab(t)}
               className={`flex-1 py-2.5 text-xs font-bold capitalize border-b-2 transition-all ${
-                planTab === t ? 'border-[var(--ns-forest)] text-[var(--ns-forest)]' : 'border-transparent text-gray-400'
-              }`}>
+                planTab === t ? 'border-[var(--ns-ember)]' : 'border-transparent'
+              }`}
+              style={{ color: planTab === t ? 'var(--ns-ember)' : 'var(--color-text-tertiary)' }}>
               {t === 'plan' ? '📋 Training Plan' : '🥗 Fuel'}
             </button>
           ))}
@@ -206,7 +226,7 @@ export default function PlanClient() {
       </div>
 
       {/* Controls */}
-      <div className={`bg-white border-b border-gray-100 px-4 py-2.5 ${planTab === 'fuel' ? 'hidden' : ''}`}>
+      <div className={`border-b px-4 py-2.5 ${planTab === 'fuel' ? 'hidden' : ''}`} style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <div className="max-w-lg mx-auto flex items-center gap-2">
           {/* View toggle */}
           <div className="flex bg-gray-100 rounded-xl p-0.5 flex-shrink-0">

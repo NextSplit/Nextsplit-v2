@@ -314,43 +314,55 @@ export default function ProfileClient({
   const medal = planComplete ? '🥇' : rpgStats.streak >= 30 ? '🥈' : rpgStats.streak >= 7 ? '🥉' : null
 
   return (
-    <div className="min-h-screen bg-[#f8f8f6] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--color-bg)' }}>
       {/* Header */}
-      <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
-        <div className="max-w-lg mx-auto flex items-center justify-between">
-          <div>
-            {editingName ? (
-              <div className="flex items-center gap-2">
-                <input value={nameInput} onChange={e => setNameInput(e.target.value)}
-                  className="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
-                  autoFocus onKeyDown={e => { if (e.key === 'Enter') saveDisplayName() }} />
-                <button onClick={saveDisplayName} disabled={savingName}
-                  className="text-[11px] font-bold text-[var(--ns-forest)]">{savingName ? '…' : 'Save'}</button>
-                <button onClick={() => setEditingName(false)}
-                  className="text-[11px] text-gray-400">Cancel</button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>{displayName || 'Character'}</h1>
-                <button onClick={() => { setNameInput(displayName); setEditingName(true) }}
-                  className="text-gray-300 text-sm">✎</button>
-              </div>
-            )}
-            <p className="text-[11px] text-gray-400">{email}</p>
+      <div className="border-b px-4 pt-12 pb-3 sticky top-0 z-40"
+        style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
+        <div className="max-w-lg mx-auto">
+          <div className="flex items-center justify-between mb-3">
+            {/* Name + plan progress */}
+            <div className="flex-1 min-w-0">
+              {editingName ? (
+                <div className="flex items-center gap-2">
+                  <input value={nameInput} onChange={e => setNameInput(e.target.value)}
+                    className="rounded-xl px-3 py-1.5 text-sm outline-none"
+                    style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}
+                    autoFocus onKeyDown={e => { if (e.key === 'Enter') saveDisplayName() }} />
+                  <button onClick={saveDisplayName} disabled={savingName}
+                    className="text-[11px] font-bold" style={{ color: 'var(--ns-forest)' }}>{savingName ? '…' : 'Save'}</button>
+                  <button onClick={() => setEditingName(false)}
+                    className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>Cancel</button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <h1 className="font-display text-xl italic" style={{ color: 'var(--color-text-primary)' }}>
+                    {displayName || 'Character'}
+                  </h1>
+                  <button onClick={() => { setNameInput(displayName); setEditingName(true) }}
+                    className="text-sm opacity-40 hover:opacity-70" style={{ color: 'var(--color-text-tertiary)' }}>✎</button>
+                </div>
+              )}
+              <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>{email}</p>
+            </div>
+            {/* Actions */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {plan && (
+                <span className="font-data text-[10px] font-bold px-2 py-1 rounded-full"
+                  style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
+                  W{plan.current_week}/{plan.total_weeks}
+                </span>
+              )}
+              <a href="/settings" aria-label="Settings"
+                className="w-8 h-8 flex items-center justify-center rounded-full transition-colors"
+                style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-tertiary)' }}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </a>
+              <DarkModeToggle />
+            </div>
           </div>
-          {plan && (
-            <span className="text-[11px] bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full font-medium">
-              W{plan.current_week}/{plan.total_weeks}
-            </span>
-          )}
-          <a href="/settings" aria-label="Settings"
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors flex-shrink-0">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </a>
-          <DarkModeToggle />
         </div>
 
         {/* Tab switcher */}
