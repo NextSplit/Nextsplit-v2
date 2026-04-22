@@ -34,9 +34,9 @@ export default async function SquadPage() {
       .from('squads')
       .select(`
         *, 
-        squad_members!squad_id(
+        squad_members!squad_members_squad_id_fkey(
           id, user_id, joined_at, last_active_at, removed_at,
-          profiles(display_name, handle, runner_class)
+          profiles!squad_members_user_id_fkey(display_name, handle, runner_class)
         ),
         squad_invites(id, code, uses, max_uses, expires_at)
       `)
