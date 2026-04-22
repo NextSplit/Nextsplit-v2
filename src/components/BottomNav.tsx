@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useCoach } from '@/hooks/useCoach'
 import {
-  CalendarBlank, ClipboardText, Users, Campfire, UserCircle, Compass,
+  CalendarBlank, ClipboardText, Users, Campfire, UserCircle, Compass, CrownSimple,
 } from '@phosphor-icons/react'
 
 // ── Tab definitions ──────────────────────────────────────────────────────────
@@ -12,7 +12,7 @@ import {
 const ATHLETE_TABS = [
   { href: '/today',     label: 'Today',     Icon: CalendarBlank  },
   { href: '/plan',      label: 'Plan',      Icon: ClipboardText  },
-  { href: '/explore',   label: 'Explore',   Icon: Compass        },
+  { href: '/squad',     label: 'Squad',     Icon: CrownSimple    },
   { href: '/community', label: 'Community', Icon: Campfire       },
   { href: '/profile',   label: 'Character', Icon: UserCircle     },
 ]

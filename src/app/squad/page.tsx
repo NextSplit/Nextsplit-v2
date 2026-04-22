@@ -1,0 +1,138 @@
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import SquadDashboardClient from './SquadDashboardClient'
+
+export const metadata = { title: 'My Squad — NextSplit' }
+
+export default async function SquadPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/auth/login')
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const s = supabase as any
+
+  // Check if leader
+  const { data: ledSquad } = await s
+    .from('squads')
+    .select(`
+      *, 
+      squad_members!squad_id(
+        id, user_id, joined_at, last_active_at, removed_at,
+        profiles(display_name, handle, runner_class)
+      ),
+      squad_invites(id, code, uses, max_uses, expires_at)
+    `)
+    .eq('leader_id', user.id)
+    .is('disbanded_at', null)
+    .maybeSingle()
+
+  if (ledSquad) {
+    ledSquad.squad_members = (ledSquad.squad_members ?? []).filter(
+      (m: { removed_at: string | null }) => !m.removed_at
+    )
+    const { data: km } = await s.rpc('squad_monthly_km', { p_squad_id: ledSquad.id })
+    return <SquadDashboardClient squad={ledSquad} role="leader" monthlyKm={km ?? 0} userId={user.id} />
+  }
+
+  // Check if member
+  const { data: membership } = await s
+    .from('squad_members')
+    .select(`
+      *,
+      squads(
+        *,
+        squad_members!squad_id(
+          id, user_id, joined_at, last_active_at, removed_at,
+          profiles(display_name, handle, runner_class)
+        ),
+        profiles!leader_id(display_name, handle, runner_class)
+      )
+    `)
+    .eq('user_id', user.id)
+    .is('removed_at', null)
+    .maybeSingle()
+
+  if (membership?.squads) {
+    const sq = membership.squads
+    sq.squad_members = (sq.squad_members ?? []).filter(
+      (m: { removed_at: string | null }) => !m.removed_at
+    )
+    const { data: km } = await s.rpc('squad_monthly_km', { p_squad_id: sq.id })
+    return <SquadDashboardClient squad={sq} role="member" monthlyKm={km ?? 0} userId={user.id} />
+  }
+
+  // Not in a squad — show options
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: profile } = await (supabase as any)
+    .from('profiles')
+    .select('subscription_tier')
+    .eq('id', user.id)
+    .single()
+
+  const isPremium = profile?.subscription_tier === 'premium'
+
+  return (
+    <main className="min-h-screen pb-28" style={{ background: 'var(--color-bg)' }}>
+      <div className="px-4 pt-14" style={{ background: 'linear-gradient(180deg, #c49a3c18 0%, var(--color-bg) 100%)' }}>
+        <div className="max-w-lg mx-auto pb-6">
+          <div className="text-5xl mb-3">👑</div>
+          <h1 className="font-display text-2xl font-black mb-1" style={{ color: 'var(--color-text-primary)' }}>
+            Split Leader
+          </h1>
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            Lead a squad of up to 5 friends. Keep each other running. Earn free months when they join Premium.
+          </p>
+        </div>
+      </div>
+
+      <div className="max-w-lg mx-auto px-4 space-y-4">
+        {/* What is Split Leader */}
+        <div className="rounded-2xl p-5 space-y-4"
+          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+          {[
+            { icon: '👟', title: 'Nudge your squad', desc: 'Send motivating messages when someone hasn\'t run' },
+            { icon: '📊', title: 'Track together', desc: 'See who ran today, weekly totals, collective goals' },
+            { icon: '🏆', title: 'Celebrate milestones', desc: 'Squad Trophy Room, monthly seasons, achievements' },
+            { icon: '🎁', title: 'Earn free months', desc: 'Get 1 free month for every friend who joins Premium' },
+          ].map(f => (
+            <div key={f.title} className="flex items-start gap-3">
+              <span className="text-xl flex-shrink-0">{f.icon}</span>
+              <div>
+                <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{f.title}</p>
+                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{f.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {isPremium ? (
+          <Link href="/squad/create"
+            className="block w-full py-4 rounded-2xl font-bold text-lg text-white text-center"
+            style={{ background: '#c49a3c' }}>
+            👑 Create your squad
+          </Link>
+        ) : (
+          <div className="rounded-2xl p-5" style={{ background: 'var(--color-surface)', border: '1px solid #c49a3c40' }}>
+            <p className="text-sm font-black mb-1" style={{ color: 'var(--color-text-primary)' }}>
+              Split Leader is a Premium feature
+            </p>
+            <p className="text-xs mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+              Upgrade to Premium to create your squad, lead your crew, and start earning free months.
+            </p>
+            <Link href="/settings?upgrade=true"
+              className="block w-full py-4 rounded-xl font-bold text-sm text-white text-center"
+              style={{ background: '#c49a3c' }}>
+              Upgrade to Premium — £7.99/mo →
+            </Link>
+          </div>
+        )}
+
+        <p className="text-xs text-center" style={{ color: 'var(--color-text-tertiary)' }}>
+          Have an invite link? Open it to join a squad as a member.
+        </p>
+      </div>
+    </main>
+  )
+}
