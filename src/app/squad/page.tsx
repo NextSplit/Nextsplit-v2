@@ -15,30 +15,41 @@ export default async function SquadPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const s = supabase as any
 
-  // Check if leader
-  const { data: ledSquad, error: ledSquadErr } = await s
+  // Check if leader — simple query first to avoid join RLS issues
+  const { data: mySquad, error: mySquadErr } = await s
     .from('squads')
-    .select(`
-      *, 
-      squad_members!squad_id(
-        id, user_id, joined_at, last_active_at, removed_at,
-        profiles(display_name, handle, runner_class)
-      ),
-      squad_invites(id, code, uses, max_uses, expires_at)
-    `)
+    .select('id')
     .eq('leader_id', user.id)
     .is('disbanded_at', null)
     .maybeSingle()
 
-  if (ledSquadErr) console.error('[squad/page] ledSquad error:', JSON.stringify(ledSquadErr))
-  console.log('[squad/page] user:', user.id, 'ledSquad:', ledSquad?.id ?? 'null')
+  if (mySquadErr) console.error('[squad/page] mySquad error:', JSON.stringify(mySquadErr))
+  console.log('[squad/page] user:', user.id, 'mySquad:', mySquad?.id ?? 'null')
 
-  if (ledSquad) {
-    ledSquad.squad_members = (ledSquad.squad_members ?? []).filter(
-      (m: { removed_at: string | null }) => !m.removed_at
-    )
-    const { data: km } = await s.rpc('squad_monthly_km', { p_squad_id: ledSquad.id })
-    return <SquadDashboardClient squad={ledSquad} role="leader" monthlyKm={km ?? 0} userId={user.id} />
+  if (mySquad?.id) {
+    // Fetch full squad data now we know it exists
+    const { data: ledSquad, error: ledFullErr } = await s
+      .from('squads')
+      .select(`
+        *, 
+        squad_members!squad_id(
+          id, user_id, joined_at, last_active_at, removed_at,
+          profiles(display_name, handle, runner_class)
+        ),
+        squad_invites(id, code, uses, max_uses, expires_at)
+      `)
+      .eq('id', mySquad.id)
+      .single()
+
+    if (ledFullErr) console.error('[squad/page] ledFull error:', JSON.stringify(ledFullErr))
+
+    if (ledSquad) {
+      ledSquad.squad_members = (ledSquad.squad_members ?? []).filter(
+        (m: { removed_at: string | null }) => !m.removed_at
+      )
+      const { data: km } = await s.rpc('squad_monthly_km', { p_squad_id: ledSquad.id })
+      return <SquadDashboardClient squad={ledSquad} role="leader" monthlyKm={km ?? 0} userId={user.id} />
+    }
   }
 
   // Check if member
