@@ -651,20 +651,51 @@ All existing open tasks shift behind this. Current alpha UI work (SessionCard da
 
 ---
 
-## Open Questions (Decide Before Phase SL1 Build)
+## All Decisions Locked ✅
 
-1. **Squad member Premium requirement**: Members can be free, but do they get a reduced feature set within the squad (e.g. can't see collective stats unless they're Premium)? Or do all squad features work for free members?
-   - Recommendation: free members can participate fully in squad. The offer to upgrade is contextual, never a gate to squad features.
+| # | Question | Decision |
+|---|---|---|
+| 1 | Free squad member features | Limited — can join, see collective stats, receive nudges, react to milestones. Cannot see individual member stats, Trophy Room, seasons, leaderboard, or claim leadership. Upgrade prompt: "See your squad's full picture with Premium." |
+| 2 | Voice notes — standard or Pro? | **Standard coach feature.** Core communication tool. Coach Pro differentiates on scale/business tools (scheduled messages, bulk management, analytics, referral programme). |
+| 3 | Annual plan referral credits | **Extend subscription.** 1 free month = billing date shifts forward 1 month. Annual plan: renewal date shifts forward. Implemented via Stripe free trial extension (not credit). Max 5 months extension. |
+| 4 | Organic join — which leader gets credit? | **None.** Referral credit only when member joins via leader's specific invite link or squad-attributed prompt. No link = no attribution. Clean, ungameable. |
 
-2. **Coach voice notes**: Standard coach feature or Coach Pro only?
-   - Recommendation: standard coach feature. It's a core communication tool, not a luxury. Coach Pro differentiates on analytics, bulk tools, scheduled messages.
+### Standard Coach vs Coach Pro — Feature Matrix
 
-3. **Split Leader on annual plan**: Do they still earn free months (which would extend past their annual renewal), or do they earn credit toward next renewal?
-   - Recommendation: credit toward next renewal. 1 month free = £7.99 credit applied at renewal.
+| Feature | Standard Coach | Coach Pro (£19.99/mo) |
+|---|---|---|
+| Athlete management (squad view, ACWR, wellness) | ✅ | ✅ |
+| Plan builder (full granularity) | ✅ | ✅ |
+| Plan templates (save + reuse) | ✅ | ✅ |
+| Text messaging + emoji reactions | ✅ | ✅ |
+| Voice notes | ✅ | ✅ |
+| Read receipts | ✅ | ✅ |
+| Earnings dashboard | ✅ | ✅ |
+| Verification + marketplace listing | ✅ | ✅ |
+| Athlete capacity up to 25 | ✅ | ✅ |
+| Scheduled messages | ❌ | ✅ |
+| Bulk plan management | ❌ | ✅ |
+| Advanced analytics (cohort trends) | ❌ | ✅ |
+| Priority NextSplit support | ❌ | ✅ |
+| Coach referral programme (£100 bonus) | ❌ | ✅ |
+| Athlete capacity up to 50+ | ❌ | ✅ |
+| Featured coach search ranking boost | ❌ | ✅ |
 
-4. **Multi-squad member priority**: If a user is in 3 squads, which squad's leader gets credit if they upgrade?
-   - Recommendation: the leader whose invite link they used to join. If they joined organically (not via invite), no leader gets credit.
+### Free vs Premium Squad Member — Feature Matrix
+
+| Feature | Free Squad Member | Premium Squad Member |
+|---|---|---|
+| Join a squad | ✅ | ✅ |
+| Appear on leader dashboard | ✅ | ✅ |
+| Receive nudges from leader | ✅ | ✅ |
+| See squad collective km + goal progress | ✅ | ✅ |
+| React to squad milestones | ✅ | ✅ |
+| See other members' individual stats (km, streak) | ❌ | ✅ |
+| Squad Trophy Room | ❌ | ✅ |
+| Squad seasons + history | ❌ | ✅ |
+| Squad leaderboard (if enabled) | ❌ | ✅ |
+| Claim leadership if leader inactive | ❌ | ✅ |
 
 ---
 
-*This document is the canonical spec for Three Pillars development. All build sessions reference it. All decisions recorded here supersede earlier strategy docs.*
+*This document is the canonical spec for Three Pillars development. All build sessions reference it. All decisions recorded here supersede earlier strategy docs. Phase SL1 build is cleared to start.*
