@@ -1,688 +1,245 @@
-# NextSplit v2 — HANDOFF-7
-**Version:** HANDOFF-7 | **April 2026** | **Build:** Production-deployed, alpha preparation
-**Live:** https://nextsplit-v2.vercel.app | **Repo:** https://github.com/NextSplit/Nextsplit-v2
-**Strategy baseline:** 16 documents — all read and reconciled
-**Master plan:** MASTER-DELIVERY-PLAN-V2.md (phases A→I, alpha-first)
+# NextSplit — HANDOFF-7
+**Version:** 7.4 | **April 2026** | **Session: Three Pillars Build — Phase SL1 Complete**
+**Live URL:** https://nextsplit-v2.vercel.app
+**GitHub:** https://github.com/NextSplit/Nextsplit-v2
+**Stack:** Next.js 15 App Router · TypeScript strict · Supabase · Tailwind · CSS vars · PWA · Anthropic SDK
 
 ---
 
-## Read This First
+## Current Phase: SL1 Complete → SL2 Next
 
-This replaces HANDOFF-6. The delivery plan was restructured from 18 linear phases
-to 8 alpha-first phases (A→I). Revenue features are built but NOT enforced —
-alpha users test everything unrestricted. Revenue activation is Phase H,
-gated on Day 30 retention ≥ 40%.
+Phase SL1 (Split Leader Foundation) is complete and deployed (commit `285afad`).
+Phase SL2 (Split Leader Depth — Trophy Room, seasons, public pages, avatar crown) is next.
 
-**Source of truth for what to build next:** MASTER-DELIVERY-PLAN-V2.md
-**This document:** Current build state, environment config, DB schema, immediate next steps.
-
----
-
-## Founding Principle
-
-> Users become believers the first time the plan adapts around something that went
-> wrong in their life. Everything traces back to that moment.
+**Canonical strategy docs:**
+- `THREE-PILLARS-STRATEGY.md` — full spec for all three pillars
+- `MASTER-DELIVERY-PLAN-V2.md` — phase order, SQL, acceptance criteria
 
 ---
 
-## Alpha Philosophy
-
-Premium features remain **unlocked** throughout alpha. Closed pool of trusted users.
-Goal: UAT and E2E testing before public release. Every feature visible and functional —
-none gated. Revenue activation (PREMIUM_ENFORCED, referral release) built and ready
-but not triggered until Phase H.
-
----
-
-## Tech Stack
-
-| Layer | Tech |
-|---|---|
-| Framework | Next.js 15 App Router + TypeScript strict |
-| Backend | Supabase (Postgres + RLS + Auth + Storage) |
-| Hosting | Vercel (auto-deploy on push to main) |
-| Payments | Stripe (subscriptions + Connect for coaches) |
-| Analytics | PostHog (AARRR — 25+ events) |
-| Errors | Sentry |
-| AI | Anthropic Claude SDK (claude-sonnet-4-20250514) |
-| Email | Resend (lifecycle emails, 7-sequence) |
-| Styling | Tailwind CSS + NextSplit design tokens |
-| Charts | Recharts |
-| Testing | Vitest (52 unit tests) + Playwright (E2E config) |
-| PWA | next-pwa service worker |
-
-## Design Tokens (brand-locked — do not change)
+## Design Tokens (never deviate)
 
 ```css
---ns-forest:       #2b5c3f  /* Primary green */
---ns-ember:        #e85d26  /* Accent orange */
---ns-track:        #c49a3c  /* Gold */
---ns-night:        #2c3e50  /* Dark slate */
---ns-forest-light: #edf4f0  /* Light green background */
+--ns-forest:       #2b5c3f   (primary brand, Forest green)
+--ns-ember:        #e85d26   (CTA, active states)
+--ns-track:        #c49a3c   (Split Leader gold, achievements)
+--ns-night:        #2c3e50   (dark backgrounds)
+--ns-forest-light: #edf4f0   (light forest tint)
+
+/* Dark theme (active globally) */
+--color-bg:           #0f1a14   (deep forest night)
+--color-surface:      #162a1e   (card surface)
+--color-surface-2:    #1e3829   (elevated surface)
+--color-surface-3:    #243f2f   (highest surface)
+--color-text-primary: #e8f5ee   (warm light green-white)
+--color-text-secondary: #8db89a (muted green)
+--color-text-tertiary:  #5a8a6a (subtle)
+--color-border:       #1e3829
+--color-border-2:     #2b5c3f
 ```
 
-Fonts loaded: Outfit (body/UI) · Cormorant Garamond (display) · JetBrains Mono (data)
-**Note:** Fonts are loaded but underused — D1 (typography system) will fix this.
+**Fonts:** Outfit (body · `font-body`) · Cormorant Garamond (display · `font-display`) · JetBrains Mono (data · `font-data`)
+
+**Pillar colour identity:**
+- Solo/Bespoke → Forest green `#2b5c3f`
+- Split Leader → Track gold `#c49a3c`
+- Coaching → Deep navy `#1e3a5f`
 
 ---
 
-## Environment Variables (Vercel)
+## Three Pillars — Strategic Summary
 
-```
-NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-STRIPE_SECRET_KEY
-STRIPE_WEBHOOK_SECRET
-STRIPE_FOUNDING_PRICE_ID
-STRIPE_STANDARD_PRICE_ID
-STRIPE_COACH_PRICE_ID
-ANTHROPIC_API_KEY
-NEXT_PUBLIC_POSTHOG_KEY
-NEXT_PUBLIC_POSTHOG_HOST
-STRAVA_CLIENT_ID
-STRAVA_CLIENT_SECRET
-NEXT_PUBLIC_VAPID_PUBLIC_KEY
-VAPID_PRIVATE_KEY
-VAPID_EMAIL
-CRON_SECRET
-RESEND_API_KEY               ← ⚠️ ADD TO VERCEL (from resend.com)
-NEXT_PUBLIC_PREMIUM_ENFORCED=false   ← stays false during alpha
-NEXT_PUBLIC_REFERRAL_ENABLED=false   ← flip true at Phase H (Day 30 retention ≥ 40%)
-```
+### Pillar 1: Bespoke Digital Coaching
+Predetermined plans (36 templates, VDOT-personalised) + AI-generated plans + coach-authored plans. Plans adapt to real life via the adaptation engine.
+
+### Pillar 2: Split Leader (PRIMARY GROWTH ENGINE)
+Premium unlock. Lead a private squad of up to 5 friends. Track gold colour. Crown avatar accessory. Squad goals, Trophy Room, seasons, nudges, milestone reactions. Referral reward: 1 free month per squad member who converts to Premium (max 5).
+
+**Free vs Premium squad member:**
+- Free: can join, see collective stats, receive nudges, react to milestones
+- Premium: + individual member stats, Trophy Room, seasons, leaderboard, leadership claim
+
+### Pillar 3: Coaching Marketplace + Hub
+Athlete discovery: find/preview/hire verified coaches. Coach business tools: athlete management, plan builder (granular), templates, messaging, voice notes, earnings dashboard. Commission: 15%→8% sliding scale. Coach Pro: £19.99/mo (scheduled messages, bulk tools, advanced analytics).
 
 ---
 
-## Cron Jobs (vercel.json)
+## All Decisions Locked
 
-```json
-{
-  "crons": [
-    { "path": "/api/cron/notify",           "schedule": "0 * * * *"  },
-    { "path": "/api/cron/lifecycle-emails", "schedule": "0 9 * * *"  }
-  ]
-}
-```
-
----
-
-## Database Schema
-
-### Core tables
-```
-profiles           id, display_name, handle, email, avatar_url, is_pro,
-                   stripe_customer_id, stripe_subscription_id,
-                   is_coach, coach_tier ('split_leader'|'professional'),
-                   runner_class, runner_class_updated_at, runner_class_revealed,
-                   first_session_logged_at,
-                   notifications_enabled, notification_time,
-                   notif_session_reminder, notif_adaptation_alert,
-                   notif_weekly_recap, notif_race_countdown,
-                   notif_streak_at_risk, notif_coach_message,
-                   notif_at_risk_reengagement, notif_class_revealed,
-                   last_notification_at, at_risk_sent_at,
-                   lifecycle_email_sent (TEXT[]),
-                   referral_code, referred_by, referral_count,
-                   referral_reward_given_at,
-                   season_xp, current_league,
-                   dark_mode, units, text_size
-
-user_plans         id, user_id, template_id, plan_type, status, name,
-                   start_date, total_weeks, current_week, race_date,
-                   weeks_data (JSON), meta
-
-training_logs      id, user_id, plan_id, week_n, day_n, session_i,
-                   done, km, pace, duration_secs, effort, notes, logged_at
-
-wellness_logs      id, user_id, date, readiness, sleep_quality,
-                   soreness, motivation, notes
-
-plan_templates     id, slug, name, distance, level, weeks_min, weeks_max,
-                   description, meta (includes price_gbp), weeks_data,
-                   author_type ('nextsplit'|'coach'), author_id, is_public,
-                   avg_completion_rate, total_starts, avg_rating, review_count
-```
-
-### Coach & marketplace
-```
-plan_purchases     id, athlete_id, template_id, coach_id,
-                   amount_gbp, stripe_payment_id,
-                   coach_payout_gbp (70%), platform_fee_gbp (30%)
-
-voice_messages     id, coach_id, athlete_id, storage_path,
-                   duration_secs, listened_at, created_at
-
-coach_profiles     user_id, display_name, slug, verified, photo_url
-coach_athletes     id, coach_id, athlete_id, status
-coach_messages     id, coach_id, athlete_id, sender_id, body, read_at
-session_annotations id, coach_id, athlete_id, training_log_id, reaction, note
-```
-
-### ⚠️ SQL to run in Supabase (not yet executed)
-
-Run `supabase/migrations/phase-12-referral.sql` — adds referral columns
-and notification preference columns (both included, both idempotent):
-
-```sql
-ALTER TABLE profiles
-  ADD COLUMN IF NOT EXISTS referral_code TEXT UNIQUE,
-  ADD COLUMN IF NOT EXISTS referred_by UUID REFERENCES profiles(id),
-  ADD COLUMN IF NOT EXISTS referral_count INT DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS referral_reward_given_at TIMESTAMPTZ,
-  ADD COLUMN IF NOT EXISTS lifecycle_email_sent TEXT[] DEFAULT '{}',
-  ADD COLUMN IF NOT EXISTS last_notification_at TIMESTAMPTZ,
-  ADD COLUMN IF NOT EXISTS at_risk_sent_at TIMESTAMPTZ,
-  ADD COLUMN IF NOT EXISTS notif_session_reminder BOOLEAN DEFAULT true,
-  ADD COLUMN IF NOT EXISTS notif_adaptation_alert BOOLEAN DEFAULT true,
-  ADD COLUMN IF NOT EXISTS notif_weekly_recap BOOLEAN DEFAULT true,
-  ADD COLUMN IF NOT EXISTS notif_race_countdown BOOLEAN DEFAULT true,
-  ADD COLUMN IF NOT EXISTS notif_streak_at_risk BOOLEAN DEFAULT true,
-  ADD COLUMN IF NOT EXISTS notif_coach_message BOOLEAN DEFAULT true,
-  ADD COLUMN IF NOT EXISTS notif_at_risk_reengagement BOOLEAN DEFAULT true,
-  ADD COLUMN IF NOT EXISTS notif_class_revealed BOOLEAN DEFAULT true;
-```
-
----
-
-## Revenue Model
-
-| Tier | Price | Notes |
-|---|---|---|
-| Athlete Free | £0 | All features visible during alpha, unrestricted |
-| Athlete Pro | £4.99/mo launch → £7.99 long-term | Unlocks when PREMIUM_ENFORCED=true (Phase H) |
-| Split Leader | Included in Pro | 5-runner cap |
-| Pro Coach | £29/mo | Unlimited athletes, marketplace |
-| Plan sale | 30% NextSplit / 70% coach | |
-| Coaching sub | 20% NextSplit / 80% coach | |
-
----
-
-## Build State — What Is Complete
-
-### ✅ Fully shipped (Phases 1–12 of original plan)
-
-**Core product:**
-- Today tab, session logging, plan view, undo, date nav, progress strip
-- Wellness check-in, readiness → Today tab greeting tone
-- Strava connect + session import
-- Offline session queue (IndexedDB, auto-sync)
-- Gym session tracker (live mode)
-- Missed session conversational flow (4-step, paywall reveal)
-- Adaptive log modal (4 modes by session type)
-- AICoachingNote (ACWR risk flag, readiness, coach voice)
-- TodayHeader (time-aware greeting, context strip, race countdown)
-
-**Character system:**
-- 7 runner classes with exact spec triggers (Trail Blazer 50%, Speed Merchant 40%, etc.)
-- computeXPBonus (8 bonus conditions per session type)
-- 8 cosmetic milestone unlocks
-- Warming Up anticipation indicator (3 phases)
-- Class reveal with coaching insight
-- CharacterProfileModal (character as social profile)
-- Community leaderboard shows character class emoji
-- Coach dashboard shows character per athlete
-
-**Notifications:**
-- 8 push notification types with Growth Pillar copy + guardrails
-- Per-type notification preferences in Settings
-- 7-email lifecycle sequence (Resend, coach voice)
-- Cron schedules in vercel.json
-
-**Onboarding:**
-- All 4 paths (Predetermined, AI Bespoke, Manual, Lifestyle)
-- Credibility layer (methodology-first for Predetermined)
-- AI Bespoke depth — "What happened last time you didn't finish a plan?"
-- Lifestyle re-entry framing — enjoyment + availability first
-- PlanPreviewScreen paywall reveal (blurred adaptation preview)
-- Readiness → greeting tone in TodayHeader
-
-**Split Leader mode:**
-- useLeadMode hook (coach_tier, localStorage)
-- LeadDashboard (needs-attention, completion bars, character emojis)
-- TodayClient toggle (display:none preserves hooks)
-
-**Engineering:**
-- 52 unit tests (statsUtils, rpg, notifications — all passing)
-- GitHub Actions CI (tsc + ESLint + vitest + next build)
-- Playwright E2E config (iPhone 14 Pro + Pixel 7)
-- Vitest config with coverage
-
-**Referral programme (behind flag):**
-- generateReferralCode(), /refer/[code] landing page
-- POST /api/referral validates + stores relationship
-- ReferralCard component (double-sided reward, native share)
-- Signup ?ref= capture + referral banner
-- SQL migration file ready
-- Flag: NEXT_PUBLIC_REFERRAL_ENABLED=false → flip at Phase H
-
----
-
-## Current Phase: Three Pillars Build (Priority 1)
-
-**Phases A–F complete. UI overhaul done. Three Pillars are now the priority.**
-
-New canonical documents created this session:
-- **THREE-PILLARS-STRATEGY.md** — Full spec for all three pillars (Split Leader, Marketplace, Coach Hub)
-- **MASTER-DELIVERY-PLAN-V2.md** — Rewritten with Three Pillars phase order
-
-Next code session starts: **Phase SL1 — Split Leader Foundation** (database schema + squad creation + invite link)
-
-## Phase D — Design Uplift ✅ COMPLETE
-
-| Sub-phase | Commit | What |
-|---|---|---|
-| D1-D3 Typography + teal purge + icons | 000e4ef | .font-display/.font-data/.font-body CSS, 435 teal→Forest, Phosphor BottomNav fix |
-| D4 Character SVG avatars | 87cb5d8 | 7 illustrated runner class SVGs, wired into reveal+profileal + CharacterProfileModal |
-| D5 Component polish | 87cb5d8 | 552 slate→warm gray, font-data on pace/km/durationosted + indicator, modal animations |
-
-## Phase C — Plan Library ✅ COMPLETE (commit 339f0ca)
-
-| Sub-phase | What |
+| Decision | Answer |
 |---|---|
-| C1 | 36 plan templates (was 17). Generator: scripts/generate-plans.ts. Run seed-plans.ts to upload. |
-| C2 | VDOT pace personalisation (src/lib/vdot.ts). Wired into plans/activate route. |
-| C3 | Plan browser: sort, duration filter, week 1 preview, Forest tokens. |
-
-## Phase B — Coach Dashboard ✅ COMPLETE
-
-| Sub-phase | Commit | What |
-|---|---|---|
-| B1 Squad command centre | 346067c | Needs-attention priority, clean dashboard, weekly load bars |
-| B2 Athlete drill-down | fbec37c | 12-week ACWR chart, wellness sparklines, this-week sessions |
-| B3 Communication layer | fbec37c | Unified thread, quick reactions, template messages |
-| B4 Plan build handshake | 43088f2 | Athlete intake form, 4-stage progress, coach receives structured message |
-| B5 Marketplace dashboard | 43088f2 | Per-plan revenue, starts, completion rate, ratings |
-
-## What Was Built in Phase A
-
-| Item | Commit | Status |
-|---|---|---|
-| A1b Zod on all 27 routes | e7daf56 | ✅ |
-| A2 Cookie consent + legal | 58a2d6b | ✅ |
-| A2 Medical disclaimer (3 locations) | 58a2d6b | ✅ |
-| A3 AI plan review tool | f41639e | ✅ |
-| A4 Onboarding funnel events | f41639e | ✅ |
-| A5 Adaptation E2E test | 6f07125 | ✅ |
-| A7 NPS prompt | 6f07125 | ✅ |
-
-## What Needs Building Next — Phase C (Plan Library)
-
-**C1 — Expand to 65+ templates**
-Currently 17 seeded templates. Add:
-- Marathon: novice (18wk), intermediate (16wk), performance (20wk), Berlin/London specific
-- Half marathon: 10wk beginner, 12wk intermediate, 14wk performance
-- 10K: 8wk beginner, 10wk intermediate, 12wk performance
-- 5K: C25K (8wk), improver (8wk), sub-20 (10wk)
-- Lifestyle: 4wk base, 6wk consistency, 8wk habit
-- Ultra: 50K (16wk), 50mi (20wk), 100mi (24wk)
-
-**C2 — VDOT pace adaptation**
-On plan activation, compute training paces from recent race times:
-- Easy: VDOT easy pace ±5s/km
-- Tempo: VDOT threshold pace
-- Interval: VDOT VO2max pace
-- Long: VDOT long run pace
-Replace generic paces in sessions with personalised targets.
-
-**C3 — Plan browser improvements**
-- Filter by distance, level, duration, coach-authored vs NextSplit
-- Sort by: completion rate, rating, newest, price
-- Preview week 1 before activating
-
-**All of Phase A is pre-user. No exceptions. Build in parallel tracks.**
-
-### Track 1 — Security
-- [x] **A1a: Supabase type regeneration** — ⚠️ Run manually: `npx supabase gen types typescript --project-id YOUR_ID > src/types/database.ts`
-- [x] **A1b: Zod validation** — ✅ COMPLETE. 27 routes validated (schemas.ts). Committed e7daf56.
-
-### Track 2 — Legal
-- [ ] **A2a: ICO registration** — ico.org.uk, £40 — ⚠️ Founder action required
-- [ ] **A2a: Company formation** — Companies House, £12 — ⚠️ Founder action required
-- [x] **A2b: Privacy policy** — ✅ Real content, GDPR-compliant, /privacy
-- [x] **A2b: Terms of service** — ✅ Real content, coaching disclaimer, /terms
-- [x] **A2b: Medical disclaimer** — ✅ MedicalDisclaimer component, 3 locations
-- [x] **A2b: Cookie consent banner** — ✅ CookieConsentBanner, PostHog gated, useCookieConsent hook
-- [ ] **A2c: GDPR data export** — ⚠️ Verify Settings "Export my data" works E2E
-
-### Track 3 — Quality verification
-- [x] **A3: AI plan quality review tool** — ✅ /admin/plan-review, 5 presets, quality checks
-- [x] **A4: Onboarding funnel PostHog events** — ✅ step_viewed, path_selected, abandoned
-- [x] **A5: Adaptation E2E test matrix** — ✅ /admin/adapt-test, 5 scenarios + Zod validation
-- [ ] **A6: Email sender domain** — ⚠️ Founder: add DNS records for mail.nextsplit.app in Resend
-- [x] **A7: In-app NPS prompt** — ✅ NPSPrompt component, Day 7+30 triggers, wired to TodayClient
-- [ ] **A8: Monday PostHog dashboard** — ⚠️ Non-code: configure funnel in PostHog UI before alpha
-
-### Phase A gate
-A1 ✅ A2-code ✅ A3 ✅ A4 ✅ A5 ✅ A7 ✅
-Remaining (founder actions): ICO reg, company formation, A6 DNS, A8 PostHog config
-**Phase A code is COMPLETE. Starting Phase B (Coach Dashboard).**
+| Split Leader unlock | Automatic with Premium |
+| Squad cap | 5 members max |
+| Leader squad limit | 1 squad only |
+| Squad member limit | Multiple squads allowed |
+| Free member features | Join + collective stats + nudges + reactions (NOT individual stats, Trophy Room, seasons) |
+| Voice notes | Standard coach (not Pro-gated) |
+| Referral credits | Extend subscription (Stripe trial extension) |
+| Organic joins | No leader credit — invite link required |
+| Commission | 15%→12%→10%→8% (9/24/49/50+ clients) |
+| Coach prices | Self-set (NextSplit shows market avg) |
+| Verification | Credential upload + UKA API. Non-UK: self-declared + 3 reviews |
+| Review unlock | After 50% programme completion |
+| Dispute window | 7 days from purchase |
+| Inactivity | 30-day warning → 6-month disband |
+| Leadership transfer | Any Premium member can claim after 30-day leader inactivity |
+| Member removal | Leader prompted at 45-day member inactivity |
+| Annual pricing | £59.99/yr (37.5% saving vs £7.99/mo) |
+| Corporate | Phase J — on roadmap, no trigger required |
 
 ---
 
-## Phases B–I Summary (see MASTER-DELIVERY-PLAN-V2.md for full detail)
+## Complete Build State
 
+### ✅ Phases A–F + UI Overhaul (all committed)
+
+| Phase | Key work | Latest commit |
+|---|---|---|
+| A1 | Zod on all 27 API routes | e7daf56 |
+| A2 | Cookie consent + legal pages + medical disclaimer | 58a2d6b |
+| A3+A4 | AI plan review, onboarding PostHog events | f41639e |
+| A5+A7 | Adaptation E2E test, NPS prompt | 6f07125 |
+| B1-B5 | Coach squad, athlete drill-down, comms, marketplace | 43088f2 |
+| C | 36 plan templates, VDOT, plan browser | 339f0ca |
+| D1-D5 | Typography, teal→Forest colour purge, character SVG avatars | 87cb5d8 |
+| E | Community feed + reactions, race leaderboard, milestone detection | ab4f41a |
+| F | Pre-alpha quality gates, E2E tests, Lighthouse script | c0a9e65 |
+| UI | Forest-dark theme throughout (auth, onboarding, all tabs) | ced8f89 |
+| UI | Character avatar 180×220px mid-stride SVG | bc750fb |
+| UI | Profile sub-tabs distinct themes | cd2af67 |
+| UI | VDOT bug fix (reads correct column) | 12eaa3f |
+| UI | Fuel tab actual content | 3ffa892 |
+| UI | Explore tab (Coaches/Plans/AI Coach) | 8efe231 |
+| UI | Notification guardrails reordered | bc750fb |
+| UI | Session card, settings, community dark theme | 01a4b7e |
+| Docs | Three Pillars strategy + master plan v3 | 294efdc |
+| SQL | Squad system migration (8 tables, RLS, RPCs) | f3b0e92 |
+| **SL1** | **Full Split Leader foundation** | **285afad** |
+
+### ✅ Phase SL1 — Split Leader Foundation (285afad)
+
+**API routes:**
+- `GET/POST/PATCH /api/squad` — create/read/update squad
+- `POST/DELETE /api/squad/members` — join/leave/remove
+- `POST /api/squad/nudge` — send curated nudge (rate-limited)
+- `GET /api/squad/invite` — public invite preview
+- `GET /api/squad/stats` — monthly km via RPC
+
+**UI pages:**
+- `/squad` — dashboard (leader or member view) or Split Leader explainer
+- `/squad/create` — 3-step wizard (name+colour → welcome → review)
+- `/squad/join/[code]` — viral invite landing page
+
+**Components:**
+- `SquadDashboardClient.tsx` — captain's command centre
+- `CreateSquadClient.tsx` — 3-step creation wizard
+- `useSquad.ts` — squad state hook
+
+**Shared lib:**
+- `src/lib/squad-nudges.ts` — 8 curated nudge messages
+
+**BottomNav:** Squad tab (CrownSimple icon) replaces Explore for athletes
+
+### 🔴 SL2 — Next to build
+- Squad Trophy Room (collective achievements)
+- Squad seasons (monthly/annual/lifetime snapshots)
+- Public squad page (`/squad/[slug]`)
+- Leader crown avatar accessory (RPG)
+- Community leaderboard crown indicator
+- Squad-to-coach pipeline prompt (at 30d + full squad)
+- Inactivity warnings + disband logic
+- Leadership transfer mechanism
+- Squad goals (monthly) with leader-set targets
+
+---
+
+## Critical Bug Fixes Applied
+
+| Bug | Fix | Commit |
+|---|---|---|
+| VDOT paces had no effect | activate route now reads `recent_race_times` JSON | 12eaa3f |
+| Predetermined plan showed same AI plan | Seed API fixed (ADMIN_EMAILS auth) | 8efe231 |
+| Fuel tab showed training content | Added real fuel guide content | 3ffa892 |
+| Notification guardrails wrong order | Rate limit → at_risk → quiet_hours | bc750fb |
+| GitHub webhook broken | GitHub Actions deploy pipeline added | 5d3d9ac |
+| Hourly cron blocked deploy | Removed (Hobby plan limit) | 15fdf2e |
+
+---
+
+## Pending Founder Actions
+
+1. **Seed 36 plans** — `nextsplit-v2.vercel.app/admin/seed` → "Seed Plans Now"
+2. **Run SL1 SQL** — `supabase/migrations/phase-sl1-squads.sql` ✅ DONE
+3. **ICO registration** — ico.org.uk — £40
+4. **Company formation** — Companies House — £12
+5. **RESEND_API_KEY** — add to Vercel env vars
+6. **Promote latest Vercel deployment** after each GitHub Actions build
+
+---
+
+## Deploy Pipeline
+
+GitHub Actions → Vercel (webhook was broken, pipeline added).
+
+**Push → GitHub Actions builds (~2 min) → appears in Vercel Deployments → promote to production**
+
+Workflow: `.github/workflows/vercel-deploy.yml`
+Requires: `VERCEL_TOKEN` secret in GitHub repo settings ✅
+
+**Environment Variables (Vercel Production):**
 ```
-Phase A  Foundation & Legal          ← CURRENT — build all before any user
-Phase B  Coach Dashboard Overhaul    5 tiers: command centre → marketplace analytics
-Phase C  Plan Library Expansion      65+ templates, VDOT pace adaptation
-Phase D  Design Uplift 3→10          Typography, colour, icons, SVG characters
-Phase E  Community Completion        Club feed, challenge verification, race results
-Phase F  Pre-Alpha Quality Gates     Founder E2E on real device, 3 people test
-Phase G  Alpha (Closed Pool)         Trusted users, NPS Day 7+30, retention data
-Phase H  Revenue Activation          PREMIUM_ENFORCED=true, Stripe E2E, referral live
-Phase I  Public Beta + Growth        App Store, Garmin, coach beta, custom domain
+NEXT_PUBLIC_SUPABASE_URL          ✅
+NEXT_PUBLIC_SUPABASE_ANON_KEY     ✅
+SUPABASE_SERVICE_ROLE_KEY         ✅
+ANTHROPIC_API_KEY                 ✅
+ADMIN_EMAILS=nextsplitplans@gmail.com  ✅
+NEXT_PUBLIC_PREMIUM_ENFORCED=false    ✅ (flip to true at Phase H)
+NEXT_PUBLIC_REFERRAL_ENABLED=false    ✅ (flip to true at Phase H)
+VERCEL_TOKEN                      ✅ (in GitHub secrets)
+RESEND_API_KEY                    ❌ MISSING — add before email testing
+STRIPE_SECRET_KEY                 ❌ MISSING — add at Phase H
 ```
-
----
-
-## Phase A→B Immediate Decision Queue
-
-Decisions to make before writing any Phase B code:
-
-1. **Coach dashboard data source** — does squad-status API need new fields for
-   the command centre, or can we extend the existing endpoint?
-2. **Plan library approach** — generate 65 templates programmatically via a seeding
-   script, or via an admin UI? (Recommendation: script, faster and testable)
-3. **Design — character SVG** — how detailed to go in-code vs commission
-   static illustrations? (Recommendation: push SVG generation to its limit in D4,
-   commission only if SVG quality ceiling is hit)
-4. **Community scope** — club feed auto-posts (session auto-published) require
-   a privacy decision: opt-in or opt-out default?
-
----
-
-## Known Issues / Tech Debt
-
-| Issue | Severity | Phase |
-|---|---|---|
-| Zod missing on all API routes | 🔴 High | A1 |
-| Supabase types stale (~40 `any` casts) | 🟠 Medium | A1 |
-| PostHog fires before cookie consent | 🔴 High (legal) | A2 |
-| AI API routes have no Pro check | 🟡 Low during alpha | Phase H |
-| Referral reward not wired to Stripe webhook | 🟡 Low during alpha | Phase H |
-| ProfileContext re-renders extensively | 🟢 Low | Phase I (or when it causes bugs) |
-| ESLint set-state-in-effect warnings (pre-existing) | 🟢 Low | Suppress or fix incrementally |
 
 ---
 
 ## Key Files Reference
 
-### Phase A–12 additions
 ```
-src/lib/notifications.ts              8 notification types + guardrails
-src/lib/lifecycleEmails.ts            7-email lifecycle HTML generator
-src/lib/offlineQueue.ts               IndexedDB offline session queue
-src/lib/referral.ts                   Referral code generation + share text
-src/lib/rpg.ts                        Character system: classes, XP, cosmetics
-src/hooks/useLeadMode.ts              Split Leader mode toggle state
-src/components/AICoachingNote.tsx     Coach voice notes (ACWR, readiness)
-src/components/LeadDashboard.tsx      Squad view for Split Leader mode
-src/components/MissedSessionFlow.tsx  4-step missed session conversational flow
-src/components/LogModal.tsx           Adaptive log modal (4 types)
-src/components/CharacterProfileModal.tsx  Character as social profile
-src/components/ReferralCard.tsx       Referral UI (behind flag)
-src/app/today/TodayHeader.tsx         Time-aware greeting, readiness tone
-src/app/today/TodayClient.tsx         Main Today tab orchestration
-src/app/api/cron/notify/route.ts      8-type push notification dispatcher
-src/app/api/cron/lifecycle-emails/    Daily lifecycle email sender
-src/app/api/profile/character/        Character data for any user
-src/app/api/referral/route.ts         Referral code GET/POST
-src/app/refer/[code]/page.tsx         Referral landing page
-src/lib/statsUtils.test.ts            ACWR + pace unit tests (13 tests)
-src/lib/rpg.test.ts                   XP + class unit tests (26 tests)
-src/lib/notifications.test.ts         Notification unit tests (13 tests)
-src/test/e2e/core-journey.spec.ts     Playwright E2E tests
-.github/workflows/ci.yml              GitHub Actions CI
-supabase/migrations/phase-12-referral.sql  Pending SQL migration
-MASTER-DELIVERY-PLAN-V2.md            Full revised delivery plan (phases A→I)
+HANDOFF-7.md                              ← This file
+THREE-PILLARS-STRATEGY.md                 ← Full product spec (canonical)
+MASTER-DELIVERY-PLAN-V2.md               ← Phase order + SQL + economics
+PRE-ALPHA-CHECKLIST.md                   ← F1-F6 founder gate
+supabase/migrations/alpha-readiness.sql  ← Base migration (run ✅)
+supabase/migrations/phase-sl1-squads.sql ← Squad tables (run ✅)
+
+src/app/squad/                           ← All squad UI
+src/app/api/squad/                       ← All squad API routes
+src/hooks/useSquad.ts                    ← Squad state hook
+src/lib/squad-nudges.ts                  ← Curated nudge messages
+src/components/BottomNav.tsx             ← Squad tab added
+src/app/globals.css                      ← Forest-dark theme vars
+src/app/onboarding/                      ← All 4 onboarding paths
+src/app/today/                           ← Today tab (core daily loop)
+src/app/plan/                            ← Plan + Fuel tabs
+src/app/profile/                         ← Character/Stats/Records
+src/app/community/                       ← Community tabs
+src/app/explore/                         ← Explore tab
+src/app/coach/                           ← Coach platform
+src/app/admin/                           ← Admin tools (seed, plan review, adapt test)
+src/lib/vdot.ts                          ← VDOT pace calculator
+src/lib/rpg.ts                           ← Runner class system
+src/lib/schemas.ts                       ← All 28 Zod schemas
 ```
-
-### API routes (all unvalidated — Zod needed on all)
-```
-/api/ai/adapt-plan          ← HIGHEST PRIORITY for Zod
-/api/ai/generate-plan       ← HIGH PRIORITY
-/api/plans/activate
-/api/marketplace/purchase
-/api/coach/invite
-/api/coach/squad-status
-/api/community/clubs
-/api/referral
-/api/runner-class
-/api/notifications/subscribe
-/api/voice-messages
-/api/strava/sync
-/api/ai/weekly-summary
-/api/ai/coach
-/api/stripe/webhook         ← validate Stripe signature (already done via Stripe lib)
-```
-
----
-
-## Analytics Events Reference
-
-| Event | When | Why it matters |
-|---|---|---|
-| `adaptation_requested` | Missed session → rebuild | The conversion moment |
-| `session_logged` | Session marked done | Core retention signal |
-| `week_advanced` | Week progresses | Progression tracked |
-| `class_revealed` | Runner opens class reveal | Identity moment |
-| `plan_purchased` | Marketplace purchase | Revenue event |
-| `voice_message_sent` | Coach sends voice | Coach feature signal |
-| `subscription_started` | Stripe checkout completes | Revenue |
-| `referral_converted` | Referred user upgrades | Growth flywheel |
-| `onboarding_step_viewed` | ← MISSING — add in A4 | Funnel measurement |
-| `nps_submitted` | ← MISSING — add in A7 | Retention signal |
-
----
-
-## OKRs — Alpha Period
-
-| Objective | Key Results |
-|---|---|
-| Prove daily loop creates habit | Alpha users: ≥3 sessions/week · Day 7 retention ≥55% |
-| Validate onboarding | Completion ≥80% across all 4 paths · Median < 5 min |
-| Validate coach dashboard | 1 coach navigates all 5 tiers without instruction |
-| Validate plan quality | 0 AI Bespoke plans are nonsensical after admin review |
-| Collect NPS | NPS ≥ 40 at Day 30 from alpha pool |
-
----
-
-## Legal Checklist (non-code — action these immediately)
-
-| Item | Status | Owner |
-|---|---|---|
-| ICO registration (£40, ico.org.uk) | ⬜ TODO | Founder |
-| Company formation (£12, Companies House) | ⬜ TODO | Founder |
-| Privacy policy (Termly, real content) | ⬜ TODO | Founder |
-| Terms of service (Termly, real content) | ⬜ TODO | Founder |
-| Medical disclaimer (onboarding + ACWR) | ⬜ TODO | Claude build |
-| Cookie consent banner | ⬜ TODO | Claude build (Phase A2b) |
-| GDPR data export verified E2E | ⬜ TODO | Claude build (Phase A2c) |
-| RESEND_API_KEY in Vercel | ⬜ TODO | Founder |
-| Email sender domain DNS (Resend) | ⬜ TODO | Founder (30 min) |
-
----
-
-## Hiring Plan
-
-| Hire | When | What they own |
-|---|---|---|
-| Technical Co-Founder | **Now — active search** | Full engineering, equity |
-| Product Designer | After Phase D design uplift | Visual execution, Figma |
-| Head of Growth | Phase H (retention gate met) | CAC, conversion, referral |
-| Community & Coach Partnerships | Phase I (coach beta) | Coach relationships, clubs |
-
-
-
----
-
-## Three Pillars — Strategic Decisions Locked (April 2026)
-
-See THREE-PILLARS-STRATEGY.md for full spec. Key decisions:
-
-**Split Leader (Pillar 2):**
-- Automatic unlock with Premium subscription
-- Squad cap: 5 members, leader leads 1 squad only
-- Members can join multiple squads
-- Leader sees: session status, distance, weekly km, streak (NOT pace/ACWR/wellness)
-- Nudge system: curated messages only (8 options), 1 per member per day
-- Reactions: milestones only (plan complete, race result, PB, streak milestone)
-- Squad goals: monthly collective km or sessions
-- Seasons: monthly + annual + lifetime — all archived in Trophy Room
-- Referral reward: 1 free month per squad member Premium conversion (max 5)
-- Member discount: 50% off first month when joining via squad invite
-- 2nd gen referral: 1 week free, 2 levels max
-- Inactivity: 30-day warning → 6-month disband
-- Leadership transfer: any Premium member can claim after 30-day leader inactivity
-- Leader RPG identity: crown/stopwatch accessory on avatar
-- Squad colour coding: Track gold (#c49a3c) — distinct from Forest (solo) and Navy (coach)
-
-**Coaching Marketplace (Pillar 3):**
-- Commission: 15% → 12% (10+ clients) → 10% (25+) → 8% (50+)
-- Coach sets own prices (NextSplit shows market averages)
-- Verification: credential upload + UKA API check. Non-UK: self-declared + 3 reviews
-- Featured coaches: weekly editorial, gold ⭐ badge, top placement
-- Review unlock: after 50% programme completion
-- Dispute: 7-day window, full refund
-- Coach Pro: £19.99/mo — scheduled messages, advanced analytics, coach referral
-- Coach referral: £100 one-off when referred coach hits 5 paying clients
-- Capacity tiers: 10 → 25 → 50 → 50+ (NextSplit gated progression)
-- Annual pricing: £59.99/yr (37.5% saving vs monthly)
-- Corporate: on roadmap, Phase J, no external trigger required
-
-**Open decisions before SL1 build:**
-1. Do free squad members get full squad features, or limited? (Recommendation: full — offer is contextual not a gate)
-2. Voice notes — standard coach or Coach Pro only? (Recommendation: standard coach)
-3. Annual plan referral credits — extend subscription or credit toward renewal? (Recommendation: credit toward renewal)
-4. Multi-squad member: which leader gets credit if member upgrades without invite link? (Recommendation: nobody — organic join, no credit)
-
----
-
-## Complete Build State (All Phases A–F)
-
-| Phase | Sub-phase | Commit | Status |
-|---|---|---|---|
-| A | A1 Zod on all 27 API routes | e7daf56 | ✅ |
-| A | A2 Cookie consent + legal pages + medical disclaimer | 58a2d6b | ✅ |
-| A | A3 AI plan quality review tool (/admin/plan-review) | f41639e | ✅ |
-| A | A4 Onboarding funnel PostHog events | f41639e | ✅ |
-| A | A5 Adaptation E2E test tool (/admin/adapt-test) | 6f07125 | ✅ |
-| A | A7 In-app NPS prompt (Day 7 + Day 30) | 6f07125 | ✅ |
-| A | A2 non-code (ICO, company, DNS) | — | ⚠️ Founder action |
-| B | B1 Squad command centre redesign | 346067c | ✅ |
-| B | B2 Athlete drill-down (12wk ACWR, wellness sparklines) | fbec37c | ✅ |
-| B | B3 Communication layer (thread, reactions, templates) | fbec37c | ✅ |
-| B | B4 Plan build handshake (/coach/plan-request) | 43088f2 | ✅ |
-| B | B5 Marketplace performance dashboard | 43088f2 | ✅ |
-| C | C1 36 plan templates (was 17), generator script | 339f0ca | ✅ |
-| C | C2 VDOT pace personalisation (src/lib/vdot.ts) | 339f0ca | ✅ |
-| C | C3 Plan browser: sort, duration filter, week 1 preview | 339f0ca | ✅ |
-| D | D1 Typography system (font-display/body/data classes) | 000e4ef | ✅ |
-| D | D2 Teal→Forest colour purge (435 instances, 66 files) | 000e4ef | ✅ |
-| D | D3 Phosphor BottomNav icon fix | 000e4ef | ✅ |
-| D | D4 7 runner class SVG avatars (RunnerClassAvatars.tsx) | 87cb5d8 | ✅ |
-| D | D5 552 slate→gray replacements across 33 files | 87cb5d8 | ✅ |
-| E | E1 Club feed API + UI (Feed tab in community) | ab4f41a | ✅ |
-| E | E2 Challenge auto-verification (already in progress route) | ab4f41a | ✅ |
-| E | E3 Race leaderboard API (medals, PB detection) | ab4f41a | ✅ |
-| E | E4 Milestone detection + coach notifications | ab4f41a | ✅ |
-| F | F1-F6 Pre-alpha gate checklist + E2E tests | c0a9e65 | ✅ code done |
-| F | F1 Founder iPhone E2E | — | ⚠️ Founder action |
-| F | F2 3-person alpha test | — | ⚠️ Founder action |
-
-**Pending SQL:** Run `supabase/migrations/phase-12-referral.sql` in Supabase SQL editor.
-**Pending seed:** Run `npx tsx scripts/seed-plans.ts` to upload 36 plan templates.
-
-
----
-
-## UI Overhaul — Session Work (Post Phase F)
-
-The following work was done after Phase F to address founder feedback on visual quality, correctness, and usability.
-
-### Critical Bug Fixes
-
-| Bug | Root Cause | Fix | Commit |
-|---|---|---|---|
-| VDOT paces had no effect | activate route read `recent_race_5k_secs` (never populated); onboarding saves to `recent_race_times` JSON | Fixed activate route to read from correct column | 12eaa3f |
-| Predetermined plan always generated same AI plan | `plan_templates` table was empty — seed script never run | Fixed seed API to use session auth (ADMIN_EMAILS), seed page now works | 8efe231 |
-| Fuel tab showed training plan content | No content guard on planTab — fuel tab existed in switcher but had no rendering | Added actual fuel guide content + nutrition dashboard link | 3ffa892 |
-| Hourly cron blocked deployment | Vercel Hobby plan only allows 1 cron/day | Removed hourly notify cron, kept daily lifecycle emails | 15fdf2e |
-| Notification guardrails wrong order | quiet_hours checked before rate_limit; tests expected reverse | Reordered: rate limits → at_risk → quiet_hours | bc750fb |
-| GitHub webhook broken | Vercel lost GitHub App connection | Added GitHub Actions deploy workflow (bypasses webhook) | 5d3d9ac |
-
-### UI Changes
-
-| Area | Change | Commit |
-|---|---|---|
-| Global theme | Forest-dark palette applied globally. CSS vars: --color-bg #0f1a14, --color-surface #162a1e, --color-surface-2 #1e3829. Global overrides for bg-white/gray-50/100 | 8efe231 |
-| Auth pages (login/signup) | Full dark theme rewrite. Forest-night header gradient, dark inputs, ember CTAs | ced8f89 |
-| BottomNav | Forest-night bg, ember active indicator, CSS var inactive | 3ffa892 |
-| Explore tab | New /explore route with Coaches/Plans/AI Coach tabs. Compass icon in athlete nav | 8efe231 |
-| Character creation | SVG avatar 100×130 → 180×220px, full mid-stride pose with hair/accessories/bib/shoes | bc750fb |
-| Character creation screen | Dark Forest theme throughout, kit-colour glow behind avatar | bc750fb |
-| Profile tabs | Stats tab: Forest green analytics header. Records tab: amber/gold header. Distinct per-tab identity | cd2af67 |
-| Plan browser | Dark level pills, ember week count, dark card surfaces, dark select dropdowns | 3ffa892 |
-| DayDrawer | Dark surface, rgba(0,0,0,0.6) backdrop, dark drag handle | bc750fb |
-| LogModal | Dark surface, rgba(0,0,0,0.7) backdrop | 3ffa892 |
-| Onboarding (10 screens) | All backgrounds dark themed. GoalsScreen inactive buttons dark | 12eaa3f |
-| Today tab | Sticky header dark, date nav buttons dark | ced8f89 |
-| Seed page | Updated count to 36 templates, fixed auth check | 3ffa892 |
-
-### Deployment Pipeline
-
-GitHub Webhook was broken. Fixed via GitHub Actions workflow:
-- `.github/workflows/vercel-deploy.yml` — deploys to Vercel on every push to main
-- Requires `VERCEL_TOKEN` secret in GitHub repo settings
-- Build takes ~2 minutes (real build, not 15s cached)
-- After build: go to Vercel → Deployments → promote to production
-
-### Pending Founder Actions (Before Alpha)
-
-1. **Seed plans** — Go to `nextsplit-v2.vercel.app/admin/seed` → tap "Seed Plans Now"
-   This loads 36 plan templates into Supabase. Required for predetermined plan browser to work.
-
-2. **Verify VDOT** — After seeding: fresh signup → enter 5K time → activate predetermined plan → check session paces are personalised (not generic)
-
-3. **ICO registration** — ico.org.uk — £40 (legal requirement for UK data collection)
-
-4. **Company formation** — Companies House — £12
-
-5. **RESEND_API_KEY** — Add to Vercel env vars for transactional email
-
-### Remaining UI Work (Next Session)
-
-- `SessionCard` done/pending states use `bg-emerald-50` etc — not caught by global override
-- Settings page needs dark theme
-- Community page explicit dark styling (global override handles bg-white but borders/text need CSS vars)
-- Final comprehensive grep for remaining conditional class strings with hardcoded white/gray
 
 ---
 
 ## Document Index
 
-| # | Document | Contribution |
-|---|---|---|
-| 1 | Vision & Strategy v2.3 | Adaptation as conversion moment |
-| 2 | Company Operating Framework | 8-pillar structure |
-| 3 | User Personas v1.3 | 6 archetypes, 4 onboarding paths |
-| 4 | Master Roadmap v1.3 | Original 4-horizon sequence |
-| 5 | Product & UX Pillar | Design language, session types, coach voice |
-| 6 | Coach & Marketplace Pillar | 3-tier model, revenue splits, flywheel |
-| 7 | Brand & Identity Pillar | Forest/Ember tokens, taglines |
-| 8 | Growth & Marketing Pillar | Lifecycle emails, push strategy, referral |
-| 9 | Technology & Engineering Pillar | Stack decisions, test pyramid, Zod requirement |
-| 10 | Community & Content Pillar | 4-layer community stack |
-| 11 | Operations & People Pillar | Hiring plan, OKRs, legal checklist |
-| 12 | Data & Analytics Pillar | AARRR framework, Monday dashboard |
-| 13 | Character System Spec | 7 classes, XP bonuses, reveal mechanic |
-| 14 | Document Conflict Audit | 8 resolved conflicts |
-| 15–16 | HANDOFF-4 through HANDOFF-6 | Previous build state |
-| 17 | MASTER-DELIVERY-PLAN-V2.md | Revised A→I phases, alpha-first |
-| 18 | HANDOFF-7 (this) | Current state, Phase A is next |
-
----
-
-*HANDOFF-7 — April 2026 — Supersedes HANDOFF-6*
-*Next update: After Phase A complete (all gates passed)*
+| # | Document | Purpose | Status |
+|---|---|---|---|
+| 1 | HANDOFF-7.md | Session state, all commits, pending actions | ✅ Current |
+| 2 | THREE-PILLARS-STRATEGY.md | Full product spec — canonical | ✅ Current |
+| 3 | MASTER-DELIVERY-PLAN-V2.md | Phase order, SQL, economics, env vars | ✅ Current |
+| 4 | PRE-ALPHA-CHECKLIST.md | F1-F6 founder gate checklist | ✅ Current |
+| 5 | supabase/migrations/alpha-readiness.sql | Base SQL migration | ✅ Run |
+| 6 | supabase/migrations/phase-sl1-squads.sql | Squad system SQL | ✅ Run |
