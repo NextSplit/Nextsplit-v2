@@ -50,6 +50,23 @@ function CharacterPreview({ config, size = 160 }: { config: CharacterConfig; siz
   // Derive a slightly darker shade of kit for shorts
   const shorts = kit
 
+  // Face shape → head dimensions
+  const headDims = {
+    oval:   { rx: 8,   ry: 9   },
+    round:  { rx: 9,   ry: 8.5 },
+    square: { rx: 8.5, ry: 8,  squareCorner: true },
+    heart:  { rx: 8,   ry: 8.5 },
+  }[config.faceShape ?? 'oval'] ?? { rx: 8, ry: 9 }
+
+  // Body type → torso width, leg thickness
+  const body = {
+    slim:     { tw: 8,  legW: 4,   armW: 3.5, shoulderOffset: 10 },
+    athletic: { tw: 11, legW: 4.5, armW: 4,   shoulderOffset: 10 },
+    stocky:   { tw: 14, legW: 5.5, armW: 5,   shoulderOffset: 9  },
+  }[config.bodyType ?? 'athletic'] ?? { tw: 11, legW: 4.5, armW: 4, shoulderOffset: 10 }
+  const lx = 30 - body.tw   // left edge of torso
+  const rx2 = 30 + body.tw  // right edge of torso
+
   return (
     <div className="flex flex-col items-center gap-3">
       {/* Large runner SVG — mid-stride pose */}
@@ -107,7 +124,10 @@ function CharacterPreview({ config, size = 160 }: { config: CharacterConfig; siz
         )}
 
         {/* ── HEAD ── */}
-        <ellipse cx="30" cy="12" rx="8" ry="9" fill={skin} />
+        {config.faceShape === 'square'
+          ? <rect x={30 - headDims.rx} y={12 - headDims.ry} width={headDims.rx * 2} height={headDims.ry * 2} rx="2" fill={skin} />
+          : <ellipse cx="30" cy="12" rx={headDims.rx} ry={headDims.ry} fill={skin} />
+        }
 
         {/* ── FACE ── */}
         {/* Eyes */}
@@ -131,36 +151,27 @@ function CharacterPreview({ config, size = 160 }: { config: CharacterConfig; siz
         )}
 
         {/* ── NECK ── */}
-        <rect x="27.5" y="20" width="5" height="4" rx="1" fill={skin} />
+        <rect x={30 - 2.5} y="20" width="5" height="4" rx="1" fill={skin} />
 
         {/* ── TORSO — running vest ── */}
-        <path d="M20 24 Q22 22 30 22 Q38 22 40 24 L41 42 Q38 44 30 44 Q22 44 19 42 Z" fill={kit} />
-        {/* Kit stripe detail */}
-        <path d="M22 26 L22 40" stroke="white" strokeWidth="0.8" opacity="0.2" strokeLinecap="round"/>
-        <path d="M38 26 L38 40" stroke="white" strokeWidth="0.8" opacity="0.2" strokeLinecap="round"/>
+        <path d={`M${lx} 24 Q${lx+2} 22 30 22 Q${rx2-2} 22 ${rx2} 24 L${rx2+1} 42 Q${rx2-2} 44 30 44 Q${lx+2} 44 ${lx-1} 42 Z`} fill={kit} />
+        <path d={`M${lx+2} 26 L${lx+2} 40`} stroke="white" strokeWidth="0.8" opacity="0.2" strokeLinecap="round"/>
+        <path d={`M${rx2-2} 26 L${rx2-2} 40`} stroke="white" strokeWidth="0.8" opacity="0.2" strokeLinecap="round"/>
 
         {/* ── ARMS — mid stride, one forward one back ── */}
-        {/* Left arm (forward) */}
-        <path d="M20 26 Q12 30 11 38" stroke={skin} strokeWidth="4" strokeLinecap="round" fill="none"/>
-        {/* Left glove/hand */}
-        <circle cx="11" cy="39" r="2.5" fill={skin} />
-        {/* Right arm (back) */}
-        <path d="M40 26 Q47 32 48 28" stroke={skin} strokeWidth="4" strokeLinecap="round" fill="none"/>
-        <circle cx="48" cy="27" r="2.5" fill={skin} />
+        <path d={`M${lx} 26 Q${lx-8} 30 ${lx-9} 38`} stroke={skin} strokeWidth={body.armW} strokeLinecap="round" fill="none"/>
+        <circle cx={lx-9} cy="39" r="2.5" fill={skin} />
+        <path d={`M${rx2} 26 Q${rx2+7} 32 ${rx2+8} 28`} stroke={skin} strokeWidth={body.armW} strokeLinecap="round" fill="none"/>
+        <circle cx={rx2+8} cy="27" r="2.5" fill={skin} />
 
         {/* ── SHORTS ── */}
-        <path d="M22 42 Q25 48 28 55 L32 55 Q35 48 38 42 Z" fill={shorts} opacity="0.9"/>
+        <path d={`M${lx+2} 42 Q${lx+5} 48 28 55 L32 55 Q${rx2-5} 48 ${rx2-2} 42 Z`} fill={shorts} opacity="0.9"/>
 
         {/* ── LEGS — running stride ── */}
-        {/* Left leg (back, pushing off) */}
-        <path d="M28 55 Q24 62 20 68" stroke={skin} strokeWidth="4.5" strokeLinecap="round" fill="none"/>
-        {/* Left shoe */}
+        <path d="M28 55 Q24 62 20 68" stroke={skin} strokeWidth={body.legW} strokeLinecap="round" fill="none"/>
         <path d="M18 67 Q15 70 13 71 Q17 73 22 71 Q22 68 20 68 Z" fill={shoe} />
         <path d="M13 71 Q13 73 15 73 Q19 73 22 72" stroke={shoe} strokeWidth="1" fill="none"/>
-
-        {/* Right leg (forward, leading) */}
-        <path d="M32 55 Q38 62 42 60" stroke={skin} strokeWidth="4.5" strokeLinecap="round" fill="none"/>
-        {/* Right shoe (in air) */}
+        <path d="M32 55 Q38 62 42 60" stroke={skin} strokeWidth={body.legW} strokeLinecap="round" fill="none"/>
         <path d="M42 60 Q46 58 48 59 Q46 63 42 63 Q40 62 42 60 Z" fill={shoe} />
 
         {/* ── RUNNING NUMBER BIB ── */}

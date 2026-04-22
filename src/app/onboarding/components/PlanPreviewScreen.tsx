@@ -6,6 +6,17 @@ import { useOnboarding } from '../context/OnboardingContext'
 import { createClient } from '@/lib/supabase/client'
 import { db } from '@/lib/supabase/db'
 
+interface SessionPreview {
+  day: string
+  type: string
+  name: string
+  km: number
+}
+interface WeekPreview {
+  weekNum: number
+  title: string
+  sessions: SessionPreview[]
+}
 interface PlanSummary {
   name:        string
   totalWeeks:  number
@@ -13,6 +24,7 @@ interface PlanSummary {
   raceDate:    string | null
   weeklyKm:    string
   gymSessions: number
+  weeks:       WeekPreview[]
 }
 
 function daysUntil(dateStr: string): number {
@@ -43,7 +55,7 @@ export function PlanPreviewScreen() {
 
       const { data: plans } = await db(supabase)
         .from('user_plans')
-        .select('name, total_weeks, plan_type, race_date, meta')
+        .select('name, total_weeks, plan_type, race_date, meta, weeks_data')
         .eq('user_id', user.id)
         .eq('status', 'active')
         .order('created_at', { ascending: false })
@@ -51,6 +63,26 @@ export function PlanPreviewScreen() {
 
       if (plans && plans.length > 0) {
         const p = plans[0]
+        // Parse first 2 weeks of sessions for preview
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const weeksRaw: any[] = Array.isArray(p.weeks_data) ? p.weeks_data.slice(0, 2) : []
+        const SESSION_ICONS: Record<string, string> = {
+          'run-easy': '🟢', 'run-tempo': '🟡', 'run-long': '🔵',
+          'run-int': '🔴', 'run-race': '🏆', 'gym-a': '🏋️',
+          'gym-b': '🏋️', 'gym-c': '🏋️', 'rest': '😴',
+        }
+        const weeks: WeekPreview[] = weeksRaw.map((w: any) => ({
+          weekNum: w.n,
+          title: w.title || `Week ${w.n}`,
+          sessions: (w.days || []).flatMap((d: any) =>
+            (d.sessions || []).filter((s: any) => s.km > 0 || s.c?.startsWith('gym')).map((s: any) => ({
+              day: d.d,
+              type: SESSION_ICONS[s.c] ?? '▶',
+              name: s.n,
+              km: s.km || 0,
+            }))
+          ),
+        }))
         setPlan({
           name:        p.name,
           totalWeeks:  p.total_weeks,
@@ -58,9 +90,10 @@ export function PlanPreviewScreen() {
           raceDate:    p.race_date,
           weeklyKm:    `${data.weeklyKmCurrent}–${Math.round(data.weeklyKmCurrent * 1.4)}km`,
           gymSessions: data.gymEnabled ? data.gymSessionsPerWeek : 0,
+          weeks,
         })
       } else {
-        // Manual / marketplace path — show profile summary instead
+        // No plan yet — show profile summary
         setPlan({
           name:        'Your Training',
           totalWeeks:  0,
@@ -68,6 +101,7 @@ export function PlanPreviewScreen() {
           raceDate:    null,
           weeklyKm:    `${data.weeklyKmCurrent}km current`,
           gymSessions: data.gymEnabled ? data.gymSessionsPerWeek : 0,
+          weeks:       [],
         })
       }
       setLoading(false)
@@ -113,56 +147,78 @@ export function PlanPreviewScreen() {
 
       <div className="flex-1 overflow-y-auto pb-36 px-4 pt-6 space-y-4">
 
-        {/* Plan card */}
+        {/* Plan header card */}
         {plan && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+          <div className="rounded-2xl p-5 space-y-4" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Your plan</p>
-                <h2 className="text-lg font-black text-gray-900">{plan.name}</h2>
-                <p className="text-xs text-gray-400 mt-0.5 capitalize">
-                  {plan.planType.replace('_', ' ')} plan
-                </p>
+                <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-tertiary)' }}>Your plan</p>
+                <h2 className="text-lg font-black" style={{ color: 'var(--color-text-primary)' }}>{plan.name}</h2>
+                <div className="flex items-center gap-3 mt-1">
+                  {plan.totalWeeks > 0 && (
+                    <span className="text-xs font-bold" style={{ color: 'var(--ns-forest)' }}>{plan.totalWeeks} weeks</span>
+                  )}
+                  {aGoal?.race_date && (
+                    <span className="text-xs font-bold" style={{ color: 'var(--ns-track)' }}>Race in {daysUntil(aGoal.race_date)} days</span>
+                  )}
+                </div>
               </div>
               <div className="text-3xl">
                 {{ predetermined: '📋', ai_bespoke: '🤖', manual: '✏️', lifestyle: '🌿', coach_marketplace: '👥' }[plan.planType] ?? '📋'}
               </div>
             </div>
-
-            {/* Stats grid */}
-            <div className="grid grid-cols-2 gap-3">
-              {plan.totalWeeks > 0 && (
-                <StatPill label="Weeks" value={`${plan.totalWeeks}w`} />
-              )}
-              <StatPill label="Current load" value={plan.weeklyKm} />
-              {plan.gymSessions > 0 && (
-                <StatPill label="Gym / week" value={`${plan.gymSessions}x`} />
-              )}
-              {aGoal?.race_date && (
-                <StatPill label="Race in" value={`${daysUntil(aGoal.race_date)}d`} />
-              )}
-            </div>
           </div>
         )}
 
-        {/* Goal reminder */}
+        {/* Week-by-week session preview */}
+        {plan && plan.weeks.length > 0 && plan.weeks.map(week => (
+          <div key={week.weekNum} className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>
+                Week {week.weekNum} — {week.title}
+              </p>
+              {week.weekNum === 1 && (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: 'var(--ns-forest)' }}>Starts today</span>
+              )}
+            </div>
+            <div className="space-y-2">
+              {week.sessions.map((s, si) => (
+                <div key={si} className="flex items-center gap-3 py-2 px-3 rounded-xl" style={{ background: 'var(--color-surface-2)' }}>
+                  <span className="text-base w-6 text-center">{s.type}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold truncate" style={{ color: 'var(--color-text-primary)' }}>{s.name}</p>
+                    <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>{s.day}</p>
+                  </div>
+                  {s.km > 0 && (
+                    <span className="text-xs font-black font-data flex-shrink-0" style={{ color: 'var(--ns-forest)' }}>{s.km}km</span>
+                  )}
+                </div>
+              ))}
+              {week.sessions.length === 0 && (
+                <p className="text-xs text-center py-2" style={{ color: 'var(--color-text-tertiary)' }}>Rest week</p>
+              )}
+            </div>
+          </div>
+        ))}
+
+        {/* A Goal reminder */}
         {aGoal && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Your A goal</p>
+          <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+            <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: 'var(--color-text-tertiary)' }}>Your A goal</p>
             <div className="flex items-center gap-3">
               <span className="text-2xl">🎯</span>
               <div>
-                <p className="text-sm font-bold text-gray-800">
-                  {aGoal.race_name ?? aGoal.race_distance_label ?? aGoal.goal_type?.replace('_', ' ')}
+                <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                  {aGoal.race_name ?? aGoal.race_distance_label ?? aGoal.goal_type?.replace(/_/g, ' ')}
                 </p>
                 {aGoal.race_date && (
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
                     {new Date(aGoal.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                 )}
                 {aGoal.target_time_secs && (
-                  <p className="text-xs text-[var(--ns-forest)] font-semibold mt-0.5">
-                    Target: {Math.floor(aGoal.target_time_secs / 3600)}:{String(Math.floor((aGoal.target_time_secs % 3600) / 60)).padStart(2, '0')}:{String(aGoal.target_time_secs % 60).padStart(2, '0')}
+                  <p className="text-xs font-semibold mt-0.5" style={{ color: 'var(--ns-forest)' }}>
+                    Target: {Math.floor(aGoal.target_time_secs / 3600)}h {String(Math.floor((aGoal.target_time_secs % 3600) / 60)).padStart(2,'0')}m
                   </p>
                 )}
               </div>

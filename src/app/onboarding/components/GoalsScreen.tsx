@@ -24,9 +24,10 @@ interface GoalCardProps {
   onUpdate: (g: Partial<UserGoal>) => void
   onRemove: () => void
   canRemove: boolean
+  aIsTaken: boolean  // another goal already has A priority
 }
 
-function GoalCard({ goal, index, onUpdate, onRemove, canRemove }: GoalCardProps) {
+function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: GoalCardProps) {
   return (
     <div className={`bg-white rounded-2xl border shadow-sm p-4 space-y-4 ${
       goal.priority === 'A' ? 'border-[var(--ns-forest)]' : 'border-gray-200'
@@ -45,18 +46,28 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove }: GoalCardProps)
         </div>
         <div className="flex items-center gap-2">
           {/* Priority selector */}
-          <div className="flex gap-1">
-            {(['A','B','C'] as const).map(p => (
-              <button
-                key={p}
-                onClick={() => onUpdate({ ...goal, priority: p })}
-                className={`w-6 h-6 rounded-full text-xs font-bold transition-all ${
-                  goal.priority === p ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-500'
-                }`}
-              >
-                {p}
-              </button>
-            ))}
+          <div className="flex gap-1 items-center">
+            {(['A','B','C'] as const).map(p => {
+              const isLocked = p === 'A' && aIsTaken && goal.priority !== 'A'
+              return (
+                <button
+                  key={p}
+                  onClick={() => !isLocked && onUpdate({ ...goal, priority: p })}
+                  disabled={isLocked}
+                  title={isLocked ? 'Only one A race allowed' : undefined}
+                  className={`w-6 h-6 rounded-full text-xs font-bold transition-all ${
+                    goal.priority === p ? 'bg-[var(--ns-forest)] text-white' :
+                    isLocked ? 'opacity-30 cursor-not-allowed' : ''
+                  }`}
+                  style={goal.priority !== p && !isLocked ? { background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' } : {}}
+                >
+                  {p}
+                </button>
+              )
+            })}
+            {aIsTaken && goal.priority !== 'A' && (
+              <span className="text-[9px] ml-1" style={{ color: 'var(--ns-ember)' }}>A taken</span>
+            )}
           </div>
           {canRemove && (
             <button onClick={onRemove} className="text-gray-300 hover:text-red-400 transition-colors text-lg leading-none">×</button>
@@ -123,7 +134,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove }: GoalCardProps)
             label="Target finish time"
             value={goal.target_time_secs ?? null}
             onChange={secs => onUpdate({ ...goal, target_time_secs: secs ?? undefined })}
-            hint="Type digits e.g. 34500 → 3:45:00"
+            
           />
         </div>
       )}
@@ -155,19 +166,39 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove }: GoalCardProps)
 
       {/* Distance milestone fields */}
       {goal.goal_type === 'distance_milestone' && (
-        <div className="space-y-3 pt-1 border-t border-gray-100">
+        <div className="space-y-3 pt-1 border-t" style={{ borderColor: 'var(--color-border)' }}>
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Milestone distance</label>
+            <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Milestone distance</label>
             <div className="grid grid-cols-2 gap-2">
               {DISTANCES.map(d => (
                 <button
                   key={d}
                   onClick={() => onUpdate({ ...goal, race_distance_label: d })}
-                  className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
-                    goal.race_distance_label === d ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-gray-600 border-gray-200'
-                  }`}
+                  className="py-2 rounded-xl text-xs font-semibold border transition-all"
+                  style={{
+                    background:  goal.race_distance_label === d ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                    color:       goal.race_distance_label === d ? 'white' : 'var(--color-text-secondary)',
+                    borderColor: goal.race_distance_label === d ? 'var(--ns-forest)' : 'var(--color-border)',
+                  }}
                 >
                   {d}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Milestone type</label>
+            <div className="flex flex-wrap gap-2">
+              {['Single run', 'Weekly', 'Monthly', 'Annual'].map(freq => (
+                <button key={freq}
+                  onClick={() => onUpdate({ ...goal, notes: `milestone_freq:${freq}` })}
+                  className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all"
+                  style={{
+                    background:  goal.notes === `milestone_freq:${freq}` ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                    color:       goal.notes === `milestone_freq:${freq}` ? 'white' : 'var(--color-text-secondary)',
+                    borderColor: goal.notes === `milestone_freq:${freq}` ? 'var(--ns-forest)' : 'var(--color-border)',
+                  }}>
+                  {freq}
                 </button>
               ))}
             </div>
@@ -248,8 +279,8 @@ export function GoalsScreen() {
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
         <div className="mb-2">
-          <h1 className="text-xl font-black text-gray-900">Your goals</h1>
-          <p className="text-sm text-gray-500 mt-1">Set your A race as your primary target. Add B and C goals too — your plan adapts around all of them.</p>
+          <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Your goals</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>Set your A race as your primary target. Add B and C goals too — your plan adapts around all of them.</p>
         </div>
 
         {goals.map((goal, i) => (
@@ -260,6 +291,7 @@ export function GoalsScreen() {
             onUpdate={g => updateGoal(i, g)}
             onRemove={() => removeGoal(i)}
             canRemove={goals.length > 1}
+            aIsTaken={goals.some((g, gi) => gi !== i && g.priority === 'A')}
           />
         ))}
 
