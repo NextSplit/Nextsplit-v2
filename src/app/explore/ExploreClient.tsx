@@ -128,6 +128,22 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
               ))
             )}
 
+            {/* Browse all coaches */}
+            <a href="/coaches"
+              className="flex items-center justify-between w-full rounded-2xl px-4 py-3 transition-all active:scale-95"
+              style={{ background: 'var(--color-surface)', border: '1px solid #1e3a5f40' }}>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🔍</span>
+                <div>
+                  <p className="text-sm font-bold text-left" style={{ color: 'var(--color-text-primary)' }}>Browse all coaches</p>
+                  <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>Filter by specialty, distance &amp; price</p>
+                </div>
+              </div>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ color: 'var(--color-text-tertiary)' }}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+
             {/* CTA for coaches */}
             <div className="rounded-2xl p-4 border" style={{ background: 'var(--color-surface-2)', borderColor: 'var(--color-border)' }}>
               <p className="text-xs font-bold mb-1" style={{ color: 'var(--color-text-tertiary)' }}>Are you a coach?</p>

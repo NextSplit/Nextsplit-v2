@@ -338,18 +338,52 @@ export interface CoachProfile {
   credentials: string | null
   specialities: string[]
   photo_url: string | null
+  video_intro_url: string | null
+  video_intro_seconds: number | null
   location: string | null
+  timezone: string | null
   website_url: string | null
   instagram_handle: string | null
   strava_profile: string | null
   rate_monthly_gbp: number | null
   rate_plan_gbp: number | null
   verified: boolean
+  verification_tier: "listed" | "credential_verified" | "elite"
+  credential_status: "pending" | "approved" | "rejected"
+  uka_number: string | null
   accepting_athletes: boolean
   max_athletes: number
+  specialty_tags: string[]
+  distance_tags: string[]
+  athlete_type_tags: string[]
+  language_tags: string[]
+  coach_pbs: Record<string, string>
+  avg_rating: number
+  review_count: number
+  completion_rate: number
+  total_athletes: number
+  is_featured: boolean
+  featured_until: string | null
+  group_coaching: boolean
+  group_max_size: number | null
+  group_price_gbp: number | null
   stripe_account_id: string | null
   created_at: string
   updated_at: string
+}
+
+export interface CoachReview {
+  id: string
+  coach_id: string
+  athlete_id: string
+  coach_athlete_id: string | null
+  rating: number
+  review_text: string | null
+  would_recommend: boolean
+  is_anonymous: boolean
+  published_at: string
+  created_at: string
+  profiles?: { display_name: string | null; handle: string | null }
 }
 
 export interface CoachAthlete {
