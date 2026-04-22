@@ -38,54 +38,56 @@ export async function GET() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const s = supabase as any
 
-    // Check if user leads a squad
-    const { data: ledSquad } = await s
+    // Check if user leads a squad — no nested profile join (causes PGRST200)
+    const { data: ledSquad, error: ledErr } = await s
       .from('squads')
-      .select(`
-        *,
-        squad_members!squad_id (
-          id, user_id, joined_at, removed_at, last_active_at,
-          profiles (display_name, handle, runner_class, is_split_leader)
-        ),
-        squad_invites (id, code, uses, max_uses, expires_at)
-      `)
+      .select('*, squad_members!squad_id(id, user_id, joined_at, removed_at, last_active_at), squad_invites(id, code, uses, max_uses, expires_at)')
       .eq('leader_id', user.id)
       .is('disbanded_at', null)
       .maybeSingle()
 
+    if (ledErr) console.error('[GET /api/squad] ledSquad error:', ledErr.message)
+
     if (ledSquad) {
-      // Filter out removed members
-      ledSquad.squad_members = (ledSquad.squad_members || []).filter(
+      const activeMembers = (ledSquad.squad_members || []).filter(
         (m: { removed_at: string | null }) => !m.removed_at
       )
+      // Fetch profiles separately
+      const memberIds = activeMembers.map((m: { user_id: string }) => m.user_id)
+      const { data: profiles } = memberIds.length > 0
+        ? await s.from('profiles').select('id, display_name, handle, runner_class, is_split_leader').in('id', memberIds)
+        : { data: [] }
+      const profileMap = Object.fromEntries((profiles ?? []).map((p: { id: string }) => [p.id, p]))
+      ledSquad.squad_members = activeMembers.map((m: { user_id: string }) => ({ ...m, profiles: profileMap[m.user_id] ?? null }))
       return NextResponse.json({ squad: ledSquad, role: 'leader' })
     }
 
-    // Check if user is a member of a squad
-    const { data: membership } = await s
+    // Check if user is a member of a squad — no nested joins
+    const { data: myMembership } = await s
       .from('squad_members')
-      .select(`
-        *,
-        squads (
-          *,
-          squad_members!squad_id (
-            id, user_id, joined_at, removed_at, last_active_at,
-            profiles (display_name, handle, runner_class)
-          ),
-          profiles!leader_id (display_name, handle, runner_class)
-        )
-      `)
+      .select('squad_id')
       .eq('user_id', user.id)
       .is('removed_at', null)
-      .is('squads.disbanded_at', null)
       .maybeSingle()
 
-    if (membership?.squads) {
-      const squad = membership.squads
-      squad.squad_members = (squad.squad_members || []).filter(
-        (m: { removed_at: string | null }) => !m.removed_at
-      )
-      return NextResponse.json({ squad, role: 'member', membership })
+    if (myMembership?.squad_id) {
+      const { data: squad } = await s
+        .from('squads')
+        .select('*, squad_members!squad_id(id, user_id, joined_at, removed_at, last_active_at), squad_invites(id, code, uses, max_uses, expires_at)')
+        .eq('id', myMembership.squad_id)
+        .is('disbanded_at', null)
+        .maybeSingle()
+
+      if (squad) {
+        const activeMembers = (squad.squad_members || []).filter((m: { removed_at: string | null }) => !m.removed_at)
+        const memberIds = activeMembers.map((m: { user_id: string }) => m.user_id)
+        const { data: profiles } = memberIds.length > 0
+          ? await s.from('profiles').select('id, display_name, handle, runner_class').in('id', memberIds)
+          : { data: [] }
+        const profileMap = Object.fromEntries((profiles ?? []).map((p: { id: string }) => [p.id, p]))
+        squad.squad_members = activeMembers.map((m: { user_id: string }) => ({ ...m, profiles: profileMap[m.user_id] ?? null }))
+        return NextResponse.json({ squad, role: 'member' })
+      }
     }
 
     return NextResponse.json({ squad: null, role: null })
