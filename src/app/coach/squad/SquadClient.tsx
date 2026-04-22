@@ -469,17 +469,23 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
               <p className="text-sm font-bold text-gray-800">Plan Builder</p>
               <p className="text-xs text-gray-400">Build plans for athletes</p>
             </Link>
+            <Link href="/coach/earnings"
+              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
+              <span className="text-xl">💰</span>
+              <p className="text-sm font-bold text-gray-800">Earnings</p>
+              <p className="text-xs text-gray-400">Revenue &amp; commission</p>
+            </Link>
+            <Link href="/coach/settings"
+              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
+              <span className="text-xl">⚙️</span>
+              <p className="text-sm font-bold text-gray-800">Settings</p>
+              <p className="text-xs text-gray-400">Availability &amp; capacity</p>
+            </Link>
             <Link href="/marketplace"
               className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
               <span className="text-xl">🏪</span>
               <p className="text-sm font-bold text-gray-800">Marketplace</p>
               <p className="text-xs text-gray-400">Browse and publish plans</p>
-            </Link>
-            <Link href="/community"
-              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
-              <span className="text-xl">👥</span>
-              <p className="text-sm font-bold text-gray-800">Community</p>
-              <p className="text-xs text-gray-400">Clubs, challenges, races</p>
             </Link>
             <button
               onClick={async () => {
