@@ -30,23 +30,28 @@ export default async function SquadPage() {
   console.log('[squad] user.id:', user.id, '| mySquad:', mySquad?.id ?? 'null', '| err:', mySquadErr?.message ?? 'none')
 
   if (mySquad?.id) {
+    // Fetch squad without nested profile join (causes PGRST200 with service client)
     const { data: ledSquad } = await svc
       .from('squads')
-      .select(`
-        *, 
-        squad_members!squad_members_squad_id_fkey(
-          id, user_id, joined_at, last_active_at, removed_at,
-          profiles!squad_members_user_id_fkey(display_name, handle, runner_class)
-        ),
-        squad_invites(id, code, uses, max_uses, expires_at)
-      `)
+      .select(`*, squad_members!squad_id(id, user_id, joined_at, last_active_at, removed_at), squad_invites(id, code, uses, max_uses, expires_at)`)
       .eq('id', mySquad.id)
       .single()
 
     if (ledSquad) {
-      ledSquad.squad_members = (ledSquad.squad_members ?? []).filter(
+      // Filter out removed members
+      const activeMembers = (ledSquad.squad_members ?? []).filter(
         (m: { removed_at: string | null }) => !m.removed_at
       )
+      // Fetch profiles for each member separately
+      const memberIds = activeMembers.map((m: { user_id: string }) => m.user_id)
+      const { data: memberProfiles } = memberIds.length > 0
+        ? await svc.from('profiles').select('id, display_name, handle, runner_class').in('id', memberIds)
+        : { data: [] }
+      const profileMap = Object.fromEntries((memberProfiles ?? []).map((p: { id: string; display_name: string | null; handle: string | null; runner_class: string | null }) => [p.id, p]))
+      ledSquad.squad_members = activeMembers.map((m: { user_id: string }) => ({
+        ...m,
+        profiles: profileMap[m.user_id] ?? null,
+      }))
       const { data: km } = await svc.rpc('squad_monthly_km', { p_squad_id: ledSquad.id })
       return <SquadDashboardClient squad={ledSquad} role="leader" monthlyKm={km ?? 0} userId={user.id} />
     }
