@@ -1,77 +1,204 @@
-# NextSplit v2 — Dev Session Handoff
-_Last updated: end of session 3_
+# NextSplit v2 — Handoff Document
+**Last updated:** 23 April 2026 — Session 4  
+**App URL:** nextsplit-v2.vercel.app (custom domain nextsplit.app in progress)  
+**GitHub:** github.com/NextSplit/Nextsplit-v2  
+**Latest commit:** 87e0c58  
+**Tests:** 52 passing ✅ | TypeScript: clean ✅
 
-## Repo
-- GitHub: https://github.com/NextSplit/Nextsplit-v2
-- Live: https://nextsplit-v2.vercel.app
-- Deploy hook: https://api.vercel.com/v1/integrations/deploy/prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri/onqfsTdnji
-  (open this URL in browser to trigger deploy after any push)
+---
 
-## Git log (latest first)
+## What Was Done This Session
+
+### Design System v2 — Full Light Mode (150+ files)
+Complete overhaul from dark forest theme to warm light base.
+
+**Design tokens (src/app/globals.css):**
+- `--color-bg: #f8f7f5` — warm off-white page background
+- `--color-surface: #ffffff` — card surface
+- `--ns-ember: #e85d26` — ALL CTAs, buttons, active states
+- `--ns-forest: #2b5c3f` — brand wordmark, active nav dot, Split Leader ONLY
+- `--ns-track: #c49a3c` — Splity, XP, achievements
+- Plus Jakarta Sans 800 — display font throughout
+
+**Rule:** Forest green is NEVER used as a UI action colour. Ember only.
+
+### Splity — Coach Character (new)
+- `src/components/Splity.tsx` — SVG running shoe with face, 4 moods
+- Moods: default / happy / encouraging / celebrating
+- Used in: TodayHeader coaching line, TodayBelowFold toggle
+- Gold/amber colour matching `--ns-track`
+
+### Today Tab
+- Sessions are hero — nothing competes above fold
+- Splity coaching line with mood-aware coaching text
+- Week note / sleep → inline pills (not large cards)
+- Fuel plan → collapsible FuelPlanCard
+- Check-in + weather → behind Splity toggle
+
+### Plan Tab
+- DayDrawer REMOVED entirely
+- WeekRow → tap expands inline showing session dots
+- InlineDayRow → NEW: day expands sessions inline below
+- Session tapped → Splity coach note + Log button
+
+### Log Modal
+- Full-screen overlay (92dvh), X close, tap backdrop dismisses
+- Distance + time: type-in fields (not steppers)
+- Quick-done button opens modal (not auto-complete)
+
+### Character Tab (Profile)
+- HeroCard rebuilt for light mode — gradient accent bar replaces dark bg
+- StatBar: visible colours (blue/purple/green/amber) on light background
+- WeeklyXPChart: ember bars
+- Tab switcher: ember active state
+
+### ShareSessionCard
+- Preview card: white surface + forest→ember→gold gradient bar
+- Canvas share image: light background, ember type pill, gold XP badge
+
+### Squad Dashboard
+- Fixed PGRST200 (nested profile joins fail with PostgREST)
+- Solution: separate profile fetch after squad query, no nested joins
+
+### Splity Email Notifications
+- `src/lib/notificationEmails.ts` — 5 types with Splity voice + HTML templates
+- `src/app/api/cron/notify-email/route.ts` — email dispatcher
+- `.github/workflows/notify.yml` — GitHub Actions daily 9am UTC cron (free)
+- `src/app/api/debug/notify-test/route.ts` — debug test endpoint
+- Sender: `onboarding@resend.dev` (temporary — see pending below)
+- Guardrails: 1/day per user, at-risk once only, priority ordering
+
+### HTML Entity Fixes
+- Fixed `&apos;` / `&amp;` raw text rendering across 34 files
+
+---
+
+## PENDING — Must Complete
+
+### 🔴 Domain: nextsplit.app → Vercel (NOT DONE)
+nextsplit.app registered on Cloudflare (23 Apr 2026).
+Vercel shows "Invalid Configuration" for nextsplit.app.
+
+**Next step:** In Vercel Domains page, tap `nextsplit.app` row → **DNS Records** tab → **Manual setup** → add the records it shows into Cloudflare DNS.
+
+OR: Change Cloudflare nameservers to Vercel's:
+- `ns1.vercel-dns.com`
+- `ns2.vercel-dns.com`
+Then re-add Resend DNS records in Vercel DNS panel.
+
+### 🔴 Resend Domain: nextsplit.app (PENDING PROPAGATION)
+DNS records added to Cloudflare but status shows "Pending".
+Check resend.com/domains — when green, run:
+```bash
+sed -i 's/onboarding@resend.dev/coach@nextsplit.app/g' \
+  src/app/api/cron/notify-email/route.ts \
+  src/app/api/cron/lifecycle-emails/route.ts \
+  src/app/api/debug/notify-test/route.ts
+git add -A && git commit -m "feat: switch email sender to coach@nextsplit.app"
+git push origin main
 ```
-[pending]    feat: dark mode toggle on all tab headers
-036cbf1      fix: dark mode higher specificity CSS overrides
-bf6c56c      Phase 5B: Strava — fix callback URL, disconnect button
-f4c10b7      Phase 5A: onboarding polish — entry screen, progress bars, animations
-5a202cb      Phase 4: PB history card, dark mode global overrides, accessibility
-a81ce1d      fix: remove cron for Hobby plan compatibility
-589e7e6      Phase 3: share card wired, plan completion ceremony, push notifications
-55aeb73      Phase 2: contextual fuel card, pre-race AI brief, adaptive suggestions
-4c55fd0      Phase 1: settings, plan history, plan switching, units/dark mode
-68d68f1      Phase 0: CSS tokens, Toast, ErrorBoundary, units utility
+
+### 🟡 GitHub Secret: CRON_SECRET
+Add to: github.com/NextSplit/Nextsplit-v2 → Settings → Secrets → Actions → New secret
+- Name: `CRON_SECRET`
+- Value: same as Vercel CRON_SECRET env var
+
+### 🟡 Buy nextsplit.co.uk
+Redirect to nextsplit.app. ~£5/year. Do before launch.
+
+### 🟡 SQL: Add missing column if not present
+```sql
+ALTER TABLE profiles
+ADD COLUMN IF NOT EXISTS notif_at_risk_reengagement boolean DEFAULT true;
 ```
 
-## Phases complete
-- Phase 0 ✅ CSS tokens, Toast, ErrorBoundary, units
-- Phase 1 ✅ Settings, plan history, switching, units/dark mode prefs
-- Phase 2 ✅ Fuel card, PreRaceBrief, AdaptiveSuggestions
-- Phase 3 ✅ Haptics, ShareSessionCard wired, push notifications, plan completion ceremony
-- Phase 4 ✅ PB history card, dark mode CSS overrides, accessibility
-- Phase 5A ✅ Onboarding polish — entry screen redesign, progress bars, animations across all 4 flows
-- Phase 5B ✅ Strava — fixed callback URL bug (/auth/strava/callback), disconnect button, improved UI
-- Phase 5B+ ✅ Dark mode toggle (sun/moon) on all 5 tab headers, persists via localStorage
+### 🟡 Stripe keys
+Add to Vercel env vars before any paid features go live.
 
-## Vercel setup
-- Project: nextsplit-v2 (nextsplit-v2.vercel.app)
-- Hobby plan — cron removed from vercel.json
-- Auto-deploy broken — open deploy hook URL after each push to trigger
-- Env vars set: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  NEXT_PUBLIC_SITE_URL, NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  VAPID_PRIVATE_KEY, VAPID_EMAIL, CRON_SECRET
-- ANTHROPIC_API_KEY: NOT SET (AI features skip gracefully)
-- STRAVA_CLIENT_ID / STRAVA_CLIENT_SECRET: NOT SET (Strava UI shows but connect will fail)
+---
 
-## VAPID keys (in Vercel env)
-- Public: BCfA02eIMUzW0dHw5KLiw7SDunfQNEcsfJS8BE7Z9hulEKluKwc5syOb-oBxjF2DJoZKdsZR8SWaiIFT0Eu0LCI
+## Environment Variables
 
-## Known issues / to activate later
-- ANTHROPIC_API_KEY — add to Vercel to enable PreRaceBrief, AdaptiveSuggestions, CoachingCard
-- STRAVA_CLIENT_ID + STRAVA_CLIENT_SECRET — need Strava developer app + add redirect URI:
-  https://nextsplit-v2.vercel.app/auth/strava/callback
-- Push notifications cron removed — manual send works via /api/notifications/send
-- Dark mode CSS overrides use [class*="bg-white"] attribute selectors — may still miss
-  some inline style backgrounds. If any remain, target them individually in globals.css
+| Variable | Vercel | GitHub Secrets |
+|---|---|---|
+| SUPABASE_URL | ✅ | — |
+| SUPABASE_ANON_KEY | ✅ | — |
+| SUPABASE_SERVICE_ROLE_KEY | ✅ | — |
+| RESEND_API_KEY | ✅ | — |
+| CRON_SECRET | ✅ | ❌ MISSING |
+| NEXT_PUBLIC_VAPID_PUBLIC_KEY | ❌ | — |
+| VAPID_PRIVATE_KEY | ❌ | — |
 
-## Next tasks — Phase 5C + beyond
-- 5C: PWA — install prompt (beforeinstallprompt), offline page, better manifest
-- 6: Final polish pass — any remaining dark mode gaps, animation smoothness
-- 7: ANTHROPIC_API_KEY setup when ready → AI features come alive
+---
 
-## Key files
-- Today:       src/app/today/TodayClient.tsx
-- Stats:       src/app/dashboard/StatsClient.tsx
-- Profile:     src/app/profile/ProfileClient.tsx
-- Fuel:        src/app/nutrition/NutritionClient.tsx
-- Plan:        src/app/plan/PlanClient.tsx
-- Settings:    src/app/settings/SettingsClient.tsx
-- Onboarding:  src/app/onboarding/ (OnboardingEntry.tsx + 4 sub-flows)
-- Components:  DarkModeToggle.tsx, OnboardingProgress.tsx, ShareSessionCard.tsx,
-               PlanCompletionCeremony.tsx, PreRaceBrief.tsx, AdaptiveSuggestions.tsx,
-               FocusMode.tsx, StravaSyncButton.tsx
-- Hooks:       useActivePlan.ts, useProfile.ts, usePushNotifications.ts
-- Lib:         haptics.ts, units.ts, rpg.ts, personalBests.ts
+## Key File Paths
 
-## Build commands
-  npm run build
-  npx tsc --noEmit
-  npm run dev
+```
+Design:
+src/app/globals.css                          ← design tokens
+src/components/Splity.tsx                    ← Splity SVG character
+
+Today:
+src/app/today/TodayClient.tsx
+src/app/today/TodayHeader.tsx                ← Splity coaching line
+src/app/today/TodayBelowFold.tsx
+src/components/FuelPlanCard.tsx
+src/components/SessionCard.tsx
+src/components/LogModal.tsx
+
+Plan:
+src/app/plan/PlanClient.tsx
+src/components/plan/WeekRow.tsx
+src/components/plan/InlineDayRow.tsx         ← NEW this session
+
+Squad:
+src/app/squad/SquadPageClient.tsx
+src/app/api/squad/route.ts
+
+Notifications:
+src/lib/notificationEmails.ts               ← Splity email templates
+src/lib/notifications.ts                    ← Push notification copy
+src/app/api/cron/notify-email/route.ts      ← Email cron
+src/app/api/debug/notify-test/route.ts      ← Debug test
+.github/workflows/notify.yml                ← GitHub Actions cron
+```
+
+---
+
+## Architecture
+
+```
+Next.js 15 + Supabase + Vercel (hobby)
+├── Auth: email + Google OAuth
+├── DB: 9-table Supabase schema with RLS
+├── Plans: 17 seeded templates + AI bespoke
+├── Notifications: Resend email via GitHub Actions (free cron)
+├── Payments: Stripe (not yet wired)
+└── Strava: OAuth connect (Settings page)
+```
+
+**Deploy:** GitHub push → CI (TS + tests) → Vercel auto-deploy  
+**Never** manually promote in Vercel dashboard.
+
+---
+
+## Test Account
+- Profile ID: `71ac42c2-543a-4672-ac34-e8221c5f071d`
+- Email: `nextsplitplans@gmail.com`
+- Squad "Tatata" exists in DB
+- `notifications_enabled = true`
+
+---
+
+## What's Next (Priority Order)
+
+1. Complete nextsplit.app → Vercel domain setup
+2. Resend domain verification → switch sender to coach@nextsplit.app
+3. Add CRON_SECRET to GitHub secrets
+4. Test notification email: visit /api/debug/notify-test while logged in
+5. Buy nextsplit.co.uk
+6. Undo after logging (8-second undo toast — spec exists, not wired)
+7. Today tab "all done" Splity celebration state
+8. Settings page full light mode audit
+9. Stripe keys + paywall
+10. Alpha user invites
