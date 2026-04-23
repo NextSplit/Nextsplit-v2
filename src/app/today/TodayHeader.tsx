@@ -51,7 +51,7 @@ export function TodayHeader({
 
   return (
     <div className="sticky top-0 z-40 border-b"
-      style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+      style={{ background: 'linear-gradient(180deg, #fff5f7 0%, var(--color-surface) 100%)', borderColor: 'var(--color-border)' }}>
       <div className="max-w-lg mx-auto px-4 pt-12 pb-3">
 
         {/* Top row — brand + streak + settings */}

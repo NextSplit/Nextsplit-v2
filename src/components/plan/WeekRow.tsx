@@ -92,17 +92,16 @@ export default function WeekRow({ week, status, logs, gymLogs, todayDayIndex, we
       ref={weekRef}
       className="rounded-2xl overflow-hidden transition-all"
       style={{
-        background: 'var(--color-surface)',
-        border: `1px solid ${isCurrent ? 'var(--ns-cobalt)' : 'var(--color-border)'}`,
-        boxShadow: isCurrent ? '0 0 0 1px var(--ns-cobalt-light)' : 'none',
-        opacity: isCompleted ? 0.65 : 1,
+        background: isCurrent ? '#eff6ff' : isCompleted ? '#f0fdf4' : 'var(--color-surface)',
+        border: `1.5px solid ${isCurrent ? 'var(--ns-cobalt)' : isCompleted ? '#86efac' : 'var(--color-border)'}`,
+        boxShadow: isCurrent ? '0 2px 12px rgba(37,99,235,0.1)' : 'none',
       }}
     >
       {/* Week header — tap to expand/collapse */}
       <button
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
-        style={{ background: isCurrent ? 'var(--ns-cobalt-light)' : 'transparent' }}
+        style={{ background: 'transparent' }}
       >
         {/* Week number badge */}
         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-sm"
@@ -153,7 +152,7 @@ export default function WeekRow({ week, status, logs, gymLogs, todayDayIndex, we
         <div className="flex items-center gap-2 flex-shrink-0">
           {totalSessions > 0 && (
             <span className="text-[11px] font-data font-bold"
-              style={{ color: doneSessions === totalSessions ? '#16a34a' : 'var(--color-text-tertiary)' }}>
+              style={{ color: doneSessions === totalSessions ? '#16a34a' : isCurrent ? 'var(--ns-cobalt)' : 'var(--color-text-tertiary)' }}>
               {doneSessions}/{totalSessions}
             </span>
           )}
