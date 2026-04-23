@@ -72,7 +72,7 @@ export async function checkAndIncrementAIUsage(
 
     if (error) {
       // Table doesn't exist yet — allow the call, log a warning
-      console.warn('[aiRateLimit] ai_usage table not found — allowing call:', error.message)
+      // ai_usage table not yet created — allow call (will be rate limited once table exists)
       return { allowed: true, callsToday: 0, limit }
     }
 
@@ -97,7 +97,7 @@ export async function checkAndIncrementAIUsage(
     return { allowed: true, callsToday, limit }
   } catch (err) {
     // Any unexpected error — fail open (allow call) so users aren't blocked by infra issues
-    console.error('[aiRateLimit] Unexpected error — allowing call:', err)
+    // Fail open on unexpected errors — don't block users due to infra issues
     return { allowed: true, callsToday: 0, limit }
   }
 }

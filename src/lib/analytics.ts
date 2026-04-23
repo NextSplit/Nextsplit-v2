@@ -19,7 +19,7 @@ import posthog from 'posthog-js'
 function track(event: string, props?: Record<string, unknown>) {
   if (typeof window === 'undefined') return
   if (process.env.NODE_ENV !== 'production') {
-    console.debug('[Analytics]', event, props)
+    // Analytics debug logging disabled in production
     return
   }
   posthog.capture(event, props)

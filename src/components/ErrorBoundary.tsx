@@ -26,7 +26,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error(`[ErrorBoundary: ${this.props.label ?? 'unknown'}]`, error, info)
+    Sentry.captureException(error, { extra: { componentStack: info.componentStack, label: this.props.label } })
     const eventId = Sentry.captureException(error, {
       contexts: { react: { componentStack: info.componentStack } },
       tags: { boundary: this.props.label ?? 'unknown' },

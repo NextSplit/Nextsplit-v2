@@ -21,7 +21,7 @@ export function usePushNotifications() {
 
   const subscribe = useCallback(async (): Promise<boolean> => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      console.warn('[push] Not supported in this browser')
+      // Push notifications not supported in this browser
       setStatus('error')
       return false
     }
@@ -63,7 +63,7 @@ export function usePushNotifications() {
       setStatus('subscribed')
       return true
     } catch (err) {
-      console.error('[push] Subscribe failed:', err)
+      // Push subscribe failed — user may have denied permission
       setStatus('error')
       return false
     }
@@ -80,7 +80,7 @@ export function usePushNotifications() {
       setStatus('idle')
       return true
     } catch (err) {
-      console.error('[push] Unsubscribe failed:', err)
+      // Push unsubscribe failed — subscription may already be invalid
       return false
     }
   }, [])

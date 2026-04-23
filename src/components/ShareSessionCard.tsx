@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 'use client'
 
 import { useRef, useState } from 'react'
@@ -188,7 +189,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
         URL.revokeObjectURL(url)
       }
     } catch (e) {
-      if ((e as Error).name !== 'AbortError') console.error('Share failed', e)
+      if ((e as Error).name !== 'AbortError') Sentry.captureException(e, { extra: { context: 'Share session' } })
     } finally {
       setSharing(false)
     }

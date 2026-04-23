@@ -18,7 +18,7 @@ export default function ServiceWorkerRegistrar() {
         reg.update().catch(() => {/* network may be offline */})
       })
       .catch((err) => {
-        console.warn('[SW] Registration failed:', err)
+        // Service worker registration failed — browser may not support it
       })
   }, [])
 

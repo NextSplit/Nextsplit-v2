@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -109,7 +110,7 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
       setBrief(result)
     } catch (e) {
       setError('Could not generate brief — try again')
-      console.error(e)
+      Sentry.captureException(e)
     } finally {
       setLoading(false)
     }

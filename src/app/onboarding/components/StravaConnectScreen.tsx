@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -143,7 +144,7 @@ export function StravaConnectScreen() {
       setPrefill(analysed)
       setStatus('connected')
     } catch (err) {
-      console.error('Strava import error:', err)
+      Sentry.captureException(err, { extra: { context: 'Strava import' } })
       setError('Couldn\'t fetch your Strava data — you can fill in manually instead.')
       setStatus('idle')
     }

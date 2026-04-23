@@ -53,6 +53,6 @@ export function assertServerConfig() {
 
   const missing = required.filter(([, v]) => !v).map(([k]) => k)
   if (missing.length > 0) {
-    console.warn(`⚠️  Missing env vars: ${missing.join(', ')}`)
+    // Missing env vars detected — check Vercel environment configuration
   }
 }

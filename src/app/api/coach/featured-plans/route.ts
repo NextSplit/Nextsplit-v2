@@ -49,7 +49,12 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    // TODO: check admin role — for now any authenticated user can set featured (admin only in production)
+    // Admin-only: verify user is in ADMIN_EMAILS list
+    const { data: { session } } = await supabase.auth.getSession()
+    const userEmail = session?.user?.email ?? ''
+    const isAdmin = process.env.ADMIN_EMAILS?.split(',').map((e: string) => e.trim()).includes(userEmail)
+    if (!isAdmin) return NextResponse.json({ error: 'Admin only' }, { status: 403 })
+
     const parsed = CoachFeaturedPlansSchema.safeParse(await req.json())
     if (!parsed.success) return zodError(parsed.error)
     const { template_ids, week_start, feature_type } = parsed.data
