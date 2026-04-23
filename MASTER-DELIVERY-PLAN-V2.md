@@ -46,21 +46,30 @@ Pillar 3 — Coaching Marketplace + Hub
 | Area | What's built | Commit |
 |---|---|---|
 | Core daily loop | Today, Plan, logging, undo, date nav, adaptation | Various |
-| Character system | 7 classes, XP, 15 levels, 32 badges, class reveal, new SVG avatar | bc750fb |
+| Character system | 7 classes, XP, 15 levels, 32 badges, class reveal, SVG avatars | bc750fb |
 | Coach platform | Squad view, athlete detail, voice messages, plan builder | Various |
 | Community | Clubs, challenges, races, leaderboard, feed with reactions | ab4f41a |
 | Onboarding | All 4 paths, VDOT, AI bespoke, lifestyle re-entry | Various |
-| Notifications | 8 types, guardrails, per-type preferences | Various |
+| Notifications | 8 types, guardrails, per-type preferences, Splity voice | 718c45c |
+| Notification emails | 5 types via Resend, GitHub Actions daily cron (free) | 93b9e0f |
 | Lifecycle emails | 7-email sequence, Resend | Various |
 | Referral | Built, behind NEXT_PUBLIC_REFERRAL_ENABLED flag | Various |
 | Analytics | 25+ PostHog events, AARRR | Various |
 | Legal | Cookie consent, privacy, terms, medical disclaimer | 58a2d6b |
 | API security | Zod validation on all 27 routes | e7daf56 |
-| Dark theme | Forest-dark throughout (auth, onboarding, all tabs) | ced8f89 |
+| **Design system v2** | **Light mode, ember CTAs, Splity mascot, 150+ files** | **9179f8a** |
+| Splity character | SVG running shoe mascot, 4 moods, coach voice | d35ef48 |
+| Today tab | Sessions hero, Splity coaching line, collapsible fuel plan | 830e162 |
+| Plan tab | Inline week/day/session expand, DayDrawer removed | 6cf83e9 |
+| Log modal | Full-screen, type-in inputs, X dismiss | 918d1e9 |
+| Character tab | HeroCard light mode, visible stat bars, ember XP | d35ef48 |
+| Share card | Light design, ember pill, gold XP badge | 167b2cd |
+| Squad dashboard | PGRST200 fixed — no nested joins | 020da3a |
 | Explore tab | Coaches / Plans / AI Coach | 8efe231 |
 | Fuel tab | Pre-run/during/recovery/hydration guide | 3ffa892 |
 | Seed pipeline | Admin seed page working (ADMIN_EMAILS=nextsplitplans@gmail.com) | 3ffa892 |
-| Deploy pipeline | GitHub Actions → Vercel (webhook was broken, now fixed) | 5d3d9ac |
+| Deploy pipeline | GitHub Actions → Vercel (webhook fixed) | 5d3d9ac |
+| Domain | nextsplit.app registered on Cloudflare (23 Apr 2026) | — |
 
 ### Critical bug fixes applied
 | Bug | Fix | Commit |
@@ -75,12 +84,25 @@ Pillar 3 — Coaching Marketplace + Hub
 2. **Verify VDOT** — new signup → enter 5K time → activate plan → check paces personalised
 3. **ICO registration** — ico.org.uk — £40
 4. **Company formation** — Companies House — £12
-5. **RESEND_API_KEY** — add to Vercel env vars
+5. **nextsplit.app → Vercel** — add custom domain via manual DNS setup in Cloudflare
+6. **Resend domain verify** — check resend.com/domains, then switch sender to coach@nextsplit.app
+7. **CRON_SECRET → GitHub secrets** — same value as Vercel env var
+8. **Buy nextsplit.co.uk** — redirect to nextsplit.app (~£5/year)
 
-### 🟡 Remaining UI polish (low priority, continue in background)
-- SessionCard done/pending states using `bg-emerald-50` — partially fixed
-- Community page explicit dark styling on borders/text
-- Settings page edge cases
+### ✅ Completed since last update (Session 4)
+- RESEND_API_KEY — added to Vercel ✅
+- Design system v2 — full light mode (150+ files) ✅
+- Splity mascot — SVG character, 4 moods ✅
+- Today/Plan/Log/Character tabs rebuilt ✅
+- Squad PGRST200 bug fixed ✅
+- Splity email notifications via GitHub Actions ✅
+- HTML entity bugs fixed (34 files) ✅
+
+### 🟡 Remaining UI polish
+- Settings page — full light mode audit (870 lines)
+- Undo after logging — 8-second undo toast (spec exists, not wired)
+- Today "all done" state — Splity celebration
+- First-run experience for new users with no plan
 
 ---
 
@@ -601,7 +623,7 @@ STRIPE_WEBHOOK_SECRET
 STRIPE_CONNECT_CLIENT_ID  ← for coach payouts
 
 # Resend
-RESEND_API_KEY  ← ⚠️ still needs adding to Vercel
+RESEND_API_KEY  ← ✅ set in Vercel
 
 # Feature flags
 NEXT_PUBLIC_PREMIUM_ENFORCED=false  ← flip to true at Phase H

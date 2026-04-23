@@ -96,8 +96,9 @@ If no events in Sentry: check NEXT_PUBLIC_SENTRY_DSN in Vercel environment.
 
 ## F5 — Pre-Alpha Infrastructure
 
-- [ ] RESEND_API_KEY is set in Vercel → test email sends
-- [ ] Verify lifecycle email cron is active (check Vercel cron logs)
+- [x] RESEND_API_KEY is set in Vercel → test email sends ✅
+- [ ] Verify lifecycle email cron fires (GitHub Actions → notify.yml, runs 9am UTC)
+- [ ] Test notification email: visit /api/debug/notify-test while logged in → should return ok:true
 - [ ] Run pending SQL migration: supabase/migrations/phase-12-referral.sql
 - [ ] Run npx tsx scripts/seed-plans.ts (if not yet run)
 - [ ] ICO registration complete (ico.org.uk — £40)

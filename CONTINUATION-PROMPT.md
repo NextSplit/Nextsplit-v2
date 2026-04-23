@@ -21,7 +21,7 @@ All must be clean before proceeding.
 
 ## Step 2 — Read the docs (in order)
 
-1. **`HANDOFF-7.md`** — Current build state, environment variables, DB schema,
+1. **`HANDOFF.md (latest)`** — Current build state, environment variables, DB schema,
    known issues, legal checklist, what's immediately next. **This is the canonical
    source of truth.** If anything in this prompt conflicts with HANDOFF-7, HANDOFF-7 wins.
 

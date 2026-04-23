@@ -45,7 +45,7 @@ node_modules/.bin/tsc --noEmit      # must show zero errors
 ## MASTER DOCUMENT
 
 The full living product + dev document lives at:
-`/home/claude/nextsplit-v2/HANDOFF-2.md`
+`/home/claude/nextsplit-v2/HANDOFF.md` (latest — updated each session)
 
 **Read this at the start of every session.** It contains:
 - Immediate next actions
