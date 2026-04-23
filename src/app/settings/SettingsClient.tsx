@@ -458,7 +458,7 @@ function RunnerColourPicker({ value, onChange }: { value: string; onChange: (c: 
             style={{
               background: c.hex,
               boxShadow: value === c.hex
-                ? \`0 0 0 3px var(--color-surface), 0 0 0 5px \${c.hex}\`
+                ? `0 0 0 3px var(--color-surface), 0 0 0 5px ${c.hex}`
                 : '0 2px 6px rgba(0,0,0,0.15)',
             }}
           >
@@ -470,9 +470,9 @@ function RunnerColourPicker({ value, onChange }: { value: string; onChange: (c: 
       </div>
       {/* Preview */}
       <div className="mt-4 rounded-xl px-4 py-3 flex items-center gap-3 border"
-        style={{ background: \`\${value}10\`, borderColor: \`\${value}30\` }}>
+        style={{ background: `${value}10`, borderColor: `${value}30` }}>
         <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg border-2"
-          style={{ borderColor: value, background: \`\${value}15\` }}>
+          style={{ borderColor: value, background: `${value}15` }}>
           🏃
         </div>
         <div>
