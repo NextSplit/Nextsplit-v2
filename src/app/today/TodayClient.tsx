@@ -326,7 +326,7 @@ export default function TodayClient() {
 
   return (
     <div
-      className="min-h-screen bg-[#f8f8f6] pb-24"
+      className="min-h-screen pb-24" style={{ background: "var(--color-bg)" }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -500,7 +500,7 @@ export default function TodayClient() {
               const gymSessions = planDay?.sessions?.filter((s: PlanSession) => s?.c?.startsWith('gym')) ?? []
               if (gymSessions.length > 0) {
                 return (
-                  <div className="bg-white rounded-2xl border border-gray-100 p-5">
+                  <div className="rounded-2xl p-5" style={{ background: 'rgba(139,92,246,0.10)', border: '1.5px solid rgba(139,92,246,0.25)' }}>
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-base">🏋️</span>
                       <p className="text-sm font-bold text-gray-900">Gym day</p>
@@ -510,7 +510,7 @@ export default function TodayClient() {
                       {gymSessions.map((s: PlanSession, i: number) => (
                         <button key={i}
                           onClick={() => router.push(`/gym/live/${weekN}/${planDayIndex}/${i}`)}
-                          className="w-full flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-left">
+                          className="w-full flex items-center gap-3 rounded-xl px-4 py-3 text-left" style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)" }}>
                           <span className="text-xl">{getSessionType(s.c).emoji}</span>
                           <div className="flex-1">
                             <p className="text-sm font-bold text-amber-900">{s.n}</p>
@@ -524,10 +524,11 @@ export default function TodayClient() {
                 )
               }
               return (
-                <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+                <div className="rounded-2xl p-6 text-center"
+                  style={{ background: 'rgba(156,163,175,0.10)', border: '1.5px solid rgba(156,163,175,0.2)' }}>
                   <div className="text-4xl mb-3">😴</div>
-                  <p className="text-sm font-semibold text-gray-700">Rest day</p>
-                  <p className="text-xs text-gray-400 mt-1">Recovery is training too.</p>
+                  <p className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>Rest day</p>
+                  <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>Recovery is training too.</p>
                 </div>
               )
             })()}

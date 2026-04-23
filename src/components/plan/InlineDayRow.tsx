@@ -6,14 +6,14 @@ import type { PlanDay, PlanSession, TrainingLog } from '@/types/database'
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-const SESSION_STYLE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  easy:     { bg: '#dcfce7', text: '#15803d', dot: '#22c55e', label: 'Easy Run' },
-  tempo:    { bg: '#fef9c3', text: '#a16207', dot: '#eab308', label: 'Tempo' },
-  interval: { bg: '#ffedd5', text: '#c2410c', dot: '#f97316', label: 'Intervals' },
-  long:     { bg: '#dbeafe', text: '#1d4ed8', dot: '#3b82f6', label: 'Long Run' },
-  recovery: { bg: '#f0fdf4', text: '#166534', dot: '#4ade80', label: 'Recovery' },
-  gym:      { bg: '#ede9fe', text: '#6d28d9', dot: '#8b5cf6', label: 'Strength' },
-  rest:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Rest' },
+const SESSION_STYLE: Record<string, { bg: string; border: string; dot: string; label: string }> = {
+  easy:     { bg: 'rgba(34,197,94,0.10)',   border: 'rgba(34,197,94,0.3)',   dot: '#22c55e', label: 'Easy Run' },
+  tempo:    { bg: 'rgba(234,179,8,0.10)',   border: 'rgba(234,179,8,0.3)',   dot: '#eab308', label: 'Tempo' },
+  interval: { bg: 'rgba(249,115,22,0.10)',  border: 'rgba(249,115,22,0.3)',  dot: '#f97316', label: 'Intervals' },
+  long:     { bg: 'rgba(59,130,246,0.10)',  border: 'rgba(59,130,246,0.3)',  dot: '#3b82f6', label: 'Long Run' },
+  recovery: { bg: 'rgba(74,222,128,0.10)',  border: 'rgba(74,222,128,0.3)',  dot: '#4ade80', label: 'Recovery' },
+  gym:      { bg: 'rgba(139,92,246,0.10)',  border: 'rgba(139,92,246,0.3)',  dot: '#8b5cf6', label: 'Strength' },
+  rest:     { bg: 'rgba(107,114,128,0.06)', border: 'rgba(107,114,128,0.15)',dot: '#9ca3af', label: 'Rest' },
 }
 
 function getStyle(code: string | null | undefined) {
@@ -62,7 +62,7 @@ export default function InlineDayRow({ day, dayIndex, weekN, logs, gymLogs, isTo
         onClick={onToggle}
         className="w-full flex items-center gap-3 px-4 py-3 text-left"
         style={{
-          background: isToday ? 'rgba(232,93,38,0.04)' : 'transparent',
+          background: isToday ? 'rgba(255,77,109,0.06)' : 'transparent',
         }}
       >
         {/* Day name */}
@@ -151,17 +151,21 @@ export default function InlineDayRow({ day, dayIndex, weekN, logs, gymLogs, isTo
                 {/* Session header */}
                 <button
                   onClick={() => setOpenSessionIdx(isSessionOpen ? null : sessIdx)}
-                  className="w-full flex items-center gap-3 p-3 text-left"
+                  className="w-full flex items-center gap-3 p-3 text-left rounded-xl mx-2 mb-1"
+                  style={done
+                    ? { background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }
+                    : { background: style.bg, border: `1.5px solid ${style.border}` }
+                  }
                 >
                   <div className="w-1.5 h-8 rounded-full flex-shrink-0"
-                    style={{ background: done ? '#22c55e' : style.dot }} />
+                    style={{ background: done ? '#22c55e' : style.dot, boxShadow: done ? 'none' : `0 0 6px ${style.dot}60` }} />
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-black uppercase tracking-widest mb-0.5"
-                      style={{ color: style.text }}>
+                      style={{ color: done ? 'var(--color-text-tertiary)' : style.dot }}>
                       {style.label}{session.km > 0 ? ` · ${fmtKm(session.km)}` : ''}
                     </p>
                     <p className="text-sm font-bold leading-tight"
-                      style={{ color: 'var(--color-text-primary)' }}>
+                      style={{ color: done ? 'var(--color-text-secondary)' : 'var(--color-text-primary)' }}>
                       {decodeHtml(session.n ?? '')}
                     </p>
                   </div>
