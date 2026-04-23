@@ -80,14 +80,17 @@ export default function PushPrompt({ firstSessionAt, displayName }: Props) {
         ) : (
           <>
             <div className="flex items-start gap-3 mb-3">
-              <div className="text-2xl flex-shrink-0">🔔</div>
+              <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-xl"
+                style={{ background: 'var(--ns-track-light)' }}>
+                👟
+              </div>
               <div>
                 <p className="text-sm font-bold mb-0.5" style={{ color: 'var(--color-text-primary)' }}>
-                  {name ? `Nice work, ${name}.` : 'Nice work.'} Stay consistent?
+                  {name ? `Want me to remind you, ${name}?` : 'Want session reminders?'}
                 </p>
+                <p className="text-[10px] font-semibold mb-1" style={{ color: 'var(--color-text-tertiary)' }}>Splity · your coach</p>
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
-                  We'll remind you before your next session and when your streak's at risk.
-                  Never more than once a day.
+                  I'll message before sessions and if your streak is at risk. Once a day max.
                 </p>
               </div>
             </div>

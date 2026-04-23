@@ -1,5 +1,5 @@
 /**
- * NextSplit Notification Engine
+ * NextSplit Notification Engine — Splity voice
  * Growth Pillar spec: "Timed to their training. Never to our convenience."
  *
  * 8 notification types, strict guardrails:
@@ -7,17 +7,20 @@
  * - Never 10pm–7am in user's local timezone
  * - At-risk notification sent once only
  * - User can configure per-type in Settings
+ *
+ * All copy is written as Splity — warm, expert, direct.
+ * Never accusatory, never generic, never spammy.
  */
 
 export type NotificationType =
-  | 'session_reminder'      // 60min before typical session time
-  | 'adaptation_alert'      // plan changed (auto or user-triggered)
+  | 'session_reminder'      // before scheduled session
+  | 'adaptation_alert'      // plan changed
   | 'weekly_recap'          // Sunday evening
-  | 'at_risk_reengagement'  // 4 days without login — sent once only
-  | 'race_countdown'        // final 4 weeks, weekly
+  | 'at_risk_reengagement'  // 4 days without login — once only
+  | 'race_countdown'        // final 4 weeks
   | 'streak_at_risk'        // no log today, streak ≥ 3
-  | 'coach_message'         // new voice/text from coach
-  | 'class_revealed'        // runner class ready to reveal
+  | 'coach_message'         // new message from coach
+  | 'class_revealed'        // runner class ready
 
 export interface NotificationPayload {
   type:    NotificationType
@@ -27,171 +30,173 @@ export interface NotificationPayload {
   icon?:   string
 }
 
-/**
- * Build notification payload per type.
- * All copy is coach-voice — warm, personal, never accusatory.
- * Growth Pillar spec quotes included as comments.
- */
 export function buildNotification(
   type: NotificationType,
   ctx: {
-    firstName?:    string
-    sessionName?:  string
-    sessionKm?:    number
-    planName?:     string
-    daysToRace?:   number
-    weekN?:        number
-    totalWeeks?:   number
-    streakDays?:   number
-    coachName?:    string
+    firstName?:      string
+    sessionName?:    string
+    sessionKm?:      number
+    planName?:       string
+    daysToRace?:     number
+    weekN?:          number
+    totalWeeks?:     number
+    streakDays?:     number
+    coachName?:      string
     adaptationNote?: string
-    classEmoji?:   string
-    className?:    string
+    classEmoji?:     string
+    className?:      string
   }
 ): NotificationPayload {
   const name = ctx.firstName ?? 'Runner'
 
   switch (type) {
-    case 'session_reminder':
-      // Spec: "60 minutes before their logged session time. Personalised to actual training pattern."
-      // Spec copy: "Easy run today, Alex — 8km at your own pace. Best done before the day gets away from you."
+
+    case 'session_reminder': {
+      // Splity voice: specific, actionable, no fluff
+      const titles = ctx.sessionName ? [
+        `${ctx.sessionName} today, ${name} 👟`,
+        `Time to run, ${name}`,
+        `${name} — your session's waiting`,
+      ] : [
+        `Training day, ${name} 👟`,
+        `Splity here — run time, ${name}`,
+      ]
+      const title = titles[new Date().getMinutes() % titles.length]
+
+      const body = ctx.sessionKm && ctx.sessionName
+        ? `${ctx.sessionName} · ${ctx.sessionKm}km. Get it done before the day gets away from you.`
+        : ctx.sessionName
+        ? `${ctx.sessionName} is on the plan today. Start easy, find your rhythm.`
+        : `Your session is ready. Keep the momentum going.`
+
+      return { type, title, body, url: '/today' }
+    }
+
+    case 'streak_at_risk': {
+      const streak = ctx.streakDays ?? 0
+      const title = streak >= 7
+        ? `${streak} days, ${name} — don't let it slip 🔥`
+        : `Streak at risk, ${name} 🔥`
+      const body = streak >= 14
+        ? `${streak} days straight. Log something today — even 10 minutes counts.`
+        : streak >= 7
+        ? `You've been consistent for ${streak} days. Today matters. Even a short run keeps it alive.`
+        : `Your ${streak}-day streak is on the line. Splity believes in you. Log today.`
+      return { type, title, body, url: '/today' }
+    }
+
+    case 'at_risk_reengagement': {
+      // Warm, one-shot only, zero pressure
+      const titles = [
+        `Still here for you, ${name}`,
+        `Your plan's waiting, ${name}`,
+        `No catch-up needed, ${name}`,
+      ]
+      const bodies = [
+        `Your plan is exactly where you left it. Pick up whenever you're ready — no catch-up required.`,
+        `Life gets in the way. That's fine. Your plan adjusts. Come back when you're ready.`,
+        `Splity here — your training is paused, not cancelled. Ready when you are.`,
+      ]
+      const i = new Date().getDay() % 3
+      return { type, title: titles[i], body: bodies[i], url: '/today' }
+    }
+
+    case 'weekly_recap': {
+      const title = ctx.weekN && ctx.totalWeeks
+        ? `Week ${ctx.weekN} done, ${name} ✓`
+        : `Week done, ${name} ✓`
+      const body = ctx.weekN && ctx.totalWeeks
+        ? `${ctx.weekN} of ${ctx.totalWeeks} weeks complete${ctx.planName ? ` on ${ctx.planName}` : ''}. See how this week went.`
+        : `Another training week in the books. Check your recap and see what's coming next.`
+      return { type, title, body, url: '/today' }
+    }
+
+    case 'race_countdown': {
+      const days = ctx.daysToRace ?? 0
+      const weeks = Math.ceil(days / 7)
+      const title = days <= 7
+        ? `Race week, ${name} 🏁`
+        : `${weeks} weeks to go, ${name} 🏁`
+      const body = days <= 7
+        ? `This is race week. Trust your training. Splity's got you.`
+        : days <= 14
+        ? `Two weeks out. The hard work is done — now it's about staying sharp.`
+        : `${weeks} weeks to race day. Every session now is an investment.`
+      return { type, title, body, url: '/today' }
+    }
+
+    case 'adaptation_alert': {
       return {
         type,
-        title: ctx.sessionName
-          ? `${ctx.sessionName} today, ${name}`
-          : `Training day, ${name}`,
-        body: ctx.sessionKm && ctx.sessionName
-          ? `${ctx.sessionName} — ${ctx.sessionKm}km. Best done before the day gets away from you.`
-          : ctx.planName
-          ? `Your ${ctx.planName} session is ready. Keep the momentum going.`
-          : 'Your session is ready. Best done before the day gets away from you.',
+        title: `Plan updated, ${name}`,
+        body: ctx.adaptationNote ?? 'Your plan has been adjusted to keep you on track. Tap to see what changed.',
         url: '/today',
       }
+    }
 
-    case 'adaptation_alert':
-      // Spec: "What changed and why — in one line. Transparency builds trust."
-      // Spec copy: "Plan updated — moved Thursday's intervals to Saturday..."
+    case 'coach_message': {
       return {
         type,
-        title: 'Plan updated',
-        body: ctx.adaptationNote ?? 'Your plan has been adjusted to keep you on track.',
+        title: ctx.coachName ? `Message from ${ctx.coachName}` : 'New coaching message',
+        body: `Your coach left you a note. Tap to read it.`,
         url: '/today',
       }
+    }
 
-    case 'weekly_recap':
-      // Spec: "Sunday evening. Feels like a coach's end-of-week message."
+    case 'class_revealed': {
+      const emoji = ctx.classEmoji ?? '🏃'
       return {
         type,
-        title: ctx.planName ? `Week ${ctx.weekN} recap` : 'Weekly recap',
-        body: ctx.planName && ctx.weekN && ctx.totalWeeks
-          ? `Week ${ctx.weekN} of ${ctx.totalWeeks} done. Your ${ctx.planName} is on track.`
-          : 'Another training week done. Check how it went and what\'s coming next.',
-        url: '/today',
-      }
-
-    case 'at_risk_reengagement':
-      // Spec: "Warm, never accusatory. One gentle notification. No repeat if ignored."
-      // Spec copy: "Your plan is still here, Alex. Pick up where you left off whenever you're ready."
-      return {
-        type,
-        title: `Still here, ${name}`,
-        body: `Your plan is still here. Pick up wherever you're ready — no catch-up required.`,
-        url: '/today',
-      }
-
-    case 'race_countdown':
-      // Spec: "Final 4 weeks. Weekly countdown with taper context."
-      // Spec copy: "3 weeks to race day. Taper has started — the training is done. Trust the work."
-      return {
-        type,
-        title: ctx.daysToRace !== undefined
-          ? `${Math.ceil(ctx.daysToRace / 7)} week${Math.ceil(ctx.daysToRace / 7) !== 1 ? 's' : ''} to race day`
-          : 'Race countdown',
-        body: ctx.daysToRace !== undefined && ctx.daysToRace <= 14
-          ? `${ctx.daysToRace} days to go. Taper has started — the training is done. Trust the work.`
-          : `${ctx.daysToRace} days to race day. Keep the quality sessions, protect the recovery.`,
-        url: '/today',
-      }
-
-    case 'streak_at_risk':
-      // Spec: "One line, warm, no guilt."
-      return {
-        type,
-        title: `${ctx.streakDays}-day streak today, ${name}`,
-        body: 'Log any session to keep it going — even a rest day counts.',
-        url: '/today',
-      }
-
-    case 'coach_message':
-      // Spec: "New voice/text from coach."
-      return {
-        type,
-        title: ctx.coachName ? `Message from ${ctx.coachName}` : 'New coach message',
-        body: 'Your coach left you a note. Tap to read.',
-        url: '/today',
-      }
-
-    case 'class_revealed':
-      // Spec: "After 4 weeks + 6 sessions. Fires at natural app open moment."
-      return {
-        type,
-        title: 'Your runner class is ready',
-        body: ctx.classEmoji && ctx.className
-          ? `${ctx.classEmoji} After 4 weeks of training, NextSplit knows what kind of runner you are. Open to reveal.`
-          : 'Four weeks of training data collected. Open NextSplit to discover your runner class.',
+        title: `Your runner class is ready ${emoji}`,
+        body: ctx.className
+          ? `Splity has classified you as: ${ctx.className}. Tap to reveal.`
+          : `Four weeks of data, one verdict. Tap to see what kind of runner you are.`,
         url: '/profile',
+      }
+    }
+
+    default:
+      return {
+        type,
+        title: `NextSplit · Splity`,
+        body: `Time to check in on your training.`,
+        url: '/today',
       }
   }
 }
 
-/**
- * Guardrail checks — all must pass before sending any notification.
- * Growth Pillar: "The runner's trust in the notification channel is worth more
- * than any individual message."
- */
 export interface GuardrailContext {
   type:               NotificationType
-  userTimezoneOffset: number    // minutes from UTC (e.g. +60 for BST)
+  userTimezoneOffset: number  // minutes from UTC
   lastNotificationAt: Date | null
-  atRiskSentAt:       Date | null  // for at_risk_reengagement one-shot
+  atRiskSentAt:       Date | null
   notificationsEnabled: boolean
-  typePrefs:          Record<string, boolean>  // per-type on/off
+  typePrefs:          Record<string, boolean>
 }
 
 export function passesGuardrails(ctx: GuardrailContext): { ok: boolean; reason?: string } {
-  // Master switch
   if (!ctx.notificationsEnabled) return { ok: false, reason: 'notifications_disabled' }
-
-  // Per-type preference
   if (ctx.typePrefs[ctx.type] === false) return { ok: false, reason: 'type_disabled' }
 
-  // Max 1 notification per day (checked before quiet hours — rate limits are absolute)
+  // Max 1 per day
   if (ctx.lastNotificationAt) {
     const msSince = Date.now() - ctx.lastNotificationAt.getTime()
-    if (msSince < 20 * 3600 * 1000) {
-      return { ok: false, reason: 'rate_limit_1_per_day' }
-    }
+    if (msSince < 20 * 3600 * 1000) return { ok: false, reason: 'rate_limit_1_per_day' }
   }
 
-  // At-risk: sent once only, never again (checked before quiet hours — permanent block)
+  // At-risk: once only
   if (ctx.type === 'at_risk_reengagement' && ctx.atRiskSentAt) {
     return { ok: false, reason: 'at_risk_already_sent' }
   }
 
-  // Quiet hours: never 10pm–7am in user's local time
+  // Quiet hours: never 10pm–7am local
   const nowUtcMs = Date.now()
   const localHour = Math.floor((nowUtcMs + ctx.userTimezoneOffset * 60 * 1000) / (1000 * 3600)) % 24
-  if (localHour >= 22 || localHour < 7) {
-    return { ok: false, reason: 'quiet_hours' }
-  }
+  if (localHour >= 22 || localHour < 7) return { ok: false, reason: 'quiet_hours' }
 
   return { ok: true }
 }
 
-/**
- * Notification preference defaults — all on by default.
- * Users can turn off per-type in Settings.
- */
 export const NOTIFICATION_DEFAULTS: Record<NotificationType, boolean> = {
   session_reminder:     true,
   adaptation_alert:     true,
@@ -204,12 +209,12 @@ export const NOTIFICATION_DEFAULTS: Record<NotificationType, boolean> = {
 }
 
 export const NOTIFICATION_LABELS: Record<NotificationType, { label: string; description: string }> = {
-  session_reminder:     { label: 'Session reminders',     description: 'Before your scheduled training sessions' },
-  adaptation_alert:     { label: 'Plan updates',          description: 'When your plan is adjusted or adapted' },
-  weekly_recap:         { label: 'Weekly recap',          description: 'Sunday evening summary of your week' },
-  at_risk_reengagement: { label: 'Check-in reminder',    description: 'If you haven\'t logged in a few days' },
-  race_countdown:       { label: 'Race countdown',        description: 'Weekly updates in your final 4 weeks before race day' },
-  streak_at_risk:       { label: 'Streak reminder',       description: 'When your training streak is about to break' },
-  coach_message:        { label: 'Coach messages',        description: 'New messages and voice notes from your coach' },
-  class_revealed:       { label: 'Class reveal',          description: 'When your runner class is ready to reveal' },
+  session_reminder:     { label: 'Session reminders',   description: 'Before your scheduled training sessions' },
+  adaptation_alert:     { label: 'Plan updates',         description: 'When your plan is adjusted or adapted' },
+  weekly_recap:         { label: 'Weekly recap',         description: 'Sunday evening summary of your week' },
+  at_risk_reengagement: { label: 'Check-in reminder',   description: 'If you haven\'t logged in a few days (sent once)' },
+  race_countdown:       { label: 'Race countdown',       description: 'Weekly updates in your final 4 weeks' },
+  streak_at_risk:       { label: 'Streak reminder',      description: 'When your training streak is about to break' },
+  coach_message:        { label: 'Coach messages',       description: 'New messages and voice notes from your coach' },
+  class_revealed:       { label: 'Runner class reveal',  description: 'When your runner class is ready to reveal' },
 }
