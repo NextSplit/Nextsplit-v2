@@ -1,5 +1,5 @@
-import * as Sentry from '@/lib/sentry'
 'use client'
+import * as Sentry from '@/lib/sentry'
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'

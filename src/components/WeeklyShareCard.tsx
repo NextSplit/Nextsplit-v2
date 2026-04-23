@@ -1,5 +1,5 @@
-import * as Sentry from '@/lib/sentry'
 'use client'
+import * as Sentry from '@/lib/sentry'
 
 import { useRef, useState } from 'react'
 

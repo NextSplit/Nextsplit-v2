@@ -1,5 +1,5 @@
-import * as Sentry from '@/lib/sentry'
 'use client'
+import * as Sentry from '@/lib/sentry'
 
 import { useState, useEffect } from 'react'
 import type { Race, TrainingLog } from '@/types/database'
