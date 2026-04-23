@@ -1,0 +1,46 @@
+name: Splity Notifications
+
+on:
+  schedule:
+    # 9am UTC daily — Splity sends the right message to the right user
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (check without sending)'
+        required: false
+        default: 'false'
+
+jobs:
+  notify:
+    name: Send Splity notification emails
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Send notification emails
+        run: |
+          echo "Triggering Splity notifications at $(date -u)"
+          
+          STATUS=$(curl -s -o /tmp/notify_response.json -w "%{http_code}" \
+            -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://nextsplit-v2.vercel.app/api/cron/notify-email")
+          
+          echo "HTTP status: $STATUS"
+          echo "Response:"
+          cat /tmp/notify_response.json
+          
+          if [ "$STATUS" != "200" ]; then
+            echo "::warning::Notification email cron returned $STATUS"
+          fi
+
+      - name: Send lifecycle emails  
+        run: |
+          STATUS=$(curl -s -o /tmp/lifecycle_response.json -w "%{http_code}" \
+            -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://nextsplit-v2.vercel.app/api/cron/lifecycle-emails")
+          
+          echo "Lifecycle emails HTTP status: $STATUS"
+          cat /tmp/lifecycle_response.json
