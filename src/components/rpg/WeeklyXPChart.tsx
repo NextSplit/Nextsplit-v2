@@ -48,7 +48,7 @@ function WeeklyXPChart({ logs, weeks }: {
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-bold text-gray-900">⚡ This week's XP</span>
         <div className="text-right">
-          <span className="text-sm font-black text-[var(--ns-forest)]">+{totalWeekXP}</span>
+          <span className="text-sm font-black text-[var(--ns-ember)]">+{totalWeekXP}</span>
           <span className="text-[10px] text-gray-400 ml-1">{activeDays}/7 days</span>
         </div>
       </div>
@@ -60,13 +60,13 @@ function WeeklyXPChart({ logs, weeks }: {
               <div className="w-full flex items-end" style={{ height: '48px' }}>
                 <div
                   className={`w-full rounded-t-lg transition-all duration-500 ${
-                    bar.isToday ? 'bg-[var(--ns-forest)]' :
+                    bar.isToday ? 'bg-[var(--ns-ember)]' :
                     bar.xp > 0 ? 'bg-teal-200' : 'bg-gray-100'
                   }`}
                   style={{ height: bar.xp > 0 ? `${Math.max(heightPct, 15)}%` : '6px' }}
                 />
               </div>
-              <span className={`text-[9px] font-bold ${bar.isToday ? 'text-[var(--ns-forest)]' : 'text-gray-400'}`}>
+              <span className={`text-[9px] font-bold ${bar.isToday ? 'text-[var(--ns-ember)]' : 'text-gray-400'}`}>
                 {bar.dayLabel}
               </span>
             </div>

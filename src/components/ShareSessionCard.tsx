@@ -210,62 +210,66 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
-      <div className="w-full max-w-lg bg-white rounded-t-3xl p-5 pb-8 animate-slide-up" onClick={e => e.stopPropagation()}>
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+    <div className="fixed inset-0 z-50 flex flex-col bg-black/50 justify-end" style={{ backdropFilter: "blur(4px)" }} onClick={onClose}>
+      <div className="w-full max-w-lg mx-auto bg-white p-5 pb-8" style={{ borderRadius: "24px 24px 0 0" }} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-border-2)' }} />
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
+            style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>×</button>
+        </div>
 
-        {/* Preview card */}
-        <div className="rounded-2xl overflow-hidden mb-4 aspect-square relative"
-          style={{ background: 'linear-gradient(135deg, #0f172a 0%, #0d3d38 50%, #0f172a 100%)' }}>
-          {/* Grid overlay */}
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-            backgroundSize: '30px 30px'
-          }} />
-          {/* Glow */}
-          <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-30"
-            style={{ background: 'radial-gradient(circle, var(--ns-forest), transparent)', transform: 'translate(25%, -25%)' }} />
+        {/* Preview card — clean light design */}
+        <div className="rounded-2xl overflow-hidden mb-4 relative"
+          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+          {/* Ember accent bar */}
+          <div className="h-1.5" style={{ background: 'linear-gradient(90deg, var(--ns-forest) 0%, var(--ns-ember) 60%, var(--ns-track) 100%)' }} />
 
-          <div className="relative z-10 p-5 h-full flex flex-col">
+          <div className="p-5">
             {/* Top bar */}
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[var(--ns-forest-mid)] font-black text-sm tracking-wider">NEXTSPLIT</span>
-              <span className="text-[10px] text-[var(--ns-forest-light)]/70 bg-teal-900/40 px-2 py-0.5 rounded-full">Week {weekN}</span>
+              <span className="font-display text-sm" style={{ color: 'var(--ns-forest)', letterSpacing: '-0.02em' }}>NextSplit</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
+                Week {weekN}
+              </span>
             </div>
 
             {/* Type pill */}
-            <div className="inline-flex items-center gap-1 bg-white/10 rounded-full px-3 py-1 mb-3 self-start">
+            <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 mb-3 self-start"
+              style={{ background: 'var(--ns-ember-light)' }}>
               <span className="text-sm">{cfg.emoji}</span>
-              <span className="text-[10px] font-bold text-white/70 uppercase tracking-wide">{cfg.label}</span>
+              <span className="text-[10px] font-black uppercase tracking-wide" style={{ color: 'var(--ns-ember)' }}>{cfg.label}</span>
             </div>
 
             {/* Name */}
-            <p className="text-white font-black text-xl leading-tight mb-2 flex-1">{name}</p>
+            <p className="font-display text-2xl leading-tight mb-2" style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>{name}</p>
 
             {/* Stats */}
             {stats.length > 0 && (
-              <p className="text-white/70 text-sm mb-3">{stats.join('  ·  ')}</p>
+              <p className="text-sm mb-4 font-data" style={{ color: 'var(--color-text-secondary)' }}>{stats.join('  ·  ')}</p>
             )}
 
             {/* Effort dots */}
             {log.effort && (
-              <div className="flex items-center gap-1 mb-3">
+              <div className="flex items-center gap-1 mb-4">
                 {Array.from({ length: 10 }, (_, i) => (
-                  <div key={i} className={`w-3 h-3 rounded-full ${i < log.effort! ? 'bg-[var(--ns-forest-mid)]' : 'bg-white/10'}`} />
+                  <div key={i} className="w-2.5 h-2.5 rounded-full"
+                    style={{ background: i < log.effort! ? 'var(--ns-ember)' : 'var(--color-surface-3)' }} />
                 ))}
-                <span className="text-white/50 text-[10px] ml-1">RPE {log.effort}</span>
+                <span className="text-[10px] ml-1" style={{ color: 'var(--color-text-tertiary)' }}>RPE {log.effort}</span>
               </div>
             )}
 
             {/* XP + bottom */}
-            <div className="flex items-center justify-between">
-              <span className="text-[var(--ns-forest-light)] text-xs font-black bg-teal-900/50 border border-teal-700/50 rounded-full px-2.5 py-0.5">
+            <div className="flex items-center justify-between pt-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
+              <span className="text-xs font-black px-2.5 py-0.5 rounded-full"
+                style={{ background: 'var(--ns-track-light)', color: 'var(--ns-track)' }}>
                 +{xp} XP
               </span>
               {log.strava_id && (
-                <span className="text-orange-400 text-[10px] font-bold">⚡ Strava</span>
+                <span className="text-[10px] font-bold" style={{ color: '#fc4c02' }}>⚡ Strava</span>
               )}
-              <span className="text-white/20 text-[9px]">nextsplit.app</span>
+              <span className="text-[9px]" style={{ color: 'var(--color-text-tertiary)' }}>nextsplit.app</span>
             </div>
           </div>
         </div>
@@ -273,7 +277,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
         <canvas ref={canvasRef} className="hidden" />
 
         <button onClick={handleShare} disabled={sharing}
-          className="w-full py-3.5 bg-[var(--ns-forest)] text-white font-bold text-sm rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full py-3.5 text-white font-bold text-sm rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2" style={{ background: 'var(--ns-ember)' }}>
           {sharing ? 'Preparing…' : (
             <>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
