@@ -161,7 +161,7 @@ export async function GET(req: NextRequest) {
 
       try {
         await resend.emails.send({
-          from:    'NextSplit <onboarding@resend.dev>',
+          from:    'NextSplit <coach@nextsplit.app>',
           to:      email,
           subject: emailDef.subject,
           html,

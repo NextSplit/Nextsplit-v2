@@ -33,7 +33,7 @@ export async function GET() {
     })
 
     const result = await resend.emails.send({
-      from: 'Splity at NextSplit <onboarding@resend.dev>',
+      from: 'Splity at NextSplit <coach@nextsplit.app>',
       to:   email,
       subject: `[TEST] ${subject}`,
       html, text,
