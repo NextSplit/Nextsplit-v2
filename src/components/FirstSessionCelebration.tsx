@@ -148,7 +148,7 @@ export default function FirstSessionCelebration({ totalDone, displayName, xp }: 
 
         {/* Coach copy */}
         <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--color-text-secondary)' }}>
-          The first session is the hardest. You showed up — that&apos;s what this is built on.
+          The first session is the hardest. You showed up — that's what this is built on.
           Come back tomorrow and it gets easier from here.
         </p>
 
@@ -174,7 +174,7 @@ export default function FirstSessionCelebration({ totalDone, displayName, xp }: 
         <button onClick={dismiss}
           className="w-full py-4 rounded-2xl font-black text-white active:scale-95 transition-all"
           style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #d44a12 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.3)' }}>
-          Let&apos;s go →
+          Let's go →
         </button>
       </div>
     </div>

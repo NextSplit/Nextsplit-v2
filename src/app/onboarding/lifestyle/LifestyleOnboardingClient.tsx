@@ -66,7 +66,7 @@ export default function LifestyleOnboardingClient() {
       {step === 'focus' && (
         <div>
           <div className="text-3xl mb-3">🌿</div>
-          <h1 className="text-2xl font-black text-white mb-1">What&apos;s your focus?</h1>
+          <h1 className="text-2xl font-black text-white mb-1">What's your focus?</h1>
           <p className="text-zinc-400 text-sm mb-7">No race pressure — just running for you.</p>
           <div className="space-y-2.5">
             {FOCUSES.map(f => (

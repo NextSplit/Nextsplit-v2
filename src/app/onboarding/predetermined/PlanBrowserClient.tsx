@@ -432,7 +432,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
             <input type="date" value={raceDateInput} onChange={e => setRaceDateInput(e.target.value)}
               className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors" />
             <p className="text-[10px] text-gray-400 mt-1">
-              We&apos;ll align your training weeks to build up to race day.
+              We'll align your training weeks to build up to race day.
             </p>
           </div>
 

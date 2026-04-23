@@ -6,7 +6,7 @@ export default function NotFound() {
       <div className="text-6xl mb-4">🏃</div>
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Page not found</h1>
       <p className="text-sm text-gray-400 mb-8 max-w-xs">
-        Looks like you took a wrong turn. This page doesn&apos;t exist.
+        Looks like you took a wrong turn. This page doesn't exist.
       </p>
       <Link
         href="/today"

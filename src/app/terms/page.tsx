@@ -64,7 +64,7 @@ export default function TermsPage() {
             <p>You must not:</p>
             <ul className="mt-2 space-y-1 list-disc list-inside">
               <li>Use NextSplit for any unlawful purpose</li>
-              <li>Attempt to access other users&apos; data</li>
+              <li>Attempt to access other users' data</li>
               <li>Reverse engineer, scrape or abuse the API</li>
               <li>Impersonate another person or coach</li>
               <li>Submit false credentials for coach verification</li>
@@ -81,7 +81,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">9. Intellectual property</h2>
-            <p>NextSplit&apos;s software, brand, and content are owned by NextSplit and protected by copyright. Coach-authored training plans remain the intellectual property of the coach. You may not redistribute or resell plans purchased from the marketplace.</p>
+            <p>NextSplit's software, brand, and content are owned by NextSplit and protected by copyright. Coach-authored training plans remain the intellectual property of the coach. You may not redistribute or resell plans purchased from the marketplace.</p>
           </section>
 
           <section>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Splity from '@/components/Splity'
 import { CoachCard } from '@/components/coach/CoachCard'
 import TodayProgressStrip from './TodayProgressStrip'
 import type { TrainingLog } from '@/types/database'
@@ -43,7 +44,7 @@ function SecondarySection({ hasRunSessions, onReadiness }: { hasRunSessions: boo
         style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm">👟</span>
+          <Splity size={20} mood="encouraging" />
           <span className="text-xs font-bold" style={{ color: 'var(--color-text-secondary)' }}>
             Splity · Check-in & weather
           </span>
@@ -143,7 +144,7 @@ export default function TodayBelowFold({
           <div>
             <p className="text-[11px] font-bold text-teal-800 mb-0.5">Week {weekN} complete!</p>
             <p className="text-xs text-[var(--ns-forest)] leading-relaxed">
-              Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what&apos;s ahead.
+              Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what's ahead.
             </p>
           </div>
         </div>

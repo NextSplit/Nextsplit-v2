@@ -367,7 +367,7 @@ export default function AthleteDetailClient({
           <div className="space-y-3">
             {!relationship.share_logs ? (
               <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
-                <p className="text-sm text-gray-500">Athlete hasn&apos;t shared training logs</p>
+                <p className="text-sm text-gray-500">Athlete hasn't shared training logs</p>
               </div>
             ) : doneLogs.length === 0 ? (
               <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">

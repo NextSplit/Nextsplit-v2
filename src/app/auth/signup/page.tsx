@@ -146,7 +146,7 @@ function SignupForm() {
           </form>
 
           <p className="text-xs text-center" style={{ color: "var(--color-text-tertiary)" }}>
-            By signing up you agree to our <a href="/terms" className="underline">Terms</a> &amp; <a href="/privacy" className="underline">Privacy Policy</a>.
+            By signing up you agree to our <a href="/terms" className="underline">Terms</a> & <a href="/privacy" className="underline">Privacy Policy</a>.
           </p>
         </div>
 

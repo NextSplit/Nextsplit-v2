@@ -290,7 +290,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
             ) : (
               <>
                 <p className="text-base font-black mb-1" style={{ color: 'var(--color-text-primary)' }}>Request coaching from {coach.display_name}</p>
-                <p className="text-xs mb-4" style={{ color: 'var(--color-text-secondary)' }}>Tell the coach about your goals, current fitness, and what you&apos;re training for.</p>
+                <p className="text-xs mb-4" style={{ color: 'var(--color-text-secondary)' }}>Tell the coach about your goals, current fitness, and what you're training for.</p>
                 <textarea value={requestNote} onChange={e => setRequestNote(e.target.value)}
                   placeholder="e.g. Training for my first marathon in October. Currently running 30km/week..."
                   rows={4} className="w-full rounded-xl px-4 py-3 text-sm resize-none mb-4"

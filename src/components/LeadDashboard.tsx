@@ -123,7 +123,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
           <div className="text-3xl mb-3">👥</div>
           <h3 className="text-sm font-bold text-gray-900 mb-1">No athletes yet</h3>
           <p className="text-xs text-gray-400 mb-4 leading-relaxed">
-            Invite runners to your squad. They&apos;ll need a free NextSplit account.
+            Invite runners to your squad. They'll need a free NextSplit account.
           </p>
           {!atCap && (
             <button

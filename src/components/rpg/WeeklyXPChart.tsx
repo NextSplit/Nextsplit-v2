@@ -46,7 +46,7 @@ function WeeklyXPChart({ logs, weeks }: {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-bold text-gray-900">⚡ This week&apos;s XP</span>
+        <span className="text-sm font-bold text-gray-900">⚡ This week's XP</span>
         <div className="text-right">
           <span className="text-sm font-black text-[var(--ns-forest)]">+{totalWeekXP}</span>
           <span className="text-[10px] text-gray-400 ml-1">{activeDays}/7 days</span>

@@ -42,7 +42,7 @@ export default function InviteLandingClient({
       {/* Hero */}
       <div className="px-6 pt-14 pb-8 text-center space-y-4">
         <div className="inline-flex items-center gap-2 bg-[var(--ns-forest)]/20 border border-[var(--ns-forest)]/30 rounded-full px-3 py-1.5 mb-2">
-          <span className="text-xs text-[var(--ns-forest-light)] font-semibold">You&apos;ve been invited</span>
+          <span className="text-xs text-[var(--ns-forest-light)] font-semibold">You've been invited</span>
         </div>
 
         {/* Coach avatar */}
@@ -93,7 +93,7 @@ export default function InviteLandingClient({
 
         {/* What is NextSplit */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">What you&apos;re joining</p>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">What you're joining</p>
           {[
             { emoji: '🧠', text: 'AI coaching that adapts to your actual training data' },
             { emoji: '📋', text: 'Personalised training plan built around your goals' },
@@ -115,7 +115,7 @@ export default function InviteLandingClient({
             <p className="text-sm font-black text-amber-300">Exclusive founding member offer</p>
           </div>
           <p className="text-xs text-amber-200/80">
-            Join through {coachName}&apos;s invite and lock in NextSplit Elite at <span className="font-bold">£7.99/mo forever</span> — our founding member rate. Price rises for new users soon.
+            Join through {coachName}'s invite and lock in NextSplit Elite at <span className="font-bold">£7.99/mo forever</span> — our founding member rate. Price rises for new users soon.
           </p>
           <p className="text-xs text-amber-300/60">Optional — you can always upgrade later</p>
         </div>
@@ -126,7 +126,7 @@ export default function InviteLandingClient({
             onClick={handleSignup}
             className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-base font-black active:scale-95 transition-all hover:bg-[var(--ns-forest-mid)]"
           >
-            Join NextSplit &amp; connect with {coachName} →
+            Join NextSplit & connect with {coachName} →
           </button>
           <button
             onClick={handleLogin}

@@ -71,7 +71,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">AI and your data</h2>
             <p>NextSplit uses the Anthropic Claude API to generate training plans and provide coaching feedback. Your training data, profile information and goals are sent to the Claude API to generate personalised responses.</p>
-            <p className="mt-2">Anthropic&apos;s data processing is governed by their own privacy policy. We do not use your data to train AI models.</p>
+            <p className="mt-2">Anthropic's data processing is governed by their own privacy policy. We do not use your data to train AI models.</p>
           </section>
 
           <section>

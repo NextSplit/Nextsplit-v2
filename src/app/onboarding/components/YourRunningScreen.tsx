@@ -145,7 +145,7 @@ export function YourRunningScreen() {
               One important question first
             </p>
             <p className="text-sm font-semibold text-gray-900 mb-3 leading-snug">
-              What happened the last time you didn&apos;t complete a training plan?
+              What happened the last time you didn't complete a training plan?
             </p>
             <div className="space-y-2">
               {[
@@ -208,7 +208,7 @@ export function YourRunningScreen() {
             <span>0km</span><span>60km</span><span>120km</span>
           </div>
           {weeklyKm === 0 && (
-            <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>No worries — we&apos;ll build you up from scratch</p>
+            <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>No worries — we'll build you up from scratch</p>
           )}
         </div>
 
@@ -248,7 +248,7 @@ export function YourRunningScreen() {
           </div>
           {longestRun === 0 && (
             <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
-              Slide to set — or leave at 0 if you haven&apos;t run recently
+              Slide to set — or leave at 0 if you haven't run recently
             </p>
           )}
         </div>

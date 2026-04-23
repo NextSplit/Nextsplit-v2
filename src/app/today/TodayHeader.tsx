@@ -1,6 +1,7 @@
 'use client'
 
 import DarkModeToggle from '@/components/DarkModeToggle'
+import Splity from '@/components/Splity'
 import { formatDate, getTimeGreeting, getSessionPlainEnglish } from '@/lib/sessionUtils'
 import type { UserPlan, PlanSession } from '@/types/database'
 
@@ -96,10 +97,9 @@ export function TodayHeader({
           <div className="mb-3">
             {sessionLine ? (
               <div className="flex items-start gap-2">
-                {/* Splity avatar pill */}
-                <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-black mt-0.5"
-                  style={{ background: 'var(--ns-track-light)', color: 'var(--ns-track)' }}>
-                  S
+                {/* Splity avatar */}
+                <div className="flex-shrink-0 mt-0.5">
+                  <Splity size={28} mood={allDone ? 'celebrating' : isLowReadiness ? 'encouraging' : 'default'} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-semibold mb-0.5"

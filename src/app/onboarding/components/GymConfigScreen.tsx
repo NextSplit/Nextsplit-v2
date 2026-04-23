@@ -118,7 +118,7 @@ export function GymConfigScreen() {
             <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>What equipment do you have?</label>
-                <p className="text-xs text-gray-400 mt-1">Select all that apply — we&apos;ll build sessions around what you have</p>
+                <p className="text-xs text-gray-400 mt-1">Select all that apply — we'll build sessions around what you have</p>
               </div>
               <div className="space-y-2">
                 {EQUIPMENT_OPTIONS.map(o => (

@@ -77,7 +77,7 @@ function PWAProfileCard() {
       </div>
       {!isIOS && !_installPrompt && (
         <p className="mt-2 text-xs text-gray-400 leading-relaxed">
-          Use Chrome&apos;s menu (⋮) → &quot;Add to Home screen&quot; to install.
+          Use Chrome's menu (⋮) → &quot;Add to Home screen&quot; to install.
         </p>
       )}
       {showIOSSteps && (

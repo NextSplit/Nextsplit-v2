@@ -110,7 +110,7 @@ export function YourLifeScreen() {
             Your training week
           </h1>
           <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
-            Tell us how your week looks — we&apos;ll fit training around your life, not the other way around.
+            Tell us how your week looks — we'll fit training around your life, not the other way around.
           </p>
         </div>
 

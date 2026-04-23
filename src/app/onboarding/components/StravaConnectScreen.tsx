@@ -200,12 +200,12 @@ export function StravaConnectScreen() {
           <div className="text-center py-2">
             <div className="text-3xl mb-2">✅</div>
             <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Strava connected</h1>
-            <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>Here&apos;s what we found from your recent training</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>Here's what we found from your recent training</p>
           </div>
 
           {/* Prefill summary */}
           <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>We&apos;ll pre-fill these for you</p>
+            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>We'll pre-fill these for you</p>
             <div className="space-y-2">
               {[
                 { label: 'Weekly mileage',    value: `~${prefill.weeklyKmCurrent} km/week` },
@@ -259,7 +259,7 @@ export function StravaConnectScreen() {
             onClick={next}
             className="w-full text-gray-400 py-2 text-sm"
           >
-            I&apos;ll fill it in manually instead
+            I'll fill it in manually instead
           </button>
         </div>
       </div>
@@ -281,13 +281,13 @@ export function StravaConnectScreen() {
         <div className="space-y-2">
           <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Connect Strava</h1>
           <p className="text-sm text-gray-500 max-w-xs">
-            Skip most of the setup — we&apos;ll pull your training history and pre-fill your profile automatically.
+            Skip most of the setup — we'll pull your training history and pre-fill your profile automatically.
           </p>
         </div>
 
         {/* What we import */}
         <div className="w-full max-w-xs bg-white rounded-2xl border border-gray-200 p-4 text-left space-y-2">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">We&apos;ll import</p>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">We'll import</p>
           {[
             '📊 Current weekly mileage',
             '🏃 Longest recent run',

@@ -709,11 +709,11 @@ export default function TodayClient() {
                   <div className="flex-1">
                     <p className="text-[11px] font-bold text-amber-800 mb-0.5">
                       Looks like {todaySessions.length - doneTodayCount === 1
-                        ? `${todaySessions.find((_, i) => !logs[`${weekN}_${planDayIndex}_${i}`]?.done)?.n ?? 'a session'} didn&apos;t happen`
-                        : `${todaySessions.length - doneTodayCount} sessions didn&apos;t happen`}
+                        ? `${todaySessions.find((_, i) => !logs[`${weekN}_${planDayIndex}_${i}`]?.done)?.n ?? 'a session'} didn't happen`
+                        : `${todaySessions.length - doneTodayCount} sessions didn't happen`}
                     </p>
                     <p className="text-xs text-amber-700 leading-relaxed mb-2.5">
-                      Tap here if you&apos;d like to sort the plan.
+                      Tap here if you'd like to sort the plan.
                     </p>
                     <button
                       onClick={() => setShowMissedFlow(true)}

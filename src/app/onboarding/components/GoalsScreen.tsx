@@ -328,7 +328,7 @@ export function GoalsScreen() {
           }}
           className="w-full text-gray-400 text-xs py-1.5 hover:text-gray-600 transition-colors"
         >
-          Skip — I&apos;ll set a goal later
+          Skip — I'll set a goal later
         </button>
       </div>
     </div>

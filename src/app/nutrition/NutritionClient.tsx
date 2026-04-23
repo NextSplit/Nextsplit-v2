@@ -202,7 +202,7 @@ export default function NutritionClient() {
             {/* Macro summary — ring + bars */}
             <div className="bg-white rounded-2xl border border-gray-100 p-4">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-bold text-gray-900">Today&apos;s macros</span>
+                <span className="text-sm font-bold text-gray-900">Today's macros</span>
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${DAY_TYPE_CONFIG[todayDayType].colour} ${DAY_TYPE_CONFIG[todayDayType].text}`}>
                   {DAY_TYPE_CONFIG[todayDayType].emoji} {todayDayTypeLabel}
                 </span>
@@ -247,7 +247,7 @@ export default function NutritionClient() {
             {/* Today's meal slots */}
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
               <div className="px-4 py-3 border-b border-gray-50">
-                <span className="text-sm font-bold text-gray-900">Today&apos;s meals</span>
+                <span className="text-sm font-bold text-gray-900">Today's meals</span>
               </div>
               <div className="divide-y divide-gray-50">
                 {MEAL_SLOTS.map(slot => {
@@ -350,7 +350,7 @@ export default function NutritionClient() {
                 <div className="text-4xl mb-3">📖</div>
                 <p className="text-sm font-bold text-gray-900 mb-2">Build your recipe book</p>
                 <p className="text-xs text-gray-500 leading-relaxed mb-5">
-                  Add your go-to meals and they&apos;ll appear when planning your weekly nutrition.
+                  Add your go-to meals and they'll appear when planning your weekly nutrition.
                   Start with your usual breakfast or pre-run snack.
                 </p>
                 <button

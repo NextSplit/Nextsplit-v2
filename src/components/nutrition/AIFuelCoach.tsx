@@ -55,7 +55,7 @@ function AIFuelCoach({
         <span className="text-2xl flex-shrink-0">🧠</span>
         <div className="flex-1">
           <p className="text-white text-xs font-bold">AI Nutrition Coach</p>
-          <p className="text-teal-100 text-[10px] mt-0.5">Tap for today&apos;s personalised fuel tip</p>
+          <p className="text-teal-100 text-[10px] mt-0.5">Tap for today's personalised fuel tip</p>
         </div>
         <span className="text-white text-lg">›</span>
       </button>
@@ -77,7 +77,7 @@ function AIFuelCoach({
         </div>
       ) : error ? (
         <div className="flex items-center justify-between">
-          <p className="text-teal-100 text-xs">Couldn&apos;t load tip right now.</p>
+          <p className="text-teal-100 text-xs">Couldn't load tip right now.</p>
           <button onClick={fetchTip} className="text-white text-xs font-bold underline">Retry</button>
         </div>
       ) : (

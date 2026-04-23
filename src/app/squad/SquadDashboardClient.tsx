@@ -493,7 +493,7 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
             <span className="text-xl">🏆</span>
             <div>
               <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Trophy Room</p>
-              <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>Achievements &amp; season history</p>
+              <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>Achievements & season history</p>
             </div>
           </div>
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ color: 'var(--color-text-tertiary)' }}>

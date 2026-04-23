@@ -136,7 +136,7 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
                 <span className="text-lg">🔍</span>
                 <div>
                   <p className="text-sm font-bold text-left" style={{ color: 'var(--color-text-primary)' }}>Browse all coaches</p>
-                  <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>Filter by specialty, distance &amp; price</p>
+                  <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>Filter by specialty, distance & price</p>
                 </div>
               </div>
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ color: 'var(--color-text-tertiary)' }}>

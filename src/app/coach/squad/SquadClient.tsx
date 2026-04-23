@@ -473,13 +473,13 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
               className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
               <span className="text-xl">💰</span>
               <p className="text-sm font-bold text-gray-800">Earnings</p>
-              <p className="text-xs text-gray-400">Revenue &amp; commission</p>
+              <p className="text-xs text-gray-400">Revenue & commission</p>
             </Link>
             <Link href="/coach/settings"
               className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
               <span className="text-xl">⚙️</span>
               <p className="text-sm font-bold text-gray-800">Settings</p>
-              <p className="text-xs text-gray-400">Availability &amp; capacity</p>
+              <p className="text-xs text-gray-400">Availability & capacity</p>
             </Link>
             <Link href="/marketplace"
               className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">

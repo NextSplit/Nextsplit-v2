@@ -329,7 +329,7 @@ export default function ProfileClient({
                     style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}
                     autoFocus onKeyDown={e => { if (e.key === 'Enter') saveDisplayName() }} />
                   <button onClick={saveDisplayName} disabled={savingName}
-                    className="text-[11px] font-bold" style={{ color: 'var(--ns-forest)' }}>{savingName ? '…' : 'Save'}</button>
+                    className="text-[11px] font-bold" style={{ color: 'var(--ns-ember)' }}>{savingName ? '…' : 'Save'}</button>
                   <button onClick={() => setEditingName(false)}
                     className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>Cancel</button>
                 </div>
@@ -381,7 +381,7 @@ export default function ProfileClient({
                   : ''
               }`}
               style={profileTab === tab.id
-                ? { background: 'var(--ns-forest)', color: 'white' }
+                ? { background: 'var(--ns-ember)', color: 'white' }
                 : { color: 'var(--color-text-tertiary)' }
               }
             >
@@ -398,7 +398,7 @@ export default function ProfileClient({
 
         {/* Hero RPG Card — skeleton while XP data loads */}
         {allLogsLoading ? (
-          <div className="rounded-3xl overflow-hidden animate-pulse" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f3460 100%)' }}>
+          <div className="rounded-3xl overflow-hidden animate-pulse" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
             <div className="p-5">
               <div className="flex items-start gap-4 mb-4">
                 <div className="w-[88px] h-[108px] rounded-2xl bg-white/10 flex-shrink-0" />
@@ -431,8 +431,8 @@ export default function ProfileClient({
 
         {/* Kit colour customiser — inline, expandable */}
         {showCustomiser && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
-            <p className="text-xs font-bold text-gray-700 mb-3">Kit colour</p>
+          <div className="rounded-2xl p-4" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
+            <p className="text-xs font-bold mb-3" style={{ color: "var(--color-text-secondary)" }}>Kit colour</p>
             <div className="flex gap-2 flex-wrap">
               {[
                 { hex: 'var(--ns-forest)', label: 'Teal' },
@@ -460,8 +460,8 @@ export default function ProfileClient({
         <NextRewardCard stats={rpgStats} unlockedIds={unlockedIds} />
 
         {/* Badges — near top so achievements are immediately visible */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4">
-          <p className="text-sm font-bold text-gray-900 mb-3">🏆 Badges</p>
+        <div className="rounded-2xl p-4" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
+          <p className="text-sm font-bold mb-3" style={{ color: "var(--color-text-primary)" }}>🏆 Badges</p>
           <BadgeGrid unlockedIds={unlockedIds} stats={rpgStats} />
         </div>
 
@@ -473,7 +473,7 @@ export default function ProfileClient({
           const copy  = WARMING_UP_COPY[phase]
           if (!copy) return null
           return (
-            <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest)]20 rounded-2xl px-4 py-3 flex items-start gap-3">
+            <div className="rounded-2xl px-4 py-3 flex items-start gap-3" style={{ background: 'var(--ns-ember-light)', border: '1px solid rgba(232,93,38,0.15)' }}>
               <span className="text-xl mt-0.5">🌅</span>
               <div className="flex-1">
                 <p className="text-sm font-bold leading-snug" style={{ color: 'var(--ns-forest)' }}>
@@ -486,7 +486,7 @@ export default function ProfileClient({
                   <button
                     onClick={() => setShowClassReveal(true)}
                     className="mt-2 text-xs font-bold px-3 py-1.5 rounded-lg text-white"
-                    style={{ background: 'var(--ns-forest)' }}
+                    style={{ background: 'var(--ns-ember)' }}
                   >
                     Reveal my class →
                   </button>
@@ -508,9 +508,9 @@ export default function ProfileClient({
 
         {/* ── Account & Integrations ─────────────────────────────────── */}
         <div className="flex items-center gap-3 px-1 pt-2">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Account &amp; Integrations</span>
-          <div className="flex-1 h-px bg-gray-200" />
+          <div className="flex-1 h-px" style={{ background: "var(--color-border)" }} />
+          <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>Account & Integrations</span>
+          <div className="flex-1 h-px" style={{ background: "var(--color-border)" }} />
         </div>
 
         {/* Public profile link */}
@@ -552,10 +552,10 @@ export default function ProfileClient({
           <div className="space-y-4">
             {/* Stats tab header */}
             <div className="rounded-2xl px-4 py-3 flex items-center gap-3"
-              style={{ background: 'linear-gradient(135deg, #1e3829 0%, #162a1e 100%)', border: '1px solid var(--color-border)' }}>
+              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
               <span className="text-2xl">📊</span>
               <div>
-                <p className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--ns-track)' }}>Training Analytics</p>
+                <p className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Training Analytics</p>
                 <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>ACWR · pace trends · training zones</p>
               </div>
             </div>
@@ -588,7 +588,7 @@ export default function ProfileClient({
               style={{ background: 'linear-gradient(135deg, #2c1f0a 0%, #1e1508 100%)', border: '1px solid #3d2e10' }}>
               <span className="text-2xl">🏆</span>
               <div>
-                <p className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--ns-track)' }}>Personal Bests &amp; Records</p>
+                <p className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--ns-track)' }}>Personal Bests & Records</p>
                 <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Race history · session logs · all-time bests</p>
               </div>
             </div>

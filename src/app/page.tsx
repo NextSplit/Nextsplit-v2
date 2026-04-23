@@ -142,7 +142,7 @@ export default function LandingPage() {
             <h2 className="text-4xl font-black tracking-tight">
               Everything a serious runner needs.
               <br />
-              <span className="text-white/30">Nothing they don&apos;t.</span>
+              <span className="text-white/30">Nothing they don't.</span>
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden">
@@ -190,7 +190,7 @@ export default function LandingPage() {
                 <p className="text-xs font-bold text-[var(--ns-forest-mid)] uppercase tracking-widest mb-4">For coaches</p>
                 <h2 className="text-3xl font-black tracking-tight mb-4">Your athletes.<br />One dashboard.</h2>
                 <p className="text-white/50 text-sm leading-relaxed mb-6">
-                  See every athlete&apos;s training load, wellness, ACWR, and adherence in real time.
+                  See every athlete's training load, wellness, ACWR, and adherence in real time.
                   Leave annotations. Message directly. Publish plans. Get paid.
                 </p>
                 <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-[var(--ns-forest)] text-white font-bold text-sm px-5 py-3 rounded-xl hover:bg-[var(--ns-forest-mid)] transition-all">
@@ -222,7 +222,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-xs font-bold text-[var(--ns-forest-mid)] uppercase tracking-widest mb-3">Early feedback</p>
-            <h2 className="text-2xl font-black">From runners who&apos;ve tried it.</h2>
+            <h2 className="text-2xl font-black">From runners who've tried it.</h2>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {TESTIMONIALS.map(t => (

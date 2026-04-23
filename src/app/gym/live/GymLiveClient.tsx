@@ -344,7 +344,7 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
       <div className="text-5xl mb-4">🏋️</div>
       <h2 className="text-lg font-bold text-gray-900 mb-2">No exercises found</h2>
       <p className="text-sm text-gray-500 mb-6 max-w-xs">
-        Couldn&apos;t parse exercises from this session. You can still log it as complete.
+        Couldn't parse exercises from this session. You can still log it as complete.
       </p>
       <button
         onClick={async () => {

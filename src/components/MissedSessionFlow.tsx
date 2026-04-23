@@ -72,7 +72,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
             <div className="text-center">
               <div className="text-3xl mb-3">🤔</div>
               <h2 className="text-base font-bold text-gray-900 mb-2">
-                Looks like {session.n} didn&apos;t happen
+                Looks like {session.n} didn't happen
               </h2>
               <p className="text-sm text-gray-500 mb-6 leading-relaxed">
                 Want to sort the plan? I can rebuild it around what actually happened.
@@ -152,7 +152,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
             <div className="text-center py-6">
               <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-[var(--ns-forest)] animate-spin mx-auto mb-4" />
               <p className="text-sm font-semibold text-gray-700">Rebuilding your plan…</p>
-              <p className="text-xs text-gray-400 mt-1">Looking at what moved and what&apos;s still on track</p>
+              <p className="text-xs text-gray-400 mt-1">Looking at what moved and what's still on track</p>
             </div>
           )}
 
@@ -161,7 +161,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
             <div>
               <div className="text-2xl mb-3 text-center">✓</div>
               <h2 className="text-base font-bold text-gray-900 mb-1 text-center">Plan rebuild ready</h2>
-              <p className="text-xs text-gray-400 text-center mb-4">Here&apos;s what I&apos;d change — unlock to apply it.</p>
+              <p className="text-xs text-gray-400 text-center mb-4">Here's what I'd change — unlock to apply it.</p>
 
               {/* Preview — blurred for free users */}
               <div className="bg-gray-50 rounded-2xl p-4 mb-4 relative overflow-hidden">
@@ -221,7 +221,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
               </div>
 
               <p className="text-xs text-gray-400 text-center mb-5">
-                You&apos;re still on track. The plan has been adjusted.
+                You're still on track. The plan has been adjusted.
               </p>
 
               <button onClick={onClose}

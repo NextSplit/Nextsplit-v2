@@ -342,7 +342,7 @@ export function CharacterCreationScreen() {
               onClick={() => { setShowWelcome(false); next() }}
               className="w-full py-4 rounded-2xl text-white font-black text-base active:scale-95 transition-all"
               style={{ background: 'var(--ns-forest)' }}>
-              Let&apos;s go →
+              Let's go →
             </button>
           </div>
         </div>
@@ -352,7 +352,7 @@ export function CharacterCreationScreen() {
         {/* Header */}
         <div className="px-6 pt-4 pb-2 text-center">
           <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Create your runner</h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>This is how you&apos;ll appear across NextSplit</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>This is how you'll appear across NextSplit</p>
         </div>
 
         {/* Character preview — large and prominent */}

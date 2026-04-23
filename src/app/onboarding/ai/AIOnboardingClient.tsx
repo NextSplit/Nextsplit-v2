@@ -205,9 +205,9 @@ export default function AIOnboardingClient() {
           <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--ns-forest)' }}>
             AI Bespoke
           </p>
-          <h1 className="font-display text-3xl italic text-white mb-1">What&apos;s your goal?</h1>
+          <h1 className="font-display text-3xl italic text-white mb-1">What's your goal?</h1>
           <p className="text-sm mb-7" style={{ color: 'var(--color-text-tertiary)' }}>
-            We&apos;ll match you to the best plan structure.
+            We'll match you to the best plan structure.
           </p>
           <div className="space-y-2.5">
             {GOALS.map(g => (
@@ -244,7 +244,7 @@ export default function AIOnboardingClient() {
           <Breadcrumb items={[selectedGoal?.label ?? '', selectedLevel?.label ?? '']} />
           <h1 className="font-display text-3xl italic text-white mb-1">Race date?</h1>
           <p className="text-sm mb-7" style={{ color: 'var(--color-text-tertiary)' }}>
-            Skip if you don&apos;t have one — you can add it later.
+            Skip if you don't have one — you can add it later.
           </p>
           <input type="date" value={raceDate} onChange={e => setRaceDate(e.target.value)} min={today}
             className="w-full rounded-2xl px-4 py-4 text-sm text-white outline-none mb-4"

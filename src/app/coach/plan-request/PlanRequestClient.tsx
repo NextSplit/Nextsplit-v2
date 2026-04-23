@@ -133,7 +133,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
           </div>
 
           <p className="text-center text-xs text-gray-400">
-            You&apos;ll get a message when your plan is ready. Usually within 24–48 hours.
+            You'll get a message when your plan is ready. Usually within 24–48 hours.
           </p>
 
           <Link href="/today"

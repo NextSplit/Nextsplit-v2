@@ -86,7 +86,7 @@ function BugReportButton() {
             style={{ background: 'var(--color-surface)' }}>
             <h3 className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>Report a problem</h3>
             {sent ? (
-              <p className="text-sm text-center py-2" style={{ color: 'var(--ns-forest)' }}>✓ Thanks — we&apos;ll look into it</p>
+              <p className="text-sm text-center py-2" style={{ color: 'var(--ns-forest)' }}>✓ Thanks — we'll look into it</p>
             ) : (
               <>
                 <textarea value={msg} onChange={e => setMsg(e.target.value)}

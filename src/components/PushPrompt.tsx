@@ -74,7 +74,7 @@ export default function PushPrompt({ firstSessionAt, displayName }: Props) {
           <div className="flex items-center gap-3 py-1">
             <span className="text-2xl">✓</span>
             <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>
-              You&apos;re in. We&apos;ll only message when it matters.
+              You're in. We'll only message when it matters.
             </p>
           </div>
         ) : (
@@ -86,7 +86,7 @@ export default function PushPrompt({ firstSessionAt, displayName }: Props) {
                   {name ? `Nice work, ${name}.` : 'Nice work.'} Stay consistent?
                 </p>
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
-                  We&apos;ll remind you before your next session and when your streak&apos;s at risk.
+                  We'll remind you before your next session and when your streak's at risk.
                   Never more than once a day.
                 </p>
               </div>

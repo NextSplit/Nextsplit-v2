@@ -91,7 +91,7 @@ function LevelUpScreen({
         <button onClick={onDismiss}
           className="px-8 py-3 rounded-2xl bg-[var(--ns-forest)] text-white text-sm font-black animate-slide-up"
           style={{ animationDelay: '0.5s' }}>
-          Let&apos;s go →
+          Let's go →
         </button>
         <div className="text-gray-500 text-[10px] mt-3">tap anywhere to dismiss</div>
       </div>
