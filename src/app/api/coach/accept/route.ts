@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { CoachAcceptSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -88,7 +89,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, coach_name: coach?.display_name, coach_slug: coach?.slug })
 
   } catch (err) {
-    console.error('Coach accept error:', err)
+    Sentry.captureException(err, { extra: { context: 'Coach accept error:' } })
     return NextResponse.json({ error: 'Failed to accept invite' }, { status: 500 })
   }
 }

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -91,7 +92,7 @@ export async function GET() {
       })),
     })
   } catch (err) {
-    console.error('Inactivity check error:', err)
+    Sentry.captureException(err, { extra: { context: 'Inactivity check error:' } })
     return NextResponse.json({ error: 'Failed to check inactivity' }, { status: 500 })
   }
 }

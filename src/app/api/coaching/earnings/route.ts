@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -73,7 +74,7 @@ export async function GET() {
       stripe_account_id: coach.stripe_account_id,
     })
   } catch (err) {
-    console.error('Earnings fetch error:', err)
+    Sentry.captureException(err, { extra: { context: 'Earnings fetch error:' } })
     return NextResponse.json({ error: 'Failed to load earnings' }, { status: 500 })
   }
 }

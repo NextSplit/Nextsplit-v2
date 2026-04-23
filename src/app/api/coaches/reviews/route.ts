@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ reviews: sanitised })
   } catch (err) {
-    console.error('Reviews fetch error:', err)
+    Sentry.captureException(err, { extra: { context: 'Reviews fetch error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
     }, { onConflict: 'coach_id,athlete_id' })
 
     if (error) {
-      console.error('Review upsert error:', error)
+      Sentry.captureException(error, { extra: { context: 'Review upsert error:' } })
       return NextResponse.json({ error: 'Failed to submit review' }, { status: 500 })
     }
 
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ submitted: true })
   } catch (err) {
-    console.error('Review submit error:', err)
+    Sentry.captureException(err, { extra: { context: 'Review submit error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

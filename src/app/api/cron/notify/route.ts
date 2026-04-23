@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { config, serverConfig } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -197,7 +198,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ ok: true, sent })
   } catch (err) {
-    console.error('[cron/notify]', err)
+    Sentry.captureException(err, { extra: { context: '[cron/notify]' } })
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }

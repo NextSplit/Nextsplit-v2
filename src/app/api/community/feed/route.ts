@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -58,7 +59,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ feed: feed ?? [] })
   } catch (err) {
-    console.error('Feed GET error:', err)
+    Sentry.captureException(err, { extra: { context: 'Feed GET error:' } })
     return NextResponse.json({ error: 'Failed to fetch feed' }, { status: 500 })
   }
 }
@@ -99,7 +100,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error('Feed reaction error:', err)
+    Sentry.captureException(err, { extra: { context: 'Feed reaction error:' } })
     return NextResponse.json({ error: 'Reaction failed' }, { status: 500 })
   }
 }

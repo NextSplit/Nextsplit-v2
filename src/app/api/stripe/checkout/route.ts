@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { config } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: session.url })
 
   } catch (err) {
-    console.error('Stripe checkout error:', err)
+    Sentry.captureException(err, { extra: { context: 'Stripe checkout error:' } })
     return NextResponse.json({ error: 'Checkout failed' }, { status: 500 })
   }
 }

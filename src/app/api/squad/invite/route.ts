@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -65,13 +66,12 @@ export async function GET(req: NextRequest) {
         leader_name: squad.profiles?.display_name ?? squad.profiles?.handle ?? 'The Leader',
         leader_class: squad.profiles?.runner_class ?? 'warming_up',
         member_count: activeMembers.length,
-        members: activeMembers, // first names only
         monthly_km: monthlyKm ?? 0,
         is_full: activeMembers.length >= 5,
       }
     })
   } catch (err) {
-    console.error('Invite lookup error:', err)
+    Sentry.captureException(err, { extra: { context: 'Invite lookup error:' } })
     return NextResponse.json({ error: 'Failed to fetch invite' }, { status: 500 })
   }
 }

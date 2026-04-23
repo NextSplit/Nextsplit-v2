@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
@@ -61,7 +62,7 @@ export async function POST(req: NextRequest) {
       })
 
     if (profileError) {
-      console.error('Coach profile create error:', profileError)
+      Sentry.captureException(profileError, { extra: { context: 'Coach profile create error:' } })
       return NextResponse.json({ error: 'Failed to create coach profile' }, { status: 500 })
     }
 
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, slug })
 
   } catch (err) {
-    console.error('Coach apply error:', err)
+    Sentry.captureException(err, { extra: { context: 'Coach apply error:' } })
     return NextResponse.json({ error: 'Application failed' }, { status: 500 })
   }
 }

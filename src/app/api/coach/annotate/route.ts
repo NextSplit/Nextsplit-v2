@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { CoachAnnotateSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, annotation: data })
 
   } catch (err) {
-    console.error('Annotate error:', err)
+    Sentry.captureException(err, { extra: { context: 'Annotate error:' } })
     return NextResponse.json({ error: 'Failed to save annotation' }, { status: 500 })
   }
 }
@@ -86,7 +87,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ annotations: data ?? [] })
 
   } catch (err) {
-    console.error('Get annotations error:', err)
+    Sentry.captureException(err, { extra: { context: 'Get annotations error:' } })
     return NextResponse.json({ error: 'Failed to fetch annotations' }, { status: 500 })
   }
 }

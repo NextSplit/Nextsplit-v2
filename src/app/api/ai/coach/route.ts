@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
 import { AiCoachSchema, zodError } from '@/lib/schemas'
@@ -193,7 +194,7 @@ ${recentNotes.length ? `ATHLETE NOTES:\n${recentNotes.join('\n')}` : ''}
 
     return NextResponse.json({ note: text, context: { acwr, weekSummaries, currentWeekN } })
   } catch (err) {
-    console.error('Claude API error:', err)
+    Sentry.captureException(err, { extra: { context: 'Claude API error:' } })
     return NextResponse.json({ error: 'AI coaching temporarily unavailable' }, { status: 503 })
   }
 }

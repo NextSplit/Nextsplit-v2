@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe, incrementFoundingCount, PRICES } from '@/lib/stripe'
 import { createClient } from '@supabase/supabase-js'
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
       serverConfig.stripeWebhookSecret
     )
   } catch (err) {
-    console.error('Webhook signature verification failed:', err)
+    Sentry.captureException(err, { extra: { context: 'Webhook signature verification failed:' } })
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
@@ -66,7 +67,6 @@ export async function POST(req: NextRequest) {
           pro_expires_at:       new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
         }).eq('id', uid)
 
-        console.log(`✅ Subscription updated: ${sub.status}`)
         break
       }
 
@@ -86,7 +86,6 @@ export async function POST(req: NextRequest) {
             subscription_status: 'canceled',
             pro_expires_at:      new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
           }).eq('id', data.id)
-          console.log(`✅ Subscription cancelled`)
         }
         break
       }
@@ -158,7 +157,6 @@ export async function POST(req: NextRequest) {
               .update({ total_athletes: athleteCount ?? 0 })
               .eq('user_id', coachId)
 
-            console.log(`✅ Coaching subscription activated: ${athleteId} → ${coachId}`)
           }
           break
         }
@@ -182,18 +180,16 @@ export async function POST(req: NextRequest) {
           const serverSupabase = await (await import('@/lib/supabase/server')).createClient()
           await incrementFoundingCount(serverSupabase)
         }
-        console.log(`✅ Pro subscription activated (founding: ${isFounding})`)
         break
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
     }
 
     return NextResponse.json({ received: true })
 
   } catch (err) {
-    console.error('Webhook handler error:', err)
+    Sentry.captureException(err, { extra: { context: 'Webhook handler error:' } })
     return NextResponse.json({ error: 'Handler failed' }, { status: 500 })
   }
 }

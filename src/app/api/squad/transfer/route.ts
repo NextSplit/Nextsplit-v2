@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -103,7 +104,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ transferred: true, new_leader_id: user.id })
   } catch (err) {
-    console.error('Leadership transfer error:', err)
+    Sentry.captureException(err, { extra: { context: 'Leadership transfer error:' } })
     return NextResponse.json({ error: 'Failed to transfer leadership' }, { status: 500 })
   }
 }

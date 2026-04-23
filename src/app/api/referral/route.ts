@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { generateReferralCode, buildReferralUrl } from '@/lib/referral'
@@ -41,7 +42,7 @@ export async function GET() {
       displayName:    profile?.display_name ?? null,
     })
   } catch (err) {
-    console.error('[referral GET]', err)
+    Sentry.captureException(err, { extra: { context: '[referral GET]' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }
@@ -100,7 +101,7 @@ export async function POST(req: NextRequest) {
       referrerName: (referrer.display_name as string | null)?.split(' ')[0] ?? 'A friend',
     })
   } catch (err) {
-    console.error('[referral POST]', err)
+    Sentry.captureException(err, { extra: { context: '[referral POST]' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

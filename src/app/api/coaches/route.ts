@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -39,13 +40,13 @@ export async function GET(req: NextRequest) {
     })
 
     if (error) {
-      console.error('Coach browse RPC error:', error)
+      Sentry.captureException(error, { extra: { context: 'Coach browse RPC error:' } })
       return NextResponse.json({ error: 'Failed to load coaches' }, { status: 500 })
     }
 
     return NextResponse.json({ coaches: data ?? [] })
   } catch (err) {
-    console.error('Coach browse error:', err)
+    Sentry.captureException(err, { extra: { context: 'Coach browse error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

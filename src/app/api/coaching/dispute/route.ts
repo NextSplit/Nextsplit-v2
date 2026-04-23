@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getStripe } from '@/lib/stripe'
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
         })
         refundId = refund.id
       } catch (refundErr) {
-        console.error('Refund failed:', refundErr)
+        Sentry.captureException(refundErr, { extra: { context: 'Refund failed:' } })
         // Continue — we still record the dispute
       }
     }
@@ -108,7 +109,7 @@ export async function POST(req: NextRequest) {
       amount_gbp: sub.amount_gbp,
     })
   } catch (err) {
-    console.error('Coaching dispute error:', err)
+    Sentry.captureException(err, { extra: { context: 'Coaching dispute error:' } })
     return NextResponse.json({ error: 'Failed to open dispute' }, { status: 500 })
   }
 }

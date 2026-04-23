@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { serverConfig } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { AiCoachDigestSchema, zodError } from '@/lib/schemas'
@@ -96,7 +97,7 @@ Be direct and actionable. Write as if briefing the coach. No fluff.`
     })
 
   } catch (err) {
-    console.error('Coach digest error:', err)
+    Sentry.captureException(err, { extra: { context: 'Coach digest error:' } })
     return NextResponse.json({ error: 'Digest generation failed' }, { status: 500 })
   }
 }

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -181,7 +182,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ milestones, posted: true })
 
   } catch (err) {
-    console.error('Milestone error:', err)
+    Sentry.captureException(err, { extra: { context: 'Milestone error:' } })
     return NextResponse.json({ error: 'Milestone check failed' }, { status: 500 })
   }
 }

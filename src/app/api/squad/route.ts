@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -46,7 +47,7 @@ export async function GET() {
       .is('disbanded_at', null)
       .maybeSingle()
 
-    if (ledErr) console.error('[GET /api/squad] ledSquad error:', ledErr.message)
+    if (ledErr) Sentry.captureException(new Error('[GET /api/squad] ledSquad error:', ledErr.message))
 
     if (ledSquad) {
       const activeMembers = (ledSquad.squad_members || []).filter(
@@ -92,7 +93,7 @@ export async function GET() {
 
     return NextResponse.json({ squad: null, role: null })
   } catch (err) {
-    console.error('Squad GET error:', err)
+    Sentry.captureException(err, { extra: { context: 'Squad GET error:' } })
     return NextResponse.json({ error: 'Failed to fetch squad' }, { status: 500 })
   }
 }
@@ -145,7 +146,7 @@ export async function POST(req: NextRequest) {
     }).select().single()
 
     if (squadErr) {
-      console.error('Squad create error:', squadErr)
+      Sentry.captureException(squadErr, { extra: { context: 'Squad create error:' } })
       return NextResponse.json({ error: squadErr.message }, { status: 500 })
     }
 
@@ -165,7 +166,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ squad: { ...squad, invite_code: inviteCode } }, { status: 201 })
   } catch (err) {
-    console.error('Squad POST error:', err)
+    Sentry.captureException(err, { extra: { context: 'Squad POST error:' } })
     return NextResponse.json({ error: 'Failed to create squad' }, { status: 500 })
   }
 }
@@ -200,7 +201,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ squad: updated })
   } catch (err) {
-    console.error('Squad PATCH error:', err)
+    Sentry.captureException(err, { extra: { context: 'Squad PATCH error:' } })
     return NextResponse.json({ error: 'Failed to update squad' }, { status: 500 })
   }
 }

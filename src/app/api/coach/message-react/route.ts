@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ reacted: true, reaction })
   } catch (err) {
-    console.error('Message react error:', err)
+    Sentry.captureException(err, { extra: { context: 'Message react error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

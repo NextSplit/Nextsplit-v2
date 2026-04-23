@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { serverConfig } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
@@ -39,7 +40,8 @@ export async function POST(req: NextRequest) {
       plan = JSON.parse(cleaned)
     } catch {
       // If parsing fails return a fallback structure
-      console.error('Failed to parse AI plan JSON:', cleaned.slice(0, 200))
+      Sentry.captureException(new Error('Failed to parse AI plan JSON:', cleaned.slice(0, 200))
+)
       plan = {
         name:        'My Training Plan',
         totalWeeks:  12,
@@ -51,7 +53,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(plan)
 
   } catch (err) {
-    console.error('generate-plan error:', err)
+    Sentry.captureException(err, { extra: { context: 'generate-plan error:' } })
     return NextResponse.json({ error: 'Plan generation failed' }, { status: 500 })
   }
 }

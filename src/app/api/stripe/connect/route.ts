@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { config } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: accountLink.url })
 
   } catch (err) {
-    console.error('Stripe Connect error:', err)
+    Sentry.captureException(err, { extra: { context: 'Stripe Connect error:' } })
     return NextResponse.json({ error: 'Failed to create Stripe Connect account' }, { status: 500 })
   }
 }
@@ -90,7 +91,7 @@ export async function GET(req: NextRequest) {
     })
 
   } catch (err) {
-    console.error('Stripe Connect status error:', err)
+    Sentry.captureException(err, { extra: { context: 'Stripe Connect status error:' } })
     return NextResponse.json({ connected: false, charges_enabled: false })
   }
 }

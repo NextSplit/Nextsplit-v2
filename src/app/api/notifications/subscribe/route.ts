@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { PushSubscribeSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (error) throw error
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('[push/subscribe]', err)
+    Sentry.captureException(err, { extra: { context: '[push/subscribe]' } })
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }
@@ -42,7 +43,7 @@ export async function DELETE() {
     await db(supabase).from('push_subscriptions').delete().eq('user_id', user.id)
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('[push/unsubscribe]', err)
+    Sentry.captureException(err, { extra: { context: '[push/unsubscribe]' } })
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }

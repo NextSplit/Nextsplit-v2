@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { PurchasePlanSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, plan: newPlan })
   } catch (err) {
-    console.error('Marketplace purchase error:', err)
+    Sentry.captureException(err, { extra: { context: 'Marketplace purchase error:' } })
     return NextResponse.json({ error: 'Purchase failed' }, { status: 500 })
   }
 }

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { VoiceMessageListenSchema, zodError } from '@/lib/schemas'
@@ -16,6 +17,22 @@ export async function GET(req: NextRequest) {
 
     const athleteId = req.nextUrl.searchParams.get('athlete_id')
     if (!athleteId) return NextResponse.json({ error: 'athlete_id required' }, { status: 400 })
+
+    // Security: verify the requesting user is one of the two parties in this conversation.
+    // user.id must be either the coach or the athlete — never a third party.
+    const isParty = user.id === athleteId // user IS the athlete
+      // OR user is the coach for this athlete — verified below via DB
+    if (!isParty) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: rel } = await (supabase as any)
+        .from('coach_athletes')
+        .select('id')
+        .eq('coach_id', user.id)
+        .eq('athlete_id', athleteId)
+        .eq('status', 'active')
+        .maybeSingle()
+      if (!rel) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
@@ -40,7 +57,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ messages })
   } catch (err) {
-    console.error('Voice messages GET error:', err)
+    Sentry.captureException(err, { extra: { context: 'Voice messages GET error:' } })
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 })
   }
 }
@@ -78,7 +95,7 @@ export async function POST(req: NextRequest) {
       })
 
     if (uploadErr) {
-      console.error('Storage upload error:', uploadErr)
+      Sentry.captureException(uploadErr, { extra: { context: 'Storage upload error:' } })
       return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
     }
 
@@ -103,7 +120,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: data })
   } catch (err) {
-    console.error('Voice messages POST error:', err)
+    Sentry.captureException(err, { extra: { context: 'Voice messages POST error:' } })
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
   }
 }
@@ -129,7 +146,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error('Voice messages PATCH error:', err)
+    Sentry.captureException(err, { extra: { context: 'Voice messages PATCH error:' } })
     return NextResponse.json({ error: 'Update failed' }, { status: 500 })
   }
 }

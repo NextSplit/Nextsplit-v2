@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { CoachMessageSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, message: data })
 
   } catch (err) {
-    console.error('Message send error:', err)
+    Sentry.captureException(err, { extra: { context: 'Message send error:' } })
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
   }
 }
@@ -93,7 +94,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ messages: data ?? [] })
 
   } catch (err) {
-    console.error('Message fetch error:', err)
+    Sentry.captureException(err, { extra: { context: 'Message fetch error:' } })
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 })
   }
 }

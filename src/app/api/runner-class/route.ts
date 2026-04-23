@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
@@ -110,7 +111,7 @@ export async function POST() {
     })
 
   } catch (err) {
-    console.error('Runner class compute error:', err)
+    Sentry.captureException(err, { extra: { context: 'Runner class compute error:' } })
     return NextResponse.json({ error: 'Failed to compute class' }, { status: 500 })
   }
 }

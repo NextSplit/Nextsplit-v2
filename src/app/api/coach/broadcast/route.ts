@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ sent: messages.length, success: true })
   } catch (err) {
-    console.error('broadcast error:', err)
+    Sentry.captureException(err, { extra: { context: 'broadcast error:' } })
     return NextResponse.json({ error: 'Broadcast failed' }, { status: 500 })
   }
 }

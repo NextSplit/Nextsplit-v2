@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -33,7 +34,7 @@ export async function GET() {
       is_coach_pro:      data?.is_coach_pro       ?? false,
     })
   } catch (err) {
-    console.error('Digest get error:', err)
+    Sentry.captureException(err, { extra: { context: 'Digest get error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }
@@ -58,7 +59,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ updated: true })
   } catch (err) {
-    console.error('Digest update error:', err)
+    Sentry.captureException(err, { extra: { context: 'Digest update error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

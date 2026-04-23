@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { MarketplacePublishSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -68,7 +69,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ plans: enriched })
   } catch (err) {
-    console.error('Marketplace GET error:', err)
+    Sentry.captureException(err, { extra: { context: 'Marketplace GET error:' } })
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 })
   }
 }
@@ -140,7 +141,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ plan: data })
   } catch (err) {
-    console.error('Marketplace POST error:', err)
+    Sentry.captureException(err, { extra: { context: 'Marketplace POST error:' } })
     return NextResponse.json({ error: 'Failed to publish' }, { status: 500 })
   }
 }

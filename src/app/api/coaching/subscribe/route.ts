@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getStripe } from '@/lib/stripe'
@@ -123,7 +124,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url, session_id: session.id })
   } catch (err) {
-    console.error('Coaching subscribe error:', err)
+    Sentry.captureException(err, { extra: { context: 'Coaching subscribe error:' } })
     return NextResponse.json({ error: 'Failed to create checkout' }, { status: 500 })
   }
 }

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { CommunityProgressSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -100,7 +101,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, xp_awarded: sessionXP })
 
   } catch (err) {
-    console.error('Community progress error:', err)
+    Sentry.captureException(err, { extra: { context: 'Community progress error:' } })
     return NextResponse.json({ error: 'Progress update failed' }, { status: 500 })
   }
 }

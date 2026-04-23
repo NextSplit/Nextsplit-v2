@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { CoachSavePlanSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, plan: result })
 
   } catch (err) {
-    console.error('Save plan error:', err)
+    Sentry.captureException(err, { extra: { context: 'Save plan error:' } })
     return NextResponse.json({ error: 'Failed to save plan' }, { status: 500 })
   }
 }

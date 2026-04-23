@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { randomBytes } from 'crypto'
@@ -39,7 +40,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ clubs: data ?? [] })
 
   } catch (err) {
-    console.error('Get clubs error:', err)
+    Sentry.captureException(err, { extra: { context: 'Get clubs error:' } })
     return NextResponse.json({ error: 'Failed to fetch clubs' }, { status: 500 })
   }
 }
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, club })
 
   } catch (err) {
-    console.error('Create club error:', err)
+    Sentry.captureException(err, { extra: { context: 'Create club error:' } })
     return NextResponse.json({ error: 'Failed to create club' }, { status: 500 })
   }
 }

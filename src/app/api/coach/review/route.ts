@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { CoachReviewSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true })
 
   } catch (err) {
-    console.error('Review error:', err)
+    Sentry.captureException(err, { extra: { context: 'Review error:' } })
     return NextResponse.json({ error: 'Failed to submit review' }, { status: 500 })
   }
 }
@@ -113,7 +114,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ reviews: data ?? [] })
 
   } catch (err) {
-    console.error('Get reviews error:', err)
+    Sentry.captureException(err, { extra: { context: 'Get reviews error:' } })
     return NextResponse.json({ error: 'Failed to fetch reviews' }, { status: 500 })
   }
 }

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { ChallengeActionSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
     })
 
   } catch (err) {
-    console.error('Get challenges error:', err)
+    Sentry.captureException(err, { extra: { context: 'Get challenges error:' } })
     return NextResponse.json({ error: 'Failed to fetch challenges' }, { status: 500 })
   }
 }
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
 
   } catch (err) {
-    console.error('Challenge action error:', err)
+    Sentry.captureException(err, { extra: { context: 'Challenge action error:' } })
     return NextResponse.json({ error: 'Failed to process challenge action' }, { status: 500 })
   }
 }

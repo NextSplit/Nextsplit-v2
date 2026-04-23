@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { serverConfig } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -118,7 +119,7 @@ Respond with ONLY a JSON object (no markdown) with this structure:
     return NextResponse.json({ success: true, adaptation, week_n })
 
   } catch (err) {
-    console.error('Adapt plan error:', err)
+    Sentry.captureException(err, { extra: { context: 'Adapt plan error:' } })
     return NextResponse.json({ error: 'Adaptation failed' }, { status: 500 })
   }
 }

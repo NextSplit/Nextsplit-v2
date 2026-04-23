@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
 import { AiRecommendSchema, zodError } from '@/lib/schemas'
@@ -52,7 +53,7 @@ Recommend the single best plan slug for this runner. Respond with JSON only:
 
     return NextResponse.json(result)
   } catch (err) {
-    console.error('recommend error:', err)
+    Sentry.captureException(err, { extra: { context: 'recommend error:' } })
     return NextResponse.json({ error: 'Recommendation failed' }, { status: 500 })
   }
 }

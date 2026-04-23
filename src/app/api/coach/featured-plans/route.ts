@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { CoachFeaturedPlansSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ featured, source: 'editorial' })
 
   } catch (err) {
-    console.error('Featured plans error:', err)
+    Sentry.captureException(err, { extra: { context: 'Featured plans error:' } })
     return NextResponse.json({ error: 'Failed to fetch featured plans' }, { status: 500 })
   }
 }
@@ -80,7 +81,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true })
 
   } catch (err) {
-    console.error('Featured plans set error:', err)
+    Sentry.captureException(err, { extra: { context: 'Featured plans set error:' } })
     return NextResponse.json({ error: 'Failed to set featured plans' }, { status: 500 })
   }
 }

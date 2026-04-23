@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
     const { data } = await query
     return NextResponse.json({ scheduled: data ?? [] })
   } catch (err) {
-    console.error('Scheduled messages fetch error:', err)
+    Sentry.captureException(err, { extra: { context: 'Scheduled messages fetch error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest) {
     if (error) throw error
     return NextResponse.json({ scheduled: msg })
   } catch (err) {
-    console.error('Schedule message error:', err)
+    Sentry.captureException(err, { extra: { context: 'Schedule message error:' } })
     return NextResponse.json({ error: 'Failed to schedule message' }, { status: 500 })
   }
 }
@@ -150,7 +151,7 @@ export async function DELETE(req: NextRequest) {
     if (error) throw error
     return NextResponse.json({ cancelled: true })
   } catch (err) {
-    console.error('Cancel scheduled message error:', err)
+    Sentry.captureException(err, { extra: { context: 'Cancel scheduled message error:' } })
     return NextResponse.json({ error: 'Failed to cancel' }, { status: 500 })
   }
 }

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -128,7 +129,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ joined: true, squad_id: invite.squad_id })
   } catch (err) {
-    console.error('Squad join error:', err)
+    Sentry.captureException(err, { extra: { context: 'Squad join error:' } })
     return NextResponse.json({ error: 'Failed to join squad' }, { status: 500 })
   }
 }
@@ -171,7 +172,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ left: true })
   } catch (err) {
-    console.error('Squad leave/remove error:', err)
+    Sentry.captureException(err, { extra: { context: 'Squad leave/remove error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

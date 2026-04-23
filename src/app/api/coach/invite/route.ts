@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { config } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ token, inviteUrl })
 
   } catch (err) {
-    console.error('Coach invite error:', err)
+    Sentry.captureException(err, { extra: { context: 'Coach invite error:' } })
     return NextResponse.json({ error: 'Failed to create invite' }, { status: 500 })
   }
 }

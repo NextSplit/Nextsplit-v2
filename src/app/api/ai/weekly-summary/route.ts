@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -134,7 +135,7 @@ Keep the whole thing under 200 words. Sound like a coach, not a report.`
     })
 
   } catch (err) {
-    console.error('Weekly summary error:', err)
+    Sentry.captureException(err, { extra: { context: 'Weekly summary error:' } })
     return NextResponse.json({ error: 'Summary generation failed' }, { status: 500 })
   }
 }

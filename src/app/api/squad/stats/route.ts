@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest) {
       month: currentMonth,
     })
   } catch (err) {
-    console.error('Squad stats error:', err)
+    Sentry.captureException(err, { extra: { context: 'Squad stats error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

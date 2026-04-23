@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest) {
       },
     })
   } catch (err) {
-    console.error('Character profile GET error:', err)
+    Sentry.captureException(err, { extra: { context: 'Character profile GET error:' } })
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 })
   }
 }

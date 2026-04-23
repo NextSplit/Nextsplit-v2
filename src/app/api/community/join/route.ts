@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { JoinClubSchema, zodError } from '@/lib/schemas'
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, club })
 
   } catch (err) {
-    console.error('Club join error:', err)
+    Sentry.captureException(err, { extra: { context: 'Club join error:' } })
     return NextResponse.json({ error: 'Failed to join club' }, { status: 500 })
   }
 }

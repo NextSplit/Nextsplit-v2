@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -94,7 +95,7 @@ export async function GET() {
       },
     })
   } catch (err) {
-    console.error('Coach settings fetch error:', err)
+    Sentry.captureException(err, { extra: { context: 'Coach settings fetch error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }
@@ -148,13 +149,13 @@ export async function PATCH(req: NextRequest) {
       .eq('user_id', user.id)
 
     if (error) {
-      console.error('Coach settings update error:', error)
+      Sentry.captureException(error, { extra: { context: 'Coach settings update error:' } })
       return NextResponse.json({ error: 'Update failed' }, { status: 500 })
     }
 
     return NextResponse.json({ updated: true })
   } catch (err) {
-    console.error('Coach settings error:', err)
+    Sentry.captureException(err, { extra: { context: 'Coach settings error:' } })
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { RaceActionSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
@@ -39,7 +40,7 @@ export async function GET(req: NextRequest) {
     })
 
   } catch (err) {
-    console.error('Get races error:', err)
+    Sentry.captureException(err, { extra: { context: 'Get races error:' } })
     return NextResponse.json({ error: 'Failed to fetch races' }, { status: 500 })
   }
 }
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
 
   } catch (err) {
-    console.error('Race action error:', err)
+    Sentry.captureException(err, { extra: { context: 'Race action error:' } })
     return NextResponse.json({ error: 'Failed to process race action' }, { status: 500 })
   }
 }

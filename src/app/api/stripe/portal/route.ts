@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { config } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: session.url })
 
   } catch (err) {
-    console.error('Portal error:', err)
+    Sentry.captureException(err, { extra: { context: 'Portal error:' } })
     return NextResponse.json({ error: 'Portal failed' }, { status: 500 })
   }
 }

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -97,7 +98,7 @@ export async function GET(req: NextRequest) {
     })
 
   } catch (err) {
-    console.error('Race leaderboard error:', err)
+    Sentry.captureException(err, { extra: { context: 'Race leaderboard error:' } })
     return NextResponse.json({ error: 'Failed to fetch leaderboard' }, { status: 500 })
   }
 }
