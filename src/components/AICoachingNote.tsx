@@ -115,7 +115,7 @@ export default function AICoachingNote({
 
         {/* Dismiss */}
         {onDismiss && (
-          <button onClick={onDismiss} className="text-gray-300 text-lg leading-none flex-shrink-0 mt-0.5">
+          <button aria-label="Close" onClick={onDismiss} className="text-gray-300 text-lg leading-none flex-shrink-0 mt-0.5">
             ×
           </button>
         )}

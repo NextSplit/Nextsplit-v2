@@ -45,7 +45,7 @@ function SessionPill({ session, onRemove }: { session: Session; onRemove: () => 
       <span>{type.emoji}</span>
       <span className="font-medium text-gray-700 truncate max-w-[80px]">{session.n}</span>
       {session.km && <span className="text-gray-400">{session.km}k</span>}
-      <button onClick={onRemove} className="text-gray-300 hover:text-red-400 ml-1">×</button>
+      <button aria-label="Close" onClick={onRemove} className="text-gray-300 hover:text-red-400 ml-1">×</button>
     </div>
   )
 }

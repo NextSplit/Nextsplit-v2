@@ -199,7 +199,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
       <div className="w-full max-w-lg mx-auto bg-white p-5 pb-8" style={{ borderRadius: "24px 24px 0 0" }} onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-border-2)' }} />
-          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
+          <button aria-label="Close" onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
             style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>×</button>
         </div>
 

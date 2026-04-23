@@ -151,7 +151,7 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
           <span className="text-sm font-bold text-gray-900">Voice message</span>
           <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">max 60s</span>
         </div>
-        <button onClick={onCancel} className="text-gray-400 text-lg leading-none">×</button>
+        <button aria-label="Close" onClick={onCancel} className="text-gray-400 text-lg leading-none">×</button>
       </div>
 
       <div className="px-4 py-5">

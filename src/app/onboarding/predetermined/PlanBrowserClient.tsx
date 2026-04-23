@@ -245,7 +245,7 @@ function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose
               <h3 className="text-sm font-black text-gray-900">{plan.name}</h3>
               <p className="text-xs text-gray-500 mt-0.5">Week 1 preview</p>
             </div>
-            <button onClick={onClose} className="text-gray-400 text-lg">✕</button>
+            <button aria-label="Close" onClick={onClose} className="text-gray-400 text-lg">✕</button>
           </div>
 
           {days.length === 0 ? (

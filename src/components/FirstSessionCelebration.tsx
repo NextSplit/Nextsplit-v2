@@ -129,7 +129,7 @@ export default function FirstSessionCelebration({ totalDone, displayName, xp }: 
         onClick={e => e.stopPropagation()}>
 
         {/* X close */}
-        <button onClick={dismiss}
+        <button aria-label="Close" onClick={dismiss}
           className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-lg"
           style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
           ×

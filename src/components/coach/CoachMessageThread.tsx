@@ -126,7 +126,7 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
               {unreadVoice > 0 && <span className="ml-2 text-[10px] font-bold text-red-500">{unreadVoice} new voice message{unreadVoice > 1 ? 's' : ''}</span>}
             </p>
           </div>
-          <button onClick={onClose} className="text-gray-400 text-xl leading-none">×</button>
+          <button aria-label="Close" onClick={onClose} className="text-gray-400 text-xl leading-none">×</button>
         </div>
 
         {/* Messages */}

@@ -70,7 +70,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
             )}
           </div>
           {canRemove && (
-            <button onClick={onRemove} className="text-gray-300 hover:text-red-400 transition-colors text-lg leading-none">×</button>
+            <button aria-label="Close" onClick={onRemove} className="text-gray-300 hover:text-red-400 transition-colors text-lg leading-none">×</button>
           )}
         </div>
       </div>

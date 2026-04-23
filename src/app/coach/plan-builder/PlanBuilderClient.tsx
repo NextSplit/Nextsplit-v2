@@ -46,7 +46,7 @@ function SessionCard({ session, onRemove, onEdit }: { session: Session; onRemove
         </div>
         <div className="flex gap-1 flex-shrink-0">
           <button onClick={onEdit} className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: 'var(--color-surface-3)', color: 'var(--color-text-tertiary)' }}>edit</button>
-          <button onClick={onRemove} className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: '#e85d2615', color: '#e85d26' }}>×</button>
+          <button aria-label="Close" onClick={onRemove} className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: '#e85d2615', color: '#e85d26' }}>×</button>
         </div>
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5" style={{ color: 'var(--color-text-tertiary)' }}>

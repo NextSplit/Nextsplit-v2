@@ -69,7 +69,7 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
         onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-border-2)' }} />
-          <button onClick={onClose}
+          <button aria-label="Close" onClick={onClose}
             className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
             style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
             ×

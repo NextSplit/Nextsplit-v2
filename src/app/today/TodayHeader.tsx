@@ -148,6 +148,7 @@ export function TodayHeader({
         {/* Date navigation */}
         <div className="flex items-center gap-3">
           <button onClick={() => setDateOffset(o => o - 1)}
+            aria-label="Previous day"
             className="w-8 h-8 flex items-center justify-center rounded-full text-lg transition-all active:scale-90"
             style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>
             ‹
@@ -166,6 +167,7 @@ export function TodayHeader({
             </div>
           </div>
           <button onClick={() => setDateOffset(o => Math.min(o + 1, 0))}
+            aria-label="Next day"
             className="w-8 h-8 flex items-center justify-center rounded-full text-lg transition-all active:scale-90"
             style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>
             ›
