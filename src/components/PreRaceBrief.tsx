@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@/lib/sentry'
 'use client'
 
 import { useState, useEffect } from 'react'

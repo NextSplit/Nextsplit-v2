@@ -47,7 +47,7 @@ export async function GET() {
       .is('disbanded_at', null)
       .maybeSingle()
 
-    if (ledErr) Sentry.captureException(new Error('[GET /api/squad] ledSquad error:', ledErr.message))
+    if (ledErr) Sentry.captureException(ledErr, { extra: { context: 'ledSquad error' } })
 
     if (ledSquad) {
       const activeMembers = (ledSquad.squad_members || []).filter(

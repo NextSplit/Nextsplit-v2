@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@/lib/sentry'
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -161,7 +161,7 @@ export default function AdaptiveSuggestions({ weeks, logs, gymLogs = {}, current
       setSuggestions(parsed)
       setGeneratedAtWeek(currentWeek)
     } catch (e) {
-      Sentry.captureException(e, { extra: { context: 'Adaptive suggestions' } })
+      Sentry.captureException(e, { context: 'Adaptive suggestions' })
     } finally {
       setLoading(false)
     }

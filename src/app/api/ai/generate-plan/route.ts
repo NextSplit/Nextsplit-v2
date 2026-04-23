@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       plan = JSON.parse(cleaned)
     } catch {
       // If parsing fails return a fallback structure
-      Sentry.captureException(new Error('Failed to parse AI plan JSON:', cleaned.slice(0, 200))
+      Sentry.captureException(new Error('Failed to parse AI plan JSON'), { extra: { preview: cleaned.slice(0, 200) } })
 )
       plan = {
         name:        'My Training Plan',

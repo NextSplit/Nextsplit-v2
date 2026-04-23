@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@/lib/sentry'
 'use client'
 
 import { useRef, useState } from 'react'
@@ -146,7 +146,7 @@ export default function WeeklyShareCard({
         URL.revokeObjectURL(url)
       }
     } catch (e) {
-      if ((e as Error).name !== 'AbortError') Sentry.captureException(e, { extra: { context: 'Weekly share' } })
+      if ((e as Error).name !== 'AbortError') Sentry.captureException(e, { context: 'Weekly share' })
     } finally {
       setSharing(false)
     }

@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@/lib/sentry'
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
@@ -297,7 +297,7 @@ export function PlanGenerationScreen() {
         setDone(true)
 
       } catch (err) {
-        Sentry.captureException(err, { extra: { context: 'Plan generation' } })
+        Sentry.captureException(err, { context: 'Plan generation' })
         setError('Something went wrong — your profile is saved. You can pick a plan from the dashboard.')
         setProgress(100)
         // Still mark onboarding complete so they get through
