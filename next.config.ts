@@ -1,29 +1,6 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
-const securityHeaders = [
-  { key: 'X-Frame-Options',            value: 'DENY' },
-  { key: 'X-Content-Type-Options',     value: 'nosniff' },
-  { key: 'Referrer-Policy',            value: 'strict-origin-when-cross-origin' },
-  { key: 'Permissions-Policy',         value: 'camera=(), microphone=(), geolocation=()' },
-  { key: 'Strict-Transport-Security',  value: 'max-age=63072000; includeSubDomains; preload' },
-  {
-    key: 'Content-Security-Policy',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.posthog.com https://browser.sentry-cdn.com https://js.stripe.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https:",
-      "media-src 'self' blob: https://*.supabase.co",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://app.posthog.com https://sentry.io https://api.resend.com https://www.strava.com https://js.stripe.com",
-      "frame-src https://js.stripe.com",
-      "frame-ancestors 'none'",
-      "worker-src 'self' blob:",
-    ].join('; '),
-  },
-]
-
 const nextConfig: NextConfig = {
   // Remove X-Powered-By header
   poweredByHeader: false,
@@ -31,9 +8,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Compress responses
   compress: true,
-  async headers() {
-    return [{ source: '/(.*)', headers: securityHeaders }]
-  },
 };
 
 export default withSentryConfig(nextConfig, {
