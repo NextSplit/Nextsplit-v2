@@ -44,19 +44,27 @@ export async function GET(req: NextRequest) {
     const { data: profiles } = await (supabase as any)
       .from('profiles')
       .select(`
-        id, display_name, email,
+        id, display_name,
         last_notification_at, at_risk_sent_at,
         notif_session_reminder, notif_streak_at_risk,
         notif_weekly_recap, notif_at_risk_reengagement, notif_race_countdown
       `)
-      .eq('notifications_enabled', true)
-      .not('email', 'is', null) as { data: AnyRecord[] | null }
+      .eq('notifications_enabled', true) as { data: AnyRecord[] | null }
 
     if (!profiles?.length) {
       return NextResponse.json({ ok: true, sent: 0, reason: 'no_eligible_users' })
     }
 
     const userIds = profiles.map(p => p.id as string)
+
+    // Fetch emails via service role (auth.users not accessible with anon key)
+    const { createServiceClient } = await import('@/lib/supabase/server')
+    const svc = createServiceClient() as any
+    const emailByUser: Record<string, string> = {}
+    for (const uid of userIds) {
+      const { data: u } = await svc.auth.admin.getUserById(uid)
+      if (u?.user?.email) emailByUser[uid] = u.user.email
+    }
 
     // Fetch active plans
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,7 +110,8 @@ export async function GET(req: NextRequest) {
     for (const profile of profiles) {
       const uid       = profile.id as string
       const firstName = (profile.display_name as string | null)?.split(' ')[0] ?? 'Runner'
-      const email     = profile.email as string
+      const email     = emailByUser[uid]
+      if (!email) { results.push(`${uid}: no_email`); continue }
 
       // Rate limit: 1 email per day
       if (profile.last_notification_at) {
