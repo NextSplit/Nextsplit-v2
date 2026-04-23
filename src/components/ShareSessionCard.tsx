@@ -51,61 +51,46 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
       canvas.width = 1080
       canvas.height = 1080
 
-      // ── Background gradient ──────────────────────────────────────────────
-      const bg = ctx.createLinearGradient(0, 0, 1080, 1080)
-      bg.addColorStop(0, '#0f172a')
-      bg.addColorStop(0.5, '#0d3d38')
-      bg.addColorStop(1, '#0f172a')
-      ctx.fillStyle = bg
+      // ── Background — clean white ──────────────────────────────────────
+      ctx.fillStyle = '#f8f7f5'
       ctx.fillRect(0, 0, 1080, 1080)
 
-      // Subtle grid pattern
-      ctx.strokeStyle = 'rgba(255,255,255,0.03)'
-      ctx.lineWidth = 1
-      for (let x = 0; x < 1080; x += 60) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1080); ctx.stroke()
-      }
-      for (let y = 0; y < 1080; y += 60) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1080, y); ctx.stroke()
-      }
-
-      // Accent circle glow top-right
-      const glow = ctx.createRadialGradient(900, 150, 0, 900, 150, 400)
-      glow.addColorStop(0, 'rgba(13,148,136,0.25)')
-      glow.addColorStop(1, 'rgba(13,148,136,0)')
-      ctx.fillStyle = glow
-      ctx.fillRect(0, 0, 1080, 1080)
+      // Ember gradient bar at top
+      const barGrad = ctx.createLinearGradient(0, 0, 1080, 0)
+      barGrad.addColorStop(0, '#2b5c3f')
+      barGrad.addColorStop(0.5, '#e85d26')
+      barGrad.addColorStop(1, '#c49a3c')
+      ctx.fillStyle = barGrad
+      ctx.fillRect(0, 0, 1080, 12)
 
       // ── Top bar ─────────────────────────────────────────────────────────
-      ctx.fillStyle = 'rgba(255,255,255,0.08)'
-      ctx.fillRect(0, 0, 1080, 90)
-      ctx.fillStyle = 'var(--ns-forest)'
-      ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
-      ctx.fillText('NEXTSPLIT', 60, 58)
-      ctx.fillStyle = 'rgba(255,255,255,0.3)'
+      ctx.fillStyle = '#2b5c3f'
+      ctx.font = 'bold 32px system-ui, -apple-system, sans-serif'
+      ctx.fillText('NextSplit', 60, 80)
+      ctx.fillStyle = '#9e9c97'
       ctx.font = '28px system-ui'
-      ctx.fillText('Training Log', 260, 58)
+      ctx.fillText('Training Log', 230, 80)
 
       // Week badge top-right
-      ctx.fillStyle = 'rgba(13,148,136,0.3)'
+      ctx.fillStyle = '#f3f2f0'
       ctx.beginPath()
-      ctx.roundRect(870, 22, 160, 46, 23)
+      ctx.roundRect(870, 38, 160, 46, 23)
       ctx.fill()
-      ctx.fillStyle = '#5eead4'
+      ctx.fillStyle = '#6b6b67'
       ctx.font = 'bold 26px system-ui'
-      ctx.fillText(`Week ${weekN}`, 900, 52)
+      ctx.fillText(`Week ${weekN}`, 900, 68)
 
       // ── Session type pill ────────────────────────────────────────────────
-      ctx.fillStyle = 'rgba(255,255,255,0.1)'
+      ctx.fillStyle = '#fef3ee'
       ctx.beginPath()
-      ctx.roundRect(60, 140, 280, 56, 28)
+      ctx.roundRect(60, 130, 300, 56, 28)
       ctx.fill()
-      ctx.fillStyle = 'var(--ns-forest)'
+      ctx.fillStyle = '#e85d26'
       ctx.font = 'bold 26px system-ui'
-      ctx.fillText(`${cfg.emoji}  ${cfg.label.toUpperCase()}`, 85, 177)
+      ctx.fillText(`${cfg.emoji}  ${cfg.label.toUpperCase()}`, 85, 167)
 
       // ── Session name ─────────────────────────────────────────────────────
-      ctx.fillStyle = '#ffffff'
+      ctx.fillStyle = '#1a1a18'
       ctx.font = 'bold 80px system-ui, -apple-system, sans-serif'
       const words = name.split(' ')
       let line = ''
@@ -124,7 +109,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
       // ── Stats row ────────────────────────────────────────────────────────
       if (stats.length > 0) {
         const statStr = stats.join('   ·   ')
-        ctx.fillStyle = 'rgba(255,255,255,0.75)'
+        ctx.fillStyle = '#6b6b67'
         ctx.font = '52px system-ui'
         ctx.fillText(statStr, 60, y + 10)
         y += 80
@@ -155,14 +140,14 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
       // ── XP badge ─────────────────────────────────────────────────────────
       y += 20
       const xpW = 200
-      ctx.fillStyle = 'rgba(13,148,136,0.4)'
+      ctx.fillStyle = '#fdf7ec'
       ctx.beginPath()
       ctx.roundRect(60, y, xpW, 64, 32)
       ctx.fill()
-      ctx.strokeStyle = 'var(--ns-forest)'
+      ctx.strokeStyle = '#c49a3c'
       ctx.lineWidth = 2
       ctx.stroke()
-      ctx.fillStyle = '#5eead4'
+      ctx.fillStyle = '#c49a3c'
       ctx.font = 'bold 38px system-ui'
       ctx.fillText(`+${xp} XP`, 84, y + 44)
 

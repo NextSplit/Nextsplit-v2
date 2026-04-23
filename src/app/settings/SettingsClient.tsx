@@ -26,7 +26,7 @@ function Section({ title, children, id }: { title: string; children: React.React
   return (
     <div>
       <div className="px-4 py-2">
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{title}</span>
+        <span className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-widest">{title}</span>
       </div>
       <div className="rounded-2xl overflow-hidden divide-y" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", borderColor: "var(--color-border)" }}>
         {children}
@@ -44,7 +44,7 @@ function SettingRow({ label, sublabel, children, danger }: {
     <div className="flex items-center justify-between px-4 py-3.5 gap-3">
       <div className="flex-1 min-w-0">
         <div className={`text-sm font-medium ${danger ? 'text-red-500' : ''}`} style={danger ? {} : { color: 'var(--color-text-primary)' }}>{label}</div>
-        {sublabel && <div className="text-[11px] text-gray-400 mt-0.5">{sublabel}</div>}
+        {sublabel && <div className="text-[11px] text-[var(--color-text-tertiary)] mt-0.5">{sublabel}</div>}
       </div>
       {children && <div className="flex-shrink-0">{children}</div>}
     </div>
@@ -58,12 +58,12 @@ function ToggleRow({ label, sublabel, value, onChange }: {
     <SettingRow label={label} sublabel={sublabel}>
       <button
         onClick={() => onChange(!value)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? 'bg-[var(--ns-forest)]' : 'bg-gray-200'}`}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? 'bg-[var(--ns-ember)]' : 'bg-gray-200'}`}
         role="switch"
         aria-checked={value}
         aria-label={label}
       >
-        <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
+        <span className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-surface)] shadow transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
       </button>
     </SettingRow>
   )
@@ -100,7 +100,7 @@ function ButtonRow({ label, sublabel, buttonLabel, onClick, danger, disabled }: 
         className={`text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40 transition-all ${
           danger
             ? 'text-red-500 bg-red-50 border border-red-200 hover:bg-red-100'
-            : 'text-[var(--ns-forest)] bg-[var(--ns-forest-light)] border border-green-100 hover:bg-green-100'
+            : 'text-[var(--ns-ember)] bg-[var(--ns-forest-light)] border border-green-100 hover:bg-green-100'
         }`}
         aria-label={buttonLabel}
       >
@@ -133,12 +133,12 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
         <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>{label}</span>
         {!editing && (
           <button onClick={() => { setDraft(value); setEditing(true) }}
-            className="text-[11px] font-semibold text-[var(--ns-forest)]" aria-label={`Edit ${label}`}>
+            className="text-[11px] font-semibold text-[var(--ns-ember)]" aria-label={`Edit ${label}`}>
             Edit
           </button>
         )}
       </div>
-      {sublabel && <div className="text-[11px] text-gray-400 mb-1">{sublabel}</div>}
+      {sublabel && <div className="text-[11px] text-[var(--color-text-tertiary)] mb-1">{sublabel}</div>}
       {editing ? (
         <div className="flex gap-2 mt-1.5">
           <input
@@ -151,7 +151,7 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
             aria-label={`${label} input`}
           />
           <button onClick={handleSave} disabled={saving}
-            className="px-3 py-2 bg-[var(--ns-forest)] text-white text-xs font-bold rounded-xl disabled:opacity-50">
+            className="px-3 py-2 bg-[var(--ns-ember)] text-white text-xs font-bold rounded-xl disabled:opacity-50">
             {saving ? '…' : 'Save'}
           </button>
           <button onClick={() => setEditing(false)}
@@ -160,7 +160,7 @@ function EditableRow({ label, sublabel, value, placeholder, type = 'text', onSav
           </button>
         </div>
       ) : (
-        <div className="text-sm text-gray-500 mt-0.5">{value || <span className="italic text-gray-300">{placeholder ?? 'Not set'}</span>}</div>
+        <div className="text-sm text-[var(--color-text-secondary)] mt-0.5">{value || <span className="italic text-gray-300">{placeholder ?? 'Not set'}</span>}</div>
       )}
     </div>
   )
@@ -215,7 +215,7 @@ function CoachAccessSection() {
   }, [])
 
   if (!rel) {
-    return <p className="text-sm text-gray-400 px-1">No active coach connected. <Link href="/coach/setup" className="text-[var(--ns-forest)] hover:underline">Become a coach</Link> or accept an invite to connect.</p>
+    return <p className="text-sm text-[var(--color-text-tertiary)] px-1">No active coach connected. <Link href="/coach/setup" className="text-[var(--ns-ember)] hover:underline">Become a coach</Link> or accept an invite to connect.</p>
   }
 
   const toggle = async (field: 'share_logs' | 'share_wellness' | 'share_nutrition' | 'share_body_weight') => {
@@ -256,9 +256,9 @@ function CoachAccessSection() {
           <button
             onClick={() => toggle(item.field)}
             disabled={saving}
-            className={`w-11 h-6 rounded-full transition-all relative ${rel[item.field] ? 'bg-[var(--ns-forest)]' : 'bg-gray-200'}`}
+            className={`w-11 h-6 rounded-full transition-all relative ${rel[item.field] ? 'bg-[var(--ns-ember)]' : 'bg-gray-200'}`}
           >
-            <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${rel[item.field] ? 'left-5' : 'left-0.5'}`} />
+            <div className={`absolute top-0.5 w-5 h-5 bg-[var(--color-surface)] rounded-full shadow transition-all ${rel[item.field] ? 'left-5' : 'left-0.5'}`} />
           </button>
         </SettingRow>
       ))}
@@ -309,9 +309,9 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
         </div>
         <div>
           <p className="text-sm font-semibold text-gray-800">Split Leader active</p>
-          <p className="text-xs text-gray-400">Manage your squad from the Athletes tab</p>
+          <p className="text-xs text-[var(--color-text-tertiary)]">Manage your squad from the Athletes tab</p>
         </div>
-        <Link href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-forest)] flex-shrink-0">
+        <Link href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-ember)] flex-shrink-0">
           Squad →
         </Link>
       </div>
@@ -323,13 +323,13 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
       <div className="bg-[var(--ns-forest-light)] rounded-2xl p-4 space-y-2">
         <div className="flex items-center gap-2">
           <span className="text-lg">👥</span>
-          <p className="text-sm font-bold text-[var(--ns-forest)]">Split Leader</p>
-          <span className="text-[10px] bg-[var(--ns-forest)] text-white px-2 py-0.5 rounded-full font-bold ml-auto">Pro</span>
+          <p className="text-sm font-bold text-[var(--ns-ember)]">Split Leader</p>
+          <span className="text-[10px] bg-[var(--ns-ember)] text-white px-2 py-0.5 rounded-full font-bold ml-auto">Pro</span>
         </div>
         <p className="text-xs text-gray-600 leading-relaxed">
           Coach up to 5 runners. Share your plan, annotate sessions, run a squad leaderboard. Included free with NextSplit Pro.
         </p>
-        <a href="/profile" className="inline-block mt-1 text-xs font-bold text-[var(--ns-forest)] underline">
+        <a href="/profile" className="inline-block mt-1 text-xs font-bold text-[var(--ns-ember)] underline">
           Upgrade to Pro to unlock →
         </a>
       </div>
@@ -342,7 +342,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
         <div className="flex items-start gap-3 mb-3">
           <span className="text-2xl">👥</span>
           <div>
-            <p className="text-sm font-bold text-[var(--ns-forest)]">Become a Split Leader</p>
+            <p className="text-sm font-bold text-[var(--ns-ember)]">Become a Split Leader</p>
             <p className="text-xs text-gray-600 mt-0.5">Included with your Pro subscription — no extra cost.</p>
           </div>
         </div>
@@ -355,7 +355,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
             'Up to 5 runners (upgrade to Pro Coach for more)',
           ].map(f => (
             <li key={f} className="flex items-start gap-2 text-xs text-gray-700">
-              <span className="text-[var(--ns-forest)] font-bold mt-0.5">→</span>
+              <span className="text-[var(--ns-ember)] font-bold mt-0.5">→</span>
               {f}
             </li>
           ))}
@@ -364,7 +364,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
           onClick={activate}
           disabled={activating}
           className="w-full py-3 rounded-xl text-sm font-bold text-white disabled:opacity-50 transition-all active:scale-95"
-          style={{ background: 'var(--ns-forest)' }}
+          style={{ background: 'var(--ns-ember)' }}
         >
           {activating ? 'Activating…' : 'Activate Split Leader →'}
         </button>
@@ -388,9 +388,9 @@ function ProCoachSection({ coachTier, isPro }: { coachTier: string | null; isPro
         </div>
         <div>
           <p className="text-sm font-semibold text-gray-800">Professional Coach</p>
-          <p className="text-xs text-gray-400">Full coach platform unlocked</p>
+          <p className="text-xs text-[var(--color-text-tertiary)]">Full coach platform unlocked</p>
         </div>
-        <Link href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-forest)] flex-shrink-0">
+        <Link href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-ember)] flex-shrink-0">
           Dashboard →
         </Link>
       </div>
@@ -661,7 +661,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
           </div>
           <div className="border-t" style={{ borderColor: 'var(--color-border)' }}>
             <SettingRow label="Email" sublabel="Your login email">
-              <span className="text-xs text-gray-400 max-w-[160px] truncate">{email}</span>
+              <span className="text-xs text-[var(--color-text-tertiary)] max-w-[160px] truncate">{email}</span>
             </SettingRow>
           </div>
         </Section>
@@ -670,7 +670,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
         {plan && (
           <Section title="Current Plan">
             <SettingRow label={plan.name} sublabel={`Week ${plan.current_week} of ${plan.total_weeks}`}>
-              <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-[var(--ns-forest-light)] text-[var(--ns-forest)]">Active</span>
+              <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-[var(--ns-forest-light)] text-[var(--ns-ember)]">Active</span>
             </SettingRow>
 
             {/* Reset */}
@@ -769,8 +769,8 @@ export default function SettingsClient({ email, initialProfile }: Props) {
               <div className="px-4 py-3.5 border-t" style={{ borderColor: 'var(--color-border)' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-gray-900">Reminder time</div>
-                    <div className="text-[11px] text-gray-400 mt-0.5">Your typical session time</div>
+                    <div className="text-sm font-medium text-[var(--color-text-primary)]">Reminder time</div>
+                    <div className="text-[11px] text-[var(--color-text-tertiary)] mt-0.5">Your typical session time</div>
                   </div>
                   <input
                     type="time"
@@ -784,7 +784,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
               {/* Per-type notification preferences */}
               <div className="border-t" style={{ borderColor: 'var(--color-border)' }}>
                 <div className="px-4 py-2.5">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">
                     Notification types
                   </p>
                 </div>
@@ -815,7 +815,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
                   )
                 })}
                 <div className="px-4 py-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
-                  <p className="text-[10px] text-gray-400 leading-relaxed">
+                  <p className="text-[10px] text-[var(--color-text-tertiary)] leading-relaxed">
                     Quiet hours (10pm–7am) are always respected regardless of these settings.
                     Maximum one notification per day.
                   </p>

@@ -36,7 +36,7 @@ export default function WeeklyShareCard({
 
       // Background
       const bg = ctx.createLinearGradient(0, 0, 1080, 1080)
-      bg.addColorStop(0, '#0f172a')
+      bg.addColorStop(0, 'var(--color-surface)')
       bg.addColorStop(1, '#0d3d38')
       ctx.fillStyle = bg
       ctx.fillRect(0, 0, 1080, 1080)
@@ -193,7 +193,7 @@ export default function WeeklyShareCard({
         <canvas ref={canvasRef} className="hidden" />
 
         <button onClick={handleShare} disabled={sharing}
-          className="w-full py-3.5 bg-[var(--ns-forest)] text-white font-bold text-sm rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full py-3.5 bg-[var(--ns-ember)] text-white font-bold text-sm rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
           {sharing ? 'Preparing…' : (
             <>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

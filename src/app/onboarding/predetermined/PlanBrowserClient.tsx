@@ -157,7 +157,7 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
       className={`flex-shrink-0 text-xs font-bold px-3 py-1.5 rounded-xl border-2 transition-all ${
         active ? 'text-white border-transparent' : 'border-gray-200 text-gray-600 bg-white'
       }`}
-      style={active ? { background: 'var(--ns-forest)', borderColor: 'var(--ns-forest)' } : {}}
+      style={active ? { background: 'var(--ns-ember)', borderColor: 'var(--ns-forest)' } : {}}
     >
       {label}
     </button>
@@ -291,7 +291,7 @@ function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose
             </button>
             <button onClick={onSelect}
               className="flex-1 py-3 rounded-2xl text-white text-sm font-bold"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               Select this plan →
             </button>
           </div>
@@ -346,7 +346,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
         {/* Plan hero card */}
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="rounded-2xl border overflow-hidden" style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
           <div className="bg-gradient-to-r from-teal-600 to-teal-500 px-5 py-4">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -398,31 +398,31 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
 
         {/* Coach notes — promoted to be visible early */}
         {(meta.coach_notes as string) && (
-          <div className="bg-[var(--ns-forest-light)] rounded-2xl border border-teal-100 p-4">
+          <div className="bg-[var(--color-surface-2)] rounded-2xl border border-teal-100 p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-base">🧠</span>
               <span className="text-xs font-bold text-teal-800 uppercase tracking-wide">Coach notes</span>
             </div>
-            <p className="text-sm text-[var(--ns-forest)] leading-relaxed">{meta.coach_notes as string}</p>
+            <p className="text-sm text-[var(--ns-ember)] leading-relaxed">{meta.coach_notes as string}</p>
           </div>
         )}
 
         {/* Target time */}
         {(meta.target_finish_time as string) && (
-          <div className="bg-white rounded-2xl border border-gray-100 px-4 py-3 flex items-center justify-between">
+          <div className="rounded-2xl border px-4 py-3 flex items-center justify-between" style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <span className="text-sm text-gray-500">Target finish time</span>
             <span className="text-sm font-bold text-gray-900">{meta.target_finish_time as string}</span>
           </div>
         )}
 
         {/* Activation form */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
+        <div className="rounded-2xl border p-5 space-y-4" style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
           <h2 className="text-sm font-bold text-gray-900">Set up your plan</h2>
 
           <div>
             <label className="text-xs font-semibold text-gray-500 block mb-1.5">Plan name</label>
             <input type="text" value={planName} onChange={e => setPlanName(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors" />
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors" />
           </div>
 
           <div>
@@ -430,7 +430,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
               Race date <span className="text-gray-300 font-normal">(optional)</span>
             </label>
             <input type="date" value={raceDateInput} onChange={e => setRaceDateInput(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors" />
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors" />
             <p className="text-[10px] text-gray-400 mt-1">
               We'll align your training weeks to build up to race day.
             </p>
@@ -464,7 +464,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           )}
 
           <button onClick={handleActivate} disabled={activating || !planName.trim()}
-            className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-xl text-sm font-bold hover:bg-[var(--ns-forest)] transition-colors disabled:opacity-50">
+            className="w-full bg-[var(--ns-ember)] text-white py-3.5 rounded-xl text-sm font-bold hover:bg-[var(--ns-ember)] transition-colors disabled:opacity-50">
             {activating ? 'Starting your plan…' : 'Start this plan →'}
           </button>
         </div>

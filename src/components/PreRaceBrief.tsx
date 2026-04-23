@@ -118,22 +118,22 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
   const sections = [
     { icon: '⏱️', label: 'Pacing strategy', key: 'pacing' as const, colour: 'text-blue-800 bg-blue-50 border-blue-100' },
     { icon: '⚡', label: 'Race fuelling',    key: 'fuelling' as const, colour: 'text-amber-800 bg-amber-50 border-amber-100' },
-    { icon: '😴', label: 'Taper notes',     key: 'taper' as const,    colour: 'text-teal-800 bg-[var(--ns-forest-light)] border-teal-100' },
+    { icon: '😴', label: 'Taper notes',     key: 'taper' as const,    colour: 'text-teal-800 bg-[var(--color-surface-2)] border-teal-100' },
     { icon: '🧠', label: 'Race mindset',    key: 'mindset' as const,  colour: 'text-emerald-800 bg-emerald-50 border-emerald-100' },
   ]
 
   return (
-    <div className="bg-white rounded-2xl border border-[var(--ns-forest)] overflow-hidden shadow-sm">
+    <div className="bg-white rounded-2xl border border-[var(--ns-ember)] overflow-hidden shadow-sm">
       {/* Header */}
       <button
         onClick={() => setExpanded(e => !e)}
         className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
       >
-        <div className="w-9 h-9 rounded-xl bg-[var(--ns-forest)] flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-[var(--ns-ember)] flex items-center justify-center flex-shrink-0">
           <span className="text-lg">🏁</span>
         </div>
         <div className="flex-1">
-          <div className="text-[10px] font-bold text-[var(--ns-forest)] uppercase tracking-wide">Race brief</div>
+          <div className="text-[10px] font-bold text-[var(--ns-ember)] uppercase tracking-wide">Race brief</div>
           <div className="text-sm font-bold text-gray-900 truncate">{race.name}</div>
           <div className="text-[10px] text-gray-400">
             {daysUntil === 0 ? 'Today!' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil} days`}
@@ -153,7 +153,7 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
               <p className="text-sm text-gray-500 mb-3">Get your personalised race brief — pacing plan, fuelling strategy, and taper advice based on your training.</p>
               <button
                 onClick={generateBrief}
-                className="px-5 py-2.5 bg-[var(--ns-forest)] text-white text-sm font-bold rounded-xl"
+                className="px-5 py-2.5 bg-[var(--ns-ember)] text-white text-sm font-bold rounded-xl"
                 aria-label="Generate race brief"
               >
                 Generate my race brief
@@ -174,7 +174,7 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
           {error && (
             <div className="px-4 py-4 text-center">
               <p className="text-sm text-red-500 mb-2">{error}</p>
-              <button onClick={generateBrief} className="text-sm text-[var(--ns-forest)] font-semibold">Try again</button>
+              <button onClick={generateBrief} className="text-sm text-[var(--ns-ember)] font-semibold">Try again</button>
             </div>
           )}
 

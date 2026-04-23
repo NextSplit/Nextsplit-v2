@@ -98,7 +98,7 @@ export default function TodayBelowFold({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[11px] font-bold text-teal-800 uppercase tracking-wide">Week {weeklyReport.weekN} · {weeklyReport.weekTitle}</p>
-                <p className="text-xs text-[var(--ns-forest)] mt-0.5">Your weekly report</p>
+                <p className="text-xs text-[var(--ns-ember)] mt-0.5">Your weekly report</p>
               </div>
               <span className="text-2xl">{weeklyReport.completionPct >= 90 ? '🌟' : weeklyReport.completionPct >= 60 ? '✅' : '💪'}</span>
             </div>
@@ -125,10 +125,10 @@ export default function TodayBelowFold({
           {(weeklyReport.bestSession || weeklyReport.lookAheadNote) && (
             <div className="px-4 py-3 space-y-1.5">
               {weeklyReport.bestSession && (
-                <p className="text-xs text-[var(--ns-forest)]"><span className="font-semibold">Best session:</span> {weeklyReport.bestSession}</p>
+                <p className="text-xs text-[var(--ns-ember)]"><span className="font-semibold">Best session:</span> {weeklyReport.bestSession}</p>
               )}
               {weeklyReport.lookAheadNote && (
-                <p className="text-xs text-[var(--ns-forest)] leading-relaxed line-clamp-2">
+                <p className="text-xs text-[var(--ns-ember)] leading-relaxed line-clamp-2">
                   <span className="font-semibold">This week:</span> {weeklyReport.lookAheadNote}
                 </p>
               )}
@@ -139,11 +139,11 @@ export default function TodayBelowFold({
 
       {/* Sunday coach banner */}
       {planDay === 0 && hasPlanNextWeek && (
-        <div className="bg-[var(--ns-forest-light)] rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
+        <div className="bg-[var(--color-surface-2)] rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
           <span className="text-base mt-0.5">🗓️</span>
           <div>
             <p className="text-[11px] font-bold text-teal-800 mb-0.5">Week {weekN} complete!</p>
-            <p className="text-xs text-[var(--ns-forest)] leading-relaxed">
+            <p className="text-xs text-[var(--ns-ember)] leading-relaxed">
               Good work this week. Week {weekN + 1} starts tomorrow — check the Plan tab to see what's ahead.
             </p>
           </div>

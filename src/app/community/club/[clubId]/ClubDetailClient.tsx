@@ -93,19 +93,19 @@ export default function ClubDetailClient({ club, membership, members, feed, user
             </div>
             {(isOwner || membership) && (
               <button onClick={() => setShowCode(!showCode)}
-                className="text-xs bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] text-[var(--ns-forest)] px-3 py-1.5 rounded-xl font-bold">
+                className="text-xs bg-[var(--color-surface-2)] border border-[var(--ns-forest-light)] text-[var(--ns-ember)] px-3 py-1.5 rounded-xl font-bold">
                 Invite
               </button>
             )}
           </div>
 
           {showCode && (
-            <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] rounded-2xl p-3 space-y-2">
-              <p className="text-xs text-[var(--ns-forest)] font-semibold">Share this code to invite members:</p>
+            <div className="bg-[var(--color-surface-2)] border border-[var(--ns-forest-light)] rounded-2xl p-3 space-y-2">
+              <p className="text-xs text-[var(--ns-ember)] font-semibold">Share this code to invite members:</p>
               <div className="flex items-center gap-2">
                 <code className="flex-1 text-center text-2xl font-black text-teal-800 tracking-widest">{club.join_code}</code>
                 <button onClick={copyCode}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold ${copied ? 'bg-emerald-500 text-white' : 'bg-[var(--ns-forest)] text-white'}`}>
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold ${copied ? 'bg-emerald-500 text-white' : 'bg-[var(--ns-ember)] text-white'}`}>
                   {copied ? '✓' : 'Copy'}
                 </button>
               </div>
@@ -135,7 +135,7 @@ export default function ClubDetailClient({ club, membership, members, feed, user
               const medal  = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
               return (
                 <div key={m.user_id}
-                  className={`flex items-center gap-3 rounded-2xl p-3 ${isMe ? 'bg-[var(--ns-forest-light)] border-2 border-teal-300' : 'bg-white border border-gray-200'}`}>
+                  className={`flex items-center gap-3 rounded-2xl p-3 ${isMe ? 'bg-[var(--color-surface-2)] border-2 border-teal-300' : 'bg-white border border-gray-200'}`}>
                   <div className="w-7 text-center shrink-0">
                     {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-gray-400">#{i+1}</span>}
                   </div>
@@ -147,7 +147,7 @@ export default function ClubDetailClient({ club, membership, members, feed, user
                     <p className="text-[10px] text-gray-400">{LEAGUE_CONFIG[league]?.emoji} {m.season_xp} XP this season</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className={`text-sm font-black ${isMe ? 'text-[var(--ns-forest)]' : 'text-gray-700'}`}>{Math.round(m.weekly_km)}km</p>
+                    <p className={`text-sm font-black ${isMe ? 'text-[var(--ns-ember)]' : 'text-gray-700'}`}>{Math.round(m.weekly_km)}km</p>
                     <p className="text-[10px] text-gray-400">this week</p>
                   </div>
                 </div>
@@ -170,7 +170,7 @@ export default function ClubDetailClient({ club, membership, members, feed, user
               return (
                 <div key={item.id} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[var(--ns-forest-light)] flex items-center justify-center text-sm">🏃</div>
+                    <div className="w-8 h-8 rounded-full bg-[var(--color-surface-2)] flex items-center justify-center text-sm">🏃</div>
                     <div>
                       <p className="text-xs font-bold text-gray-800">{name}</p>
                       <p className="text-[10px] text-gray-400">{fmtDate(item.logged_at)}</p>

@@ -7,7 +7,7 @@ import CharacterProfileModal from '@/components/CharacterProfileModal'
 
 const LEAGUE_CONFIG = {
   bronze:   { label: 'Bronze',   emoji: '🥉', colour: 'text-amber-700 bg-amber-50 border-amber-200' },
-  silver:   { label: 'Silver',   emoji: '🥈', colour: 'text-gray-600 bg-[#f8f8f6] border-gray-200' },
+  silver:   { label: 'Silver',   emoji: '🥈', colour: 'text-gray-600 bg-[#f8f8f6] border-[var(--color-border)]' },
   gold:     { label: 'Gold',     emoji: '🥇', colour: 'text-yellow-700 bg-yellow-50 border-yellow-200' },
   platinum: { label: 'Platinum', emoji: '💎', colour: 'text-blue-700 bg-blue-50 border-blue-200' },
   elite:    { label: 'Elite',    emoji: '👑', colour: 'text-purple-700 bg-purple-50 border-purple-200' },
@@ -45,10 +45,10 @@ function JoinClubModal({ onClose, onJoined }: { onClose: () => void; onJoined: (
       <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl px-4 pt-4 pb-8 space-y-4 max-w-lg mx-auto" style={{ background: "var(--color-surface)" }}>
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
         <h2 className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>Join a club</h2>
-        <p className="text-sm text-gray-500">Enter the 6-character join code from your club admin.</p>
+        <p className="text-sm text-[var(--color-text-secondary)]">Enter the 6-character join code from your club admin.</p>
         <input value={code} onChange={e => setCode(e.target.value.toUpperCase())}
           placeholder="e.g. A3F9C2" maxLength={6}
-          className="w-full px-4 py-3 rounded-2xl border border-gray-200 text-lg font-mono text-center tracking-widest outline-none focus:border-[var(--ns-forest)]" />
+          className="w-full px-4 py-3 rounded-2xl border border-[var(--color-border)] text-lg font-mono text-center tracking-widest outline-none focus:border-[var(--ns-ember)]" />
         {error && <p className="text-xs text-red-500 text-center">{error}</p>}
         {success && <p className="text-xs text-emerald-600 text-center font-bold">{success}</p>}
         <button onClick={join} disabled={code.length < 6 || loading}
@@ -94,17 +94,17 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
         <div className="flex gap-2 flex-wrap">
           {EMOJIS.map(e => (
             <button key={e} onClick={() => setEmoji(e)}
-              className={`text-2xl w-10 h-10 rounded-xl border-2 transition-all ${emoji === e ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]' : 'border-gray-200'}`}>
+              className={`text-2xl w-10 h-10 rounded-xl border-2 transition-all ${emoji === e ? 'border-[var(--ns-ember)] bg-[var(--color-surface-2)]' : 'border-[var(--color-border)]'}`}>
               {e}
             </button>
           ))}
         </div>
 
         <input value={name} onChange={e => setName(e.target.value)} placeholder="Club name"
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)]" />
+          className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)]" />
         <textarea value={desc} onChange={e => setDesc(e.target.value)} rows={2}
           placeholder="What's your club about? (optional)"
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none" />
+          className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)] resize-none" />
 
         <label className="flex items-center gap-3 text-sm text-gray-700">
           <input type="checkbox" checked={isPublic} onChange={e => setPublic(e.target.checked)} className="rounded" />
@@ -188,9 +188,9 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         <div className="max-w-lg mx-auto space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="font-display text-xl italic" style={{ color: 'var(--color-text-primary)' }}>Community</h1>
+              <h1 className="font-display text-xl" style={{ color: 'var(--color-text-primary)' }}>Community</h1>
               {season && (
-                <p className="text-xs text-gray-400">{season.name} · {daysLeft}d remaining</p>
+                <p className="text-xs" style={{ color: "var(--color-text-tertiary)" }}>{season.name} · {daysLeft}d remaining</p>
               )}
             </div>
             <div className="flex items-center gap-2">
@@ -198,28 +198,28 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                 {leagueCfg.emoji} {leagueCfg.label}
               </span>
               {myRank > 0 && (
-                <span className="text-xs text-gray-400">#{myRank}</span>
+                <span className="text-xs" style={{ color: "var(--color-text-tertiary)" }}>#{myRank}</span>
               )}
             </div>
           </div>
 
           {/* Season XP bar */}
           <div className="space-y-1">
-            <div className="flex justify-between text-[10px] text-gray-400">
+            <div className="flex justify-between text-[10px]" style={{ color: "var(--color-text-tertiary)" }}>
               <span>{profile?.season_xp ?? 0} season XP</span>
               <span>Next league at {league === 'bronze' ? 500 : league === 'silver' ? 1500 : league === 'gold' ? 3000 : league === 'platinum' ? 6000 : '∞'} XP</span>
             </div>
-            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-full bg-[var(--ns-forest)] rounded-full transition-all"
+            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--color-surface-2)" }}>
+              <div className="h-full bg-[var(--ns-ember)] rounded-full transition-all"
                 style={{ width: `${Math.min(100, ((profile?.season_xp ?? 0) / (league === 'bronze' ? 500 : 1500)) * 100)}%` }} />
             </div>
           </div>
 
           {/* Tab nav */}
-          <div className="flex gap-1 bg-gray-100 rounded-xl p-1 overflow-x-auto">
+          <div className="flex gap-1 rounded-xl p-1 overflow-x-auto" style={{ background: "var(--color-surface-2)" }}>
             {(['feed','clubs','challenges','races','leaderboard'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex-shrink-0 flex-1 py-1.5 rounded-lg text-[10px] font-bold capitalize transition-all min-w-[52px] ${tab === t ? 'text-gray-900 shadow' : 'text-gray-500'}`}>
+                className={`flex-shrink-0 flex-1 py-1.5 rounded-lg text-[10px] font-bold capitalize transition-all min-w-[52px] ${tab === t ? 'text-gray-900 shadow' : 'text-[var(--color-text-secondary)]'}`}>
                 {t === 'feed' ? '📣' : t === 'leaderboard' ? '🏆' : t === 'clubs' ? '👥' : t === 'challenges' ? '🎯' : '🏁'} {t}
               </button>
             ))}
@@ -227,21 +227,36 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+      {/* Squad quick access — always visible at top */}
+      <div className="max-w-lg mx-auto px-4 pt-3">
+        <a href="/squad"
+          className="flex items-center gap-3 px-4 py-3 rounded-2xl active:scale-[0.99] transition-all"
+          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-lg"
+            style={{ background: 'var(--ns-track-light)' }}>👑</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>My Squad</p>
+            <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>View squad dashboard and invite runners</p>
+          </div>
+          <span style={{ color: 'var(--color-text-tertiary)' }}>›</span>
+        </a>
+      </div>
+
+      <div className="max-w-lg mx-auto px-4 py-3 space-y-3">
 
         {/* FEED TAB */}
         {tab === 'feed' && (
           <>
             {feedLoading && (
               <div className="space-y-3">
-                {[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />)}
+                {[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-[var(--color-border)] animate-pulse" />)}
               </div>
             )}
             {!feedLoading && feed.length === 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+              <div className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-8 text-center">
                 <div className="text-4xl mb-3">📣</div>
                 <h2 className="text-sm font-bold text-gray-800 mb-1">No activity yet</h2>
-                <p className="text-xs text-gray-500">Join a club and log sessions to see your squad's activity here.</p>
+                <p className="text-xs text-[var(--color-text-secondary)]">Join a club and log sessions to see your squad's activity here.</p>
               </div>
             )}
             {!feedLoading && feed.map((item) => {
@@ -273,7 +288,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
               }, {})
 
               return (
-                <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4">
+                <div key={item.id} className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-4">
                   <div className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-full flex items-center justify-center text-base flex-shrink-0"
                       style={{ background: 'var(--ns-forest-light)' }}>
@@ -286,7 +301,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                       </div>
                       <p className="text-xs text-gray-600 mt-0.5">
                         {item.session_name}
-                        {item.km ? <span className="font-data ml-1.5 text-gray-500">{item.km}km</span> : null}
+                        {item.km ? <span className="font-data ml-1.5 text-[var(--color-text-secondary)]">{item.km}km</span> : null}
                         {item.pace ? <span className="font-data ml-1.5 text-gray-400">{item.pace}/km</span> : null}
                       </p>
                       {item.milestone_type && (
@@ -304,11 +319,11 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                         onClick={() => reactToFeed(item.id, r)}
                         className={`flex items-center gap-1 px-2 py-1 rounded-xl border text-xs transition-all ${
                           myReaction === r
-                            ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]'
-                            : 'border-gray-100 bg-white hover:border-gray-200'
+                            ? 'border-[var(--ns-ember)] bg-[var(--color-surface-2)]'
+                            : 'border-[var(--color-border)] bg-white hover:border-[var(--color-border)]'
                         }`}>
                         <span>{r}</span>
-                        {reactionCounts[r] > 0 && <span className="text-[10px] text-gray-500">{reactionCounts[r]}</span>}
+                        {reactionCounts[r] > 0 && <span className="text-[10px] text-[var(--color-text-secondary)]">{reactionCounts[r]}</span>}
                       </button>
                     ))}
                   </div>
@@ -333,22 +348,22 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
             </div>
 
             {myClubs.length === 0 && !loading && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-3">
+              <div className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-8 text-center space-y-3">
                 <div className="text-4xl">👥</div>
                 <h2 className="text-base font-bold text-gray-800">No clubs yet</h2>
-                <p className="text-sm text-gray-500">Join a club with a code or create your own to start competing with others.</p>
+                <p className="text-sm text-[var(--color-text-secondary)]">Join a club with a code or create your own to start competing with others.</p>
               </div>
             )}
 
             {myClubs.map(({ clubs: club, role, weekly_km }) => (
               <a key={club.id} href={`/community/club/${club.id}`}
-                className="block bg-white rounded-2xl border border-gray-200 p-4 space-y-2 active:bg-[#f8f8f6]">
+                className="block bg-white rounded-2xl border border-[var(--color-border)] p-4 space-y-2 active:bg-[#f8f8f6]">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{club.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-bold truncate" style={{ color: 'var(--color-text-primary)' }}>{club.name}</p>
-                      {role === 'owner' && <span className="text-[10px] text-[var(--ns-forest)] font-bold">Owner</span>}
+                      {role === 'owner' && <span className="text-[10px] text-[var(--ns-ember)] font-bold">Owner</span>}
                     </div>
                     <p className="text-xs text-gray-400">{club.member_count} members</p>
                   </div>
@@ -359,9 +374,9 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                     <p className="text-sm font-black text-gray-800">{Math.round(club.weekly_km)}km</p>
                     <p className="text-[10px] text-gray-400">club this week</p>
                   </div>
-                  <div className="bg-[var(--ns-forest-light)] rounded-xl py-2">
-                    <p className="text-sm font-black text-[var(--ns-forest)]">{Math.round(weekly_km ?? 0)}km</p>
-                    <p className="text-[10px] text-[var(--ns-forest-mid)]">your contribution</p>
+                  <div className="bg-[var(--color-surface-2)] rounded-xl py-2">
+                    <p className="text-sm font-black text-[var(--ns-ember)]">{Math.round(weekly_km ?? 0)}km</p>
+                    <p className="text-[10px] text-[var(--color-text-secondary)]">your contribution</p>
                   </div>
                 </div>
               </a>
@@ -373,29 +388,29 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         {tab === 'challenges' && (
           <>
             {challenges.length === 0 && !loading && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-2">
+              <div className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-8 text-center space-y-2">
                 <div className="text-4xl">🎯</div>
                 <h2 className="text-base font-bold text-gray-800">No active challenges</h2>
-                <p className="text-sm text-gray-500">Check back soon — challenges reset regularly.</p>
+                <p className="text-sm text-[var(--color-text-secondary)]">Check back soon — challenges reset regularly.</p>
               </div>
             )}
             {challenges.map(c => {
               const daysLeft = Math.max(0, Math.ceil((new Date(c.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24)))
               const progress = c.my_entry ? Math.min(100, (c.my_entry.progress / c.target_value) * 100) : 0
               return (
-                <div key={c.id} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
+                <div key={c.id} className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-4 space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{c.title}</p>
                       <p className="text-xs text-gray-400 mt-0.5">{c.description}</p>
                     </div>
                     <div className="text-right shrink-0 ml-3">
-                      <p className="text-xs font-bold text-[var(--ns-forest)]">+{c.reward_xp} XP</p>
+                      <p className="text-xs font-bold text-[var(--ns-ember)]">+{c.reward_xp} XP</p>
                       <p className="text-[10px] text-gray-400">{daysLeft}d left</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <div className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]">
                     <span>🎯 {c.target_value} {c.target_unit}</span>
                     <span>·</span>
                     <span>👥 {c.entry_count} entered</span>
@@ -404,18 +419,18 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
 
                   {c.my_entry ? (
                     <div className="space-y-1.5">
-                      <div className="flex justify-between text-[10px] text-gray-400">
+                      <div className="flex justify-between text-[10px]" style={{ color: "var(--color-text-tertiary)" }}>
                         <span>{c.my_entry.completed ? '✓ Complete!' : `${Math.round(c.my_entry.progress)} / ${c.target_value} ${c.target_unit}`}</span>
                         <span>{Math.round(progress)}%</span>
                       </div>
                       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full transition-all ${c.my_entry.completed ? 'bg-emerald-500' : 'bg-[var(--ns-forest)]'}`}
+                        <div className={`h-full rounded-full transition-all ${c.my_entry.completed ? 'bg-emerald-500' : 'bg-[var(--ns-ember)]'}`}
                           style={{ width: `${progress}%` }} />
                       </div>
                     </div>
                   ) : (
                     <button onClick={() => joinChallenge(c.id)}
-                      className="w-full bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] text-[var(--ns-forest)] py-2 rounded-xl text-xs font-bold active:scale-95">
+                      className="w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--ns-ember)] py-2 rounded-xl text-xs font-bold active:scale-95">
                       Join challenge →
                     </button>
                   )}
@@ -429,10 +444,10 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         {tab === 'races' && (
           <>
             {races.length === 0 && !loading && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-2">
+              <div className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-8 text-center space-y-2">
                 <div className="text-4xl">🏁</div>
                 <h2 className="text-base font-bold text-gray-800">No upcoming races</h2>
-                <p className="text-sm text-gray-500">Virtual races will appear here. Check back soon.</p>
+                <p className="text-sm text-[var(--color-text-secondary)]">Virtual races will appear here. Check back soon.</p>
               </div>
             )}
             {races.map(r => {
@@ -440,7 +455,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
               const daysLeft  = Math.max(0, Math.ceil((new Date(r.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24)))
               const isFull    = r.max_entries ? r.entry_count >= r.max_entries : false
               return (
-                <div key={r.id} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
+                <div key={r.id} className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-4 space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="text-sm font-bold text-gray-900">{r.name}</p>
@@ -454,7 +469,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                     </div>
                   </div>
 
-                  {r.description && <p className="text-xs text-gray-500">{r.description}</p>}
+                  {r.description && <p className="text-xs text-[var(--color-text-secondary)]">{r.description}</p>}
 
                   {r.my_entry ? (
                     r.my_entry.finish_time_secs ? (
@@ -480,14 +495,14 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                               ).join('\n')
                             )
                           }}
-                          className="w-full text-xs font-bold py-2 rounded-xl border border-gray-200 text-gray-600 hover:border-gray-300 transition-colors"
+                          className="w-full text-xs font-bold py-2 rounded-xl border border-[var(--color-border)] text-gray-600 hover:border-gray-300 transition-colors"
                         >
                           View full leaderboard ({r.entry_count} finishers)
                         </button>
                       </div>
                     ) : (
-                      <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] rounded-xl p-3 text-center">
-                        <p className="text-xs font-bold text-[var(--ns-forest)]">✓ Entered — submit your time when done</p>
+                      <div className="bg-[var(--color-surface-2)] border border-[var(--color-border)] rounded-xl p-3 text-center">
+                        <p className="text-xs font-bold text-[var(--ns-ember)]">✓ Entered — submit your time when done</p>
                       </div>
                     )
                   ) : (
@@ -506,7 +521,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         {/* LEADERBOARD TAB */}
         {tab === 'leaderboard' && (
           <div className="space-y-2">
-            <div className="bg-white rounded-2xl border border-gray-100 p-3 flex items-center justify-between">
+            <div className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-3 flex items-center justify-between">
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                 {season?.name ?? 'Season'} — Global XP
               </p>
@@ -530,8 +545,8 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                   onClick={() => !isMe && setViewingCharacter({ userId: entry.user_id, displayName: name, handle: entry.handle ?? undefined })}
                   className={`w-full flex items-center gap-3 rounded-2xl p-3 text-left transition-all active:scale-[0.98] ${
                     isMe
-                      ? 'border-2 border-[var(--ns-forest)]'
-                      : 'bg-white border border-gray-100'
+                      ? 'border-2 border-[var(--ns-ember)]'
+                      : 'bg-white border border-[var(--color-border)]'
                   }`}
                   style={isMe ? { background: 'var(--ns-forest-light)' } : {}}
                 >
@@ -570,7 +585,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
             })}
 
             {leaderboard.length === 0 && !loading && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
+              <div className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-8 text-center">
                 <p className="text-gray-400 text-sm">No runners yet this season. Be the first!</p>
               </div>
             )}

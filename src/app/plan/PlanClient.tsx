@@ -18,7 +18,7 @@ import DayRow from '@/components/plan/DayRow'
 import WeekRow from '@/components/plan/WeekRow'
 
 const PHASE_LABELS: Record<string, { label: string; bg: string; text: string }> = {
-  p1: { label: 'Phase 1', bg: 'bg-[var(--ns-forest-light)]',   text: 'text-teal-800'   },
+  p1: { label: 'Phase 1', bg: 'bg-[var(--color-surface-2)]',   text: 'text-teal-800'   },
   p2: { label: 'Phase 2', bg: 'bg-violet-100', text: 'text-violet-800' },
   tr: { label: 'Travel',  bg: 'bg-amber-100',  text: 'text-amber-800'  },
 }
@@ -170,7 +170,7 @@ export default function PlanClient() {
         style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-1">
-            <h1 className="font-display text-xl italic truncate"
+            <h1 className="font-display text-xl truncate"
               style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.01em' }}>
               {decodeHtml(plan.name)}
             </h1>

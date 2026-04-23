@@ -73,16 +73,16 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
             <span className="text-base">🧠</span>
             <p className="text-sm font-bold text-teal-800">Plan adapted</p>
           </div>
-          <p className="text-xs text-[var(--ns-forest)] mt-1 leading-relaxed">{adaptation.recommendation}</p>
+          <p className="text-xs text-[var(--ns-ember)] mt-1 leading-relaxed">{adaptation.recommendation}</p>
         </div>
 
         {/* Adapted sessions */}
         {adaptation.adapted_days.length > 0 && (
           <div className="px-4 py-3 space-y-2">
-            <p className="text-[10px] font-bold text-[var(--ns-forest)] uppercase tracking-wider">Updated schedule</p>
+            <p className="text-[10px] font-bold text-[var(--ns-ember)] uppercase tracking-wider">Updated schedule</p>
             {adaptation.adapted_days.map(day => (
               <div key={day.day}>
-                <p className="text-xs font-semibold text-[var(--ns-forest)] mb-1">{day.day}</p>
+                <p className="text-xs font-semibold text-[var(--ns-ember)] mb-1">{day.day}</p>
                 {day.sessions.map((sess, i) => (
                   <div key={i} className="flex items-start gap-2 py-1.5 border-t border-teal-100/50">
                     <span className="text-sm shrink-0">{SESSION_EMOJI[sess.c] ?? '🏃'}</span>
@@ -90,7 +90,7 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
                       <p className="text-xs font-semibold text-teal-800">{sess.n}
                         {sess.km > 0 && <span className="text-[var(--ns-forest-mid)] font-normal ml-1">{sess.km}km</span>}
                       </p>
-                      <p className="text-[10px] text-[var(--ns-forest)] leading-relaxed mt-0.5">{sess.det}</p>
+                      <p className="text-[10px] text-[var(--ns-ember)] leading-relaxed mt-0.5">{sess.det}</p>
                     </div>
                   </div>
                 ))}
@@ -112,13 +112,13 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
         {/* Key message */}
         {adaptation.key_message && (
           <div className="px-4 py-3 border-t border-teal-100/50">
-            <p className="text-xs text-[var(--ns-forest)] font-semibold italic">&ldquo;{adaptation.key_message}&rdquo;</p>
+            <p className="text-xs text-[var(--ns-ember)] font-semibold italic">&ldquo;{adaptation.key_message}&rdquo;</p>
           </div>
         )}
 
         <div className="px-4 pb-3">
           <button onClick={() => setDismissed(true)}
-            className="text-[10px] text-[var(--ns-forest-mid)] hover:text-[var(--ns-forest)]">
+            className="text-[10px] text-[var(--ns-forest-mid)] hover:text-[var(--ns-ember)]">
             Dismiss
           </button>
         </div>
