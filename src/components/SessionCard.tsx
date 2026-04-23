@@ -21,15 +21,16 @@ interface SessionCardProps {
   onFocus: () => void
 }
 
+// bg/border use CSS custom properties so they adapt in dark mode via globals.css
 const SESSION_COLOURS: Record<string, { bg: string; border: string; text: string; dot: string; label: string }> = {
-  easy:     { bg: '#f0fdf4', border: '#86efac', text: '#15803d', dot: '#22c55e', label: 'Easy Run' },
-  tempo:    { bg: '#fefce8', border: '#fde047', text: '#a16207', dot: '#eab308', label: 'Tempo' },
-  interval: { bg: '#fff7ed', border: '#fdba74', text: '#c2410c', dot: '#f97316', label: 'Intervals' },
-  long:     { bg: '#eff6ff', border: '#93c5fd', text: '#1d4ed8', dot: '#3b82f6', label: 'Long Run' },
-  recovery: { bg: '#f0fdf4', border: '#6ee7b7', text: '#047857', dot: '#4ade80', label: 'Recovery' },
-  gym:      { bg: '#f5f3ff', border: '#c4b5fd', text: '#6d28d9', dot: '#8b5cf6', label: 'Strength' },
-  rest:     { bg: '#f9fafb', border: '#e5e7eb', text: '#6b7280', dot: '#9ca3af', label: 'Rest' },
-  race:     { bg: '#fdf2f8', border: '#f9a8d4', text: '#be185d', dot: '#ec4899', label: 'Race' },
+  easy:     { bg: 'rgba(34,197,94,0.10)',   border: 'rgba(34,197,94,0.25)',   text: '#22c55e', dot: '#22c55e', label: 'Easy Run' },
+  tempo:    { bg: 'rgba(234,179,8,0.10)',   border: 'rgba(234,179,8,0.25)',   text: '#eab308', dot: '#eab308', label: 'Tempo' },
+  interval: { bg: 'rgba(249,115,22,0.10)',  border: 'rgba(249,115,22,0.25)',  text: '#f97316', dot: '#f97316', label: 'Intervals' },
+  long:     { bg: 'rgba(59,130,246,0.10)',  border: 'rgba(59,130,246,0.25)',  text: '#3b82f6', dot: '#3b82f6', label: 'Long Run' },
+  recovery: { bg: 'rgba(74,222,128,0.10)',  border: 'rgba(74,222,128,0.25)',  text: '#4ade80', dot: '#4ade80', label: 'Recovery' },
+  gym:      { bg: 'rgba(139,92,246,0.10)',  border: 'rgba(139,92,246,0.25)',  text: '#8b5cf6', dot: '#8b5cf6', label: 'Strength' },
+  rest:     { bg: 'rgba(156,163,175,0.08)', border: 'rgba(156,163,175,0.15)', text: '#9ca3af', dot: '#9ca3af', label: 'Rest' },
+  race:     { bg: 'rgba(236,72,153,0.10)',  border: 'rgba(236,72,153,0.25)',  text: '#ec4899', dot: '#ec4899', label: 'Race' },
 }
 
 function getSessionColour(code: string | null | undefined) {

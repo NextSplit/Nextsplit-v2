@@ -124,6 +124,59 @@ body {
 .border-gray-100, [class*="border-gray-100"] { border-color: var(--color-border) !important; }
 .border-gray-200, [class*="border-gray-200"] { border-color: var(--color-border-2) !important; }
 
+
+/* ─── Dark mode — applied when <html> has class="dark" ────────────────────── */
+.dark {
+  --color-bg:             #0c0c0c;   /* Near-black page background */
+  --color-surface:        #161616;   /* Card surface */
+  --color-surface-2:      #1f1f1f;   /* Elevated input / pill */
+  --color-surface-3:      #2a2a2a;   /* Highest surface */
+
+  --color-border:         rgba(255,255,255,0.08);   /* Subtle border */
+  --color-border-2:       rgba(255,255,255,0.14);   /* Stronger border */
+
+  --color-text-primary:   #f0efed;   /* Near-white headings */
+  --color-text-secondary: #a8a6a1;   /* Mid — body, descriptions */
+  --color-text-tertiary:  #6b6966;   /* Muted — labels, captions */
+  --color-text-disabled:  #3d3c3a;   /* Disabled */
+  --color-text-inverse:   #0c0c0c;   /* Text on light backgrounds */
+
+  --color-brand:          var(--ns-cyan);
+  --color-brand-light:    rgba(6,182,212,0.15);
+  --color-brand-text:     var(--ns-cyan);
+
+  /* Tint vars for session cards on dark */
+  --ns-ember-light:       rgba(255,77,109,0.12);
+  --ns-cyan-light:        rgba(6,182,212,0.12);
+  --ns-cobalt-light:      rgba(37,99,235,0.12);
+  --ns-lime-light:        rgba(132,204,22,0.10);
+  --ns-violet-light:      rgba(139,92,246,0.12);
+  --ns-magenta-light:     rgba(236,72,153,0.12);
+}
+
+/* Dark mode — override Tailwind bg-white etc */
+.dark .bg-white,
+.dark [class*="bg-white"] {
+  background-color: var(--color-surface) !important;
+}
+.dark .bg-gray-50,
+.dark [class*="bg-gray-50"] {
+  background-color: var(--color-bg) !important;
+}
+.dark .bg-gray-100,
+.dark [class*="bg-gray-100"] {
+  background-color: var(--color-surface-2) !important;
+}
+.dark .border-gray-100,
+.dark [class*="border-gray-100"],
+.dark .border-gray-200,
+.dark [class*="border-gray-200"] {
+  border-color: var(--color-border) !important;
+}
+.dark .text-gray-900, .dark .text-gray-800 { color: var(--color-text-primary) !important; }
+.dark .text-gray-700, .dark .text-gray-600 { color: var(--color-text-secondary) !important; }
+.dark .text-gray-500, .dark .text-gray-400 { color: var(--color-text-tertiary) !important; }
+
 /* ─── Safe area ───────────────────────────────────────────────────────────── */
 .safe-area-pb { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .safe-area-pt { padding-top: env(safe-area-inset-top, 0px); }

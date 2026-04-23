@@ -92,8 +92,8 @@ export default function WeekRow({ week, status, logs, gymLogs, todayDayIndex, we
       ref={weekRef}
       className="rounded-2xl overflow-hidden transition-all"
       style={{
-        background: isCurrent ? '#eff6ff' : isCompleted ? '#f0fdf4' : 'var(--color-surface)',
-        border: `1.5px solid ${isCurrent ? 'var(--ns-cobalt)' : isCompleted ? '#86efac' : 'var(--color-border)'}`,
+        background: isCurrent ? 'rgba(37,99,235,0.10)' : isCompleted ? 'rgba(34,197,94,0.08)' : 'var(--color-surface)',
+        border: `1.5px solid ${isCurrent ? 'var(--ns-cobalt)' : isCompleted ? 'rgba(34,197,94,0.35)' : 'var(--color-border)'}`,
         boxShadow: isCurrent ? '0 2px 12px rgba(37,99,235,0.1)' : 'none',
       }}
     >
