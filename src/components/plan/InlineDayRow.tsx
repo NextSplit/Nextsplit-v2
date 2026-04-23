@@ -91,7 +91,7 @@ export default function InlineDayRow({ day, dayIndex, weekN, logs, gymLogs, isTo
                     className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
                     style={{
                       background: done ? '#dcfce7' : style.bg,
-                      color: done ? '#15803d' : style.text,
+                      color: done ? '#15803d' : style.dot,
                       opacity: done && !isOpen ? 0.7 : 1,
                     }}>
                     {done && <span>✓</span>}
