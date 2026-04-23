@@ -11,6 +11,7 @@ interface Props {
   log: TrainingLog
   weekN: number
   onClose: () => void
+  runnerColour?: string
 }
 
 function fmtPaceDisplay(paceStr: string | null): string {
