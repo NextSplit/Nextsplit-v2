@@ -341,7 +341,7 @@ export default function PlanClient() {
                   <div className="border-t border-gray-50 px-3 pb-3 pt-2 space-y-2">
                     {completedWeeks.filter(filterWeek).map(week => (
                       <WeekRow key={week.n} week={week} status="completed" logs={logs} gymLogs={gymLogs} todayDayIndex={-1}
-                        onOpenDay={(day, di) => openDay(week, day, di)} />
+                        planId={plan?.id ?? ''} onLog={(s, di, si, wn) => setLogModal({ session: s, dayIndex: di, sessI: si, weekN: wn })} />
                     ))}
                   </div>
                 )}
@@ -351,13 +351,13 @@ export default function PlanClient() {
             {/* Current */}
             {currentWeekObj && filterWeek(currentWeekObj) && (
               <WeekRow week={currentWeekObj} status="current" logs={logs} gymLogs={gymLogs} todayDayIndex={todayDayIndex}
-                weekRef={currentWeekRef} onOpenDay={(day, di) => openDay(currentWeekObj, day, di)} />
+                weekRef={currentWeekRef} planId={plan?.id ?? ''} onLog={(s, di, si, wn) => setLogModal({ session: s, dayIndex: di, sessI: si, weekN: wn })} />
             )}
 
             {/* Upcoming */}
             {upcomingWeeks.filter(filterWeek).map(week => (
               <WeekRow key={week.n} week={week} status="upcoming" logs={logs} gymLogs={gymLogs} todayDayIndex={-1}
-                onOpenDay={(day, di) => openDay(week, day, di)} />
+                planId={plan?.id ?? ''} onLog={(s, di, si, wn) => setLogModal({ session: s, dayIndex: di, sessI: si, weekN: wn })} />
             ))}
           </>
         )}
@@ -369,7 +369,7 @@ export default function PlanClient() {
             <WeekRow key={week.n} week={week} status={status} logs={logs} gymLogs={gymLogs}
               todayDayIndex={status === 'current' ? todayDayIndex : -1}
               weekRef={status === 'current' ? currentWeekRef : undefined}
-              onOpenDay={(day, di) => openDay(week, day, di)} />
+              planId={plan?.id ?? ''} onLog={(s, di, si, wn) => setLogModal({ session: s, dayIndex: di, sessI: si, weekN: wn })} />
           )
         })}
       </div>

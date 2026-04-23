@@ -1,173 +1,195 @@
 'use client'
 
-import { useState, useRef, useMemo, useCallback } from 'react'
-import DayRow from '@/components/plan/DayRow'
-import { getSessionType, fmtKm, decodeHtml, parseDet } from '@/lib/sessionUtils'
-import { useGymLog } from '@/hooks/useGymLog'
+import { useState, useRef } from 'react'
+import { fmtKm, decodeHtml } from '@/lib/sessionUtils'
 import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/database'
-const PHASE_LABELS: Record<string, { label: string; bg: string; text: string }> = {
-  p1: { label: 'Phase 1', bg: 'bg-[var(--ns-forest-light)]',   text: 'text-teal-800'   },
-  p2: { label: 'Phase 2', bg: 'bg-violet-100', text: 'text-violet-800' },
-  tr: { label: 'Travel',  bg: 'bg-amber-100',  text: 'text-amber-800'  },
+import InlineDayRow from './InlineDayRow'
+
+const WEEK_TYPE: Record<string, { label: string; color: string }> = {
+  k: { label: 'Build',  color: '#3b82f6' },
+  d: { label: 'Deload', color: '#f97316' },
+  p: { label: 'Peak',   color: '#ef4444' },
+  r: { label: 'Race',   color: '#eab308' },
 }
 
-const WEEK_TYPE: Record<string, { label: string; colour: string; dot: string }> = {
-  k: { label: 'Build',  colour: 'text-blue-600',   dot: 'bg-blue-400'   },
-  d: { label: 'Deload', colour: 'text-orange-500', dot: 'bg-orange-400' },
-  p: { label: 'Peak',   colour: 'text-red-600',    dot: 'bg-red-400'    },
-  r: { label: 'Race',   colour: 'text-yellow-600', dot: 'bg-yellow-400' },
+const SESSION_DOT: Record<string, string> = {
+  easy:     '#22c55e',
+  tempo:    '#eab308',
+  interval: '#f97316',
+  long:     '#3b82f6',
+  recovery: '#4ade80',
+  gym:      '#8b5cf6',
+  rest:     '#d1d5db',
 }
 
-const NUT_CAT: Record<string, { bg: string; text: string; border: string; icon: string }> = {
-  hydration: { bg: 'bg-blue-50',   text: 'text-blue-800',   border: 'border-blue-200',   icon: '💧' },
-  food:      { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-200',  icon: '🍽️' },
-  fuel:      { bg: 'bg-amber-50',  text: 'text-amber-800',  border: 'border-amber-200',  icon: '⚡' },
-  info:      { bg: 'bg-gray-50',   text: 'text-gray-600',   border: 'border-gray-200',   icon: 'ℹ️' },
-  macro:     { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200', icon: '📊' },
+function getSessionDot(code: string | null | undefined): string {
+  if (!code) return SESSION_DOT.easy
+  const c = code.toLowerCase()
+  if (c.includes('tempo')) return SESSION_DOT.tempo
+  if (c.includes('interval') || c.includes('speed')) return SESSION_DOT.interval
+  if (c.includes('long')) return SESSION_DOT.long
+  if (c.includes('recovery')) return SESSION_DOT.recovery
+  if (c.includes('gym') || c.includes('strength')) return SESSION_DOT.gym
+  if (c.includes('rest')) return SESSION_DOT.rest
+  return SESSION_DOT.easy
 }
 
-// ─── Day Drawer ─────────────────────────────────────────────────────────────────
+function getSessionLabel(code: string | null | undefined, name: string): string {
+  if (!code) return name
+  const c = code.toLowerCase()
+  if (c.includes('tempo')) return 'Tempo'
+  if (c.includes('interval') || c.includes('speed')) return 'Intervals'
+  if (c.includes('long')) return 'Long Run'
+  if (c.includes('recovery')) return 'Recovery'
+  if (c.includes('gym') || c.includes('strength')) return 'Strength'
+  if (c.includes('rest')) return 'Rest'
+  return 'Easy Run'
+}
 
+const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDay }: {
-  week: PlanWeek; status: 'completed' | 'current' | 'upcoming'
-  logs: Record<string, TrainingLog>; gymLogs: Record<string, unknown>; todayDayIndex: number
+interface WeekRowProps {
+  week: PlanWeek
+  status: 'completed' | 'current' | 'upcoming'
+  logs: Record<string, TrainingLog>
+  gymLogs: Record<string, unknown>
+  todayDayIndex: number
   weekRef?: React.RefObject<HTMLDivElement | null>
-  onOpenDay: (day: PlanDay, dayIndex: number) => void
-}) {
-  const isCurrent = status === 'current'
+  planId: string
+  onLog: (session: PlanSession, dayIndex: number, sessIndex: number, weekN: number) => void
+}
+
+export default function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, planId, onLog }: WeekRowProps) {
+  const isCurrent   = status === 'current'
   const isCompleted = status === 'completed'
   const [open, setOpen] = useState(isCurrent)
+  const [openDayIdx, setOpenDayIdx] = useState<number | null>(isCurrent ? todayDayIndex : null)
 
-  const phase = PHASE_LABELS[week.ph] ?? { label: week.ph, bg: 'bg-gray-100', text: 'text-gray-600' }
   const wtype = WEEK_TYPE[week.b] ?? null
-  const realSessions = week.days.flatMap((d, dayI) => d.sessions.filter(s => s.c != null && s.c !== 'rest').map((_, sessI) => `${week.n}_${dayI}_${sessI}`))
-  const totalSessions = realSessions.length
-  const doneSessions = realSessions.filter(k => logs[k]?.done || !!gymLogs[k]).length
-  const progress = totalSessions > 0 ? doneSessions / totalSessions : 0
+
+  // Count sessions for summary dots
+  const allSessions = week.days.flatMap((d, di) =>
+    d.sessions.filter(s => s.c && s.c !== 'rest').map((s, si) => ({ s, di, si }))
+  )
+  const doneSessions = allSessions.filter(({ di, si }) => {
+    const key = `${week.n}_${di}_${si}`
+    return logs[key]?.done || !!gymLogs[key]
+  }).length
+  const totalSessions = allSessions.length
+
+  // Session type dot summary for collapsed week header
+  const sessionDots = allSessions.slice(0, 7).map(({ s }) => ({
+    dot: getSessionDot(s.c),
+    label: getSessionLabel(s.c, s.n ?? ''),
+    km: s.km,
+  }))
+
+  // Total weekly km
+  const weeklyKm = allSessions.reduce((sum, { s }) => sum + (s.km ?? 0), 0)
 
   return (
     <div
       ref={weekRef}
-      className={`rounded-2xl border overflow-hidden bg-white transition-all ${
-        isCurrent ? 'border-[var(--ns-forest)] shadow-sm' : isCompleted ? 'border-gray-100 opacity-60' : 'border-gray-100'
-      }`}
+      className="rounded-2xl overflow-hidden transition-all"
+      style={{
+        background: 'var(--color-surface)',
+        border: `1px solid ${isCurrent ? 'var(--ns-ember)' : 'var(--color-border)'}`,
+        boxShadow: isCurrent ? '0 0 0 1px var(--ns-ember-light)' : 'none',
+        opacity: isCompleted ? 0.65 : 1,
+      }}
     >
-      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center gap-3 p-4 text-left">
-        {/* Badge */}
-        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm ${
-          isCurrent ? 'bg-[var(--ns-forest)] text-white' : isCompleted ? 'bg-gray-100 text-gray-300' : 'bg-gray-100 text-gray-500'
-        }`}>
-          {isCompleted ? (
-            <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-          ) : week.n}
+      {/* Week header — tap to expand/collapse */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
+        style={{ background: isCurrent ? 'var(--ns-ember-light)' : 'transparent' }}
+      >
+        {/* Week number badge */}
+        <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-sm"
+          style={{
+            background: isCurrent ? 'var(--ns-ember)' : isCompleted ? 'var(--color-surface-2)' : 'var(--color-surface-2)',
+            color:      isCurrent ? 'white'           : isCompleted ? 'var(--color-text-tertiary)' : 'var(--color-text-secondary)',
+          }}>
+          {week.n}
         </div>
 
+        {/* Week info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${phase.bg} ${phase.text}`}>{phase.label}</span>
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="text-sm font-bold truncate"
+              style={{ color: 'var(--color-text-primary)' }}>
+              {decodeHtml(week.title)}
+            </span>
             {wtype && (
-              <div className="flex items-center gap-1">
-                <span className={`w-1.5 h-1.5 rounded-full ${wtype.dot}`} />
-                <span className={`text-[10px] font-semibold ${wtype.colour}`}>{wtype.label}</span>
-              </div>
+              <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full flex-shrink-0"
+                style={{ background: `${wtype.color}18`, color: wtype.color }}>
+                {wtype.label}
+              </span>
             )}
-            {isCurrent && <span className="text-[10px] font-bold text-[var(--ns-forest)]">← Now</span>}
+            {isCurrent && (
+              <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full flex-shrink-0"
+                style={{ background: 'var(--ns-ember)', color: 'white' }}>
+                Current
+              </span>
+            )}
           </div>
-          <div className={`text-sm font-semibold truncate ${isCompleted ? 'text-gray-400' : 'text-gray-900'}`}>{decodeHtml(week.title)}</div>
-          <div className={`text-[10px] mt-0.5 ${isCompleted ? 'text-gray-300' : 'text-gray-400'}`}>
-            {week.kl[0]}–{week.kl[1]}km · {doneSessions}/{totalSessions} done
-          </div>
-        </div>
-
-        <div className="flex-shrink-0 flex flex-col items-end gap-1">
-          {isCurrent && totalSessions > 0 && (
-            <div className="text-right">
-              <span className="text-base font-bold text-[var(--ns-forest)] leading-none">{doneSessions}</span>
-              <span className="text-[9px] text-gray-400">/{totalSessions}</span>
+          {/* Session type dots — at-a-glance week summary */}
+          {!open && (
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {sessionDots.map((dot, i) => (
+                <div key={i} className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: dot.dot }} />
+                  <span className="text-[9px]" style={{ color: 'var(--color-text-tertiary)' }}>
+                    {dot.label}{dot.km ? ` ${fmtKm(dot.km)}` : ''}
+                  </span>
+                </div>
+              ))}
             </div>
           )}
-          {isCompleted && progress > 0 && (
-            <span className="text-[9px] text-gray-300">{Math.round(progress * 100)}%</span>
+        </div>
+
+        {/* Right — progress + chevron */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {totalSessions > 0 && (
+            <span className="text-[11px] font-data font-bold"
+              style={{ color: doneSessions === totalSessions ? '#16a34a' : 'var(--color-text-tertiary)' }}>
+              {doneSessions}/{totalSessions}
+            </span>
           )}
-          <svg className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''} ${isCompleted ? 'text-gray-200' : 'text-gray-400'}`}
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
+          {weeklyKm > 0 && (
+            <span className="text-[10px] font-data"
+              style={{ color: 'var(--color-text-tertiary)' }}>
+              {Math.round(weeklyKm)}km
+            </span>
+          )}
+          <span className="text-base transition-transform duration-200"
+            style={{
+              color: 'var(--color-text-tertiary)',
+              display: 'inline-block',
+              transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}>
+            ↓
+          </span>
         </div>
       </button>
 
-      {/* Progress bar */}
-      {isCurrent && totalSessions > 0 && (
-        <div className="px-4 pb-1">
-          <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[var(--ns-forest)] rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
-          </div>
-        </div>
-      )}
-
-      {/* Week note */}
-      {open && week.note && (
-        <div className="px-4 pb-2">
-          <p className={`text-xs rounded-xl px-3 py-2 leading-relaxed ${isCompleted ? 'bg-gray-50 text-gray-400' : 'bg-amber-50 text-amber-700'}`}>
-            {decodeHtml(week.note)}
-          </p>
-        </div>
-      )}
-
-      {/* Gym session summary — current week only */}
-      {open && isCurrent && (() => {
-        const gymSessionsThisWeek = week.days.flatMap((d, dayI) =>
-          d.sessions
-            .map((s, sessI) => ({ s, dayI, sessI }))
-            .filter(({ s }) => s?.c?.startsWith('gym'))
-        )
-        if (gymSessionsThisWeek.length === 0) return null
-        const gymDone = gymSessionsThisWeek.filter(({ dayI, sessI }) =>
-          !!gymLogs[`${week.n}_${dayI}_${sessI}`]
-        ).length
-        return (
-          <div className="mx-4 mb-3 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2.5">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-sm">🏋️</span>
-              <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wide">Strength this week</span>
-              <span className="ml-auto text-[11px] font-bold text-amber-700">{gymDone}/{gymSessionsThisWeek.length} done</span>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {gymSessionsThisWeek.map(({ s, dayI, sessI }) => {
-                const isDone = !!gymLogs[`${week.n}_${dayI}_${sessI}`]
-                const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-                return (
-                  <div key={`${dayI}_${sessI}`}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold ${
-                      isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-white border border-amber-200 text-amber-700'
-                    }`}>
-                    {isDone && <span>✓</span>}
-                    <span>{dayNames[dayI]} — {s.n}</span>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )
-      })()}
-
-      {/* Day rows */}
+      {/* Expanded — day rows */}
       {open && (
-        <div className="border-t border-gray-50">
-          {week.days.map((day, dayI) => (
-            <DayRow
-              key={dayI}
-              day={day as PlanDay}
-              dayIndex={dayI}
+        <div className="border-t" style={{ borderColor: 'var(--color-border)' }}>
+          {week.days.map((day, dayIndex) => (
+            <InlineDayRow
+              key={dayIndex}
+              day={day}
+              dayIndex={dayIndex}
               weekN={week.n}
               logs={logs}
               gymLogs={gymLogs}
-              isToday={isCurrent && dayI === todayDayIndex}
-              isPast={isCompleted}
-              onOpen={() => onOpenDay(day, dayI)}
+              isToday={isCurrent && dayIndex === todayDayIndex}
+              isPast={isCompleted || (isCurrent && dayIndex < todayDayIndex)}
+              isOpen={openDayIdx === dayIndex}
+              onToggle={() => setOpenDayIdx(openDayIdx === dayIndex ? null : dayIndex)}
+              onLog={onLog}
             />
           ))}
         </div>
@@ -175,8 +197,3 @@ function WeekRow({ week, status, logs, gymLogs, todayDayIndex, weekRef, onOpenDa
     </div>
   )
 }
-
-// ─── Main ────────────────────────────────────────────────────────────────────────
-
-
-export default WeekRow
