@@ -37,7 +37,7 @@ export default function RaceResultShareCard({
   const [copied, setCopied] = useState(false)
   const cls = getRunnerClass(runnerClass)
 
-  const shareText = `${cls.emoji} "${cls.shareText.replace('NextSplit', '').trim()}\n\n📋 ${planName}\n📅 ${totalWeeks} weeks · ${Math.round(totalKm)}km logged · ${sessionsDone} sessions\n${longestRun > 0 ? `🏃 Longest run: ${longestRun}km\n` : ''}${bestPace ? `⚡ Best pace: ${bestPace}/km\n` : ''}\nnextsplit-v2.vercel.app`
+  const shareText = `${cls.emoji} "${cls.shareText.replace('NextSplit', '').trim()}\n\n📋 ${planName}\n📅 ${totalWeeks} weeks · ${Math.round(totalKm)}km logged · ${sessionsDone} sessions\n${longestRun > 0 ? `🏃 Longest run: ${longestRun}km\n` : ''}${bestPace ? `⚡ Best pace: ${bestPace}/km\n` : ''}\nnextsplit.app`
 
   async function handleShare() {
     setSharing(true)
@@ -47,7 +47,7 @@ export default function RaceResultShareCard({
         await nav.share({
           title: `${displayName} finished their plan — NextSplit`,
           text: shareText,
-          url: 'https://nextsplit-v2.vercel.app',
+          url: 'https://nextsplit.app',
         })
       } else if (nav.clipboard) {
         await nav.clipboard.writeText(shareText)

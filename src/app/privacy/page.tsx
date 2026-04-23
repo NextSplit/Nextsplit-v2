@@ -21,7 +21,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">Who we are</h2>
-            <p>NextSplit (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) is a training platform for runners and endurance athletes. We are the data controller for personal data collected through nextsplit-v2.vercel.app and associated mobile applications.</p>
+            <p>NextSplit (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) is a training platform for runners and endurance athletes. We are the data controller for personal data collected through nextsplit.app and associated mobile applications.</p>
             <p className="mt-2">Contact: <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-ember)] hover:underline">privacy@nextsplit.com</a></p>
           </section>
 

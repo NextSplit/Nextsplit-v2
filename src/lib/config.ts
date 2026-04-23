@@ -6,7 +6,7 @@
 
 // ── Public (safe to expose to browser) ─────────────────────────────────────
 export const config = {
-  siteUrl:               process.env.NEXT_PUBLIC_SITE_URL ?? 'https://nextsplit-v2.vercel.app',
+  siteUrl:               process.env.NEXT_PUBLIC_SITE_URL ?? 'https://nextsplit.app',
   supabaseUrl:           process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
   supabaseAnonKey:       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
   stripePublishableKey:  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '',

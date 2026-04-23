@@ -190,7 +190,7 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
   const [copied, setCopied]             = useState(false)
 
   const inviteCode = squad.squad_invites?.[0]?.code
-  const inviteUrl  = `${typeof window !== 'undefined' ? window.location.origin : 'https://nextsplit-v2.vercel.app'}/squad/join/${inviteCode}`
+  const inviteUrl  = `${typeof window !== 'undefined' ? window.location.origin : 'https://nextsplit.app'}/squad/join/${inviteCode}`
 
   const activeMembers = squad.squad_members ?? []
   const goalProgress  = squad.goal_type && squad.goal_value

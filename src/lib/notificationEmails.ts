@@ -52,14 +52,14 @@ export function buildNotificationEmail(type: NotificationEmailType, ctx: NotifEm
         mood: 'encouraging',
         headline: subject,
         body: `${sessionLine} is on your plan today.<br><br>Best done before the day gets away from you. Start easy, find your rhythm — the rest takes care of itself.`,
-        cta: { label: 'Open today\'s session →', url: 'https://nextsplit-v2.vercel.app/today' },
+        cta: { label: 'Open today\'s session →', url: 'https://nextsplit.app/today' },
         footer: 'You\'re getting this because session reminders are on. Turn off in Settings.',
       })
 
       return {
         subject,
         html,
-        text: `${subject}\n\n${ctx.sessionName ?? 'Your session'} is on your plan today. Open NextSplit to log it: https://nextsplit-v2.vercel.app/today`,
+        text: `${subject}\n\n${ctx.sessionName ?? 'Your session'} is on your plan today. Open NextSplit to log it: https://nextsplit.app/today`,
       }
     }
 
@@ -78,14 +78,14 @@ export function buildNotificationEmail(type: NotificationEmailType, ctx: NotifEm
         mood: 'urgent',
         headline: `🔥 ${streak} days and counting`,
         body,
-        cta: { label: 'Log today\'s session →', url: 'https://nextsplit-v2.vercel.app/today' },
+        cta: { label: 'Log today\'s session →', url: 'https://nextsplit.app/today' },
         footer: 'You\'re getting this because streak reminders are on. Turn off in Settings.',
       })
 
       return {
         subject,
         html,
-        text: `${subject}\n\nYour ${streak}-day streak is at risk. Log something today: https://nextsplit-v2.vercel.app/today`,
+        text: `${subject}\n\nYour ${streak}-day streak is at risk. Log something today: https://nextsplit.app/today`,
       }
     }
 
@@ -108,14 +108,14 @@ export function buildNotificationEmail(type: NotificationEmailType, ctx: NotifEm
             ? `Week ${ctx.weekN} of ${ctx.totalWeeks}${ctx.planName ? ` on ${ctx.planName}` : ''} — you're making progress.`
             : 'Another training week in the books.'
         }<br><br>See what's coming up next week and make sure your plan still fits your schedule.`,
-        cta: { label: 'See next week →', url: 'https://nextsplit-v2.vercel.app/plan' },
+        cta: { label: 'See next week →', url: 'https://nextsplit.app/plan' },
         footer: 'You\'re getting this because weekly recaps are on. Turn off in Settings.',
       })
 
       return {
         subject,
         html,
-        text: `${subject}\n\n${statsLine}. ${kmLine}.\n\nSee next week: https://nextsplit-v2.vercel.app/plan`,
+        text: `${subject}\n\n${statsLine}. ${kmLine}.\n\nSee next week: https://nextsplit.app/plan`,
       }
     }
 
@@ -126,14 +126,14 @@ export function buildNotificationEmail(type: NotificationEmailType, ctx: NotifEm
         mood: 'default',
         headline: 'Your plan is exactly where you left it.',
         body: `No catch-up. No guilt. Your training clock doesn't start until you do.<br><br>Whenever you're ready — even if that's today — just open the app and pick up from where you were. Splity's got you.`,
-        cta: { label: 'Pick up where you left off →', url: 'https://nextsplit-v2.vercel.app/today' },
+        cta: { label: 'Pick up where you left off →', url: 'https://nextsplit.app/today' },
         footer: 'This is a one-time message. We won\'t send this again.',
       })
 
       return {
         subject,
         html,
-        text: `${subject}\n\nYour plan is still there. No catch-up required. Pick up whenever you're ready: https://nextsplit-v2.vercel.app/today`,
+        text: `${subject}\n\nYour plan is still there. No catch-up required. Pick up whenever you're ready: https://nextsplit.app/today`,
       }
     }
 
@@ -155,14 +155,14 @@ export function buildNotificationEmail(type: NotificationEmailType, ctx: NotifEm
         mood: 'happy',
         headline: subject,
         body,
-        cta: { label: 'See your race plan →', url: 'https://nextsplit-v2.vercel.app/today' },
+        cta: { label: 'See your race plan →', url: 'https://nextsplit.app/today' },
         footer: 'You\'re getting race countdown updates because you have a race date set.',
       })
 
       return {
         subject,
         html,
-        text: `${subject}\n\n${body.replace(/<br><br>/g, '\n\n').replace(/<[^>]+>/g, '')}\n\nhttps://nextsplit-v2.vercel.app/today`,
+        text: `${subject}\n\n${body.replace(/<br><br>/g, '\n\n').replace(/<[^>]+>/g, '')}\n\nhttps://nextsplit.app/today`,
       }
     }
   }
@@ -255,9 +255,9 @@ function splityEmail({ name, mood, headline, body, cta, footer }: SplityEmailOpt
             <td style="padding:20px 8px 8px;text-align:center;">
               <p style="margin:0 0 8px;font-size:11px;color:#9e9c97;">${footer}</p>
               <p style="margin:0;font-size:11px;color:#c4c2bd;">
-                <a href="https://nextsplit-v2.vercel.app/settings" style="color:#9e9c97;">Manage notifications</a>
+                <a href="https://nextsplit.app/settings" style="color:#9e9c97;">Manage notifications</a>
                 &nbsp;·&nbsp;
-                <a href="https://nextsplit-v2.vercel.app" style="color:#9e9c97;">nextsplit.app</a>
+                <a href="https://nextsplit.app" style="color:#9e9c97;">nextsplit.app</a>
               </p>
             </td>
           </tr>

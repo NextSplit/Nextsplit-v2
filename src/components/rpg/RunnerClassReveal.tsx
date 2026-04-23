@@ -30,7 +30,7 @@ export default function RunnerClassReveal({ classId, onDismiss }: Props) {
       navigator.share({
         title: `I'm a ${cls.name} — NextSplit`,
         text: cls.shareText,
-        url: 'https://nextsplit-v2.vercel.app',
+        url: 'https://nextsplit.app',
       }).catch(() => {})
       setShared(true)
     }

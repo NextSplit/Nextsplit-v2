@@ -108,8 +108,8 @@ export function buildLifecycleEmailHtml(
   }
 ): string {
   const name    = ctx.firstName
-  const proUrl  = ctx.proUrl  ?? 'https://nextsplit-v2.vercel.app/profile?upgrade=1'
-  const unsub   = ctx.unsubUrl ?? 'https://nextsplit-v2.vercel.app/settings?section=notifications'
+  const proUrl  = ctx.proUrl  ?? 'https://nextsplit.app/profile?upgrade=1'
+  const unsub   = ctx.unsubUrl ?? 'https://nextsplit.app/settings?section=notifications'
 
   const styles = `
     body { margin: 0; padding: 0; background: #f8f8f6; font-family: 'Outfit', -apple-system, sans-serif; }
@@ -139,7 +139,7 @@ export function buildLifecycleEmailHtml(
         <p>Everything is set up. Your first week of training is scheduled and waiting — you just need to log the first session.</p>
         ${ctx.planName ? `<p>You're on the <strong>${ctx.planName}</strong>. Here's what week one looks like — a mix of easy running and some structure, nothing that should feel overwhelming.</p>` : ''}
         <p>The most important thing at this stage isn't pace or distance. It's the habit. One session this week, and you're already ahead of where you'd be otherwise.</p>
-        <a href="https://nextsplit-v2.vercel.app/today" class="cta">Start week one →</a>
+        <a href="https://nextsplit.app/today" class="cta">Start week one →</a>
         <div class="divider"></div>
         <p>If anything in the plan doesn't work — a session you can't make, a day that needs shifting — just open the app and let it know. The plan adapts. That's the whole point.</p>
         <p>— Your NextSplit coach</p>
@@ -151,7 +151,7 @@ export function buildLifecycleEmailHtml(
         <h1>Still here when you are, ${name}.</h1>
         <p>Your plan hasn't started the clock yet. Whenever you're ready to begin — tomorrow, this weekend, whenever — it picks up from that day.</p>
         <p>No catch-up required. No sense of having fallen behind. The plan adjusts to when you actually start, not when you signed up.</p>
-        <a href="https://nextsplit-v2.vercel.app/today" class="cta">Pick up where you left off →</a>
+        <a href="https://nextsplit.app/today" class="cta">Pick up where you left off →</a>
         <div class="divider"></div>
         <p>If something got in the way of starting — work, life, just not feeling ready — that's completely normal. The plan doesn't judge. It just waits.</p>
         <p>— Your NextSplit coach</p>
@@ -172,7 +172,7 @@ export function buildLifecycleEmailHtml(
           <p>The first week of any training plan is about building the habit more than the fitness. If you logged sessions this week, you're already doing the most important thing.</p>
         `}
         <p>One thing worth knowing: the weeks where runners feel like they didn't do enough are usually the weeks that build the most fitness. Easy runs that feel too easy are doing exactly what they're supposed to do.</p>
-        <a href="https://nextsplit-v2.vercel.app/today" class="cta">See week 2 →</a>
+        <a href="https://nextsplit.app/today" class="cta">See week 2 →</a>
         <p>— Your NextSplit coach</p>
       `
       break
@@ -219,7 +219,7 @@ export function buildLifecycleEmailHtml(
           <p>It's been a couple of weeks since we heard from you. The plan is still there, and there's still time to get the training in before race day.</p>
         `}
         <p>There's no catch-up required. Open the app, mark where you are, and let the plan rebuild from today. Missing weeks doesn't mean starting over — it means adjusting.</p>
-        <a href="https://nextsplit-v2.vercel.app/today" class="cta">Get back on track →</a>
+        <a href="https://nextsplit.app/today" class="cta">Get back on track →</a>
         <div class="divider"></div>
         <p>If something got in the way — injury, illness, life — the app can adapt the remaining plan to work with whatever time you have left.</p>
         <p>— Your NextSplit coach</p>
@@ -230,7 +230,7 @@ export function buildLifecycleEmailHtml(
       body = `
         <h1>How did it go, ${name}?</h1>
         <p>Your race was today. Log your result in the app and we'll save it to your training history — along with everything you did to get there.</p>
-        <a href="https://nextsplit-v2.vercel.app/today" class="cta">Log your race result →</a>
+        <a href="https://nextsplit.app/today" class="cta">Log your race result →</a>
         <div class="divider"></div>
         <p>Whatever happened out there — a PB, a tough day, just crossing the line — you trained for it. That part is already done.</p>
         <p>When you're ready to think about what's next, the app is there. A recovery week first. Then a new plan, whenever you're ready.</p>

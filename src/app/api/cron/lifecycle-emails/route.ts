@@ -166,7 +166,7 @@ export async function GET(req: NextRequest) {
           subject: emailDef.subject,
           html,
           headers: {
-            'List-Unsubscribe': '<https://nextsplit-v2.vercel.app/settings?section=notifications>',
+            'List-Unsubscribe': '<https://nextsplit.app/settings?section=notifications>',
           },
         })
 

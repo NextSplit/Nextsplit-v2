@@ -44,7 +44,7 @@ export function generateReferralCode(userId: string): string {
   return code
 }
 
-export function buildReferralUrl(code: string, baseUrl = 'https://nextsplit-v2.vercel.app'): string {
+export function buildReferralUrl(code: string, baseUrl = 'https://nextsplit.app'): string {
   return `${baseUrl}/refer/${code}`
 }
 
