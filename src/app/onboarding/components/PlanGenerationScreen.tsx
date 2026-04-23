@@ -419,8 +419,7 @@ export function PlanGenerationScreen() {
 
       <div className="w-full max-w-xs bg-white/10 rounded-full h-1.5 overflow-hidden mb-4">
         <div
-          className="h-full bg-[var(--ns-forest-mid)] rounded-full transition-all duration-300 ease-out"
-          style={{ width: `${progress}%` }}
+          className="h-full rounded-full transition-all duration-300 ease-out" style={{ background: "var(--ns-ember)", width: `${progress}%` }}
         />
       </div>
 

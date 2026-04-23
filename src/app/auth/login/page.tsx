@@ -37,13 +37,12 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen flex flex-col" style={{ background: 'var(--color-bg)' }}>
       {/* Header */}
-      <div className="px-6 pt-16 pb-10 text-center"
-        style={{ background: 'linear-gradient(180deg, #0f2818 0%, var(--color-bg) 100%)' }}>
+      <div className="px-6 pt-16 pb-10 text-center">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
-          style={{ background: 'rgba(43,92,63,0.3)', border: '1px solid rgba(43,92,63,0.5)' }}>
+          style={{ background: 'var(--ns-ember-light)', border: '1px solid rgba(232,93,38,0.2)' }}>
           <span className="text-2xl">🏃</span>
         </div>
-        <h1 className="text-2xl font-black text-white tracking-tight">NextSplit</h1>
+        <h1 className="font-display text-2xl tracking-tight" style={{ color: 'var(--ns-forest)', letterSpacing: '-0.03em' }}>NextSplit</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
           Track. Log. Level up.
         </p>

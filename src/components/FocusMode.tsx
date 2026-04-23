@@ -100,7 +100,7 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
         )}
 
         {/* Elapsed timer */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <div className="rounded-2xl p-5 text-center" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
           <div className="text-4xl font-black text-gray-900 font-mono mb-3 tabular-nums">
             {formatElapsed(elapsed)}
           </div>

@@ -66,17 +66,17 @@ function SignupForm() {
   return (
     <main className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
       {/* Brand header */}
-      <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-16 pb-10 text-center">
+      <div className="px-6 pt-16 pb-10 text-center">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--ns-ember)]/20 border border-[var(--ns-ember)]/30 mb-4">
           <span className="text-2xl">🏃</span>
         </div>
-        <h1 className="text-2xl font-black text-white tracking-tight">NextSplit</h1>
+        <h1 className="font-display text-2xl tracking-tight" style={{ color: "var(--ns-forest)", letterSpacing: "-0.03em" }}>NextSplit</h1>
         {refCode ? (
-          <p className="text-[var(--ns-forest-light)] text-sm mt-1">
+          <p className="text-sm mt-1" style={{ color: "var(--color-text-tertiary)" }}>
             🎁 You were invited — first month free when you upgrade
           </p>
         ) : (
-          <p className="text-[var(--ns-forest-light)] text-sm mt-1">AI coaching · Gamified progress · Real plans</p>
+          <p className="text-sm mt-1" style={{ color: "var(--color-text-tertiary)" }}>AI coaching · Gamified progress · Real plans</p>
         )}
       </div>
 
@@ -140,7 +140,7 @@ function SignupForm() {
             )}
 
             <button type="submit" disabled={loading}
-              className="w-full text-white py-3 rounded-xl text-sm font-bold disabled:opacity-50 transition-all active:scale-95" style={{ background: "var(--ns-forest)" }}>
+              className="w-full text-white py-3 rounded-xl text-sm font-bold disabled:opacity-50 transition-all active:scale-95" style={{ background: "var(--ns-ember)" }}>
               {loading ? 'Creating account…' : 'Create free account →'}
             </button>
           </form>
