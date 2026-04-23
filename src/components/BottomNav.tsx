@@ -4,39 +4,36 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useCoach } from '@/hooks/useCoach'
 import {
-  CalendarBlank, ClipboardText, Users, Campfire, UserCircle, Compass, CrownSimple,
+  CalendarBlank, ClipboardText, Campfire, UserCircle, CrownSimple,
 } from '@phosphor-icons/react'
-
-// ── Tab definitions ──────────────────────────────────────────────────────────
 
 const ATHLETE_TABS = [
   { href: '/today',     label: 'Today',     Icon: CalendarBlank  },
   { href: '/plan',      label: 'Plan',      Icon: ClipboardText  },
-  { href: '/squad',     label: 'Squad',     Icon: CrownSimple    },
   { href: '/community', label: 'Community', Icon: Campfire       },
   { href: '/profile',   label: 'Character', Icon: UserCircle     },
 ]
 
 const COACH_TABS = [
-  { href: '/today',       label: 'Today',     Icon: CalendarBlank },
-  { href: '/plan',        label: 'Plan',      Icon: ClipboardText },
-  { href: '/coach/squad', label: 'Athletes',  Icon: Users         },
-  { href: '/community',   label: 'Community', Icon: Campfire      },
-  { href: '/profile',     label: 'Character', Icon: UserCircle    },
+  { href: '/today',       label: 'Today',    Icon: CalendarBlank },
+  { href: '/plan',        label: 'Plan',     Icon: ClipboardText },
+  { href: '/community',   label: 'Community',Icon: Campfire      },
+  { href: '/profile',     label: 'Character',Icon: UserCircle    },
 ]
-
-// ── Component ────────────────────────────────────────────────────────────────
 
 export default function BottomNav() {
   const pathname    = usePathname()
   const { isCoach } = useCoach()
-
   const tabs = isCoach ? COACH_TABS : ATHLETE_TABS
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-sm border-t safe-area-pb"
-      style={{ background: 'rgba(15, 26, 20, 0.95)', borderColor: 'var(--color-border)' }}
+      className="fixed bottom-0 left-0 right-0 z-50 border-t safe-area-pb"
+      style={{
+        background: 'var(--color-surface)',
+        borderColor: 'var(--color-border)',
+        boxShadow: '0 -1px 0 var(--color-border)',
+      }}
       role="navigation"
       aria-label="Main navigation"
     >
@@ -49,19 +46,25 @@ export default function BottomNav() {
               href={tab.href}
               aria-label={tab.label}
               aria-current={active ? 'page' : undefined}
-              className={`flex-1 flex flex-col items-center justify-center gap-0.5 pt-2 pb-1.5 relative transition-colors focus-visible:outline-none ${
-                active ? 'text-[var(--ns-forest)]' : 'text-[var(--color-text-tertiary)]'
-              }`}
+              className="flex-1 flex flex-col items-center justify-center gap-1 pt-2.5 pb-2 relative transition-all focus-visible:outline-none"
             >
-              {/* Active indicator line */}
+              {/* Active indicator dot */}
               {active && (
                 <span
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full"
+                  className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full"
                   style={{ background: 'var(--ns-ember)' }}
                 />
               )}
-              <tab.Icon size={23} weight={active ? 'fill' : 'regular'} />
-              <span className={`text-[9px] font-bold tracking-wide ${active ? 'text-[var(--ns-forest)]' : 'text-[var(--color-text-tertiary)]'}`}>
+
+              <Icon
+                component={tab.Icon}
+                active={active}
+              />
+
+              <span
+                className="text-[10px] font-semibold"
+                style={{ color: active ? 'var(--ns-ember)' : 'var(--color-text-tertiary)' }}
+              >
                 {tab.label}
               </span>
             </Link>
@@ -69,5 +72,15 @@ export default function BottomNav() {
         })}
       </div>
     </nav>
+  )
+}
+
+function Icon({ component: IconComponent, active }: { component: React.ElementType; active: boolean }) {
+  return (
+    <IconComponent
+      size={22}
+      weight={active ? 'fill' : 'regular'}
+      color={active ? 'var(--ns-ember)' : 'var(--color-text-tertiary)'}
+    />
   )
 }

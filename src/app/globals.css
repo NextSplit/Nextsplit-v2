@@ -1,69 +1,56 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
-/* ─── NextSplit Design Tokens ─────────────────────────────────────────────────
-   Brand palette — Forest / Ember / Track / Night / Paper / Ink
-   All colour usage flows through these variables.
+/* ─── NextSplit Design Tokens v2 — Light Base ─────────────────────────────────
+   Philosophy: Clean white base. Bold where it matters. Warm, not clinical.
+   Splity orange (ember) = action. Forest green = brand/nav. Gold = achievement.
+   Everything else is neutral — white, off-white, near-black, grey.
    ──────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* ── Brand colours (NextSplit Own — not iOS, not Material) ── */
-  --ns-forest:        #2b5c3f;   /* Primary — warmth, nature, endurance */
-  --ns-forest-light:  #edf4f0;   /* Forest tint — surfaces, backgrounds */
-  --ns-forest-mid:    #3d7a57;   /* Forest hover/active state */
-  --ns-ember:         #e85d26;   /* Accent — energy, achievement, heat */
-  --ns-ember-light:   #fdf0ea;   /* Ember tint */
-  --ns-track:         #c49a3c;   /* Gold — ambition, performance, PBs */
-  --ns-track-light:   #fdf7ec;   /* Track tint */
-  --ns-night:         #2c3e50;   /* Slate — data, depth, analytics */
-  --ns-night-light:   #eef1f4;   /* Night tint */
-  --ns-paper:         #f9f6f0;   /* Background — warm off-white */
-  --ns-ink:           #1a1a14;   /* Text — warm near-black */
+  /* ── Brand accent colours ── */
+  --ns-ember:         #e85d26;   /* Primary CTA — action, energy */
+  --ns-ember-light:   #fef3ee;   /* Ember tint — hover states, highlights */
+  --ns-ember-mid:     #d44a12;   /* Ember dark — pressed state */
 
-  /* ── Legacy alias — maps old teal token to Forest ── */
+  --ns-forest:        #2b5c3f;   /* Brand — logo, active nav, Split Leader */
+  --ns-forest-light:  #edf4f0;   /* Forest tint */
+  --ns-forest-mid:    #3d7a57;
+
+  --ns-track:         #c49a3c;   /* Gold — achievements, XP, Splity */
+  --ns-track-light:   #fdf7ec;   /* Gold tint */
+
+  /* ── Page & surface system — Light ── */
+  --color-bg:           #f8f7f5;   /* Warm off-white page background */
+  --color-surface:      #ffffff;   /* Card / sheet surface */
+  --color-surface-2:    #f3f2f0;   /* Elevated input / pill background */
+  --color-surface-3:    #eae9e6;   /* Highest surface */
+
+  /* ── Borders ── */
+  --color-border:       #e8e6e3;   /* Default border — barely visible */
+  --color-border-2:     #d4d1cc;   /* Stronger border */
+
+  /* ── Text ── */
+  --color-text-primary:   #1a1a18;   /* Near-black — headings, important */
+  --color-text-secondary: #6b6b67;   /* Mid grey — body, descriptions */
+  --color-text-tertiary:  #9e9c97;   /* Light grey — labels, captions */
+  --color-text-disabled:  #c4c2bd;   /* Disabled */
+  --color-text-inverse:   #ffffff;   /* Text on dark/coloured backgrounds */
+
+  /* ── Legacy aliases (keep for backward compat during rebuild) ── */
   --color-brand:        var(--ns-forest);
   --color-brand-light:  var(--ns-forest-light);
   --color-brand-text:   var(--ns-forest-mid);
-
-  /* ── Page backgrounds — Forest Dark ── */
-  --color-bg:           #0f1a14;   /* Deep forest night */
-  --color-surface:      #162a1e;   /* Card surface */
-  --color-surface-2:    #1e3829;   /* Elevated surface */
-  --color-surface-3:    #243f2f;   /* Highest surface */
-
-  /* ── Borders ── */
-  --color-border:       #1e3829;
-  --color-border-2:     #2b5c3f;
-
-  /* ── Text ── */
-  --color-text-primary:   #e8f5ee;   /* Warm light green-white */
-  --color-text-secondary: #8db89a;   /* Muted green */
-  --color-text-tertiary:  #5a8a6a;   /* Subtle */
-  --color-text-disabled:  #3d6b4f;
+  --ns-paper:           var(--color-bg);
+  --ns-ink:             var(--color-text-primary);
+  --ns-night:           #2c3e50;
+  --ns-night-light:     #eef1f4;
+  --ns-forest-light:    #edf4f0;
 
   --background: var(--color-bg);
   --foreground: var(--color-text-primary);
 
-  /* ── Font scale — changed by text size setting ── */
+  /* ── Font scale ── */
   --font-scale: 1;
-}
-
-/* ─── Dim dark mode (zinc palette) ─────────────────────────────────────────── */
-.dark {
-  --color-bg:           #18181b;  /* zinc-900 */
-  --color-surface:      #27272a;  /* zinc-800 */
-  --color-surface-2:    #3f3f46;  /* zinc-700 */
-  --color-surface-3:    #52525b;  /* zinc-600 */
-
-  --color-border:       #3f3f46;  /* zinc-700 */
-  --color-border-2:     #52525b;  /* zinc-600 */
-
-  --color-text-primary:   #f4f4f5;  /* zinc-100 */
-  --color-text-secondary: #a1a1aa;  /* zinc-400 */
-  --color-text-tertiary:  #71717a;  /* zinc-500 */
-  --color-text-disabled:  #52525b;  /* zinc-600 */
-
-  --background: var(--color-bg);
-  --foreground: var(--color-text-primary);
 }
 
 /* ─── Text size scales ────────────────────────────────────────────────────── */
@@ -71,6 +58,7 @@
 .text-size-large   { --font-scale: 1.1; }
 .text-size-xl      { --font-scale: 1.2; }
 
+/* ─── Base styles ─────────────────────────────────────────────────────────── */
 body {
   background: var(--color-bg);
   color: var(--color-text-primary);
@@ -80,261 +68,86 @@ body {
   overscroll-behavior: none;
 }
 
-/* ── Forest dark — global card/surface mapping ────────────────────────────────
-   Replace Tailwind's white/gray classes with dark equivalents globally.
-   This means all bg-white, bg-gray-50, bg-gray-100 map to dark surfaces.
+/* ─── Global colour overrides — map legacy dark classes to light equivalents ─
+   These ensure old components using Tailwind grey classes render correctly
+   on the new light base without touching every component immediately.
    ──────────────────────────────────────────────────────────────────────────── */
 
-.bg-white,
-[class*="bg-white"] {
+/* Backgrounds */
+.bg-white, [class*="bg-white"] {
   background-color: var(--color-surface) !important;
 }
-
-.bg-gray-50,
-[class*="bg-gray-50"],
-[class*="bg-\[#f8f8f6\]"],
-[class*="bg-\[#f8f8f5\]"] {
+.bg-gray-50, [class*="bg-gray-50"],
+[class*="bg-\[#f8f8f6\]"], [class*="bg-\[#f8f8f5\]"] {
   background-color: var(--color-bg) !important;
 }
-
-.bg-gray-100,
-[class*="bg-gray-100"] {
+.bg-gray-100, [class*="bg-gray-100"] {
   background-color: var(--color-surface-2) !important;
 }
-
-.bg-gray-200,
-[class*="bg-gray-200"] {
+.bg-gray-200, [class*="bg-gray-200"] {
   background-color: var(--color-surface-3) !important;
 }
 
-/* Text colour mappings */
-.text-gray-900, [class*="text-gray-900"] { color: var(--color-text-primary) !important; }
+/* Text colours — map dark-mode greys back to light equivalents */
+.text-gray-900, [class*="text-gray-900"],
 .text-gray-800, [class*="text-gray-800"] { color: var(--color-text-primary) !important; }
-.text-gray-700, [class*="text-gray-700"] { color: var(--color-text-secondary) !important; }
+.text-gray-700, [class*="text-gray-700"],
 .text-gray-600, [class*="text-gray-600"] { color: var(--color-text-secondary) !important; }
-.text-gray-500, [class*="text-gray-500"] { color: var(--color-text-tertiary) !important; }
+.text-gray-500, [class*="text-gray-500"],
 .text-gray-400, [class*="text-gray-400"] { color: var(--color-text-tertiary) !important; }
 
-/* Border mappings */
+/* Borders */
 .border-gray-100, [class*="border-gray-100"] { border-color: var(--color-border) !important; }
 .border-gray-200, [class*="border-gray-200"] { border-color: var(--color-border-2) !important; }
 
-/* Keep ember/forest/track colours as-is — they're branded */
-/* Keep white TEXT on dark buttons — don't override text-white */
+/* ─── Safe area ───────────────────────────────────────────────────────────── */
+.safe-area-pb { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.safe-area-pt { padding-top: env(safe-area-inset-top, 0px); }
 
-/* Safe area for notched phones and home indicator */
-.safe-area-pb {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
+/* ─── Scrollbar hide ──────────────────────────────────────────────────────── */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 
-.safe-area-pt {
-  padding-top: env(safe-area-inset-top, 0px);
-}
+/* ─── Tap highlight ───────────────────────────────────────────────────────── */
+* { -webkit-tap-highlight-color: transparent; }
 
-/* Hide scrollbar but allow scroll */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Tap highlight removal on mobile */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Date inputs on dark backgrounds */
+/* ─── Date input ──────────────────────────────────────────────────────────── */
 input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: pointer;
 }
 
-/* Prevent iOS zoom on input focus */
-input, select, textarea {
-  font-size: 16px;
-}
+/* ─── Prevent iOS zoom ────────────────────────────────────────────────────── */
+input, select, textarea { font-size: 16px; }
 
-/* Range input styling */
+/* ─── Range input ─────────────────────────────────────────────────────────── */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: var(--ns-forest);
+  background: var(--ns-ember);
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(232,93,38,0.3);
 }
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 2px;
-  background: var(--color-surface-2);
+  background: var(--color-surface-3);
 }
 
-/* ─── Dark mode global overrides ────────────────────────────────────────────
-   Using [class] attribute selectors for higher specificity than Tailwind utils.
-   ──────────────────────────────────────────────────────────────────────────── */
+/* ─── Typography system ───────────────────────────────────────────────────── */
 
-/* Page backgrounds */
-.dark [class*="bg-white"],
-.dark [class*="bg-\\[#f8f8f6\\]"] {
-  background-color: var(--color-surface) !important;
-}
-.dark [class*="min-h-screen"] {
-  background-color: var(--color-bg) !important;
-}
-.dark [class*="bg-gray-50"] {
-  background-color: var(--color-surface-2) !important;
-}
-.dark [class*="bg-gray-100"] {
-  background-color: var(--color-surface-3) !important;
-}
-.dark [class*="bg-gray-200"] {
-  background-color: #52525b !important;
-}
-
-/* Borders */
-.dark [class*="border-gray-100"] { border-color: var(--color-border) !important; }
-.dark [class*="border-gray-200"] { border-color: var(--color-border-2) !important; }
-
-/* Text */
-.dark [class*="text-gray-900"],
-.dark [class*="text-gray-800"] { color: var(--color-text-primary) !important; }
-.dark [class*="text-gray-700"],
-.dark [class*="text-gray-600"],
-.dark [class*="text-gray-500"] { color: var(--color-text-secondary) !important; }
-.dark [class*="text-gray-400"] { color: var(--color-text-tertiary) !important; }
-.dark [class*="text-gray-300"] { color: var(--color-text-disabled) !important; }
-
-/* Sticky headers */
-.dark .sticky { background-color: var(--color-surface) !important; }
-
-/* Bottom nav */
-.dark nav {
-  background-color: var(--color-surface) !important;
-  border-color: var(--color-border) !important;
-}
-
-/* Inputs and selects */
-.dark input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
-.dark select,
-.dark textarea {
-  background-color: var(--color-surface-2) !important;
-  color: var(--color-text-primary) !important;
-  border-color: var(--color-border-2) !important;
-}
-
-/* Cards — any rounded element with white bg */
-.dark [class*="rounded"][class*="bg-white"] {
-  background-color: var(--color-surface) !important;
-}
-
-/* Pulse skeleton loaders */
-.dark [class*="animate-pulse"] {
-  background-color: var(--color-surface-2) !important;
-}
-
-
-/* ─── UI-5 Motion & Delight ──────────────────────────────────────────────── */
-
-@keyframes slide-up-fade-in {
-  from { opacity: 0; transform: translateY(20px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0)    scale(1);    }
-}
-.animate-slide-up { animation: slide-up-fade-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
-
-@keyframes xp-float {
-  0%   { opacity: 1; transform: translateY(0)    scale(1);   }
-  60%  { opacity: 1; transform: translateY(-28px) scale(1.1); }
-  100% { opacity: 0; transform: translateY(-48px) scale(0.9); }
-}
-.animate-xp-float { animation: xp-float 0.9s ease-out forwards; }
-
-@keyframes check-pop {
-  0%   { transform: scale(1);    }
-  40%  { transform: scale(1.35); }
-  70%  { transform: scale(0.9);  }
-  100% { transform: scale(1);    }
-}
-.animate-check-pop { animation: check-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
-
-@keyframes confetti-fall-1 {
-  0%   { opacity: 1; transform: translate(0,0) rotate(0deg);          }
-  100% { opacity: 0; transform: translate(-30px,60px) rotate(180deg); }
-}
-@keyframes confetti-fall-2 {
-  0%   { opacity: 1; transform: translate(0,0) rotate(0deg);          }
-  100% { opacity: 0; transform: translate(20px,55px) rotate(-140deg); }
-}
-@keyframes confetti-fall-3 {
-  0%   { opacity: 1; transform: translate(0,0) rotate(0deg);         }
-  100% { opacity: 0; transform: translate(35px,50px) rotate(220deg); }
-}
-@keyframes confetti-fall-4 {
-  0%   { opacity: 1; transform: translate(0,0) rotate(0deg);          }
-  100% { opacity: 0; transform: translate(-20px,65px) rotate(-90deg); }
-}
-@keyframes confetti-fall-5 {
-  0%   { opacity: 1; transform: translate(0,0) rotate(0deg);          }
-  100% { opacity: 0; transform: translate(10px,70px) rotate(300deg);  }
-}
-@keyframes confetti-fall-6 {
-  0%   { opacity: 1; transform: translate(0,0) rotate(0deg);         }
-  100% { opacity: 0; transform: translate(-35px,45px) rotate(120deg); }
-}
-
-@keyframes star-orbit {
-  0%   { opacity: 0; transform: rotate(var(--a)) translateX(0px)  scale(0); }
-  20%  { opacity: 1; transform: rotate(var(--a)) translateX(40px)  scale(1); }
-  100% { opacity: 0; transform: rotate(var(--a)) translateX(80px)  scale(0.5); }
-}
-.star-particle {
-  position: absolute; top: 50%; left: 50%; width: 8px; height: 8px;
-  border-radius: 50%; transform-origin: 0 0;
-  animation: star-orbit 1.2s ease-out forwards;
-}
-
-@keyframes level-num-in {
-  0%   { opacity: 0; transform: scale(0.4) translateY(10px); }
-  60%  { opacity: 1; transform: scale(1.15) translateY(-4px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-.animate-level-in { animation: level-num-in 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; }
-
-@keyframes card-slide-up {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.animate-card-up { animation: card-slide-up 0.5s cubic-bezier(0.22,1,0.36,1) 0.1s both; }
-
-/* ─── Global tap feedback ─────────────────────────────────────────────────── */
-/* All buttons get subtle scale-down on tap for mobile feel */
-button:active:not(:disabled),
-a[role="button"]:active {
-  transform: scale(0.97);
-  transition: transform 0.08s ease;
-}
-/* Override for elements that already have their own transform */
-button.no-tap-scale:active { transform: none; }
-
-/* ─── Typography system — Phase D1 ──────────────────────────────────────────
-   Usage:
-   .font-display  → Cormorant Garamond (display headings, brand moments)
-   .font-body     → Outfit (all UI, labels, descriptions)
-   .font-data     → JetBrains Mono (paces, times, distances, data)
-   ──────────────────────────────────────────────────────────────────────────── */
-
+/* Plus Jakarta Sans — primary display font (replaces Cormorant) */
+/* Bolder, more modern, works at all sizes, feels athletic and confident */
 .font-display {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: 'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .font-body {
@@ -347,131 +160,116 @@ button.no-tap-scale:active { transform: none; }
   letter-spacing: -0.02em;
 }
 
-/* Display heading sizes */
-.text-display-xl { font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.05; }
-.text-display-lg { font-size: clamp(1.5rem, 4vw, 2.25rem); line-height: 1.1; }
-.text-display-md { font-size: clamp(1.25rem, 3vw, 1.75rem); line-height: 1.15; }
+/* Display sizes */
+.text-display-xl { font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.0; }
+.text-display-lg { font-size: clamp(1.5rem, 4vw, 2.25rem); line-height: 1.05; }
+.text-display-md { font-size: clamp(1.25rem, 3vw, 1.75rem); line-height: 1.1; }
 
-/* Data/pace display sizes */
+/* Data sizes */
 .text-pace-lg { font-size: 1.75rem; line-height: 1; }
 .text-pace-md { font-size: 1.25rem; line-height: 1; }
 .text-pace-sm { font-size: 0.875rem; line-height: 1.2; }
 
-/* ─── Ember CTA — Phase D2 ───────────────────────────────────────────────────
-   Primary CTAs use Ember for energy/action contrast.
-   Forest = brand/nav/selected. Ember = do something now.
-   ──────────────────────────────────────────────────────────────────────────── */
+/* ─── Surface system ──────────────────────────────────────────────────────── */
+.surface-page   { background: var(--color-bg); }
+.surface-card   { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 1rem; }
+.surface-raised { background: var(--color-surface); box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); border-radius: 1rem; }
+.surface-inset  { background: var(--color-surface-2); border-radius: 0.75rem; }
 
+/* ─── Button system ───────────────────────────────────────────────────────── */
 .btn-primary {
   background: var(--ns-ember);
   color: white;
   font-family: 'Outfit', system-ui, sans-serif;
   font-weight: 700;
   border-radius: 1rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.5rem;
   transition: transform 0.1s, opacity 0.1s;
+  box-shadow: 0 4px 16px rgba(232,93,38,0.25);
 }
 .btn-primary:active { transform: scale(0.97); opacity: 0.9; }
 
 .btn-secondary {
-  background: var(--ns-forest-light);
-  color: var(--ns-forest);
+  background: var(--color-surface-2);
+  color: var(--color-text-primary);
   font-family: 'Outfit', system-ui, sans-serif;
-  font-weight: 700;
+  font-weight: 600;
   border-radius: 1rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.5rem;
+  border: 1px solid var(--color-border);
 }
 
-/* ─── Surface system — Phase D2 ─────────────────────────────────────────────
-   Consistent surface hierarchy replacing ad-hoc gray-50/slate-50.
-   ──────────────────────────────────────────────────────────────────────────── */
+/* ─── Tap feedback ────────────────────────────────────────────────────────── */
+button:active:not(:disabled), a[role="button"]:active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease;
+}
+button.no-tap-scale:active { transform: none; }
 
-.surface-page    { background: var(--color-bg); }
-.surface-card    { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 1rem; }
-.surface-raised  { background: var(--color-surface); box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); border-radius: 1rem; }
-.surface-inset   { background: var(--color-surface-2); border-radius: 0.75rem; }
-
-/* ─── Track (gold) premium indicators — Phase D2 ────────────────────────────  */
-.premium-badge {
+/* ─── Achievement / premium badges ───────────────────────────────────────── */
+.badge-track {
   background: var(--ns-track-light);
   color: var(--ns-track);
   font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 0.2rem 0.5rem;
   border-radius: 9999px;
 }
 
-/* ─── Modal sheet animations — Phase D5 ─────────────────────────────────────── */
+.badge-ember {
+  background: var(--ns-ember-light);
+  color: var(--ns-ember);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+
+@keyframes slide-up-fade-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-slide-up { animation: slide-up-fade-in 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+
 @keyframes sheet-up {
   from { transform: translateY(100%); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
-.animate-sheet-up {
-  animation: sheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
-}
+.animate-sheet-up { animation: sheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1); }
 
-/* ─── XP float animation ─────────────────────────────────────────────────────── */
 @keyframes xp-float {
   0%   { opacity: 0; transform: translateY(0) translateX(-50%); }
   20%  { opacity: 1; }
   100% { opacity: 0; transform: translateY(-32px) translateX(-50%); }
 }
-.animate-xp-float {
-  animation: xp-float 1.2s ease-out forwards;
+.animate-xp-float { animation: xp-float 1.2s ease-out forwards; }
+
+@keyframes check-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
 }
+.animate-check-pop { animation: check-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
 
-
-/* ─── Design lift — Phase UI-6 ──────────────────────────────────────────────
-   Targeted refinements: card depth, ember CTAs, noise texture, typography.
-   ──────────────────────────────────────────────────────────────────────────── */
-
-/* Subtle noise texture on page background — adds premium feel */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-size: 128px 128px;
+@keyframes card-slide-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+.animate-card-up { animation: card-slide-up 0.4s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
 
-/* Ensure content renders above noise — use isolation not z-index to avoid breaking fixed children */
-#__next, main, [data-nextjs-scroll-focus-boundary] { isolation: isolate; }
-
-/* Range slider thumb — larger for touch */
-input[type="range"]::-webkit-slider-thumb {
-  width: 24px;
-  height: 24px;
-  box-shadow: 0 2px 8px rgba(43,92,63,0.35);
-}
-
-/* Card hover lift — subtle depth on interactive cards */
-.card-interactive {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.card-interactive:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-}
-
-/* Ember CTA pulse — draw attention to primary actions */
 @keyframes ember-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(232,93,38,0.4); }
-  50%       { box-shadow: 0 0 0 6px rgba(232,93,38,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,93,38,0.35); }
+  50%       { box-shadow: 0 0 0 8px rgba(232,93,38,0); }
 }
-.btn-ember-pulse { animation: ember-pulse 2s ease-in-out infinite; }
+.btn-ember-pulse { animation: ember-pulse 2.5s ease-in-out infinite; }
 
-/* Forest glow — selected/active states */
-@keyframes forest-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(43,92,63,0.5); }
-  50%       { box-shadow: 0 0 0 4px rgba(43,92,63,0); }
-}
-
-/* Track gold shimmer — premium moments */
 @keyframes track-shimmer {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
@@ -485,27 +283,6 @@ input[type="range"]::-webkit-slider-thumb {
   animation: track-shimmer 2.5s linear infinite;
 }
 
-/* Session card accent border — top bar uses border-l replacement */
-.session-accent-bar {
-  height: 2px;
-  border-radius: 2px 2px 0 0;
-}
-
-/* Bottom sheet backdrop blur */
-.backdrop-blur-sheet {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* Stat number display — monospaced with display weight */
-.stat-number {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Loading shimmer */
 @keyframes shimmer-sweep {
   0%   { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
@@ -513,11 +290,47 @@ input[type="range"]::-webkit-slider-thumb {
 .loading-shimmer {
   overflow: hidden;
   position: relative;
+  background: var(--color-surface-2);
 }
 .loading-shimmer::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
   animation: shimmer-sweep 1.5s ease-in-out infinite;
 }
+
+/* ─── Confetti animations (first session celebration) ────────────────────── */
+@keyframes confetti-fall-1 {
+  0%   { opacity: 1; transform: translate(0,0) rotate(0deg); }
+  100% { opacity: 0; transform: translate(-30px,60px) rotate(180deg); }
+}
+@keyframes confetti-fall-2 {
+  0%   { opacity: 1; transform: translate(0,0) rotate(0deg); }
+  100% { opacity: 0; transform: translate(20px,55px) rotate(-140deg); }
+}
+@keyframes confetti-fall-3 {
+  0%   { opacity: 1; transform: translate(0,0) rotate(0deg); }
+  100% { opacity: 0; transform: translate(35px,50px) rotate(220deg); }
+}
+
+/* ─── Stat number ─────────────────────────────────────────────────────────── */
+.stat-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Session accent colours by type ─────────────────────────────────────── */
+.session-easy    { --session-color: #22c55e; }
+.session-tempo   { --session-color: #f59e0b; }
+.session-interval { --session-color: #e85d26; }
+.session-long    { --session-color: #3b82f6; }
+.session-rest    { --session-color: #9e9c97; }
+.session-gym     { --session-color: #8b5cf6; }
+
+/* ─── Splity coach colour ─────────────────────────────────────────────────── */
+.splity-accent { color: var(--ns-track); }
+.splity-bg     { background: var(--ns-track-light); border: 1px solid rgba(196,154,60,0.2); }
+

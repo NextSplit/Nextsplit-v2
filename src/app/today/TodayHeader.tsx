@@ -15,7 +15,7 @@ interface Props {
   todaySessions:   PlanSession[]
   doneTodayCount:  number
   displayName:     string | null
-  readiness?:      number | null   // 1–5 from wellness log (5 = great, 1 = low)
+  readiness?:      number | null
 }
 
 export function TodayHeader({
@@ -29,135 +29,145 @@ export function TodayHeader({
     : dateOffset === 1  ? 'Tomorrow'
     : formatDate(viewDate)
 
-  // Time-aware greeting — only shown on Today view, not past/future days
   const firstName    = displayName?.split(' ')[0] ?? null
   const greeting     = getTimeGreeting()
   const allDone      = todaySessions.length > 0 && doneTodayCount === todaySessions.length
   const primarySession = todaySessions[0]
-
-  // Readiness-adjusted session line — Product Pillar spec:
-  // "Low readiness (1-2): soften the session line, suggest but don't push"
   const isLowReadiness = readiness !== null && readiness !== undefined && readiness <= 2
 
-  // Plain-English session line — from Product & UX Pillar spec
   const sessionLine = primarySession
     ? isLowReadiness
       ? `Easy option today — ${getSessionPlainEnglish(primarySession.c ?? '', primarySession.n ?? '')} if you feel up to it`
       : getSessionPlainEnglish(primarySession.c ?? '', primarySession.n ?? '')
     : null
 
-  // Race countdown — computed outside render via prop, stable reference
   const daysToRace = plan?.race_date
     ? Math.ceil((new Date(plan.race_date).getTime() - new Date().setHours(0,0,0,0)) / 86400000)
     : null
 
+  const progressPct = plan ? (weekN / plan.total_weeks) * 100 : 0
+  const nearEnd = progressPct >= 80
+
   return (
-    <div className="sticky top-0 z-40 border-b" style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
+    <div className="sticky top-0 z-40 border-b"
+      style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
       <div className="max-w-lg mx-auto px-4 pt-12 pb-3">
 
-        {/* Brand row */}
+        {/* Top row — brand + streak + settings */}
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            {/* NextSplit wordmark — Cormorant display font */}
-            <span className="font-display text-2xl tracking-tight" style={{ color: 'var(--ns-forest)', letterSpacing: '-0.02em' }}>
+          <div className="flex items-center gap-2.5">
+            {/* NextSplit wordmark */}
+            <span className="font-display text-xl tracking-tight"
+              style={{ color: 'var(--ns-forest)', letterSpacing: '-0.03em' }}>
               NextSplit
             </span>
+            {/* Streak pill — only if active */}
             {streak.current >= 3 && (
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
                 style={{
-                  background: streak.current >= 7 ? 'rgba(232,93,38,0.15)' : 'rgba(196,154,60,0.15)',
-                  color: streak.current >= 7 ? 'var(--ns-ember)' : 'var(--ns-track)',
+                  background: streak.current >= 7 ? 'var(--ns-ember-light)' : 'var(--ns-track-light)',
+                  color:      streak.current >= 7 ? 'var(--ns-ember)'       : 'var(--ns-track)',
                 }}>
                 🔥 {streak.current}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* Right side — race countdown + dark mode */}
+          <div className="flex items-center gap-2">
             {plan && (
-              <div className="flex items-center gap-2">
-                <span className="font-data text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>
-                  W{weekN}<span style={{ color: 'var(--color-border-2)' }}>/{plan.total_weeks}</span>
-                </span>
-                {daysToRace !== null && daysToRace > 0 && daysToRace <= 30 && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(232,93,38,0.12)', color: 'var(--ns-ember)' }}>
-                    {daysToRace}d 🏁
-                  </span>
-                )}
-              </div>
+              <span className="font-data text-[11px] font-bold"
+                style={{ color: 'var(--color-text-tertiary)' }}>
+                W{weekN}<span style={{ color: 'var(--color-border-2)' }}>/{plan.total_weeks}</span>
+              </span>
+            )}
+            {daysToRace !== null && daysToRace > 0 && daysToRace <= 30 && (
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                style={{ background: 'var(--ns-ember-light)', color: 'var(--ns-ember)' }}>
+                {daysToRace}d 🏁
+              </span>
             )}
             <DarkModeToggle />
           </div>
         </div>
 
-        {/* Greeting + coaching line — Cormorant display, larger than before */}
+        {/* Splity coaching line — today only */}
         {isToday && (
-          <div className="mb-4">
+          <div className="mb-3">
             {sessionLine ? (
-              <>
-                <p className="text-[11px] font-semibold mb-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
-                  {greeting}{firstName ? `, ${firstName}` : ''}
-                </p>
-                <p className={`font-display text-xl leading-tight ${isLowReadiness ? '' : ''}`}
-                  style={{
-                    color: allDone ? '#4ade80' : isLowReadiness ? '#f59e0b' : 'var(--color-text-primary)',
-                    fontStyle: 'italic',
-                  }}>
-                  {allDone
-                    ? `All done today ✓`
-                    : sessionLine}
-                </p>
-                {isLowReadiness && !allDone && (
-                  <p className="text-[10px] mt-1" style={{ color: '#f59e0b' }}>
-                    Readiness is low — listen to your body today.
+              <div className="flex items-start gap-2">
+                {/* Splity avatar pill */}
+                <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-black mt-0.5"
+                  style={{ background: 'var(--ns-track-light)', color: 'var(--ns-track)' }}>
+                  S
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-semibold mb-0.5"
+                    style={{ color: 'var(--color-text-tertiary)' }}>
+                    Splity{firstName ? ` · ${greeting}, ${firstName}` : ''}
                   </p>
-                )}
-              </>
+                  <p className="font-display text-lg leading-tight"
+                    style={{
+                      color: allDone ? '#16a34a' : isLowReadiness ? '#d97706' : 'var(--color-text-primary)',
+                      letterSpacing: '-0.02em',
+                    }}>
+                    {allDone
+                      ? `All done today ✓`
+                      : sessionLine}
+                  </p>
+                  {isLowReadiness && !allDone && (
+                    <p className="text-[10px] mt-0.5 font-medium" style={{ color: '#d97706' }}>
+                      Readiness is low — listen to your body.
+                    </p>
+                  )}
+                </div>
+              </div>
             ) : (
-              <p className="font-display text-xl italic" style={{ color: 'var(--color-text-tertiary)' }}>
+              <p className="font-display text-lg" style={{ color: 'var(--color-text-secondary)', letterSpacing: '-0.02em' }}>
                 {greeting}{firstName ? `, ${firstName}` : ''}
               </p>
             )}
           </div>
         )}
 
-        {/* Plan progress bar — thin, full width */}
+        {/* Plan progress bar */}
         {plan && (
           <div className="mb-3">
-            <div className="h-0.5 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-2)' }}>
+            <div className="h-1 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-2)' }}>
               <div className="h-full rounded-full transition-all duration-700"
                 style={{
-                  width: `${(weekN / plan.total_weeks) * 100}%`,
-                  background: weekN / plan.total_weeks >= 0.8
-                    ? 'linear-gradient(90deg, var(--ns-ember), #ff8c5a)'
+                  width: `${progressPct}%`,
+                  background: nearEnd
+                    ? 'linear-gradient(90deg, var(--ns-ember), var(--ns-ember-mid))'
                     : 'linear-gradient(90deg, var(--ns-forest), var(--ns-forest-mid))',
-                }}
-              />
+                }} />
             </div>
           </div>
         )}
 
-        {/* Date navigation — refined */}
+        {/* Date navigation */}
         <div className="flex items-center gap-3">
           <button onClick={() => setDateOffset(o => o - 1)}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-lg transition-all"
-            style={{ background: 'var(--color-surface)', color: 'var(--color-text-tertiary)', border: '1px solid var(--color-border)' }}>
+            className="w-8 h-8 flex items-center justify-center rounded-full text-lg transition-all active:scale-90"
+            style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>
             ‹
           </button>
           <div className="flex-1 text-center">
-            <div className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{dateLabel}</div>
+            <div className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>
+              {dateLabel}
+            </div>
             <div className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
               {formatDate(viewDate)}
               {plan && todaySessions.length > 0 && isToday && (
-                <span style={{ color: allDone ? '#4ade80' : 'var(--ns-ember)' }}>
+                <span style={{ color: allDone ? '#16a34a' : 'var(--ns-ember)' }}>
                   {' '}· {doneTodayCount}/{todaySessions.length} sessions
                 </span>
               )}
             </div>
           </div>
-          <button onClick={() => setDateOffset(o => o + 1)}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-lg transition-all"
-            style={{ background: 'var(--color-surface)', color: 'var(--color-text-tertiary)', border: '1px solid var(--color-border)' }}>
+          <button onClick={() => setDateOffset(o => Math.min(o + 1, 0))}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-lg transition-all active:scale-90"
+            style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>
             ›
           </button>
         </div>
