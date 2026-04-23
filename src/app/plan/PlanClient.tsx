@@ -154,7 +154,7 @@ export default function PlanClient() {
         <div className="text-center px-4">
           <div className="text-5xl mb-4">📋</div>
           <h2 className="text-base font-bold text-gray-900 mb-2">No active plan</h2>
-          <a href="/plan/browse" className="inline-block text-white px-6 py-3 rounded-xl text-sm font-semibold mt-4" style={{ background: 'var(--ns-ember)' }}>Choose a plan →</a>
+          <a href="/plan/browse" className="inline-block text-white px-6 py-3 rounded-xl text-sm font-semibold mt-4" style={{ background: 'var(--ns-cobalt)' }}>Choose a plan →</a>
         </div>
       </div>
     )
@@ -179,7 +179,7 @@ export default function PlanClient() {
                 const days = Math.ceil((new Date(plan.race_date).getTime() - Date.now()) / 86400000)
                 return days > 0 ? (
                   <span className="font-data text-[10px] font-bold px-2 py-0.5 rounded-full"
-                    style={{ background: days <= 14 ? 'rgba(232,93,38,0.12)' : 'var(--color-surface)', color: days <= 14 ? 'var(--ns-ember)' : 'var(--color-text-tertiary)', border: '1px solid var(--color-border)' }}>
+                    style={{ background: days <= 14 ? 'rgba(232,93,38,0.12)' : 'var(--color-surface)', color: days <= 14 ? 'var(--ns-cobalt)' : 'var(--color-text-tertiary)', border: '1px solid var(--color-border)' }}>
                     {days}d 🏁
                   </span>
                 ) : null
@@ -199,7 +199,7 @@ export default function PlanClient() {
               style={{
                 width: `${(plan.current_week / plan.total_weeks) * 100}%`,
                 background: plan.current_week / plan.total_weeks >= 0.8
-                  ? 'linear-gradient(90deg, var(--ns-ember), #ff8c5a)'
+                  ? 'linear-gradient(90deg, var(--ns-cobalt), #ff8c5a)'
                   : 'linear-gradient(90deg, var(--ns-forest), var(--ns-forest-mid))',
               }} />
           </div>
@@ -212,9 +212,9 @@ export default function PlanClient() {
           {(['plan', 'fuel'] as const).map(t => (
             <button key={t} onClick={() => setPlanTab(t)}
               className={`flex-1 py-2.5 text-xs font-bold capitalize border-b-2 transition-all ${
-                planTab === t ? 'border-[var(--ns-ember)]' : 'border-transparent'
+                planTab === t ? 'border-[var(--ns-cobalt)]' : 'border-transparent'
               }`}
-              style={{ color: planTab === t ? 'var(--ns-ember)' : 'var(--color-text-tertiary)' }}>
+              style={{ color: planTab === t ? 'var(--ns-cobalt)' : 'var(--color-text-tertiary)' }}>
               {t === 'plan' ? '📋 Training Plan' : '🥗 Fuel'}
             </button>
           ))}
@@ -253,7 +253,7 @@ export default function PlanClient() {
         {planTab === 'fuel' && (
           <div className="space-y-4">
             <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)' }}>
-              <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--ns-ember)' }}>
+              <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--ns-cobalt)' }}>
                 🥗 Fuel & Nutrition
               </p>
               <p className="text-xs mb-4" style={{ color: 'var(--color-text-secondary)' }}>
@@ -261,7 +261,7 @@ export default function PlanClient() {
               </p>
               <a href="/nutrition"
                 className="block w-full py-3 rounded-2xl text-center text-sm font-bold text-white"
-                style={{ background: 'var(--ns-ember)' }}>
+                style={{ background: 'var(--ns-cobalt)' }}>
                 Open full nutrition dashboard →
               </a>
             </div>

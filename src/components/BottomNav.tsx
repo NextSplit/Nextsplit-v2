@@ -7,6 +7,15 @@ import {
   CalendarBlank, ClipboardText, Campfire, UserCircle, CrownSimple,
 } from '@phosphor-icons/react'
 
+// Each tab has its own colour identity
+const TAB_COLOURS: Record<string, string> = {
+  '/today':     '#ff4d6d', // Coral — athlete / core loop
+  '/plan':      '#2563eb', // Cobalt — data / analytics
+  '/community': '#84cc16', // Lime — social / squad
+  '/profile':   '#f0a500', // Amber — character / XP
+  '/coach':     '#4ade80', // Forest green — coach platform
+}
+
 const ATHLETE_TABS = [
   { href: '/today',     label: 'Today',     Icon: CalendarBlank  },
   { href: '/plan',      label: 'Plan',      Icon: ClipboardText  },
@@ -15,10 +24,11 @@ const ATHLETE_TABS = [
 ]
 
 const COACH_TABS = [
-  { href: '/today',       label: 'Today',    Icon: CalendarBlank },
-  { href: '/plan',        label: 'Plan',     Icon: ClipboardText },
-  { href: '/community',   label: 'Community',Icon: Campfire      },
-  { href: '/profile',     label: 'Character',Icon: UserCircle    },
+  { href: '/today',       label: 'Today',     Icon: CalendarBlank },
+  { href: '/plan',        label: 'Plan',      Icon: ClipboardText },
+  { href: '/community',   label: 'Community', Icon: Campfire      },
+  { href: '/profile',     label: 'Character', Icon: UserCircle    },
+  { href: '/coach',       label: 'Coach',     Icon: CrownSimple   },
 ]
 
 export default function BottomNav() {
@@ -40,6 +50,8 @@ export default function BottomNav() {
       <div className="flex items-stretch max-w-lg mx-auto">
         {tabs.map(tab => {
           const active = pathname === tab.href || pathname.startsWith(tab.href + '/')
+          const colour = TAB_COLOURS[tab.href] ?? '#ff4d6d'
+
           return (
             <Link
               key={tab.href}
@@ -48,22 +60,23 @@ export default function BottomNav() {
               aria-current={active ? 'page' : undefined}
               className="flex-1 flex flex-col items-center justify-center gap-1 pt-2.5 pb-2 relative transition-all focus-visible:outline-none"
             >
-              {/* Active indicator dot */}
+              {/* Active indicator — coloured top bar */}
               {active && (
                 <span
                   className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full"
-                  style={{ background: 'var(--ns-ember)' }}
+                  style={{ background: colour }}
                 />
               )}
 
-              <Icon
-                component={tab.Icon}
-                active={active}
+              <tab.Icon
+                size={22}
+                weight={active ? 'fill' : 'regular'}
+                color={active ? colour : 'var(--color-text-tertiary)'}
               />
 
               <span
-                className="text-[10px] font-semibold"
-                style={{ color: active ? 'var(--ns-ember)' : 'var(--color-text-tertiary)' }}
+                className="text-[10px] font-semibold transition-colors"
+                style={{ color: active ? colour : 'var(--color-text-tertiary)' }}
               >
                 {tab.label}
               </span>
@@ -72,15 +85,5 @@ export default function BottomNav() {
         })}
       </div>
     </nav>
-  )
-}
-
-function Icon({ component: IconComponent, active }: { component: React.ElementType; active: boolean }) {
-  return (
-    <IconComponent
-      size={22}
-      weight={active ? 'fill' : 'regular'}
-      color={active ? 'var(--ns-ember)' : 'var(--color-text-tertiary)'}
-    />
   )
 }

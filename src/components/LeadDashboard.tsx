@@ -75,7 +75,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
   if (loading) {
     return (
       <div className="flex justify-center py-16">
-        <div className="w-6 h-6 rounded-full border-2 border-gray-100 border-t-[var(--ns-forest)] animate-spin" />
+        <div className="w-6 h-6 rounded-full border-2 border-gray-100 border-t-[var(--ns-lime)] animate-spin" />
       </div>
     )
   }
@@ -201,7 +201,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
                 <a key={a.athlete_id} href={`/coach/athlete/${a.athlete_id}`}
                   className="flex items-center gap-3 group">
                   <div className="w-6 h-6 rounded-full flex items-center justify-center text-sm flex-shrink-0"
-                    style={{ background: 'var(--ns-forest-light)' }}>
+                    style={{ background: 'var(--ns-lime-light)' }}>
                     {cls?.emoji ?? '🏃'}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -279,7 +279,7 @@ function AthleteCard({ athlete }: { athlete: AthleteStatus }) {
         {/* Character emoji with status indicator */}
         <div className="relative shrink-0">
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg"
-            style={{ background: 'var(--ns-forest-light)' }}>
+            style={{ background: 'var(--ns-lime-light)' }}>
             {cls?.emoji ?? '🏃'}
           </div>
           <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white"

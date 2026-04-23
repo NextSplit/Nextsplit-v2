@@ -168,15 +168,15 @@ export default function CoachSettingsClient({ coach, activeAthletes, isCoachPro 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
 
         {error && (
-          <div className="rounded-xl px-4 py-3 text-sm" style={{ background: '#e85d2620', color: '#e85d26' }}>
+          <div className="rounded-xl px-4 py-3 text-sm" style={{ background: '#ff4d6d20', color: '#ff4d6d' }}>
             {error}
           </div>
         )}
 
         {/* Stripe warning */}
         {!coach.stripe_account_id && (
-          <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)', border: '1px solid #e85d2640' }}>
-            <p className="text-xs font-bold mb-1" style={{ color: '#e85d26' }}>⚠️ Payments not connected</p>
+          <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)', border: '1px solid #ff4d6d40' }}>
+            <p className="text-xs font-bold mb-1" style={{ color: '#ff4d6d' }}>⚠️ Payments not connected</p>
             <p className="text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>
               Connect Stripe to receive athlete payments.
             </p>
@@ -184,7 +184,7 @@ export default function CoachSettingsClient({ coach, activeAthletes, isCoachPro 
               const res = await fetch('/api/stripe/connect', { method: 'POST' })
               const d = await res.json()
               if (d.url) window.location.href = d.url
-            }} className="text-xs px-4 py-2 rounded-xl font-bold text-white" style={{ background: '#e85d26' }}>
+            }} className="text-xs px-4 py-2 rounded-xl font-bold text-white" style={{ background: '#ff4d6d' }}>
               Connect Stripe →
             </button>
           </div>
@@ -217,15 +217,15 @@ export default function CoachSettingsClient({ coach, activeAthletes, isCoachPro 
               </p>
               <span className="text-xs font-bold px-2 py-0.5 rounded-full"
                 style={{
-                  background: isFull ? '#e85d2620' : '#2b5c3f20',
-                  color:      isFull ? '#e85d26' : '#4ade80',
+                  background: isFull ? '#ff4d6d20' : '#2b5c3f20',
+                  color:      isFull ? '#ff4d6d' : '#4ade80',
                 }}>
                 {isFull ? 'Full' : `${maxAthletes - activeAthletes} slots open`}
               </span>
             </div>
             <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-3)' }}>
               <div className="h-full rounded-full transition-all"
-                style={{ width: `${capacityPct}%`, background: isFull ? '#e85d26' : '#2b5c3f' }} />
+                style={{ width: `${capacityPct}%`, background: isFull ? '#ff4d6d' : '#2b5c3f' }} />
             </div>
           </div>
 

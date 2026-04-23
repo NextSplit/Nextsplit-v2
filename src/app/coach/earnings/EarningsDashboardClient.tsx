@@ -89,7 +89,7 @@ export default function EarningsDashboardClient({
               <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>gross revenue</p>
             </div>
             <div>
-              <p className="text-2xl font-black font-data" style={{ color: '#e85d26' }}>
+              <p className="text-2xl font-black font-data" style={{ color: '#ff4d6d' }}>
                 {fmt(ytd.commission_gbp)}
               </p>
               <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
@@ -184,7 +184,7 @@ export default function EarningsDashboardClient({
                       <p className="text-[9px]" style={{ color: 'var(--color-text-tertiary)' }}>gross</p>
                     </div>
                     <div>
-                      <p className="text-xs font-data" style={{ color: '#e85d26' }}>
+                      <p className="text-xs font-data" style={{ color: '#ff4d6d' }}>
                         −{fmt(row.commission_gbp)}
                       </p>
                       <p className="text-[9px]" style={{ color: 'var(--color-text-tertiary)' }}>commission</p>
@@ -255,7 +255,7 @@ export default function EarningsDashboardClient({
           </div>
         ) : (
           <div className="rounded-2xl p-4"
-            style={{ background: 'var(--color-surface)', border: '1px solid #e85d2640' }}>
+            style={{ background: 'var(--color-surface)', border: '1px solid #ff4d6d40' }}>
             <p className="text-xs font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>
               ⚠️ Payments not set up
             </p>
@@ -264,7 +264,7 @@ export default function EarningsDashboardClient({
             </p>
             <Link href="/coach/squad?tab=settings"
               className="inline-block px-4 py-2.5 rounded-xl text-xs font-bold text-white"
-              style={{ background: '#e85d26' }}>
+              style={{ background: '#ff4d6d' }}>
               Set up payments →
             </Link>
           </div>

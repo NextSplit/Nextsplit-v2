@@ -180,7 +180,7 @@ interface SplityEmailOptions {
 }
 
 function splityEmail({ name, mood, headline, body, cta, footer }: SplityEmailOptions): string {
-  const accentColor = mood === 'urgent' ? '#e85d26' : mood === 'happy' ? '#c49a3c' : '#2b5c3f'
+  const accentColor = mood === 'urgent' ? '#ff4d6d' : mood === 'happy' ? '#c49a3c' : '#2b5c3f'
   const splityMoodEmoji = mood === 'happy' ? '😄' : mood === 'urgent' ? '⚡' : mood === 'encouraging' ? '💪' : '👟'
 
   return `<!DOCTYPE html>
@@ -242,7 +242,7 @@ function splityEmail({ name, mood, headline, body, cta, footer }: SplityEmailOpt
 
                 <!-- CTA -->
                 <a href="${cta.url}"
-                  style="display:block;background:#e85d26;color:#ffffff;text-decoration:none;text-align:center;padding:14px 24px;border-radius:14px;font-size:15px;font-weight:700;letter-spacing:-0.01em;">
+                  style="display:block;background:#ff4d6d;color:#ffffff;text-decoration:none;text-align:center;padding:14px 24px;border-radius:14px;font-size:15px;font-weight:700;letter-spacing:-0.01em;">
                   ${cta.label}
                 </a>
 

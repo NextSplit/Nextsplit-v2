@@ -445,7 +445,7 @@ export default function TodayClient() {
                   </p>
                   <a href="/plan/browse"
                     className="inline-block text-white px-6 py-3 rounded-xl text-sm font-black active:scale-95 transition-all"
-                    style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #d44a12 100%)', boxShadow: '0 4px 16px rgba(232,93,38,0.3)' }}>
+                    style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #e0334f 100%)', boxShadow: '0 4px 16px rgba(232,93,38,0.3)' }}>
                     {hadPlan ? 'Start next plan →' : 'Choose a plan →'}
                   </a>
                   {hadPlan && (

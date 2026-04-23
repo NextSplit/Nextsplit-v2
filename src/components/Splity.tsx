@@ -70,8 +70,8 @@ export default function Splity({ size = 32, mood = 'default', className = '' }: 
       {/* Motion lines when encouraging */}
       {mood === 'encouraging' && (
         <>
-          <line x1="1" y1="20" y2="20" stroke="#e85d26" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-          <line x1="1" y1="23" y2="23" stroke="#e85d26" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+          <line x1="1" y1="20" y2="20" stroke="#ff4d6d" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+          <line x1="1" y1="23" y2="23" stroke="#ff4d6d" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
         </>
       )}
     </svg>

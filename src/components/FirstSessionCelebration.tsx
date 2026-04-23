@@ -30,7 +30,7 @@ interface Particle {
   life:   number
 }
 
-const COLORS = ['#e85d26', '#c49a3c', '#2b5c3f', '#4ade80', '#f59e0b', '#60a5fa']
+const COLORS = ['#ff4d6d', '#c49a3c', '#2b5c3f', '#4ade80', '#f59e0b', '#60a5fa']
 
 export default function FirstSessionCelebration({ totalDone, displayName, xp }: Props) {
   const [show, setShow]           = useState(false)
@@ -173,7 +173,7 @@ export default function FirstSessionCelebration({ totalDone, displayName, xp }: 
 
         <button onClick={dismiss}
           className="w-full py-4 rounded-2xl font-black text-white active:scale-95 transition-all"
-          style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #d44a12 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.3)' }}>
+          style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #e0334f 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.3)' }}>
           Let's go →
         </button>
       </div>

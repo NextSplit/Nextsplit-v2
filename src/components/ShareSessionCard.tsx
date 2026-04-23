@@ -59,7 +59,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
       // Ember gradient bar at top
       const barGrad = ctx.createLinearGradient(0, 0, 1080, 0)
       barGrad.addColorStop(0, '#2b5c3f')
-      barGrad.addColorStop(0.5, '#e85d26')
+      barGrad.addColorStop(0.5, '#ff4d6d')
       barGrad.addColorStop(1, '#c49a3c')
       ctx.fillStyle = barGrad
       ctx.fillRect(0, 0, 1080, 12)
@@ -86,7 +86,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
       ctx.beginPath()
       ctx.roundRect(60, 130, 300, 56, 28)
       ctx.fill()
-      ctx.fillStyle = '#e85d26'
+      ctx.fillStyle = '#ff4d6d'
       ctx.font = 'bold 26px system-ui'
       ctx.fillText(`${cfg.emoji}  ${cfg.label.toUpperCase()}`, 85, 167)
 

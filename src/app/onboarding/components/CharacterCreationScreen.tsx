@@ -112,7 +112,7 @@ function CharacterPreview({ config, size = 160 }: { config: CharacterConfig; siz
             <polygon points="29,4 30,0 31,4" fill="#e8b84b" />
             <polygon points="31,4 33,1 35,4" fill="#c49a3c" />
             <polygon points="35,4 37,0 39,4" fill="#c49a3c" />
-            <circle cx="30" cy="1.5" r="1" fill="#e85d26" opacity="0.9" />
+            <circle cx="30" cy="1.5" r="1" fill="#ff4d6d" opacity="0.9" />
             <rect y="4.5" width="16" height="1" rx="0.5" fill="white" opacity="0.2" />
           </>
         )}

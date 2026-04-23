@@ -59,7 +59,7 @@ export function WelcomeScreen() {
       <div className="relative px-6 pb-12 pt-2 space-y-3">
         <button onClick={next}
           className="w-full text-white py-4 rounded-2xl text-base font-black tracking-tight transition-all active:scale-95 btn-ember-pulse"
-          style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #d44a12 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.35)' }}>
+          style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #e0334f 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.35)' }}>
           Get started →
         </button>
         <p className="text-center text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>

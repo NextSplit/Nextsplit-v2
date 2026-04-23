@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 
 const SQUAD_COLOURS = [
   { hex: '#c49a3c', name: 'Gold' },
-  { hex: '#2b5c3f', name: 'Forest' },
-  { hex: '#e85d26', name: 'Ember' },
+  { hex: '#84cc16', name: 'Forest' },
+  { hex: '#ff4d6d', name: 'Ember' },
   { hex: '#1e3a5f', name: 'Navy' },
   { hex: '#7c3aed', name: 'Purple' },
   { hex: '#dc2626', name: 'Red' },

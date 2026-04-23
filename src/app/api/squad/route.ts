@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 import { zodError } from '@/lib/schemas'
 
-const SQUAD_COLOURS = ['#c49a3c', '#2b5c3f', '#e85d26', '#1e3a5f', '#7c3aed', '#dc2626', '#0891b2', '#059669']
+const SQUAD_COLOURS = ['#c49a3c', '#2b5c3f', '#ff4d6d', '#1e3a5f', '#7c3aed', '#dc2626', '#0891b2', '#059669']
 
 const CreateSquadSchema = z.object({
   name:        z.string().min(2).max(30),

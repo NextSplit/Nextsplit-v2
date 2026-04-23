@@ -14,7 +14,7 @@ function StatBar({ label, value, colour, tip }: {
   label: string; value: number; colour: string; tip: string
 }) {
   const [showTip, setShowTip] = useState(false)
-  const c = STAT_COLOURS[label] ?? { bar: '#e85d26', text: '#c2410c' }
+  const c = STAT_COLOURS[label] ?? { bar: '#ff4d6d', text: '#c2410c' }
 
   return (
     <div className="relative">

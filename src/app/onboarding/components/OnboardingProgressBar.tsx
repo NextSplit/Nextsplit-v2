@@ -154,7 +154,7 @@ export function OnboardingProgressBar({ step, character, showFinishLine = false 
           <div className="h-full rounded-full transition-all duration-500 ease-out"
             style={{
               width: `${Math.max(pct, 4)}%`,
-              background: 'linear-gradient(90deg, var(--ns-ember) 0%, #d44a12 100%)',
+              background: 'linear-gradient(90deg, var(--ns-ember) 0%, #e0334f 100%)',
             }} />
         </div>
 

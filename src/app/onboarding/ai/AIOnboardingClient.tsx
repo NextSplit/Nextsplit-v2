@@ -391,7 +391,7 @@ export default function AIOnboardingClient() {
 
           <button onClick={activate}
             className="w-full py-4 rounded-2xl text-sm font-black text-white active:scale-[0.98] transition-transform mb-2"
-            style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #d44a12 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.3)' }}>
+            style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #e0334f 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.3)' }}>
             Start {SLUG_LABELS[chosenSlug] ?? 'my plan'} →
           </button>
           <button onClick={() => setStep('goal')} className="w-full py-2 text-xs" style={{ color: 'var(--color-text-tertiary)' }}>

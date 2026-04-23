@@ -198,7 +198,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
         style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <button onClick={activate} disabled={activating}
           className="w-full py-4 rounded-2xl font-black text-base text-white disabled:opacity-50 active:scale-95 transition-all max-w-lg mx-auto block"
-          style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #d44a12 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.3)' }}>
+          style={{ background: 'linear-gradient(135deg, var(--ns-ember) 0%, #e0334f 100%)', boxShadow: '0 4px 20px rgba(232,93,38,0.3)' }}>
           {activating ? 'Activating…' : `Start ${plan.name} →`}
         </button>
       </div>

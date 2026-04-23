@@ -55,7 +55,7 @@ export const RUNNER_CLASSES: Record<RunnerClassId, RunnerClass> = {
     emoji: '⚡',
     tagline: 'Fast is a habit.',
     description: 'Intervals and tempo runs dominate your training. You chase pace, embrace discomfort, and recover just long enough to go again.',
-    colour: '#e85d26',
+    colour: '#ff4d6d',
     bg: 'bg-orange-50',
     textColour: 'text-orange-800',
     shareText: 'NextSplit made me a Speed Merchant. Track work is the answer. ⚡',
@@ -748,7 +748,7 @@ export function renderCharSVG(charId: string, level: number, w: number, h: numbe
       }
     })
     // Centre gem
-    svg += `<circle cx="${cx}" cy="${crownY - crownH * 0.7}" r="${s * 1.2}" fill="#e85d26" opacity="0.9"/>`
+    svg += `<circle cx="${cx}" cy="${crownY - crownH * 0.7}" r="${s * 1.2}" fill="#ff4d6d" opacity="0.9"/>`
     // Shine
     svg += `<rect x="${crownX + s}" y="${crownY + s * 0.5}" width="${crownW - s * 2}" height="${s}" rx="${s * 0.5}" fill="white" opacity="0.25"/>`
   }

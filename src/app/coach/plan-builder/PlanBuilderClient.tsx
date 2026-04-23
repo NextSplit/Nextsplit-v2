@@ -46,7 +46,7 @@ function SessionCard({ session, onRemove, onEdit }: { session: Session; onRemove
         </div>
         <div className="flex gap-1 flex-shrink-0">
           <button onClick={onEdit} className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: 'var(--color-surface-3)', color: 'var(--color-text-tertiary)' }}>edit</button>
-          <button aria-label="Close" onClick={onRemove} className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: '#e85d2615', color: '#e85d26' }}>×</button>
+          <button aria-label="Close" onClick={onRemove} className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: '#ff4d6d15', color: '#ff4d6d' }}>×</button>
         </div>
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5" style={{ color: 'var(--color-text-tertiary)' }}>
@@ -223,9 +223,9 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span style={{ color: 'var(--color-text-tertiary)' }}>Planned: {weekKm.toFixed(1)}km</span>
-                <span style={{ color: weekKm > weeks[activeWeek].targetKm ? '#e85d26' : '#4ade80' }}>Target: {weeks[activeWeek].targetKm}km</span>
+                <span style={{ color: weekKm > weeks[activeWeek].targetKm ? '#ff4d6d' : '#4ade80' }}>Target: {weeks[activeWeek].targetKm}km</span>
               </div>
-              {weeks.length > 1 && <button onClick={() => { setWeeks(prev => prev.filter((_, idx) => idx !== activeWeek).map((w, idx) => ({ ...w, n: idx + 1 }))); setActiveWeek(Math.max(0, activeWeek - 1)) }} className="text-xs px-3 py-1.5 rounded-xl border" style={{ borderColor: '#e85d2640', color: '#e85d26' }}>Remove week</button>}
+              {weeks.length > 1 && <button onClick={() => { setWeeks(prev => prev.filter((_, idx) => idx !== activeWeek).map((w, idx) => ({ ...w, n: idx + 1 }))); setActiveWeek(Math.max(0, activeWeek - 1)) }} className="text-xs px-3 py-1.5 rounded-xl border" style={{ borderColor: '#ff4d6d40', color: '#ff4d6d' }}>Remove week</button>}
             </div>
           )}
         </div>

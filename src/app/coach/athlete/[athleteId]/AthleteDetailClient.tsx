@@ -565,7 +565,7 @@ export default function AthleteDetailClient({
                         await fetch(`/api/coach/scheduled-messages?id=${s.id}`, { method: 'DELETE' })
                         setScheduledMsgs(prev => prev.filter(m => m.id !== s.id))
                       }} className="text-[10px] px-2 py-0.5 rounded flex-shrink-0"
-                        style={{ background: '#e85d2615', color: '#e85d26' }}>
+                        style={{ background: '#ff4d6d15', color: '#ff4d6d' }}>
                         Cancel
                       </button>
                     </div>

@@ -20,7 +20,7 @@ export default function LandingPage() {
             </Link>
             <Link href="/auth/signup"
               className="text-sm font-bold px-4 py-2 rounded-lg transition-all"
-              style={{ background: '#e85d26', color: 'white' }}>
+              style={{ background: '#ff4d6d', color: 'white' }}>
               Get started free
             </Link>
           </div>
@@ -31,20 +31,20 @@ export default function LandingPage() {
       <section className="relative pt-36 pb-24 px-5">
         {/* Background glow */}
         <div className="absolute top-40 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full blur-[100px] pointer-events-none opacity-20"
-          style={{ background: '#e85d26' }} />
+          style={{ background: '#ff4d6d' }} />
 
         <div className="relative max-w-3xl mx-auto text-center">
           {/* Pill */}
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 text-xs font-bold border"
-            style={{ background: 'rgba(232,93,38,0.1)', borderColor: 'rgba(232,93,38,0.25)', color: '#e85d26' }}>
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#e85d26' }} />
+            style={{ background: 'rgba(74,222,128,0.08)', borderColor: 'rgba(74,222,128,0.2)', color: '#4ade80' }}>
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#4ade80' }} />
             500 founding spots · £7.99/mo locked in forever
           </div>
 
           <h1 className="font-black tracking-tight leading-none mb-6" style={{ fontSize: 'clamp(2.5rem, 8vw, 5rem)' }}>
             The running coach
             <br />
-            <span style={{ color: '#e85d26' }}>that reads your data.</span>
+            <span style={{ color: '#4ade80' }}>that reads your data.</span>
           </h1>
 
           <p className="text-white/50 max-w-xl mx-auto mb-10 leading-relaxed" style={{ fontSize: '1.05rem' }}>
@@ -55,7 +55,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
             <Link href="/auth/signup"
               className="w-full sm:w-auto font-black text-base px-8 py-4 rounded-xl transition-all active:scale-95"
-              style={{ background: '#e85d26', color: 'white' }}>
+              style={{ background: '#ff4d6d', color: 'white' }}>
               Start training free →
             </Link>
             <Link href="/auth/login"
@@ -154,7 +154,7 @@ export default function LandingPage() {
                   'Race history',
                 ].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    <span style={{ color: '#e85d26' }}>✓</span>{f}
+                    <span style={{ color: '#4ade80' }}>✓</span>{f}
                   </li>
                 ))}
               </ul>
@@ -186,13 +186,13 @@ export default function LandingPage() {
                   'Founding member badge',
                 ].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                    <span style={{ color: '#e85d26' }}>✓</span>{f}
+                    <span style={{ color: '#4ade80' }}>✓</span>{f}
                   </li>
                 ))}
               </ul>
               <Link href="/auth/signup"
                 className="block w-full text-center font-black py-3 rounded-xl text-sm transition-all active:scale-95"
-                style={{ background: '#e85d26', color: 'white' }}>
+                style={{ background: '#ff4d6d', color: 'white' }}>
                 Claim founding spot →
               </Link>
               <p className="text-center text-xs mt-2" style={{ color: 'rgba(255,255,255,0.25)' }}>

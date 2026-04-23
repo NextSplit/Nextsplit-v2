@@ -82,18 +82,18 @@ export function SpeedMerchantAvatar({ size = 64, className = '' }: AvatarProps) 
       <line x1="4" y1="35" y2="35" stroke="#fed7aa" strokeWidth="1.5" strokeLinecap="round" />
       <line x1="6" y1="40" y2="40" stroke="#fed7aa" strokeWidth="1.5" strokeLinecap="round" />
       {/* Head — tilted forward, aggressive */}
-      <ellipse cx="36" cy="13" rx="5" ry="5" fill="#e85d26" />
+      <ellipse cx="36" cy="13" rx="5" ry="5" fill="#ff4d6d" />
       {/* Torso — deep lean */}
-      <path d="M34 18 L26 30" stroke="#e85d26" strokeWidth="5.5" strokeLinecap="round" />
+      <path d="M34 18 L26 30" stroke="#ff4d6d" strokeWidth="5.5" strokeLinecap="round" />
       {/* Power arm drive — pumping */}
-      <path d="M32 20 L40 14" stroke="#e85d26" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M28 25 L20 28" stroke="#e85d26" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M32 20 L40 14" stroke="#ff4d6d" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M28 25 L20 28" stroke="#ff4d6d" strokeWidth="3.5" strokeLinecap="round" />
       {/* Legs — explosive, knees high */}
-      <path d="M28 30 L22 40 L18 48" stroke="#e85d26" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M30 30 L40 36 L44 46" stroke="#e85d26" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M28 30 L22 40 L18 48" stroke="#ff4d6d" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M30 30 L40 36 L44 46" stroke="#ff4d6d" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
       {/* Spikes */}
-      <ellipse cx="17" cy="49" rx="4" ry="2" fill="#e85d26" />
-      <ellipse cx="45" cy="47" rx="4" ry="2" fill="#e85d26" />
+      <ellipse cx="17" cy="49" rx="4" ry="2" fill="#ff4d6d" />
+      <ellipse cx="45" cy="47" rx="4" ry="2" fill="#ff4d6d" />
       {/* Lightning bolt */}
       <path d="M38 8 L34 15 L37 15 L33 22" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>

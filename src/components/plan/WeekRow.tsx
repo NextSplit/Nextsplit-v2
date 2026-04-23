@@ -93,8 +93,8 @@ export default function WeekRow({ week, status, logs, gymLogs, todayDayIndex, we
       className="rounded-2xl overflow-hidden transition-all"
       style={{
         background: 'var(--color-surface)',
-        border: `1px solid ${isCurrent ? 'var(--ns-ember)' : 'var(--color-border)'}`,
-        boxShadow: isCurrent ? '0 0 0 1px var(--ns-ember-light)' : 'none',
+        border: `1px solid ${isCurrent ? 'var(--ns-cobalt)' : 'var(--color-border)'}`,
+        boxShadow: isCurrent ? '0 0 0 1px var(--ns-cobalt-light)' : 'none',
         opacity: isCompleted ? 0.65 : 1,
       }}
     >
@@ -102,12 +102,12 @@ export default function WeekRow({ week, status, logs, gymLogs, todayDayIndex, we
       <button
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
-        style={{ background: isCurrent ? 'var(--ns-ember-light)' : 'transparent' }}
+        style={{ background: isCurrent ? 'var(--ns-cobalt-light)' : 'transparent' }}
       >
         {/* Week number badge */}
         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-sm"
           style={{
-            background: isCurrent ? 'var(--ns-ember)' : isCompleted ? 'var(--color-surface-2)' : 'var(--color-surface-2)',
+            background: isCurrent ? 'var(--ns-cobalt)' : isCompleted ? 'var(--color-surface-2)' : 'var(--color-surface-2)',
             color:      isCurrent ? 'white'           : isCompleted ? 'var(--color-text-tertiary)' : 'var(--color-text-secondary)',
           }}>
           {week.n}
@@ -128,7 +128,7 @@ export default function WeekRow({ week, status, logs, gymLogs, todayDayIndex, we
             )}
             {isCurrent && (
               <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full flex-shrink-0"
-                style={{ background: 'var(--ns-ember)', color: 'white' }}>
+                style={{ background: 'var(--ns-cobalt)', color: 'white' }}>
                 Current
               </span>
             )}

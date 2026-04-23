@@ -13,7 +13,7 @@ interface Props {
   coach: CoachProfile; plans: Plan[]; isOwnProfile: boolean; viewerLoggedIn: boolean
 }
 const LEVEL_COLOUR: Record<string, string> = {
-  beginner: '#059669', intermediate: '#d97706', advanced: '#e85d26',
+  beginner: '#059669', intermediate: '#d97706', advanced: '#ff4d6d',
 }
 
 function Stars({ rating, size = 4 }: { rating: number; size?: number }) {
