@@ -114,21 +114,26 @@ export default function FirstSessionCelebration({ totalDone, displayName, xp }: 
   if (!show) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center"
-      style={{ background: 'rgba(0,0,0,0.7)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+      onClick={dismiss}>
 
       {/* Confetti canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
 
-      {/* Sheet */}
-      <div className={`relative w-full max-w-lg rounded-t-3xl px-6 pt-6 pb-10 text-center transition-transform duration-300 ${
-          visible ? 'translate-y-0' : 'translate-y-full'
+      {/* Card — centred, not bottom sheet */}
+      <div className={`relative w-full max-w-sm rounded-3xl px-6 pt-8 pb-8 text-center transition-all duration-300 ${
+          visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
-        style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+        style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', boxShadow: '0 24px 64px rgba(0,0,0,0.2)' }}
+        onClick={e => e.stopPropagation()}>
 
-        {/* Handle */}
-        <div className="w-10 h-1 rounded-full mx-auto mb-5"
-          style={{ background: 'var(--color-border-2)' }} />
+        {/* X close */}
+        <button onClick={dismiss}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-lg"
+          style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
+          ×
+        </button>
 
         {/* XP badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4 font-data font-black text-sm"

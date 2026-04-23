@@ -64,10 +64,17 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl p-6 pb-10"
+    <div className="fixed inset-0 z-50 flex flex-col bg-black/50" style={{ backdropFilter: "blur(4px)" }} onClick={onClose}>
+      <div className="w-full max-w-lg mx-auto mt-auto bg-white overflow-y-auto" style={{ borderRadius: "24px 24px 0 0", maxHeight: "88dvh" }}
         onClick={e => e.stopPropagation()}>
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-border-2)' }} />
+          <button onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
+            style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
+            ×
+          </button>
+        </div>
         <h2 className="text-base font-bold text-gray-900 mb-1">Add a session</h2>
         <p className="text-xs text-gray-400 mb-4">Log extra work outside your plan — it won't affect your scheduled sessions.</p>
 

@@ -109,8 +109,8 @@ function LogModal({
   // ── REST DAY ───────────────────────────────────────────────────────────────
   if (mode === 'rest') {
     return (
-      <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
-        <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl p-6 text-center" style={{ background: "var(--color-surface)", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
+        <div className="w-full max-w-lg mx-auto p-6 text-center mt-auto" style={{ background: "var(--color-surface)", borderRadius: "24px 24px 0 0" }} onClick={e => e.stopPropagation()}>
           <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: 'var(--color-border-2)' }} />
           <div className="text-4xl mb-3">😴</div>
           <h2 className="text-base font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>Rest day</h2>
@@ -131,9 +131,9 @@ function LogModal({
   // ── ONE-TAP (Easy runs) ────────────────────────────────────────────────────
   if (mode === 'one-tap' && !existingLog) {
     return (
-      <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
-        <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl"
-          style={{ background: 'var(--color-surface)', marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
+        <div className="w-full max-w-lg mx-auto mt-auto"
+          style={{ background: 'var(--color-surface)', borderRadius: "24px 24px 0 0" }} onClick={e => e.stopPropagation()}>
           <div className="p-6">
             <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ background: 'var(--color-border-2)' }} />
             <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${cfg.colour} ${cfg.textColour} text-xs font-semibold mb-3`}>
@@ -178,10 +178,17 @@ function LogModal({
   // ── FULL DEBRIEF (Intervals + Race) ───────────────────────────────────────
   if (mode === 'full-debrief') {
     return (
-      <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
-        <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl flex flex-col" style={{ background: "var(--color-surface)", maxHeight: "92dvh", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
-          <div className="overflow-y-auto flex-1 px-6 pt-6 pb-4 space-y-5" style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
-            <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--color-border-2)' }} />
+      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
+        <div className="w-full max-w-lg mx-auto flex flex-col mt-auto" style={{ background: "var(--color-surface)", borderRadius: "24px 24px 0 0", height: "92dvh", maxHeight: "92dvh" }} onClick={e => e.stopPropagation()}>
+          <div className="flex items-center justify-between px-6 pt-4 pb-2 flex-shrink-0">
+            <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-border-2)' }} />
+            <button onClick={onClose}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-light"
+              style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
+              ×
+            </button>
+          </div>
+          <div className="overflow-y-auto flex-1 px-6 pt-2 pb-4 space-y-5" style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
 
             <div>
               <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${cfg.colour} ${cfg.textColour} text-xs font-semibold mb-2`}>
@@ -281,10 +288,17 @@ function LogModal({
 
   // ── STANDARD (Tempo, Long, MP, default) ────────────────────────────────────
   return (
-    <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
-      <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl flex flex-col" style={{ background: "var(--color-surface)", maxHeight: "92dvh", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
-        <div className="overflow-y-auto flex-1 px-6 pt-6 pb-4 space-y-5" style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
-          <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--color-border-2)' }} />
+    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
+      <div className="w-full max-w-lg mx-auto flex flex-col mt-auto" style={{ background: "var(--color-surface)", borderRadius: "24px 24px 0 0", height: "92dvh", maxHeight: "92dvh" }} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-6 pt-4 pb-2 flex-shrink-0">
+          <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-border-2)' }} />
+          <button onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-light"
+            style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
+            ×
+          </button>
+        </div>
+        <div className="overflow-y-auto flex-1 px-6 pt-2 pb-4 space-y-5" style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
 
           <div>
             <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${cfg.colour} ${cfg.textColour} text-xs font-semibold mb-2`}>
