@@ -245,7 +245,7 @@ function CoachAccessSection() {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-gray-600 px-1">Connected to <span className="font-semibold">{coachName}</span>. Control what they can see.</p>
+      <p className="text-sm px-1" style={{ color: 'var(--color-text-secondary)' }}>Connected to <span className="font-semibold">{coachName}</span>. Control what they can see.</p>
       {[
         { field: 'share_logs' as const,         label: 'Training logs',    sublabel: 'Runs and gym sessions' },
         { field: 'share_wellness' as const,      label: 'Wellness scores',  sublabel: 'Sleep, energy, soreness' },
@@ -308,7 +308,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
           <span className="text-sm">✓</span>
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-800">Split Leader active</p>
+          <p className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Split Leader active</p>
           <p className="text-xs text-[var(--color-text-tertiary)]">Manage your squad from the Athletes tab</p>
         </div>
         <Link href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-ember)] flex-shrink-0">
@@ -326,7 +326,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
           <p className="text-sm font-bold text-[var(--ns-ember)]">Split Leader</p>
           <span className="text-[10px] bg-[var(--ns-ember)] text-white px-2 py-0.5 rounded-full font-bold ml-auto">Pro</span>
         </div>
-        <p className="text-xs text-gray-600 leading-relaxed">
+        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
           Coach up to 5 runners. Share your plan, annotate sessions, run a squad leaderboard. Included free with NextSplit Pro.
         </p>
         <a href="/profile" className="inline-block mt-1 text-xs font-bold text-[var(--ns-ember)] underline">
@@ -343,7 +343,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
           <span className="text-2xl">👥</span>
           <div>
             <p className="text-sm font-bold text-[var(--ns-ember)]">Become a Split Leader</p>
-            <p className="text-xs text-gray-600 mt-0.5">Included with your Pro subscription — no extra cost.</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>Included with your Pro subscription — no extra cost.</p>
           </div>
         </div>
         <ul className="space-y-1.5 mb-4">
@@ -354,7 +354,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
             'Share your training plan — runners follow it free',
             'Up to 5 runners (upgrade to Pro Coach for more)',
           ].map(f => (
-            <li key={f} className="flex items-start gap-2 text-xs text-gray-700">
+            <li key={f} className="flex items-start gap-2 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
               <span className="text-[var(--ns-ember)] font-bold mt-0.5">→</span>
               {f}
             </li>
@@ -387,7 +387,7 @@ function ProCoachSection({ coachTier, isPro }: { coachTier: string | null; isPro
           <span className="text-sm">🏆</span>
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-800">Professional Coach</p>
+          <p className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Professional Coach</p>
           <p className="text-xs text-[var(--color-text-tertiary)]">Full coach platform unlocked</p>
         </div>
         <Link href="/coach/squad" className="ml-auto text-xs font-bold text-[var(--ns-ember)] flex-shrink-0">
@@ -861,7 +861,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
 
         {/* Version */}
         <div className="text-center pb-4">
-          <p className="text-[10px] text-gray-300">NextSplit v2 · Built with ❤️ for runners</p>
+          <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>NextSplit v2 · Built with ❤️ for runners</p>
         </div>
 
       </div>
