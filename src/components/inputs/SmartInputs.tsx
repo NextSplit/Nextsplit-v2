@@ -120,7 +120,7 @@ export function SmartTimeInput({
       )}
       <div className={`relative flex items-center rounded-xl border-2 transition-all ${
         error   ? 'border-red-400 bg-red-50'
-        : focused ? 'border-[var(--ns-ember)] bg-white ring-2 ring-[var(--ns-forest-light)]'
+        : focused ? 'border-[var(--ns-ember)] bg-white ring-2 ring-[var(--ns-cyan-light)]'
         : raw    ? 'border-slate-300 bg-white'
         : 'border-gray-200 bg-[#f8f8f6]'
       }`}>
@@ -210,7 +210,7 @@ export function SmartDistanceInput({
       )}
       <div className={`relative flex items-center rounded-xl border-2 transition-all ${
         error    ? 'border-red-400 bg-red-50'
-        : focused ? 'border-[var(--ns-ember)] bg-white ring-2 ring-[var(--ns-forest-light)]'
+        : focused ? 'border-[var(--ns-ember)] bg-white ring-2 ring-[var(--ns-cyan-light)]'
         : raw     ? 'border-slate-300 bg-white'
         : 'border-gray-200 bg-[#f8f8f6]'
       }`}>
@@ -292,7 +292,7 @@ export function SmartPaceInput({
       )}
       <div className={`relative flex items-center rounded-xl border-2 transition-all ${
         error    ? 'border-red-400 bg-red-50'
-        : focused ? 'border-[var(--ns-ember)] bg-white ring-2 ring-[var(--ns-forest-light)]'
+        : focused ? 'border-[var(--ns-ember)] bg-white ring-2 ring-[var(--ns-cyan-light)]'
         : raw     ? 'border-slate-300 bg-white'
         : 'border-gray-200 bg-[#f8f8f6]'
       }`}>

@@ -94,7 +94,7 @@ export default function CoachingCard() {
           <div className="text-center py-6">
             <div className="flex items-center justify-center gap-1.5 mb-3">
               {[0, 150, 300].map(d => (
-                <div key={d} className="w-2 h-2 rounded-full bg-[var(--ns-forest-mid)] animate-bounce"
+                <div key={d} className="w-2 h-2 rounded-full bg-[var(--ns-violet-mid)] animate-bounce"
                   style={{ animationDelay: `${d}ms` }} />
               ))}
             </div>
@@ -141,7 +141,7 @@ export default function CoachingCard() {
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => fetchNote(mode)}
-                className="flex-1 py-2.5 rounded-xl border border-[var(--ns-forest-light)] text-[var(--ns-ember)] text-xs font-semibold active:scale-95 transition-transform"
+                className="flex-1 py-2.5 rounded-xl border border-[var(--ns-violet-light)] text-[var(--ns-ember)] text-xs font-semibold active:scale-95 transition-transform"
               >
                 ↻ Refresh
               </button>

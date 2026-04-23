@@ -69,12 +69,12 @@ function SessionEditor({ session, onSave, onCancel }: { session: Session; onSave
   const inpStyle = { background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }
   const label = (t: string) => <p className="text-[10px] mb-1 font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>{t}</p>
   return (
-    <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid #2b5c3f60' }}>
+    <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid #8b5cf660' }}>
       <div className="flex flex-wrap gap-1.5">
         {SESSION_TYPES.map(t => (
           <button key={t.code} onClick={() => setS(p => ({ ...p, c: t.code }))}
             className="px-2 py-1 rounded-lg text-xs font-bold transition-all"
-            style={{ background: s.c === t.code ? '#2b5c3f' : 'var(--color-surface-2)', color: s.c === t.code ? 'white' : 'var(--color-text-tertiary)' }}>
+            style={{ background: s.c === t.code ? '#8b5cf6' : 'var(--color-surface-2)', color: s.c === t.code ? 'white' : 'var(--color-text-tertiary)' }}>
             {t.emoji} {t.label}
           </button>
         ))}
@@ -98,12 +98,12 @@ function SessionEditor({ session, onSave, onCancel }: { session: Session; onSave
       <div>{label('Coach notes (shown to athlete)')}<textarea value={s.det} onChange={e => setS(p => ({ ...p, det: e.target.value }))} rows={2} placeholder="e.g. Keep HR below 140bpm. Conversational pace throughout." className="w-full px-3 py-2 rounded-xl text-sm resize-none outline-none" style={inpStyle} /></div>
       <div className="flex items-center justify-between">
         <div><p className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>Mandatory session</p><p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>Optional sessions show as skippable</p></div>
-        <button onClick={() => setS(p => ({ ...p, mandatory: !p.mandatory }))} className="w-10 h-6 rounded-full transition-all relative flex-shrink-0" style={{ background: s.mandatory ? '#2b5c3f' : 'var(--color-surface-2)' }}>
+        <button onClick={() => setS(p => ({ ...p, mandatory: !p.mandatory }))} className="w-10 h-6 rounded-full transition-all relative flex-shrink-0" style={{ background: s.mandatory ? '#8b5cf6' : 'var(--color-surface-2)' }}>
           <span className="absolute top-1 w-4 h-4 rounded-full bg-white transition-all" style={{ left: s.mandatory ? '1.25rem' : '0.25rem' }} />
         </button>
       </div>
       <div className="flex gap-2">
-        <button onClick={() => onSave(s)} disabled={!s.n} className="flex-1 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-40" style={{ background: '#2b5c3f' }}>Save session</button>
+        <button onClick={() => onSave(s)} disabled={!s.n} className="flex-1 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-40" style={{ background: '#8b5cf6' }}>Save session</button>
         <button onClick={onCancel} className="px-4 py-3 rounded-xl text-sm border" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-tertiary)' }}>Cancel</button>
       </div>
     </div>
@@ -175,7 +175,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
             <h1 className="font-display text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Plan Builder</h1>
             <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>{coachName}</p>
           </div>
-          <button onClick={savePlan} disabled={saving || !name} className="px-4 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 active:scale-95" style={{ background: saved ? '#059669' : '#2b5c3f' }}>
+          <button onClick={savePlan} disabled={saving || !name} className="px-4 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 active:scale-95" style={{ background: saved ? '#059669' : '#8b5cf6' }}>
             {saved ? '✓ Saved!' : saving ? 'Saving…' : 'Save plan'}
           </button>
         </div>
@@ -197,7 +197,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
               {[{label:'Public marketplace',val:isPublic,set:setIsPublic},{label:'Save as template',val:isTemplate,set:setIsTemplate}].map(item => (
                 <div key={item.label} className="flex items-center justify-between">
                   <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{item.label}</p>
-                  <button onClick={() => item.set((p: boolean) => !p)} className="w-9 h-5 rounded-full transition-all relative" style={{ background: item.val ? '#2b5c3f' : 'var(--color-surface-2)' }}>
+                  <button onClick={() => item.set((p: boolean) => !p)} className="w-9 h-5 rounded-full transition-all relative" style={{ background: item.val ? '#8b5cf6' : 'var(--color-surface-2)' }}>
                     <span className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all" style={{ left: item.val ? '1.1rem' : '0.2rem' }} />
                   </button>
                 </div>
@@ -210,10 +210,10 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
         <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>{weeks.length} week{weeks.length !== 1 ? 's' : ''}</p>
-            <button onClick={() => { setWeeks(prev => [...prev, emptyWeek(prev.length + 1)]); setActiveWeek(weeks.length) }} className="text-xs px-3 py-1.5 rounded-xl font-bold text-white" style={{ background: '#2b5c3f' }}>+ Week</button>
+            <button onClick={() => { setWeeks(prev => [...prev, emptyWeek(prev.length + 1)]); setActiveWeek(weeks.length) }} className="text-xs px-3 py-1.5 rounded-xl font-bold text-white" style={{ background: '#8b5cf6' }}>+ Week</button>
           </div>
           <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3">
-            {weeks.map((w, i) => <button key={i} onClick={() => { setActiveWeek(i); setActiveDay(0) }} className="flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all" style={{ background: activeWeek === i ? '#2b5c3f' : 'var(--color-surface-2)', color: activeWeek === i ? 'white' : 'var(--color-text-tertiary)' }}>W{w.n}</button>)}
+            {weeks.map((w, i) => <button key={i} onClick={() => { setActiveWeek(i); setActiveDay(0) }} className="flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all" style={{ background: activeWeek === i ? '#8b5cf6' : 'var(--color-surface-2)', color: activeWeek === i ? 'white' : 'var(--color-text-tertiary)' }}>W{w.n}</button>)}
           </div>
           {weeks[activeWeek] && (
             <div className="space-y-2">
@@ -235,7 +235,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
           <div className="flex gap-1 mb-4 overflow-x-auto">
             {DAYS.map((d, i) => {
               const cnt = weeks[activeWeek]?.days[i]?.sessions.length ?? 0
-              return <button key={d} onClick={() => { setActiveDay(i); setEditingSession(null) }} className="flex-shrink-0 flex flex-col items-center px-3 py-2 rounded-xl transition-all min-w-[44px]" style={{ background: activeDay === i ? '#2b5c3f' : 'var(--color-surface-2)', color: activeDay === i ? 'white' : 'var(--color-text-tertiary)' }}><span className="text-xs font-bold">{d}</span>{cnt > 0 && <span className="text-[9px] mt-0.5 opacity-80">{cnt}</span>}</button>
+              return <button key={d} onClick={() => { setActiveDay(i); setEditingSession(null) }} className="flex-shrink-0 flex flex-col items-center px-3 py-2 rounded-xl transition-all min-w-[44px]" style={{ background: activeDay === i ? '#8b5cf6' : 'var(--color-surface-2)', color: activeDay === i ? 'white' : 'var(--color-text-tertiary)' }}><span className="text-xs font-bold">{d}</span>{cnt > 0 && <span className="text-[9px] mt-0.5 opacity-80">{cnt}</span>}</button>
             })}
           </div>
           <div className="space-y-2 mb-3">
@@ -245,7 +245,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
           {editingSession && editingSession.weekIdx === activeWeek && editingSession.dayIdx === activeDay
             ? <SessionEditor session={draftSession} onSave={saveSession} onCancel={() => setEditingSession(null)} />
             : <div className="flex gap-2">
-                <button onClick={openNewSession} className="flex-1 py-3 rounded-xl text-sm font-bold text-white active:scale-95" style={{ background: '#2b5c3f' }}>+ Add session</button>
+                <button onClick={openNewSession} className="flex-1 py-3 rounded-xl text-sm font-bold text-white active:scale-95" style={{ background: '#8b5cf6' }}>+ Add session</button>
                 <button onClick={aiSuggestWeek} disabled={aiSuggesting} className="px-4 py-3 rounded-xl text-sm font-bold border active:scale-95 disabled:opacity-40" style={{ borderColor: '#c49a3c60', color: '#c49a3c' }}>{aiSuggesting ? '…' : '🧠 AI week'}</button>
               </div>}
         </div>

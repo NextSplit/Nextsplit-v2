@@ -114,20 +114,20 @@ export function buildLifecycleEmailHtml(
   const styles = `
     body { margin: 0; padding: 0; background: #f8f8f6; font-family: 'Outfit', -apple-system, sans-serif; }
     .wrap { max-width: 560px; margin: 32px auto; background: #ffffff; border-radius: 16px; overflow: hidden; }
-    .header { background: #2b5c3f; padding: 28px 32px; }
+    .header { background: #06b6d4; padding: 28px 32px; }
     .logo { color: #ffffff; font-size: 20px; font-weight: 900; letter-spacing: -0.02em; margin: 0; }
     .body { padding: 32px; }
     h1 { color: #1a1a14; font-size: 22px; font-weight: 800; margin: 0 0 16px; line-height: 1.3; }
     p { color: #4a4a3a; font-size: 15px; line-height: 1.7; margin: 0 0 16px; }
-    .cta { display: inline-block; background: #2b5c3f; color: #ffffff !important; text-decoration: none;
+    .cta { display: inline-block; background: #06b6d4; color: #ffffff !important; text-decoration: none;
            padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 15px; margin: 8px 0 24px; }
-    .stat { background: #edf4f0; border-radius: 12px; padding: 16px 20px; margin: 16px 0; }
-    .stat-n { color: #2b5c3f; font-size: 28px; font-weight: 900; margin: 0; }
+    .stat { background: #ecfeff; border-radius: 12px; padding: 16px 20px; margin: 16px 0; }
+    .stat-n { color: #06b6d4; font-size: 28px; font-weight: 900; margin: 0; }
     .stat-l { color: #6b7280; font-size: 12px; margin: 2px 0 0; }
     .divider { height: 1px; background: #f0ede4; margin: 24px 0; }
     .footer { padding: 20px 32px; background: #f8f8f6; }
     .footer p { color: #9ca3af; font-size: 12px; line-height: 1.6; margin: 0; }
-    .footer a { color: #2b5c3f; }
+    .footer a { color: #06b6d4; }
   `
 
   let body = ''
@@ -183,8 +183,8 @@ export function buildLifecycleEmailHtml(
         <p>The most common thing that derails training isn't injury, illness, or bad weather. It's a missed week — and not knowing how to get back on track without losing ground.</p>
         <p>Most training plans respond to a missed week by doing nothing. You fall behind, the sessions pile up, and the plan becomes a source of guilt rather than structure.</p>
         <p>NextSplit handles this differently.</p>
-        <div class="stat" style="background: #edf4f0; border-left: 3px solid #2b5c3f; border-radius: 0 8px 8px 0; padding: 16px 20px;">
-          <p style="color: #2b5c3f; font-weight: 600; margin: 0; font-size: 14px; line-height: 1.6;">When you miss a session and tell the app, it rebuilds the plan around what actually happened — adjusting what's left, protecting your key sessions, and keeping you on track for race day.</p>
+        <div class="stat" style="background: #ecfeff; border-left: 3px solid #06b6d4; border-radius: 0 8px 8px 0; padding: 16px 20px;">
+          <p style="color: #06b6d4; font-weight: 600; margin: 0; font-size: 14px; line-height: 1.6;">When you miss a session and tell the app, it rebuilds the plan around what actually happened — adjusting what's left, protecting your key sessions, and keeping you on track for race day.</p>
         </div>
         <p>The plan adapts. Not because you failed, but because life happened — and a good coach adjusts.</p>
         <p>This feature is part of NextSplit Pro. If your plan ever needs to adapt, it's there waiting.</p>

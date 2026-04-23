@@ -35,7 +35,7 @@ function RestTimer({ secs, onDone }: { secs: number; onDone: () => void }) {
       <div className="relative w-24 h-24">
         <svg className="w-24 h-24 -rotate-90" viewBox="0 0 36 36">
           <circle cx="18" cy="18" r="15.9" fill="none" stroke="#E5E7EB" strokeWidth="2.5" />
-          <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--ns-forest)" strokeWidth="2.5"
+          <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--ns-cyan)" strokeWidth="2.5"
             strokeDasharray={`${pct} 100`} strokeLinecap="round" />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
@@ -47,7 +47,7 @@ function RestTimer({ secs, onDone }: { secs: number; onDone: () => void }) {
       <p className="text-xs text-gray-500 font-medium">Rest · breathe</p>
       <button
         onClick={onDone}
-        className="text-xs text-[var(--ns-ember)] font-semibold px-4 py-1.5 bg-[var(--ns-forest-light)] rounded-full"
+        className="text-xs text-[var(--ns-ember)] font-semibold px-4 py-1.5 bg-[var(--ns-cyan-light)] rounded-full"
       >
         Skip rest →
       </button>
@@ -114,7 +114,7 @@ function SetInput({
                 value={weight}
                 onChange={e => setWeight(e.target.value)}
                 placeholder={suggWeight != null ? String(suggWeight) : '0'}
-                className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
+                className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]"
               />
               <button
                 onClick={() => setWeight(w => String(parseFloat(w || '0') + 2.5))}
@@ -137,7 +137,7 @@ function SetInput({
               type="number" inputMode="numeric"
               value={reps}
               onChange={e => setReps(e.target.value)}
-              className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
+              className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]"
             />
             <button
               onClick={() => setReps(r => String(parseInt(r || '0') + 1))}
@@ -559,28 +559,28 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
           style={{ background: 'linear-gradient(135deg, #0f172a 0%, #0d3d38 100%)' }}>
           <div className="text-7xl mb-5 animate-bounce">🏋️</div>
           <h2 className="text-3xl font-black text-white mb-2">Session done!</h2>
-          <p className="text-[var(--ns-forest-light)] text-base mb-8">{session.n}</p>
+          <p className="text-[var(--ns-cyan-light)] text-base mb-8">{session.n}</p>
           <div className="flex gap-6 mb-6">
             <div className="text-center">
               <div className="text-2xl font-black text-white">
                 {logged.filter(e => e.sets.length > 0).length}
               </div>
-              <div className="text-[var(--ns-forest-mid)] text-xs mt-0.5">exercises</div>
+              <div className="text-[var(--ns-cyan-mid)] text-xs mt-0.5">exercises</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-black text-white">
                 {logged.reduce((a, e) => a + e.sets.length, 0)}
               </div>
-              <div className="text-[var(--ns-forest-mid)] text-xs mt-0.5">sets</div>
+              <div className="text-[var(--ns-cyan-mid)] text-xs mt-0.5">sets</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-black text-emerald-400">+{getSessionXP(session.c)}</div>
-              <div className="text-[var(--ns-forest-mid)] text-xs mt-0.5">XP</div>
+              <div className="text-[var(--ns-cyan-mid)] text-xs mt-0.5">XP</div>
             </div>
           </div>
           <div className="flex gap-1.5">
             {[0, 150, 300].map(d => (
-              <div key={d} className="w-2 h-2 rounded-full bg-[var(--ns-forest-mid)] animate-bounce"
+              <div key={d} className="w-2 h-2 rounded-full bg-[var(--ns-cyan-mid)] animate-bounce"
                 style={{ animationDelay: `${d}ms` }} />
             ))}
           </div>

@@ -356,7 +356,7 @@ export default function TodayClient() {
             className="w-full flex items-center gap-3 bg-white rounded-2xl border border-gray-100 px-4 py-3 text-left active:scale-[0.98] transition-all"
           >
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-base flex-shrink-0"
-              style={{ background: 'var(--ns-forest-light)' }}>
+              style={{ background: 'var(--ns-cyan-light)' }}>
               {isSplitLeader || isProfessional ? '👥' : '🏃'}
             </div>
             <div className="flex-1">
@@ -458,9 +458,9 @@ export default function TodayClient() {
 
               {/* Warm reassurance — reduces anxiety about "falling behind" */}
               {!hadPlan && (
-                <div className="bg-[var(--ns-forest-light)] rounded-2xl px-4 py-3 flex items-start gap-2">
+                <div className="bg-[var(--ns-cyan-light)] rounded-2xl px-4 py-3 flex items-start gap-2">
                   <span className="text-base mt-0.5">💡</span>
-                  <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-forest)' }}>
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-cyan)' }}>
                     <span className="font-bold">No rush to start.</span>{' '}
                     When you activate a plan, the clock starts from that day — not from when you signed up. No catch-up required.
                   </p>
@@ -859,6 +859,7 @@ export default function TodayClient() {
         handleUndo={handleUndo}
         handleLogSession={handleLogSession}
         toastSuccess={toastSuccess}
+        runnerColour={(profile as { runner_colour?: string })?.runner_colour ?? '#06b6d4'}
       />
 
       {/* NPS prompt — Day 7 and Day 30 triggers */}

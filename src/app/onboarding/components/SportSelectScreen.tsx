@@ -118,7 +118,7 @@ export function SportSelectScreen() {
                       className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all flex-shrink-0 ${
                         isNotified
                           ? 'bg-[var(--ns-ember-light)] border-orange-300 text-[var(--ns-ember)]'
-                          : 'bg-white border-gray-200 text-gray-500 hover:border-[var(--ns-forest-light)]'
+                          : 'bg-white border-gray-200 text-gray-500 hover:border-[var(--ns-cyan-light)]'
                       }`}
                     >
                       {isNotified ? '✓ Notify me' : 'Notify me'}

@@ -100,7 +100,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
                 key={option.id}
                 onClick={() => setTier(option.id)}
                 className={`w-full text-left rounded-2xl border-2 p-4 transition-all ${
-                  tier === option.id ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)]' : 'border-gray-200 bg-white'
+                  tier === option.id ? 'border-[var(--ns-ember)] bg-[var(--ns-violet-light)]' : 'border-gray-200 bg-white'
                 }`}
               >
                 <div className="flex items-start gap-3">

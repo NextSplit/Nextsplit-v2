@@ -70,7 +70,7 @@ function SignupForm() {
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--ns-ember)]/20 border border-[var(--ns-ember)]/30 mb-4">
           <span className="text-2xl">🏃</span>
         </div>
-        <h1 className="font-display text-2xl tracking-tight" style={{ color: "var(--ns-forest)", letterSpacing: "-0.03em" }}>NextSplit</h1>
+        <h1 className="font-display text-2xl tracking-tight" style={{ color: "var(--ns-cyan)", letterSpacing: "-0.03em" }}>NextSplit</h1>
         {refCode ? (
           <p className="text-sm mt-1" style={{ color: "var(--color-text-tertiary)" }}>
             🎁 You were invited — first month free when you upgrade

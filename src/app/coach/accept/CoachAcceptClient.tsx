@@ -45,14 +45,14 @@ export default function CoachAcceptClient({
 
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="w-16 h-16 rounded-3xl bg-[var(--ns-forest-light)] flex items-center justify-center text-3xl mx-auto">
+          <div className="w-16 h-16 rounded-3xl bg-[var(--ns-violet-light)] flex items-center justify-center text-3xl mx-auto">
             🏃
           </div>
           <h1 className="text-xl font-black text-gray-900">
             {coachName} wants to coach you
           </h1>
           {coachVerified && (
-            <span className="inline-flex items-center gap-1 bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] text-[var(--ns-ember)] text-xs font-bold px-2.5 py-1 rounded-full">
+            <span className="inline-flex items-center gap-1 bg-[var(--ns-violet-light)] border border-[var(--ns-violet-light)] text-[var(--ns-ember)] text-xs font-bold px-2.5 py-1 rounded-full">
               ✅ Verified coach
             </span>
           )}

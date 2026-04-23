@@ -122,7 +122,7 @@ export default function AIOnboardingClient() {
 
   // Character colours from onboarding context
   const skin = { 'tone-1':'#FDDBB4','tone-2':'#F1C27D','tone-3':'#E0AC69','tone-4':'#C68642','tone-5':'#8D5524','tone-6':'#4A2912' }[cfg.skinTone] ?? '#E0AC69'
-  const kit  = cfg.kitColour ?? '#2b5c3f'
+  const kit  = cfg.kitColour ?? '#06b6d4'
   const hair = cfg.hairColour ?? '#3b2314'
   const shoe = cfg.shoeColour ?? '#1e293b'
 

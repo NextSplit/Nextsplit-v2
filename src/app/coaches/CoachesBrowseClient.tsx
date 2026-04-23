@@ -61,7 +61,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
 }
 
 function CoachCard({ coach, isActive }: { coach: Coach; isActive: boolean }) {
-  const colour = '#2b5c3f'
+  const colour = '#8b5cf6'
 
   return (
     <Link href={`/coach/${coach.slug}`}
@@ -97,7 +97,7 @@ function CoachCard({ coach, isActive }: { coach: Coach; isActive: boolean }) {
                   </p>
                   {coach.verification_tier === 'credential_verified' && (
                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0"
-                      style={{ background: '#2b5c3f30', color: '#4ade80' }}>
+                      style={{ background: '#8b5cf630', color: '#4ade80' }}>
                       ✅ Verified
                     </span>
                   )}
@@ -183,7 +183,7 @@ function CoachCard({ coach, isActive }: { coach: Coach; isActive: boolean }) {
             </span>
           ) : coach.accepting_athletes ? (
             <span className="text-[10px] font-bold px-2 py-1 rounded-full"
-              style={{ background: '#2b5c3f20', color: '#4ade80' }}>
+              style={{ background: '#8b5cf620', color: '#4ade80' }}>
               Taking athletes
             </span>
           ) : (
@@ -249,9 +249,9 @@ export default function CoachesBrowseClient({ initialCoaches, viewerLoggedIn, ac
             <button onClick={() => setShowFilters(f => !f)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
               style={{
-                background: activeFilters > 0 ? '#2b5c3f30' : 'var(--color-surface)',
+                background: activeFilters > 0 ? '#8b5cf630' : 'var(--color-surface)',
                 color:      activeFilters > 0 ? '#4ade80' : 'var(--color-text-secondary)',
-                border:     `1px solid ${activeFilters > 0 ? '#2b5c3f60' : 'var(--color-border)'}`,
+                border:     `1px solid ${activeFilters > 0 ? '#8b5cf660' : 'var(--color-border)'}`,
               }}>
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M7 12h10M11 20h2" />
@@ -275,7 +275,7 @@ export default function CoachesBrowseClient({ initialCoaches, viewerLoggedIn, ac
                       onClick={() => { const v = specialty === opt ? '' : opt; setSpecialty(v); applyFilters({ specialty: v }) }}
                       className="text-xs px-2.5 py-1 rounded-full transition-all"
                       style={{
-                        background: specialty === opt ? '#2b5c3f' : 'var(--color-surface-2)',
+                        background: specialty === opt ? '#8b5cf6' : 'var(--color-surface-2)',
                         color:      specialty === opt ? 'white' : 'var(--color-text-secondary)',
                       }}>
                       {opt}
@@ -294,7 +294,7 @@ export default function CoachesBrowseClient({ initialCoaches, viewerLoggedIn, ac
                       onClick={() => { const v = distance === opt ? '' : opt; setDistance(v); applyFilters({ distance: v }) }}
                       className="text-xs px-2.5 py-1 rounded-full transition-all"
                       style={{
-                        background: distance === opt ? '#2b5c3f' : 'var(--color-surface-2)',
+                        background: distance === opt ? '#8b5cf6' : 'var(--color-surface-2)',
                         color:      distance === opt ? 'white' : 'var(--color-text-secondary)',
                       }}>
                       {opt}
@@ -313,7 +313,7 @@ export default function CoachesBrowseClient({ initialCoaches, viewerLoggedIn, ac
                       onClick={() => { setMaxPrice(opt.value); applyFilters({ maxPrice: opt.value }) }}
                       className="text-xs px-2.5 py-1 rounded-full transition-all flex-1"
                       style={{
-                        background: maxPrice === opt.value ? '#2b5c3f' : 'var(--color-surface-2)',
+                        background: maxPrice === opt.value ? '#8b5cf6' : 'var(--color-surface-2)',
                         color:      maxPrice === opt.value ? 'white' : 'var(--color-text-secondary)',
                       }}>
                       {opt.label}
@@ -329,7 +329,7 @@ export default function CoachesBrowseClient({ initialCoaches, viewerLoggedIn, ac
                 </p>
                 <button onClick={() => { const v = !verifiedOnly; setVerifiedOnly(v); applyFilters({ verifiedOnly: v }) }}
                   className="w-10 h-6 rounded-full transition-all relative"
-                  style={{ background: verifiedOnly ? '#2b5c3f' : 'var(--color-surface-2)' }}>
+                  style={{ background: verifiedOnly ? '#8b5cf6' : 'var(--color-surface-2)' }}>
                   <span className="absolute top-1 w-4 h-4 rounded-full bg-white transition-all"
                     style={{ left: verifiedOnly ? '1.25rem' : '0.25rem' }} />
                 </button>
@@ -366,7 +366,7 @@ export default function CoachesBrowseClient({ initialCoaches, viewerLoggedIn, ac
             </p>
             <button onClick={clearFilters}
               className="px-5 py-2.5 rounded-xl text-sm font-bold text-white"
-              style={{ background: '#2b5c3f' }}>
+              style={{ background: '#8b5cf6' }}>
               Clear filters
             </button>
           </div>
@@ -394,7 +394,7 @@ export default function CoachesBrowseClient({ initialCoaches, viewerLoggedIn, ac
                 </p>
                 <a href="/auth/signup"
                   className="inline-block px-6 py-3 rounded-xl font-bold text-sm text-white"
-                  style={{ background: '#2b5c3f' }}>
+                  style={{ background: '#8b5cf6' }}>
                   Get started free →
                 </a>
               </div>

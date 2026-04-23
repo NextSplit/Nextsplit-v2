@@ -103,7 +103,7 @@ function BugReportButton() {
                   </button>
                   <button onClick={submit} disabled={!msg.trim()}
                     className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40"
-                    style={{ background: 'var(--ns-ember)' }}>
+                    style={{ background: '#06b6d4' }}>
                     Send
                   </button>
                 </div>
@@ -154,7 +154,7 @@ export function OnboardingProgressBar({ step, character, showFinishLine = false 
           <div className="h-full rounded-full transition-all duration-500 ease-out"
             style={{
               width: `${Math.max(pct, 4)}%`,
-              background: 'linear-gradient(90deg, var(--ns-ember) 0%, #e0334f 100%)',
+              background: 'linear-gradient(90deg, #06b6d4 0%, #0891b2 100%)',
             }} />
         </div>
 

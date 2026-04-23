@@ -119,7 +119,7 @@ export function TrainingPathScreen() {
                     ? 'border-[var(--ns-ember)]'
                     : 'bg-white border-gray-100'
                 }`}
-                style={isSelected ? { background: 'var(--ns-forest-light)' } : {}}
+                style={isSelected ? { background: 'var(--ns-cyan-light)' } : {}}
               >
                 {/* Main row */}
                 <button
@@ -143,7 +143,7 @@ export function TrainingPathScreen() {
                         )}
                         {isRecommended && !isSelected && (
                           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
-                            style={{ color: 'var(--ns-ember)', background: 'var(--ns-forest-light)', border: '1px solid var(--ns-forest)30' }}>
+                            style={{ color: 'var(--ns-ember)', background: 'var(--ns-cyan-light)', border: '1px solid var(--ns-cyan)30' }}>
                             ✦ For you
                           </span>
                         )}

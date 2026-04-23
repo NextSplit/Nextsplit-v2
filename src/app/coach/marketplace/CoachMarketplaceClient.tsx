@@ -33,7 +33,7 @@ function StarRating({ rating, count }: { rating: number | null; count: number })
 
 function CompletionBar({ pct }: { pct: number | null }) {
   const val = pct ?? 0
-  const colour = val >= 70 ? '#2b5c3f' : val >= 40 ? '#f59e0b' : '#ef4444'
+  const colour = val >= 70 ? '#8b5cf6' : val >= 40 ? '#f59e0b' : '#ef4444'
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -95,7 +95,7 @@ export default function CoachMarketplaceClient({ plans, purchases, coachTier }: 
             ].map(s => (
               <div key={s.label} className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
                 <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">{s.label}</p>
-                <p className="text-lg font-black" style={{ color: 'var(--ns-forest)' }}>{s.value}</p>
+                <p className="text-lg font-black" style={{ color: 'var(--ns-violet)' }}>{s.value}</p>
                 <p className="text-[10px] text-gray-400">{s.sub}</p>
               </div>
             ))}
@@ -158,7 +158,7 @@ export default function CoachMarketplaceClient({ plans, purchases, coachTier }: 
                       <p className="text-[10px] text-gray-400">sales</p>
                     </div>
                     <div className="px-3 py-2.5 text-center">
-                      <p className="text-xs font-black" style={{ color: 'var(--ns-forest)' }}>
+                      <p className="text-xs font-black" style={{ color: 'var(--ns-violet)' }}>
                         {isPro ? `£${revenue.toFixed(0)}` : '—'}
                       </p>
                       <p className="text-[10px] text-gray-400">earned</p>
@@ -181,7 +181,7 @@ export default function CoachMarketplaceClient({ plans, purchases, coachTier }: 
                     </Link>
                     <Link href={`/coach/plan-builder?edit=${plan.id}`}
                       className="flex-1 py-3 text-center text-xs font-bold border-l border-gray-100 hover:bg-gray-50"
-                      style={{ color: 'var(--ns-forest)' }}>
+                      style={{ color: 'var(--ns-violet)' }}>
                       Edit plan
                     </Link>
                   </div>

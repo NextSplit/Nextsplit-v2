@@ -118,7 +118,7 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl flex flex-col max-h-[88dvh] max-w-lg mx-auto">
         {/* Header */}
         <div className="px-4 pt-4 pb-3 border-b border-gray-100 flex items-center gap-3 flex-shrink-0">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'var(--ns-forest-light)' }}>🏃</div>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'var(--ns-violet-light)' }}>🏃</div>
           <div className="flex-1">
             <p className="text-sm font-bold text-gray-900">{coachName}</p>
             <p className="text-xs text-gray-400">
@@ -131,7 +131,7 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 min-h-0">
-          {loading && <div className="flex justify-center py-8"><div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-[var(--ns-forest)] animate-spin" /></div>}
+          {loading && <div className="flex justify-center py-8"><div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-[var(--ns-violet)] animate-spin" /></div>}
           {!loading && items.length === 0 && (
             <div className="text-center py-8">
               <p className="text-2xl mb-2">👋</p>

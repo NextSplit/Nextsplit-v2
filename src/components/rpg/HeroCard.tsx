@@ -10,12 +10,13 @@ import {
 } from '@/lib/rpg'
 
 function HeroCard({
-  charId, stats, displayName, kitColour, charState, medal, onEditChar, onCustomise
+  charId, stats, displayName, kitColour, charState, medal, runnerColour, onEditChar, onCustomise
 }: {
   charId: string
   stats: RPGStats
   displayName: string
   kitColour: string
+  runnerColour?: string
   charState: 'idle' | 'running' | 'celebrating'
   medal: string | null
   onEditChar: () => void
@@ -40,7 +41,7 @@ function HeroCard({
 
       {/* Subtle ember/forest gradient accent at top */}
       <div className="h-1.5 w-full"
-        style={{ background: `linear-gradient(90deg, var(--ns-forest) 0%, var(--ns-ember) 60%, var(--ns-track) 100%)` }} />
+        style={{ background: `linear-gradient(90deg, ${runnerColour ?? 'var(--ns-cyan)'} 0%, var(--ns-ember) 60%, var(--ns-track) 100%)` }} />
 
       <div className="p-5">
         <div className="flex items-start gap-4">
@@ -105,7 +106,7 @@ function HeroCard({
                 <div className="h-full rounded-full transition-all duration-1000"
                   style={{
                     width: `${xpPct}%`,
-                    background: 'linear-gradient(90deg, var(--ns-forest), var(--ns-track))',
+                    background: `linear-gradient(90deg, ${runnerColour ?? 'var(--ns-cyan)'}, var(--ns-track))`,
                   }} />
               </div>
               <p className="text-[9px] mt-0.5 text-right" style={{ color: 'var(--color-text-tertiary)' }}>

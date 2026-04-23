@@ -38,7 +38,7 @@ function SliderRow({ label, emoji, value, onChange, lowLabel, highLabel }: {
       </div>
       <input type="range" min={1} max={5} step={1} value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[var(--ns-forest)]" />
+        className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[var(--ns-cyan)]" />
       <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
         <span>{lowLabel}</span><span>{highLabel}</span>
       </div>

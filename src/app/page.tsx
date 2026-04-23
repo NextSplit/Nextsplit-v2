@@ -31,20 +31,20 @@ export default function LandingPage() {
       <section className="relative pt-36 pb-24 px-5">
         {/* Background glow */}
         <div className="absolute top-40 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full blur-[100px] pointer-events-none opacity-20"
-          style={{ background: '#ff4d6d' }} />
+          style={{ background: '#06b6d4' }} />
 
         <div className="relative max-w-3xl mx-auto text-center">
           {/* Pill */}
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 text-xs font-bold border"
-            style={{ background: 'rgba(74,222,128,0.08)', borderColor: 'rgba(74,222,128,0.2)', color: '#4ade80' }}>
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#4ade80' }} />
+            style={{ background: 'rgba(6,182,212,0.1)', borderColor: 'rgba(6,182,212,0.25)', color: '#06b6d4' }}>
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#06b6d4' }} />
             500 founding spots · £7.99/mo locked in forever
           </div>
 
           <h1 className="font-black tracking-tight leading-none mb-6" style={{ fontSize: 'clamp(2.5rem, 8vw, 5rem)' }}>
             The running coach
             <br />
-            <span style={{ color: '#4ade80' }}>that reads your data.</span>
+            <span style={{ color: '#06b6d4' }}>that reads your data.</span>
           </h1>
 
           <p className="text-white/50 max-w-xl mx-auto mb-10 leading-relaxed" style={{ fontSize: '1.05rem' }}>
@@ -154,7 +154,7 @@ export default function LandingPage() {
                   'Race history',
                 ].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    <span style={{ color: '#4ade80' }}>✓</span>{f}
+                    <span style={{ color: '#06b6d4' }}>✓</span>{f}
                   </li>
                 ))}
               </ul>
@@ -186,7 +186,7 @@ export default function LandingPage() {
                   'Founding member badge',
                 ].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                    <span style={{ color: '#4ade80' }}>✓</span>{f}
+                    <span style={{ color: '#06b6d4' }}>✓</span>{f}
                   </li>
                 ))}
               </ul>

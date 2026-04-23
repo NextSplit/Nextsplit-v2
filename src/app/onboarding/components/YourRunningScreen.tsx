@@ -181,7 +181,7 @@ export function YourRunningScreen() {
                 onClick={() => setExperience(o.id)}
                 className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all`}
                 style={experience === o.id
-                  ? { background: 'var(--ns-forest-light)', borderColor: 'var(--ns-ember)' }
+                  ? { background: 'var(--ns-cyan-light)', borderColor: 'var(--ns-ember)' }
                   : { background: 'white', borderColor: '#e5e7eb' }}
               >
                 <p className={`text-sm font-bold ${experience === o.id ? 'text-white' : 'text-gray-700'}`}>{o.label}</p>

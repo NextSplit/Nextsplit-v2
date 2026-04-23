@@ -59,14 +59,14 @@ function InviteModal({ onClose }: { onClose: () => void }) {
         {!inviteUrl ? (
           <button onClick={generate} disabled={loading}
             className="w-full text-white py-4 rounded-2xl text-sm font-bold disabled:opacity-50 active:scale-95"
-            style={{ background: 'var(--ns-forest)' }}>
+            style={{ background: 'var(--ns-violet)' }}>
             {loading ? 'Generating…' : 'Generate invite link →'}
           </button>
         ) : (
           <div className="space-y-3">
             <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-600 font-mono break-all border border-gray-200">{inviteUrl}</div>
             <button onClick={copy} className={`w-full py-4 rounded-2xl text-sm font-bold text-white transition-all`}
-              style={{ background: copied ? '#10b981' : 'var(--ns-forest)' }}>
+              style={{ background: copied ? '#10b981' : 'var(--ns-violet)' }}>
               {copied ? '✓ Copied to clipboard!' : 'Copy invite link'}
             </button>
             <button onClick={generate} className="w-full py-2 text-xs text-gray-400">Generate another link</button>
@@ -128,7 +128,7 @@ function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athlet
               placeholder="Write your squad message…"
               rows={3}
               className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none resize-none"
-              style={{ outlineColor: 'var(--ns-forest)' }}
+              style={{ outlineColor: 'var(--ns-violet)' }}
             />
             <div className="space-y-1.5">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Quick templates</p>
@@ -141,7 +141,7 @@ function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athlet
             </div>
             <button onClick={send} disabled={sending || !body.trim()}
               className="w-full py-3 rounded-2xl text-white text-sm font-bold disabled:opacity-40"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-violet)' }}>
               {sending ? 'Sending…' : `Send to ${athleteCount} athlete${athleteCount !== 1 ? 's' : ''}`}
             </button>
           </>
@@ -254,7 +254,7 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
         </button>
         <a
           href={`/coach/athlete/${athlete.athlete_id}`}
-          className="flex-1 bg-[var(--ns-forest-light)] text-[var(--ns-forest)] text-xs font-semibold py-2 rounded-xl text-center active:bg-[var(--ns-forest-light)]"
+          className="flex-1 bg-[var(--ns-violet-light)] text-[var(--ns-violet)] text-xs font-semibold py-2 rounded-xl text-center active:bg-[var(--ns-violet-light)]"
         >
           📊 View data
         </a>
@@ -316,7 +316,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
               <button
                 onClick={() => setShowInvite(true)}
                 className="text-white text-sm font-bold px-4 py-2 rounded-xl active:scale-95"
-                style={{ background: 'var(--ns-forest)' }}
+                style={{ background: 'var(--ns-violet)' }}
               >
                 + Invite
               </button>
@@ -362,7 +362,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
             <button
               onClick={() => setShowInvite(true)}
               className="text-xs font-bold px-4 py-2 rounded-xl text-white"
-              style={{ background: 'var(--ns-forest)' }}
+              style={{ background: 'var(--ns-violet)' }}
             >
               Generate invite link →
             </button>
@@ -426,7 +426,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
                   <a key={a.athlete_id} href={`/coach/athlete/${a.athlete_id}`}
                     className="flex items-center gap-3 group active:opacity-70">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0"
-                      style={{ background: 'var(--ns-forest-light)' }}>
+                      style={{ background: 'var(--ns-violet-light)' }}>
                       {cls?.emoji ?? '🏃'}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -440,7 +440,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
                         <div className="h-full rounded-full transition-all"
                           style={{
                             width: `${Math.min(pct, 100)}%`,
-                            background: pct >= 100 ? '#10b981' : pct >= 60 ? 'var(--ns-forest)' : '#f59e0b',
+                            background: pct >= 100 ? '#10b981' : pct >= 60 ? 'var(--ns-violet)' : '#f59e0b',
                           }} />
                       </div>
                     </div>

@@ -86,7 +86,7 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
               <div className={`text-[11px] font-bold ${selected === t.c ? 'text-[var(--ns-ember)]' : 'text-gray-700'}`}>{t.label}</div>
               <div className="text-[9px] text-gray-400 mt-0.5 leading-tight">{t.desc}</div>
               {t.activityType && (
-                <div className="text-[8px] text-[var(--ns-forest-mid)] font-semibold mt-1">+TDEE</div>
+                <div className="text-[8px] text-[var(--ns-cyan-mid)] font-semibold mt-1">+TDEE</div>
               )}
             </button>
           ))}

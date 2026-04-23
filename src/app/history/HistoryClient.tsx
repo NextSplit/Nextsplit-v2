@@ -110,7 +110,7 @@ function ReadOnlyWeekRow({ week, logs }: { week: PlanWeek; logs: Record<string, 
               <div className="space-y-1">
                 {adHocThisWeek.map((l, i) => (
                   <div key={i} className="flex items-center gap-2 text-[10px] text-gray-500">
-                    <span className="w-4 h-4 rounded-full bg-[var(--ns-forest-light)] text-[var(--ns-ember)] flex items-center justify-center font-bold flex-shrink-0">+</span>
+                    <span className="w-4 h-4 rounded-full bg-[var(--ns-cyan-light)] text-[var(--ns-ember)] flex items-center justify-center font-bold flex-shrink-0">+</span>
                     <span className="flex-1 truncate">{l.notes ?? 'Ad-hoc session'}</span>
                     {l.duration_secs && (
                       <span className="text-gray-400 flex-shrink-0">{Math.round(l.duration_secs / 60)}min</span>

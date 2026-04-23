@@ -46,6 +46,7 @@ interface Props {
   handleUndo:       () => void
   handleLogSession: (params: { week_n: number; day_i: number; session_i: number; done: boolean; effort?: number; km?: number; notes?: string; duration_secs?: number; hr?: number; pace?: string }) => Promise<void>
   toastSuccess:     (msg: string) => void
+  runnerColour?:    string
 }
 
 export function TodayModals({
@@ -56,7 +57,7 @@ export function TodayModals({
   doneTodayCount, todaySessions,
   setModalSession, setFocusSession, setShareSession,
   setShowWeeklyShare, setShowAdHocModal, setCeremonyDismissed,
-  handleUndo, handleLogSession, toastSuccess,
+  handleUndo, handleLogSession, toastSuccess, runnerColour,
 }: Props) {
   return (
     <>
@@ -99,11 +100,11 @@ export function TodayModals({
           <div className="relative animate-slide-up">
             <span className="absolute top-0 left-1/2 w-2 h-2 rounded-sm bg-yellow-400 opacity-0" style={{ animation: 'confetti-fall-1 0.8s 0.1s ease-out forwards' }} />
             <span className="absolute top-0 left-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 opacity-0" style={{ animation: 'confetti-fall-2 0.8s 0.15s ease-out forwards' }} />
-            <span className="absolute top-0 left-1/2 w-2 h-1 rounded-sm bg-[var(--ns-forest-mid)] opacity-0" style={{ animation: 'confetti-fall-3 0.9s 0.05s ease-out forwards' }} />
+            <span className="absolute top-0 left-1/2 w-2 h-1 rounded-sm bg-[var(--ns-cyan-mid)] opacity-0" style={{ animation: 'confetti-fall-3 0.9s 0.05s ease-out forwards' }} />
             <span className="absolute top-0 left-1/2 w-1.5 h-1.5 rounded-full bg-amber-300 opacity-0" style={{ animation: 'confetti-fall-4 0.85s 0.2s ease-out forwards' }} />
             <span className="absolute top-0 left-1/2 w-1 h-2 rounded-sm bg-red-400 opacity-0" style={{ animation: 'confetti-fall-5 0.75s 0.1s ease-out forwards' }} />
             <span className="absolute top-0 left-1/2 w-2 h-1 rounded-full bg-orange-400 opacity-0" style={{ animation: 'confetti-fall-6 0.9s 0.0s ease-out forwards' }} />
-            <div className="bg-gradient-to-r from-yellow-400 to-amber-400 text-white rounded-2xl px-4 py-3 shadow-2xl">
+            <div className="rounded-2xl px-4 py-3 shadow-2xl" style={{ background: 'linear-gradient(135deg, #06b6d4, #0891b2)' }}>
               <div className="flex items-center gap-3">
                 <span className="text-3xl animate-bounce">🏆</span>
                 <div>
@@ -171,6 +172,7 @@ export function TodayModals({
           log={shareSession.log}
           weekN={weekN}
           onClose={() => setShareSession(null)}
+          runnerColour={runnerColour}
         />
       )}
 

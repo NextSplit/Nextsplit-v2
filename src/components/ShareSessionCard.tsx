@@ -28,7 +28,7 @@ function fmtDuration(secs: number | null): string {
   return `${s}s`
 }
 
-export default function ShareSessionCard({ session, log, weekN, onClose }: Props) {
+export default function ShareSessionCard({ session, log, weekN, onClose, runnerColour = '#06b6d4' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [sharing, setSharing] = useState(false)
   const cfg = getSessionType(session.c)
@@ -58,14 +58,14 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
 
       // Ember gradient bar at top
       const barGrad = ctx.createLinearGradient(0, 0, 1080, 0)
-      barGrad.addColorStop(0, '#2b5c3f')
-      barGrad.addColorStop(0.5, '#ff4d6d')
+      barGrad.addColorStop(0, '#06b6d4')
+      barGrad.addColorStop(0.5, runnerColour)
       barGrad.addColorStop(1, '#c49a3c')
       ctx.fillStyle = barGrad
       ctx.fillRect(0, 0, 1080, 12)
 
       // ── Top bar ─────────────────────────────────────────────────────────
-      ctx.fillStyle = '#2b5c3f'
+      ctx.fillStyle = '#06b6d4'
       ctx.font = 'bold 32px system-ui, -apple-system, sans-serif'
       ctx.fillText('NextSplit', 60, 80)
       ctx.fillStyle = '#9e9c97'
@@ -208,7 +208,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
         <div className="rounded-2xl overflow-hidden mb-4 relative"
           style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
           {/* Ember accent bar */}
-          <div className="h-1.5" style={{ background: 'linear-gradient(90deg, var(--ns-forest) 0%, var(--ns-ember) 60%, var(--ns-track) 100%)' }} />
+          <div className="h-1.5" style={{ background: 'linear-gradient(90deg, var(--ns-cyan) 0%, var(--ns-ember) 60%, var(--ns-track) 100%)' }} />
 
           <div className="p-5">
             {/* Top bar */}

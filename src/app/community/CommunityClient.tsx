@@ -291,7 +291,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                 <div key={item.id} className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-4">
                   <div className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-full flex items-center justify-center text-base flex-shrink-0"
-                      style={{ background: 'var(--ns-forest-light)' }}>
+                      style={{ background: 'var(--ns-cyan-light)' }}>
                       {cls?.emoji ?? '🏃'}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -548,7 +548,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                       ? 'border-2 border-[var(--ns-ember)]'
                       : 'bg-white border border-[var(--color-border)]'
                   }`}
-                  style={isMe ? { background: 'var(--ns-forest-light)' } : {}}
+                  style={isMe ? { background: 'var(--ns-cyan-light)' } : {}}
                 >
                   <div className="w-7 text-center shrink-0">
                     {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-gray-400">#{i + 1}</span>}
@@ -560,7 +560,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-bold truncate ${isMe ? '' : 'text-gray-900'}`}
-                      style={isMe ? { color: 'var(--ns-forest)' } : {}}>
+                      style={isMe ? { color: 'var(--ns-cyan)' } : {}}>
                       {name} {isMe && '(you)'}
                       {entry.is_split_leader && (
                         <span title="Split Leader" className="ml-1 inline-block leading-none">👑</span>
@@ -577,7 +577,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                     </div>
                   </div>
                   <p className={`text-sm font-black shrink-0 ${isMe ? '' : 'text-gray-700'}`}
-                    style={isMe ? { color: 'var(--ns-forest)' } : {}}>
+                    style={isMe ? { color: 'var(--ns-cyan)' } : {}}>
                     {entry.season_xp} XP
                   </p>
                 </button>

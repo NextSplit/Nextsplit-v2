@@ -208,7 +208,7 @@ export default function AdaptTestClient({ plans }: { plans: Plan[] }) {
                   onClick={() => setSelectedPlan(p.id)}
                   className={`text-xs px-3 py-2 rounded-xl border-2 font-semibold transition-all ${
                     selectedPlan === p.id
-                      ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)] text-[var(--ns-ember)]'
+                      ? 'border-[var(--ns-ember)] bg-[var(--ns-cyan-light)] text-[var(--ns-ember)]'
                       : 'border-gray-200 text-gray-600'
                   }`}
                 >
@@ -276,7 +276,7 @@ export default function AdaptTestClient({ plans }: { plans: Plan[] }) {
         <div className="mt-4 bg-white rounded-2xl border border-gray-100 p-4">
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Quick links</p>
           <div className="flex gap-3">
-            <a href="/admin/plan-review" className="text-xs font-bold hover:underline" style={{ color: 'var(--ns-forest)' }}>
+            <a href="/admin/plan-review" className="text-xs font-bold hover:underline" style={{ color: 'var(--ns-cyan)' }}>
               ← Plan quality review
             </a>
           </div>

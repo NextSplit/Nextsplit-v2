@@ -324,7 +324,7 @@ export function CharacterCreationScreen() {
             {/* Character headshot */}
             <div className="flex justify-center mb-4">
               <div className="w-24 h-24 rounded-full flex items-center justify-center overflow-hidden"
-                style={{ background: 'var(--color-surface-2)', border: '3px solid var(--ns-forest)' }}>
+                style={{ background: 'var(--color-surface-2)', border: '3px solid var(--ns-cyan)' }}>
                 <CharacterPreview config={config} size={80} />
               </div>
             </div>

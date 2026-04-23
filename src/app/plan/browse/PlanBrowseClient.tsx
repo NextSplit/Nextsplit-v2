@@ -33,9 +33,9 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
     <button onClick={onClick}
       className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all"
       style={{
-        background: active ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+        background: active ? 'var(--ns-cyan)' : 'var(--color-surface-2)',
         color:      active ? 'white' : 'var(--color-text-secondary)',
-        border:     `1px solid ${active ? 'var(--ns-forest)' : 'var(--color-border)'}`,
+        border:     `1px solid ${active ? 'var(--ns-cyan)' : 'var(--color-border)'}`,
       }}>
       {label}
     </button>
@@ -178,7 +178,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
 
           {meta.coach_notes && (
             <div className="rounded-xl p-3" style={{ background: 'var(--color-surface-2)' }}>
-              <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--ns-forest)' }}>
+              <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--ns-cyan)' }}>
                 Coach notes
               </p>
               <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
@@ -311,7 +311,7 @@ export default function PlanBrowseClient({ templates }: Props) {
               No plans match your filters.
             </p>
             <button onClick={() => { setSelectedDistance('all'); setSelectedLevel('all'); setMaxWeeks(0) }}
-              className="text-xs font-bold mt-2" style={{ color: 'var(--ns-forest)' }}>
+              className="text-xs font-bold mt-2" style={{ color: 'var(--ns-cyan)' }}>
               Clear filters
             </button>
           </div>

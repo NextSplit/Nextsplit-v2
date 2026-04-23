@@ -88,7 +88,7 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
                     <span className="text-sm shrink-0">{SESSION_EMOJI[sess.c] ?? '🏃'}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-[var(--color-surface-2)]">{sess.n}
-                        {sess.km > 0 && <span className="text-[var(--ns-forest-mid)] font-normal ml-1">{sess.km}km</span>}
+                        {sess.km > 0 && <span className="text-[var(--ns-cyan-mid)] font-normal ml-1">{sess.km}km</span>}
                       </p>
                       <p className="text-[10px] text-[var(--ns-ember)] leading-relaxed mt-0.5">{sess.det}</p>
                     </div>
@@ -118,7 +118,7 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
 
         <div className="px-4 pb-3">
           <button onClick={() => setDismissed(true)}
-            className="text-[10px] text-[var(--ns-forest-mid)] hover:text-[var(--ns-ember)]">
+            className="text-[10px] text-[var(--ns-cyan-mid)] hover:text-[var(--ns-ember)]">
             Dismiss
           </button>
         </div>

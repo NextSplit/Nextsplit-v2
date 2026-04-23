@@ -271,7 +271,7 @@ export default function PlanReviewClient() {
                     onClick={() => { setSelectedPreset(i); setUseCustom(false) }}
                     className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${
                       !useCustom && selectedPreset === i
-                        ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)] text-[var(--ns-ember)]'
+                        ? 'border-[var(--ns-ember)] bg-[var(--ns-cyan-light)] text-[var(--ns-ember)]'
                         : 'border-gray-100 text-gray-600 hover:border-gray-200'
                     }`}
                   >
@@ -283,7 +283,7 @@ export default function PlanReviewClient() {
               <button
                 onClick={() => setUseCustom(true)}
                 className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${
-                  useCustom ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)] text-[var(--ns-ember)]' : 'border-gray-100 text-gray-500'
+                  useCustom ? 'border-[var(--ns-ember)] bg-[var(--ns-cyan-light)] text-[var(--ns-ember)]' : 'border-gray-100 text-gray-500'
                 }`}
               >
                 Custom profile →
@@ -377,7 +377,7 @@ export default function PlanReviewClient() {
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-xs font-bold" style={{ color: 'var(--ns-forest)' }}>
+                          <span className="text-xs font-bold" style={{ color: 'var(--ns-cyan)' }}>
                             {week.targetKm}km
                           </span>
                           <span className="text-gray-400 text-sm">{expandedWeek === wi ? '−' : '+'}</span>
@@ -425,7 +425,7 @@ export default function PlanReviewClient() {
 
             {generating && (
               <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-                <div className="w-8 h-8 rounded-full border-2 border-gray-100 border-t-[var(--ns-forest)] animate-spin mx-auto mb-3" />
+                <div className="w-8 h-8 rounded-full border-2 border-gray-100 border-t-[var(--ns-cyan)] animate-spin mx-auto mb-3" />
                 <p className="text-sm text-gray-500">Generating plan…</p>
               </div>
             )}

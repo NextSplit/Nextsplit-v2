@@ -112,7 +112,7 @@ export default function ProfileClient({
   const [profileTab, setProfileTab] = useState<'character' | 'stats' | 'records'>('character')
   const [badgeToast, setBadgeToast] = useState<RPGBadge | null>(null)
   const [seenBadgeIds, setSeenBadgeIds] = useState<string[]>([])
-  const [kitColour, setKitColour] = useState('var(--ns-forest)')
+  const [kitColour, setKitColour] = useState('var(--ns-cyan)')
   const [showCustomiser, setShowCustomiser] = useState(false)
 
   // Runner class state
@@ -422,6 +422,7 @@ export default function ProfileClient({
             stats={rpgStats}
             displayName={heroDisplayName}
             kitColour={kitColour}
+            runnerColour={(profile as { runner_colour?: string })?.runner_colour ?? '#06b6d4'}
             charState={charState}
             medal={medal}
             onEditChar={() => setShowCharSelect(true)}
@@ -435,7 +436,7 @@ export default function ProfileClient({
             <p className="text-xs font-bold mb-3" style={{ color: "var(--color-text-secondary)" }}>Kit colour</p>
             <div className="flex gap-2 flex-wrap">
               {[
-                { hex: 'var(--ns-forest)', label: 'Teal' },
+                { hex: 'var(--ns-cyan)', label: 'Teal' },
                 { hex: '#F97316', label: 'Orange' },
                 { hex: '#DC2626', label: 'Red' },
                 { hex: '#2563EB', label: 'Blue' },
@@ -476,10 +477,10 @@ export default function ProfileClient({
             <div className="rounded-2xl px-4 py-3 flex items-start gap-3" style={{ background: 'var(--ns-ember-light)', border: '1px solid rgba(232,93,38,0.15)' }}>
               <span className="text-xl mt-0.5">🌅</span>
               <div className="flex-1">
-                <p className="text-sm font-bold leading-snug" style={{ color: 'var(--ns-forest)' }}>
+                <p className="text-sm font-bold leading-snug" style={{ color: 'var(--ns-cyan)' }}>
                   {copy.headline}
                 </p>
-                <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--ns-forest)', opacity: 0.7 }}>
+                <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--ns-cyan)', opacity: 0.7 }}>
                   {copy.sub}
                 </p>
                 {phase === 'ready' && (
@@ -525,7 +526,7 @@ export default function ProfileClient({
                 href={`/u/${encodeURIComponent(displayName)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[11px] font-semibold text-[var(--ns-ember)] bg-[var(--ns-forest-light)] border border-teal-100 px-3 py-1.5 rounded-xl"
+                className="text-[11px] font-semibold text-[var(--ns-ember)] bg-[var(--ns-cyan-light)] border border-teal-100 px-3 py-1.5 rounded-xl"
               >
                 Preview →
               </a>

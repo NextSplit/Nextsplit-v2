@@ -63,7 +63,7 @@ function Toggle({ value, onChange, label, sub }: { value: boolean; onChange: (v:
       </div>
       <button onClick={() => onChange(!value)}
         className="w-10 h-6 rounded-full transition-all relative flex-shrink-0 ml-3"
-        style={{ background: value ? '#2b5c3f' : 'var(--color-surface-2)' }}>
+        style={{ background: value ? '#8b5cf6' : 'var(--color-surface-2)' }}>
         <span className="absolute top-1 w-4 h-4 rounded-full bg-white transition-all"
           style={{ left: value ? '1.25rem' : '0.25rem' }} />
       </button>
@@ -159,7 +159,7 @@ export default function CoachSettingsClient({ coach, activeAthletes, isCoachPro 
           </div>
           <button onClick={save} disabled={saving}
             className="px-4 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-50 active:scale-95"
-            style={{ background: saved ? '#059669' : '#2b5c3f' }}>
+            style={{ background: saved ? '#059669' : '#8b5cf6' }}>
             {saved ? '✓ Saved' : saving ? 'Saving…' : 'Save'}
           </button>
         </div>
@@ -217,7 +217,7 @@ export default function CoachSettingsClient({ coach, activeAthletes, isCoachPro 
               </p>
               <span className="text-xs font-bold px-2 py-0.5 rounded-full"
                 style={{
-                  background: isFull ? '#ff4d6d20' : '#2b5c3f20',
+                  background: isFull ? '#ff4d6d20' : '#8b5cf620',
                   color:      isFull ? '#ff4d6d' : '#4ade80',
                 }}>
                 {isFull ? 'Full' : `${maxAthletes - activeAthletes} slots open`}
@@ -225,7 +225,7 @@ export default function CoachSettingsClient({ coach, activeAthletes, isCoachPro 
             </div>
             <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-3)' }}>
               <div className="h-full rounded-full transition-all"
-                style={{ width: `${capacityPct}%`, background: isFull ? '#ff4d6d' : '#2b5c3f' }} />
+                style={{ width: `${capacityPct}%`, background: isFull ? '#ff4d6d' : '#8b5cf6' }} />
             </div>
           </div>
 
@@ -241,8 +241,8 @@ export default function CoachSettingsClient({ coach, activeAthletes, isCoachPro 
                   disabled={isLocked}
                   className="w-full flex items-center justify-between rounded-xl px-4 py-3 transition-all text-left"
                   style={{
-                    background: isActive ? '#2b5c3f20' : 'var(--color-surface-2)',
-                    border: `1px solid ${isActive ? '#2b5c3f60' : 'transparent'}`,
+                    background: isActive ? '#8b5cf620' : 'var(--color-surface-2)',
+                    border: `1px solid ${isActive ? '#8b5cf660' : 'transparent'}`,
                     opacity: isLocked && !isActive ? 0.5 : 1,
                   }}>
                   <div>

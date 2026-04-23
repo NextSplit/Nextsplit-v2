@@ -39,7 +39,7 @@ export default function CookieConsentBanner() {
           {/* Icon + heading */}
           <div className="flex items-start gap-3 mb-3">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'var(--ns-forest-light)' }}>
+              style={{ background: 'var(--ns-cyan-light)' }}>
               <span className="text-base">🍪</span>
             </div>
             <div>

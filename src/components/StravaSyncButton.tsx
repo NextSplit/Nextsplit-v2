@@ -155,7 +155,7 @@ function ImportModal({ activity, session, onConfirm, onCancel }: ImportModalProp
           <input
             type="range" min={1} max={10} value={effort}
             onChange={e => setEffort(Number(e.target.value))}
-            className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[var(--ns-forest)]"
+            className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[var(--ns-cyan)]"
           />
           <p className="text-[10px] text-gray-400 mt-1">
             {activity.avg_hr ? `Estimated from HR (${Math.round(activity.avg_hr)}bpm)` : 'Adjust if needed'}

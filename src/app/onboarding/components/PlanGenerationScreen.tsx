@@ -329,7 +329,7 @@ export function PlanGenerationScreen() {
 
   const cfg = data.characterConfig
   const skin = { 'tone-1': '#FDDBB4','tone-2': '#F1C27D','tone-3': '#E0AC69','tone-4': '#C68642','tone-5': '#8D5524','tone-6': '#4A2912' }[cfg.skinTone] ?? '#E0AC69'
-  const kit  = cfg.kitColour ?? '#2b5c3f'
+  const kit  = cfg.kitColour ?? '#06b6d4'
   const hair = cfg.hairColour ?? '#3b2314'
   const shoe = cfg.shoeColour ?? '#1e293b'
 
@@ -339,7 +339,7 @@ export function PlanGenerationScreen() {
       {/* Running track */}
       <div className="w-full max-w-xs mb-10 relative" style={{ height: 80 }}>
         {/* Track surface */}
-        <div className="absolute bottom-6 left-0 right-0 h-3 rounded-full" style={{ background: '#1a3520', border: '1px solid #2b5c3f40' }} />
+        <div className="absolute bottom-6 left-0 right-0 h-3 rounded-full" style={{ background: '#1a3520', border: '1px solid #06b6d440' }} />
         {/* Lane lines */}
         <div className="absolute bottom-7 left-0 right-0 flex gap-2 px-4">
           {Array.from({length: 16}).map((_,i) => <div key={i} className="flex-1 h-1 rounded-full" style={{ background: 'rgba(43,92,63,0.3)' }} />)}
@@ -420,7 +420,7 @@ export function PlanGenerationScreen() {
 
       <div className="w-full max-w-xs bg-white/10 rounded-full h-1.5 overflow-hidden mb-4">
         <div
-          className="h-full rounded-full transition-all duration-300 ease-out" style={{ background: "var(--ns-ember)", width: `${progress}%` }}
+          className="h-full rounded-full transition-all duration-300 ease-out" style={{ background: "#06b6d4", width: `${progress}%` }}
         />
       </div>
 

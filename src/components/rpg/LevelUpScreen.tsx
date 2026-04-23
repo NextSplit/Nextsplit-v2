@@ -69,7 +69,7 @@ function LevelUpScreen({
         <div className="text-white text-6xl font-black mb-1 animate-level-in">
           Lv.{level}
         </div>
-        <div className="text-[var(--ns-forest-light)] text-lg font-bold mb-5">{rpgLevel?.name}</div>
+        <div className="text-[var(--ns-magenta-light)] text-lg font-bold mb-5">{rpgLevel?.name}</div>
 
         {/* Character at new level */}
         <div className="flex justify-center mb-4">

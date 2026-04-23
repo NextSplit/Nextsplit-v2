@@ -100,7 +100,7 @@ function ButtonRow({ label, sublabel, buttonLabel, onClick, danger, disabled }: 
         className={`text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40 transition-all ${
           danger
             ? 'text-red-500 bg-red-50 border border-red-200 hover:bg-red-100'
-            : 'text-[var(--ns-ember)] bg-[var(--ns-forest-light)] border border-green-100 hover:bg-green-100'
+            : 'text-[var(--ns-ember)] bg-[var(--ns-cyan-light)] border border-green-100 hover:bg-green-100'
         }`}
         aria-label={buttonLabel}
       >
@@ -320,7 +320,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
 
   if (!isPro) {
     return (
-      <div className="bg-[var(--ns-forest-light)] rounded-2xl p-4 space-y-2">
+      <div className="bg-[var(--ns-cyan-light)] rounded-2xl p-4 space-y-2">
         <div className="flex items-center gap-2">
           <span className="text-lg">👥</span>
           <p className="text-sm font-bold text-[var(--ns-ember)]">Split Leader</p>
@@ -338,7 +338,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
 
   return (
     <div className="space-y-3">
-      <div className="bg-[var(--ns-forest-light)] rounded-2xl p-4">
+      <div className="bg-[var(--ns-cyan-light)] rounded-2xl p-4">
         <div className="flex items-start gap-3 mb-3">
           <span className="text-2xl">👥</span>
           <div>
@@ -417,6 +417,73 @@ function ProCoachSection({ coachTier, isPro }: { coachTier: string | null; isPro
       >
         {isLeader ? 'Apply to become a Pro Coach →' : 'Learn more about Pro Coach →'}
       </button>
+    </div>
+  )
+}
+
+
+// ─── Runner Colour Picker ─────────────────────────────────────────────────────
+
+const RUNNER_COLOURS = [
+  { hex: '#06b6d4', name: 'Cyan'    },
+  { hex: '#ff4d6d', name: 'Coral'   },
+  { hex: '#8b5cf6', name: 'Violet'  },
+  { hex: '#84cc16', name: 'Lime'    },
+  { hex: '#f0a500', name: 'Amber'   },
+  { hex: '#2563eb', name: 'Cobalt'  },
+  { hex: '#ec4899', name: 'Magenta' },
+  { hex: '#f97316', name: 'Orange'  },
+  { hex: '#14b8a6', name: 'Teal'    },
+  { hex: '#ef4444', name: 'Red'     },
+  { hex: '#a3e635', name: 'Acid'    },
+  { hex: '#e879f9', name: 'Fuchsia' },
+]
+
+function RunnerColourPicker({ value, onChange }: { value: string; onChange: (c: string) => void }) {
+  return (
+    <div className="px-4 py-4">
+      <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>
+        Your runner colour
+      </div>
+      <div className="text-[11px] mb-3" style={{ color: 'var(--color-text-tertiary)' }}>
+        Shows on your profile card, share cards, and squad.
+      </div>
+      <div className="flex flex-wrap gap-3">
+        {RUNNER_COLOURS.map(c => (
+          <button
+            key={c.hex}
+            onClick={() => onChange(c.hex)}
+            aria-label={c.name}
+            className="relative w-8 h-8 rounded-full transition-all active:scale-90"
+            style={{
+              background: c.hex,
+              boxShadow: value === c.hex
+                ? \`0 0 0 3px var(--color-surface), 0 0 0 5px \${c.hex}\`
+                : '0 2px 6px rgba(0,0,0,0.15)',
+            }}
+          >
+            {value === c.hex && (
+              <span className="absolute inset-0 flex items-center justify-center text-white text-sm font-black">✓</span>
+            )}
+          </button>
+        ))}
+      </div>
+      {/* Preview */}
+      <div className="mt-4 rounded-xl px-4 py-3 flex items-center gap-3 border"
+        style={{ background: \`\${value}10\`, borderColor: \`\${value}30\` }}>
+        <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg border-2"
+          style={{ borderColor: value, background: \`\${value}15\` }}>
+          🏃
+        </div>
+        <div>
+          <div className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Preview</div>
+          <div className="text-xs" style={{ color: value }}>Your profile colour</div>
+        </div>
+        <div className="ml-auto text-xs font-bold px-3 py-1 rounded-full text-white"
+          style={{ background: value }}>
+          Active
+        </div>
+      </div>
     </div>
   )
 }
@@ -507,6 +574,14 @@ export default function SettingsClient({ email, initialProfile }: Props) {
       setThemePreference('text_size', val)
       success('Text size updated')
     } catch { toastError('Failed to update text size') }
+  }
+
+
+  async function saveRunnerColour(val: string) {
+    try {
+      await updateProfile({ runner_colour: val } as never)
+      success('Runner colour updated')
+    } catch { toastError('Failed to update colour') }
   }
 
   async function saveNotifications(val: boolean) {
@@ -670,7 +745,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
         {plan && (
           <Section title="Current Plan">
             <SettingRow label={plan.name} sublabel={`Week ${plan.current_week} of ${plan.total_weeks}`}>
-              <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-[var(--ns-forest-light)] text-[var(--ns-ember)]">Active</span>
+              <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-[var(--ns-cyan-light)] text-[var(--ns-ember)]">Active</span>
             </SettingRow>
 
             {/* Reset */}
@@ -754,6 +829,12 @@ export default function SettingsClient({ email, initialProfile }: Props) {
             ]}
             onChange={saveTextSize}
           />
+          <div className="border-t" style={{ borderColor: 'var(--color-border)' }}>
+            <RunnerColourPicker
+              value={(p as { runner_colour?: string })?.runner_colour ?? '#06b6d4'}
+              onChange={saveRunnerColour}
+            />
+          </div>
         </Section>
 
         {/* ── Notifications ── */}

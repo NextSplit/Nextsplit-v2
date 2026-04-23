@@ -55,7 +55,7 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
         <polyline
           points={points}
           fill="none"
-          stroke="var(--ns-forest)"
+          stroke="var(--ns-cyan)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -63,7 +63,7 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
         {paceData.map((d, i) => {
           const x = (i / (paceData.length - 1)) * w
           const y = h - ((d.pace - minPace) / range) * h
-          return <circle key={i} cx={x} cy={y} r="3" fill="var(--ns-forest)" />
+          return <circle key={i} cx={x} cy={y} r="3" fill="var(--ns-cyan)" />
         })}
       </svg>
 

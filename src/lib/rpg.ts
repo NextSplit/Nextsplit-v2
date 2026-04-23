@@ -44,7 +44,7 @@ export const RUNNER_CLASSES: Record<RunnerClassId, RunnerClass> = {
     emoji: '🏁',
     tagline: 'Built for the long game.',
     description: 'High weekly mileage at controlled effort. Long runs are your signature session. You understand that endurance is built in months, not weeks.',
-    colour: '#2b5c3f',
+    colour: '#06b6d4',
     bg: 'bg-emerald-50',
     textColour: 'text-emerald-800',
     shareText: 'NextSplit classified me as a Marathon Runner. Long runs are my thing. 🏁',
@@ -283,10 +283,10 @@ export interface RPGChar {
 }
 
 export const RPG_CHARS: RPGChar[] = [
-  { id: 'm1', label: 'Alex',   skin: '#FFCC99', hair: '#3E2723', body: 'lean',   accent: 'var(--ns-forest)', specialty: 'Endurance specialist' },
+  { id: 'm1', label: 'Alex',   skin: '#FFCC99', hair: '#3E2723', body: 'lean',   accent: 'var(--ns-cyan)', specialty: 'Endurance specialist' },
   { id: 'm2', label: 'Marcus', skin: '#8D5524', hair: '#1a1a1a', body: 'stocky', accent: '#DC2626', specialty: 'Power athlete' },
   { id: 'm3', label: 'Kai',    skin: '#F1C27D', hair: '#4E342E', body: 'tall',   accent: '#7C3AED', specialty: 'Versatile runner' },
-  { id: 'f1', label: 'Sarah',  skin: '#FFCC99', hair: '#5D4037', body: 'lean',   accent: 'var(--ns-forest)', specialty: 'Marathon machine' },
+  { id: 'f1', label: 'Sarah',  skin: '#FFCC99', hair: '#5D4037', body: 'lean',   accent: 'var(--ns-cyan)', specialty: 'Marathon machine' },
   { id: 'f2', label: 'Amara',  skin: '#8D5524', hair: '#1a1a1a', body: 'lean',   accent: '#F59E0B', specialty: 'Speed merchant' },
   { id: 'f3', label: 'Yuki',   skin: '#F1C27D', hair: '#212121', body: 'tall',   accent: '#06B6D4', specialty: 'Trail specialist' },
 ]

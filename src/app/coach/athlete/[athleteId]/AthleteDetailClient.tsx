@@ -52,7 +52,7 @@ function Sparkline({ values, colour }: { values: number[]; colour: string }) {
 }
 
 function WeeklyACWRBar({ week, acwr }: { week: number; acwr: number }) {
-  const colour = acwr > 1.3 ? '#ef4444' : acwr < 0.8 ? '#f59e0b' : '#2b5c3f'
+  const colour = acwr > 1.3 ? '#ef4444' : acwr < 0.8 ? '#f59e0b' : '#8b5cf6'
   const height = Math.min(Math.round(acwr * 30), 60)
   return (
     <div className="flex flex-col items-center gap-1">
@@ -242,19 +242,19 @@ export default function AthleteDetailClient({
                   value: latestACWR?.toFixed(2) ?? '—',
                   colour: latestACWR === null ? '#9ca3af'
                     : latestACWR > 1.3 ? '#ef4444'
-                    : latestACWR < 0.8 ? '#f59e0b' : '#2b5c3f',
+                    : latestACWR < 0.8 ? '#f59e0b' : '#8b5cf6',
                   sub: latestACWR === null ? '' : latestACWR > 1.3 ? 'High load' : latestACWR < 0.8 ? 'Low load' : 'Good zone',
                 },
                 {
                   label: 'This week',
                   value: `${thisWeekLogs.length} sessions`,
-                  colour: '#2b5c3f',
+                  colour: '#8b5cf6',
                   sub: `${thisWeekLogs.reduce((s, l) => s + (l.km ?? 0), 0).toFixed(0)}km`,
                 },
                 {
                   label: '12-week km',
                   value: `${doneLogs.reduce((s, l) => s + (l.km ?? 0), 0).toFixed(0)}`,
-                  colour: '#2b5c3f',
+                  colour: '#8b5cf6',
                   sub: 'total km',
                 },
               ].map(m => (
@@ -323,7 +323,7 @@ export default function AthleteDetailClient({
                       <div key={i} className="space-y-2">
                         <div className="flex items-start gap-2">
                           <div className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs"
-                            style={{ background: 'var(--ns-forest-light)', color: 'var(--ns-forest)' }}>
+                            style={{ background: 'var(--ns-violet-light)', color: 'var(--ns-violet)' }}>
                             ✓
                           </div>
                           <div className="flex-1 min-w-0">
@@ -344,7 +344,7 @@ export default function AthleteDetailClient({
                               onClick={() => sendReaction(key, r.id)}
                               className={`text-base px-2 py-1 rounded-xl border transition-all ${
                                 reacted === r.id
-                                  ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)] scale-110'
+                                  ? 'border-[var(--ns-ember)] bg-[var(--ns-violet-light)] scale-110'
                                   : 'border-gray-100 hover:border-gray-200 bg-white'
                               }`}
                               title={r.label}
@@ -394,7 +394,7 @@ export default function AthleteDetailClient({
                           onClick={() => sendReaction(key, r.id)}
                           className={`text-sm px-1.5 py-1 rounded-lg border transition-all ${
                             reactions[key] === r.id
-                              ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)]'
+                              ? 'border-[var(--ns-ember)] bg-[var(--ns-violet-light)]'
                               : 'border-gray-100 bg-white'
                           }`}
                           title={r.label}
@@ -448,7 +448,7 @@ export default function AthleteDetailClient({
 
             {/* Compose */}
             {sentMsg ? (
-              <div className="rounded-2xl px-4 py-3 text-center" style={{ background: '#2b5c3f20', border: '1px solid #2b5c3f40' }}>
+              <div className="rounded-2xl px-4 py-3 text-center" style={{ background: '#8b5cf620', border: '1px solid #8b5cf640' }}>
                 <p className="text-sm font-bold" style={{ color: '#4ade80' }}>Message sent ✓</p>
               </div>
             ) : (
@@ -528,7 +528,7 @@ export default function AthleteDetailClient({
                   onClick={sendMessage}
                   disabled={sendingMsg || !messageBody.trim()}
                   className="w-full py-3 rounded-2xl text-white text-sm font-bold disabled:opacity-40 transition-all active:scale-95"
-                  style={{ background: '#2b5c3f' }}
+                  style={{ background: '#8b5cf6' }}
                 >
                   {sendingMsg ? 'Sending…' : 'Send message'}
                 </button>

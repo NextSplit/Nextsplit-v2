@@ -64,7 +64,7 @@ function PlanDetailModal({
           <div className="flex items-center gap-2 flex-wrap mb-3">
             {plan.author_type === 'nextsplit' && (
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border"
-                style={{ color: 'var(--ns-forest)', background: 'var(--ns-forest-light)', borderColor: 'var(--ns-forest)30' }}>
+                style={{ color: 'var(--ns-cyan)', background: 'var(--ns-cyan-light)', borderColor: 'var(--ns-cyan)30' }}>
                 ✦ NextSplit Official
               </span>
             )}
@@ -85,7 +85,7 @@ function PlanDetailModal({
             <h2 className="text-xl font-black text-gray-900 leading-tight">{plan.name}</h2>
             <div className="text-right shrink-0">
               {isFree || plan.author_type === 'nextsplit' ? (
-                <p className="text-lg font-black" style={{ color: 'var(--ns-forest)' }}>Free</p>
+                <p className="text-lg font-black" style={{ color: 'var(--ns-cyan)' }}>Free</p>
               ) : plan.owned ? (
                 <p className="text-base font-bold text-emerald-600">Owned ✓</p>
               ) : (
@@ -103,7 +103,7 @@ function PlanDetailModal({
               className="flex items-center gap-2 mb-4 group"
               onClick={e => e.stopPropagation()}>
               <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm"
-                style={{ background: 'var(--ns-forest-light)' }}>🏃</div>
+                style={{ background: 'var(--ns-cyan-light)' }}>🏃</div>
               <div>
                 <span className="text-xs font-semibold text-gray-700 group-hover:underline">
                   {plan.coach.display_name}
@@ -163,7 +163,7 @@ function PlanDetailModal({
                 <div className="bg-gray-50 rounded-2xl p-3 text-center">
                   <p className="text-xs text-gray-500">
                     Paid plans require a NextSplit account.{' '}
-                    <a href="/profile" className="font-bold" style={{ color: 'var(--ns-forest)' }}>
+                    <a href="/profile" className="font-bold" style={{ color: 'var(--ns-cyan)' }}>
                       Upgrade →
                     </a>
                   </p>
@@ -205,7 +205,7 @@ function PlanCard({ plan, onClick }: { plan: MarketplacePlan; onClick: () => voi
           <div className="flex items-center gap-1.5 flex-wrap">
             {plan.author_type === 'nextsplit' && (
               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                style={{ color: 'var(--ns-forest)', background: 'var(--ns-forest-light)' }}>
+                style={{ color: 'var(--ns-cyan)', background: 'var(--ns-cyan-light)' }}>
                 ✦ Official
               </span>
             )}
@@ -228,7 +228,7 @@ function PlanCard({ plan, onClick }: { plan: MarketplacePlan; onClick: () => voi
         </div>
         <div className="text-right shrink-0">
           <p className={`text-base font-black ${isFree ? '' : 'text-gray-900'}`}
-            style={isFree ? { color: 'var(--ns-forest)' } : {}}>
+            style={isFree ? { color: 'var(--ns-cyan)' } : {}}>
             {isFree ? 'Free' : `£${plan.price_gbp}`}
           </p>
         </div>
@@ -238,7 +238,7 @@ function PlanCard({ plan, onClick }: { plan: MarketplacePlan; onClick: () => voi
       {plan.coach && (
         <div className="flex items-center gap-1.5 text-xs text-gray-500">
           <div className="w-4 h-4 rounded-full flex items-center justify-center text-[10px]"
-            style={{ background: 'var(--ns-forest-light)' }}>🏃</div>
+            style={{ background: 'var(--ns-cyan-light)' }}>🏃</div>
           {plan.coach.display_name}
         </div>
       )}
@@ -303,7 +303,7 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
             <button
               onClick={() => router.push('/coach/plan-builder')}
               className="text-xs font-bold px-3 py-1.5 rounded-xl border transition-all"
-              style={{ color: 'var(--ns-forest)', borderColor: 'var(--ns-forest)' }}
+              style={{ color: 'var(--ns-cyan)', borderColor: 'var(--ns-cyan)' }}
             >
               + Publish a plan
             </button>
@@ -314,9 +314,9 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
             {(['browse', 'purchased'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
                 className={`flex-1 py-2.5 text-xs font-bold capitalize border-b-2 transition-all ${
-                  tab === t ? 'border-b-[var(--ns-forest)] text-[var(--ns-ember)]' : 'border-transparent text-gray-400'
+                  tab === t ? 'border-b-[var(--ns-cyan)] text-[var(--ns-ember)]' : 'border-transparent text-gray-400'
                 }`}
-                style={tab === t ? { borderBottomColor: 'var(--ns-forest)', color: 'var(--ns-forest)' } : {}}>
+                style={tab === t ? { borderBottomColor: 'var(--ns-cyan)', color: 'var(--ns-cyan)' } : {}}>
                 {t === 'browse' ? '🔍 Browse' : '✓ My Plans'}
               </button>
             ))}
@@ -336,7 +336,7 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
                 <button key={d} onClick={() => setDistance(d)}
                   className="px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all flex-shrink-0"
                   style={distance === d
-                    ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-forest)' }
+                    ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-cyan)' }
                     : { background: 'white', color: '#6b7280', borderColor: '#e5e7eb' }}>
                   {d}
                 </button>
@@ -370,7 +370,7 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
             {tab === 'purchased' && (
               <button onClick={() => setTab('browse')}
                 className="mt-3 text-xs font-bold underline"
-                style={{ color: 'var(--ns-forest)' }}>
+                style={{ color: 'var(--ns-cyan)' }}>
                 Browse plans →
               </button>
             )}

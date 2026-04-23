@@ -30,7 +30,7 @@ interface Particle {
   life:   number
 }
 
-const COLORS = ['#ff4d6d', '#c49a3c', '#2b5c3f', '#4ade80', '#f59e0b', '#60a5fa']
+const COLORS = ['#ff4d6d', '#c49a3c', '#06b6d4', '#4ade80', '#f59e0b', '#60a5fa']
 
 export default function FirstSessionCelebration({ totalDone, displayName, xp }: Props) {
   const [show, setShow]           = useState(false)

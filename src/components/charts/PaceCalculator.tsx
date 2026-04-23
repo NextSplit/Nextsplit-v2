@@ -22,7 +22,7 @@ function PaceCalculator() {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-      <div className="bg-gradient-to-r from-[var(--ns-forest)] to-[#0891B2] px-5 py-4">
+      <div className="bg-gradient-to-r from-[var(--ns-cyan)] to-[#0891B2] px-5 py-4">
         <div className="text-xs font-semibold text-orange-50 uppercase tracking-wide mb-1">Pace Calculator</div>
         <div className="text-white font-bold text-sm">Race time ↔ min/km pace</div>
       </div>

@@ -140,7 +140,7 @@ export function PlanPreviewScreen() {
       <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-12 pb-8 text-center">
         <div className="text-4xl mb-3">🎉</div>
         <h1 className="text-2xl font-black text-white">Your plan is ready</h1>
-        <p className="text-[var(--ns-forest-light)] text-sm mt-1">
+        <p className="text-[var(--ns-cyan-light)] text-sm mt-1">
           Welcome to NextSplit, @{data.handle}
         </p>
       </div>

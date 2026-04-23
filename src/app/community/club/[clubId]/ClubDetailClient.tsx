@@ -93,14 +93,14 @@ export default function ClubDetailClient({ club, membership, members, feed, user
             </div>
             {(isOwner || membership) && (
               <button onClick={() => setShowCode(!showCode)}
-                className="text-xs bg-[var(--color-surface-2)] border border-[var(--ns-forest-light)] text-[var(--ns-ember)] px-3 py-1.5 rounded-xl font-bold">
+                className="text-xs bg-[var(--color-surface-2)] border border-[var(--ns-cyan-light)] text-[var(--ns-ember)] px-3 py-1.5 rounded-xl font-bold">
                 Invite
               </button>
             )}
           </div>
 
           {showCode && (
-            <div className="bg-[var(--color-surface-2)] border border-[var(--ns-forest-light)] rounded-2xl p-3 space-y-2">
+            <div className="bg-[var(--color-surface-2)] border border-[var(--ns-cyan-light)] rounded-2xl p-3 space-y-2">
               <p className="text-xs text-[var(--ns-ember)] font-semibold">Share this code to invite members:</p>
               <div className="flex items-center gap-2">
                 <code className="flex-1 text-center text-2xl font-black text-teal-800 tracking-widest">{club.join_code}</code>
@@ -142,7 +142,7 @@ export default function ClubDetailClient({ club, membership, members, feed, user
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-bold truncate ${isMe ? 'text-teal-800' : 'text-gray-900'}`}>
                       {name} {isMe && '(you)'}
-                      {m.role === 'owner' && <span className="ml-1 text-[10px] text-[var(--ns-forest-mid)]">Owner</span>}
+                      {m.role === 'owner' && <span className="ml-1 text-[10px] text-[var(--ns-cyan-mid)]">Owner</span>}
                     </p>
                     <p className="text-[10px] text-gray-400">{LEAGUE_CONFIG[league]?.emoji} {m.season_xp} XP this season</p>
                   </div>

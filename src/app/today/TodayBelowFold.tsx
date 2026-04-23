@@ -106,20 +106,20 @@ export default function TodayBelowFold({
           <div className="px-4 py-3 grid grid-cols-3 gap-3 border-b border-teal-100/30">
             <div className="text-center">
               <div className="text-lg font-black text-teal-900">{weeklyReport.completionPct}%</div>
-              <div className="text-[10px] text-[var(--ns-forest-mid)]">sessions done</div>
-              <div className="text-[9px] text-[var(--ns-forest-mid)]">{weeklyReport.sessionsDone}/{weeklyReport.sessionsPlanned}</div>
+              <div className="text-[10px] text-[var(--ns-cyan-mid)]">sessions done</div>
+              <div className="text-[9px] text-[var(--ns-cyan-mid)]">{weeklyReport.sessionsDone}/{weeklyReport.sessionsPlanned}</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-black text-teal-900">{weeklyReport.kmLogged}</div>
-              <div className="text-[10px] text-[var(--ns-forest-mid)]">km logged</div>
-              <div className="text-[9px] text-[var(--ns-forest-mid)]">of {weeklyReport.kmPlanned} planned</div>
+              <div className="text-[10px] text-[var(--ns-cyan-mid)]">km logged</div>
+              <div className="text-[9px] text-[var(--ns-cyan-mid)]">of {weeklyReport.kmPlanned} planned</div>
             </div>
             <div className="text-center">
               <div className={`text-lg font-black ${vsColour}`}>
                 {vsArrow} {weeklyReport.lastWeekKm > 0 ? Math.abs(Math.round((weeklyReport.kmLogged - weeklyReport.lastWeekKm) * 10) / 10) : '—'}
               </div>
-              <div className="text-[10px] text-[var(--ns-forest-mid)]">vs prev week</div>
-              {weeklyReport.avgEffort && <div className="text-[9px] text-[var(--ns-forest-mid)]">RPE {weeklyReport.avgEffort} avg</div>}
+              <div className="text-[10px] text-[var(--ns-cyan-mid)]">vs prev week</div>
+              {weeklyReport.avgEffort && <div className="text-[9px] text-[var(--ns-cyan-mid)]">RPE {weeklyReport.avgEffort} avg</div>}
             </div>
           </div>
           {(weeklyReport.bestSession || weeklyReport.lookAheadNote) && (

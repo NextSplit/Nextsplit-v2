@@ -44,29 +44,29 @@ export function WarmingUpAvatar({ size = 64, className = '' }: AvatarProps) {
 export function MarathonRunnerAvatar({ size = 64, className = '' }: AvatarProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className}>
-      <circle cx="32" cy="32" r="28" fill="#edf4f0" />
+      <circle cx="32" cy="32" r="28" fill="#ecfeff" />
       {/* Distance markers — subtle road lines */}
       <line x1="10" y1="50" y2="50" stroke="#d1fae5" strokeWidth="2" />
       <line x1="20" y1="53" y2="53" stroke="#d1fae5" strokeWidth="1.5" />
       {/* Head */}
-      <ellipse cx="32" cy="14" rx="5.5" ry="5.5" fill="#2b5c3f" />
+      <ellipse cx="32" cy="14" rx="5.5" ry="5.5" fill="#06b6d4" />
       {/* Torso — slight forward lean */}
-      <path d="M30 19 L28 34" stroke="#2b5c3f" strokeWidth="5" strokeLinecap="round" />
+      <path d="M30 19 L28 34" stroke="#06b6d4" strokeWidth="5" strokeLinecap="round" />
       {/* Arms — efficient, compact swing */}
-      <path d="M30 22 L22 27" stroke="#2b5c3f" strokeWidth="3" strokeLinecap="round" />
-      <path d="M30 25 L38 21" stroke="#2b5c3f" strokeWidth="3" strokeLinecap="round" />
+      <path d="M30 22 L22 27" stroke="#06b6d4" strokeWidth="3" strokeLinecap="round" />
+      <path d="M30 25 L38 21" stroke="#06b6d4" strokeWidth="3" strokeLinecap="round" />
       {/* Legs — long stride */}
-      <path d="M28 34 L20 46" stroke="#2b5c3f" strokeWidth="4" strokeLinecap="round" />
-      <path d="M30 34 L38 44" stroke="#2b5c3f" strokeWidth="4" strokeLinecap="round" />
+      <path d="M28 34 L20 46" stroke="#06b6d4" strokeWidth="4" strokeLinecap="round" />
+      <path d="M30 34 L38 44" stroke="#06b6d4" strokeWidth="4" strokeLinecap="round" />
       {/* Extended trailing leg */}
-      <path d="M20 46 L16 50" stroke="#2b5c3f" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M38 44 L42 50" stroke="#2b5c3f" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M20 46 L16 50" stroke="#06b6d4" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M38 44 L42 50" stroke="#06b6d4" strokeWidth="3.5" strokeLinecap="round" />
       {/* Shoes */}
-      <ellipse cx="15" cy="51" rx="4.5" ry="2.5" fill="#2b5c3f" />
-      <ellipse cx="43" cy="51" rx="4.5" ry="2.5" fill="#2b5c3f" />
+      <ellipse cx="15" cy="51" rx="4.5" ry="2.5" fill="#06b6d4" />
+      <ellipse cx="43" cy="51" rx="4.5" ry="2.5" fill="#06b6d4" />
       {/* Race number bib */}
       <rect y="24" width="8" height="6" rx="1" fill="white" opacity="0.8" />
-      <text y="29" textAnchor="middle" fontSize="3.5" fill="#2b5c3f" fontWeight="bold">42</text>
+      <text y="29" textAnchor="middle" fontSize="3.5" fill="#06b6d4" fontWeight="bold">42</text>
     </svg>
   )
 }

@@ -59,7 +59,7 @@ export function TodayHeader({
           <div className="flex items-center gap-2.5">
             {/* NextSplit wordmark */}
             <span className="font-display text-xl tracking-tight"
-              style={{ color: 'var(--ns-forest)', letterSpacing: '-0.03em' }}>
+              style={{ color: 'var(--ns-cyan)', letterSpacing: '-0.03em' }}>
               NextSplit
             </span>
             {/* Streak pill — only if active */}
@@ -139,7 +139,7 @@ export function TodayHeader({
                   width: `${progressPct}%`,
                   background: nearEnd
                     ? 'linear-gradient(90deg, var(--ns-ember), var(--ns-ember-mid))'
-                    : 'linear-gradient(90deg, var(--ns-forest), var(--ns-forest-mid))',
+                    : 'linear-gradient(90deg, var(--ns-cyan), var(--ns-cyan-mid))',
                 }} />
             </div>
           </div>

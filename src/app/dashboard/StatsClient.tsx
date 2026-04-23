@@ -76,13 +76,13 @@ function AddRaceModal({ onClose, onAdd }: {
         <div className="mb-4">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Race name *</label>
           <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. London Marathon 2027"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
         </div>
         <div className="mb-4">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Race date *</label>
           <input type="date" value={date} onChange={e => setDate(e.target.value)}
             min={new Date().toISOString().split('T')[0]}
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
         </div>
         <div className="mb-4">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Distance</label>
@@ -96,7 +96,7 @@ function AddRaceModal({ onClose, onAdd }: {
           </div>
           <input type="number" value={distKm} onChange={e => { setDistKm(e.target.value === '' ? '' : Number(e.target.value)); setDistLabel('') }}
             placeholder="Custom km"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
         </div>
         <div className="mb-4">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Priority</label>
@@ -114,14 +114,14 @@ function AddRaceModal({ onClose, onAdd }: {
           <div className="flex items-center gap-2">
             {[['H', goalH, setGoalH], ['MM', goalM, setGoalM], ['SS', goalS, setGoalS]].map(([ph, val, set]) => (
               <input key={ph as string} value={val as string} onChange={e => (set as (v:string)=>void)(e.target.value)} placeholder={ph as string}
-                className="w-14 border border-gray-200 rounded-xl px-2 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
+                className="w-14 border border-gray-200 rounded-xl px-2 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
             ))}
           </div>
         </div>
         <div className="mb-5">
           <label className="text-xs font-semibold text-gray-600 block mb-1.5">Location (optional)</label>
           <input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. London, UK"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
         </div>
         {err && <p className="text-xs text-red-500 mb-3">{err}</p>}
         <div className="flex gap-3">
@@ -152,7 +152,7 @@ function LogResultModal({ race, onClose, onLog }: { race: Race; onClose: () => v
         <div className="flex items-center gap-2 mb-4">
           {[['H', h, setH], ['MM', m, setM], ['SS', s, setS]].map(([ph, val, set]) => (
             <input key={ph as string} value={val as string} onChange={e => (set as (v:string)=>void)(e.target.value)} placeholder={ph as string}
-              className="w-16 border border-gray-200 rounded-xl px-2 py-3 text-lg text-center font-bold focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
+              className="w-16 border border-gray-200 rounded-xl px-2 py-3 text-lg text-center font-bold focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
           ))}
         </div>
         {pace && <div className="bg-gray-50 rounded-xl px-4 py-3 flex items-center justify-between mb-3"><span className="text-xs text-gray-500">Avg pace</span><span className="text-sm font-bold text-gray-900">{pace}</span></div>}
@@ -382,8 +382,8 @@ export default function StatsClient() {
                             </p>
                             {doneSessions > 0 && (
                               <div className="mt-2 flex items-center gap-2">
-                                <div className="flex-1 h-1.5 bg-[var(--ns-forest-light)] rounded-full overflow-hidden">
-                                  <div className="h-full bg-[var(--ns-forest-mid)] rounded-full" style={{ width: `${(doneSessions / 4) * 100}%` }} />
+                                <div className="flex-1 h-1.5 bg-[var(--ns-cyan-light)] rounded-full overflow-hidden">
+                                  <div className="h-full bg-[var(--ns-cyan-mid)] rounded-full" style={{ width: `${(doneSessions / 4) * 100}%` }} />
                                 </div>
                                 <span className="text-[10px] font-semibold text-[var(--ns-ember)]">{doneSessions}/4</span>
                               </div>
@@ -440,7 +440,7 @@ export default function StatsClient() {
                           const confColour = prediction.confidence === 'high' ? 'text-emerald-500'
                             : prediction.confidence === 'medium' ? 'text-amber-500' : 'text-gray-300'
                           return (
-                            <div key={label} className={`px-4 py-3 flex items-center justify-between ${isTarget ? 'bg-[var(--ns-forest-light)]/50' : ''}`}>
+                            <div key={label} className={`px-4 py-3 flex items-center justify-between ${isTarget ? 'bg-[var(--ns-cyan-light)]/50' : ''}`}>
                               <div className="flex items-center gap-2.5">
                                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold ${isTarget ? 'bg-[var(--ns-ember)] text-white' : 'bg-gray-100 text-gray-500'}`}>
                                   {label}

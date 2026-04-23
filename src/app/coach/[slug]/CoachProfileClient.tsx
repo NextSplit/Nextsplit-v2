@@ -90,7 +90,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
   const verBadge = coach.verification_tier === 'elite'
     ? { label: '⭐ Elite Coach', bg: '#c49a3c30', color: '#c49a3c' }
     : coach.verification_tier === 'credential_verified'
-    ? { label: '✅ Credential Verified', bg: '#2b5c3f30', color: '#4ade80' }
+    ? { label: '✅ Credential Verified', bg: '#8b5cf630', color: '#4ade80' }
     : coach.verified ? { label: '✓ Listed', bg: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }
     : null
 
@@ -253,7 +253,7 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <p className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>{plan.name}</p>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
-                    style={{ background: `${LEVEL_COLOUR[plan.level] ?? '#2b5c3f'}20`, color: LEVEL_COLOUR[plan.level] ?? '#2b5c3f' }}>{plan.level}</span>
+                    style={{ background: `${LEVEL_COLOUR[plan.level] ?? '#8b5cf6'}20`, color: LEVEL_COLOUR[plan.level] ?? '#8b5cf6' }}>{plan.level}</span>
                 </div>
                 <p className="text-xs mb-2" style={{ color: 'var(--color-text-tertiary)' }}>{plan.distance} · {plan.weeks_min}{plan.weeks_max !== plan.weeks_min ? `–${plan.weeks_max}` : ''} weeks</p>
                 {plan.description && <p className="text-xs line-clamp-2" style={{ color: 'var(--color-text-secondary)' }}>{plan.description}</p>}

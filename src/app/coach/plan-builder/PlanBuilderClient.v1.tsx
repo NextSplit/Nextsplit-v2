@@ -287,7 +287,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
                   placeholder="km" />
                 <span className="text-xs text-gray-400">target km this week</span>
                 <button onClick={aiSuggestWeek} disabled={aiSuggesting}
-                  className="ml-auto text-xs bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] text-[var(--ns-ember)] px-3 py-1.5 rounded-lg font-bold disabled:opacity-50">
+                  className="ml-auto text-xs bg-[var(--ns-violet-light)] border border-[var(--ns-violet-light)] text-[var(--ns-ember)] px-3 py-1.5 rounded-lg font-bold disabled:opacity-50">
                   {aiSuggesting ? '✨ Generating…' : '✨ AI suggest week'}
                 </button>
               </div>
@@ -315,7 +315,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
                     }`}>
                     {d.slice(0, 2)}
                     {hasSessions && (
-                      <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-[var(--ns-forest-mid)]" />
+                      <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-[var(--ns-violet-mid)]" />
                     )}
                   </button>
                 )

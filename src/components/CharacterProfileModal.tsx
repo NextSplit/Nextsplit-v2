@@ -53,7 +53,7 @@ export default function CharacterProfileModal({ userId, displayName, handle, onC
     athlete?.level ?? 1,
     96,
     96,
-    cls?.colour ?? '#2b5c3f',
+    cls?.colour ?? '#06b6d4',
   )
 
   return (
@@ -65,7 +65,7 @@ export default function CharacterProfileModal({ userId, displayName, handle, onC
 
           {loading ? (
             <div className="flex justify-center py-10">
-              <div className="w-6 h-6 rounded-full border-2 border-gray-200 border-t-[var(--ns-forest)] animate-spin" />
+              <div className="w-6 h-6 rounded-full border-2 border-gray-200 border-t-[var(--ns-cyan)] animate-spin" />
             </div>
           ) : (
             <>

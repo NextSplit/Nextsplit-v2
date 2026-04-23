@@ -152,7 +152,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
 
         {/* Header */}
         <div>
-          <Link href="/today" className="text-sm font-semibold" style={{ color: 'var(--ns-forest)' }}>← Back</Link>
+          <Link href="/today" className="text-sm font-semibold" style={{ color: 'var(--ns-violet)' }}>← Back</Link>
           <h1 className="text-2xl font-black text-gray-900 mt-3">Request a bespoke plan</h1>
           <p className="text-sm text-gray-500 mt-1">
             {coachName} will use this to build a plan tailored to you. Be specific — the more detail, the better the plan.
@@ -171,7 +171,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
                     ? 'text-white border-transparent'
                     : 'border-gray-200 text-gray-600'
                 }`}
-                style={data.goal === g ? { background: 'var(--ns-ember)', borderColor: 'var(--ns-forest)' } : {}}
+                style={data.goal === g ? { background: 'var(--ns-ember)', borderColor: 'var(--ns-violet)' } : {}}
               >
                 {g}
               </button>
@@ -187,7 +187,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
               <button key={l.id}
                 onClick={() => update('level', l.id)}
                 className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all ${
-                  data.level === l.id ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)]' : 'border-gray-200'
+                  data.level === l.id ? 'border-[var(--ns-ember)] bg-[var(--ns-violet-light)]' : 'border-gray-200'
                 }`}
               >
                 <p className="text-sm font-bold text-gray-900">{l.label}</p>

@@ -125,7 +125,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               </div>
               <div className="flex-1 min-w-0 pt-1">
                 <div className="text-white font-black text-xl leading-tight">{displayName}</div>
-                <div className="text-[var(--ns-forest-light)] text-xs font-semibold mt-0.5">{level.name}</div>
+                <div className="text-[var(--ns-cyan-light)] text-xs font-semibold mt-0.5">{level.name}</div>
                 {plan && (
                   <div className="text-gray-400 text-[10px] mt-0.5">{plan.name} · W{plan.current_week}/{plan.total_weeks}</div>
                 )}
@@ -135,7 +135,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                   </div>
                   <div className="h-2.5 bg-gray-700 rounded-full overflow-hidden">
                     <div className="h-full rounded-full transition-all"
-                      style={{ width: `${progress}%`, background: 'linear-gradient(90deg, var(--ns-forest), #818cf8)' }} />
+                      style={{ width: `${progress}%`, background: 'linear-gradient(90deg, var(--ns-cyan), #818cf8)' }} />
                   </div>
                 </div>
               </div>
@@ -183,7 +183,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
             <p className="text-sm font-bold text-gray-900 mb-3">Personal Bests</p>
             <div className="grid grid-cols-2 gap-2">
               {pbs.map(pb => (
-                <div key={pb.distanceKm} className="bg-[var(--ns-forest-light)] border border-teal-100 rounded-xl p-3">
+                <div key={pb.distanceKm} className="bg-[var(--ns-cyan-light)] border border-teal-100 rounded-xl p-3">
                   <div className="text-[10px] text-[var(--ns-ember)] font-bold">
                     {Object.entries(RACE_LABELS).find(([km]) => Math.abs(Number(km) - pb.distanceKm) < 0.1)?.[1] ?? `${pb.distanceKm}km`}
                   </div>

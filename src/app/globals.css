@@ -29,6 +29,20 @@
   --ns-cobalt-light:  #eff6ff;   /* Cobalt tint */
   --ns-cobalt-mid:    #1d4ed8;   /* Cobalt dark — pressed */
 
+  /* Brand anchor */
+  --ns-cyan:          #06b6d4;   /* Brand — wordmark, landing, onboarding, brand moments */
+  --ns-cyan-light:    #ecfeff;   /* Cyan tint */
+  --ns-cyan-mid:      #0891b2;   /* Cyan dark — pressed */
+
+  /* Coach platform */
+  --ns-violet:        #8b5cf6;   /* Coach dashboard, messaging, verified badge */
+  --ns-violet-light:  #f5f3ff;   /* Violet tint */
+  --ns-violet-mid:    #7c3aed;   /* Violet dark — pressed */
+
+  /* Special moments */
+  --ns-magenta:       #ec4899;   /* Class reveal, level-up, founding badge */
+  --ns-magenta-light: #fdf2f8;   /* Magenta tint */
+
   /* ── Page & surface system — Light ── */
   --color-bg:           #f8f7f5;   /* Warm off-white page background */
   --color-surface:      #ffffff;   /* Card / sheet surface */
@@ -47,9 +61,9 @@
   --color-text-inverse:   #ffffff;   /* Text on dark/coloured backgrounds */
 
   /* ── Legacy aliases (keep for backward compat during rebuild) ── */
-  --color-brand:        var(--ns-forest);
-  --color-brand-light:  var(--ns-forest-light);
-  --color-brand-text:   var(--ns-forest-mid);
+  --color-brand:        var(--ns-cyan);
+  --color-brand-light:  var(--ns-cyan-light);
+  --color-brand-text:   var(--ns-cyan-mid);
   --ns-paper:           var(--color-bg);
   --ns-ink:             var(--color-text-primary);
   --ns-night:           #2c3e50;

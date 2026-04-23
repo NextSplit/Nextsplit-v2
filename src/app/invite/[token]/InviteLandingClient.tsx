@@ -42,7 +42,7 @@ export default function InviteLandingClient({
       {/* Hero */}
       <div className="px-6 pt-14 pb-8 text-center space-y-4">
         <div className="inline-flex items-center gap-2 bg-[var(--ns-ember)]/20 border border-[var(--ns-ember)]/30 rounded-full px-3 py-1.5 mb-2">
-          <span className="text-xs text-[var(--ns-forest-light)] font-semibold">You've been invited</span>
+          <span className="text-xs text-[var(--ns-cyan-light)] font-semibold">You've been invited</span>
         </div>
 
         {/* Coach avatar */}
@@ -61,7 +61,7 @@ export default function InviteLandingClient({
             Train with {coachName}
           </h1>
           {coachVerified && (
-            <span className="inline-flex items-center gap-1 bg-[var(--ns-ember)]/20 border border-[var(--ns-ember)]/30 text-[var(--ns-forest-light)] text-xs font-bold px-2.5 py-1 rounded-full">
+            <span className="inline-flex items-center gap-1 bg-[var(--ns-ember)]/20 border border-[var(--ns-ember)]/30 text-[var(--ns-cyan-light)] text-xs font-bold px-2.5 py-1 rounded-full">
               ✅ Verified NextSplit Coach
             </span>
           )}
@@ -84,7 +84,7 @@ export default function InviteLandingClient({
         {specialities.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {specialities.map(s => (
-              <span key={s} className="text-xs bg-[var(--ns-ember)]/20 text-[var(--ns-forest-light)] border border-[var(--ns-ember)]/30 px-2.5 py-1 rounded-full font-medium">
+              <span key={s} className="text-xs bg-[var(--ns-ember)]/20 text-[var(--ns-cyan-light)] border border-[var(--ns-ember)]/30 px-2.5 py-1 rounded-full font-medium">
                 {s}
               </span>
             ))}
@@ -124,7 +124,7 @@ export default function InviteLandingClient({
         <div className="space-y-3 pt-2">
           <button
             onClick={handleSignup}
-            className="w-full bg-[var(--ns-ember)] text-white py-4 rounded-2xl text-base font-black active:scale-95 transition-all hover:bg-[var(--ns-forest-mid)]"
+            className="w-full bg-[var(--ns-ember)] text-white py-4 rounded-2xl text-base font-black active:scale-95 transition-all hover:bg-[var(--ns-cyan-mid)]"
           >
             Join NextSplit & connect with {coachName} →
           </button>

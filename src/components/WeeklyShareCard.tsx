@@ -166,17 +166,17 @@ export default function WeeklyShareCard({
           }} />
           <div className="relative z-10 h-full flex flex-col">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[var(--ns-forest-mid)] font-black text-xs tracking-widest">NEXTSPLIT</span>
+              <span className="text-[var(--ns-cyan-mid)] font-black text-xs tracking-widest">NEXTSPLIT</span>
               <span className="text-white/40 text-[10px]">{planName}</span>
             </div>
             <div className="text-white font-black text-2xl mb-1">Week {weekN} {emoji}</div>
             <div className="h-1.5 bg-white/10 rounded-full mb-1">
-              <div className="h-full bg-[var(--ns-forest-mid)] rounded-full" style={{ width: `${pct}%` }} />
+              <div className="h-full bg-[var(--ns-cyan-mid)] rounded-full" style={{ width: `${pct}%` }} />
             </div>
             <p className="text-white/40 text-[10px] mb-4">{pct}% complete</p>
             <div className="grid grid-cols-2 gap-2 flex-1">
               {[
-                { label: 'Sessions', value: `${sessionsDone}/${sessionsPlanned}`, colour: 'text-[var(--ns-forest-light)]' },
+                { label: 'Sessions', value: `${sessionsDone}/${sessionsPlanned}`, colour: 'text-[var(--ns-cyan-light)]' },
                 { label: 'km logged', value: `${Math.round(kmLogged * 10) / 10}`, colour: 'text-emerald-300' },
                 { label: 'Streak', value: `${streak}d 🔥`, colour: 'text-orange-300' },
                 { label: 'XP earned', value: `+${xpEarned}`, colour: 'text-violet-300' },

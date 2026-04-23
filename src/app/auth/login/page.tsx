@@ -42,7 +42,7 @@ export default function LoginPage() {
           style={{ background: 'var(--ns-ember-light)', border: '1px solid rgba(232,93,38,0.2)' }}>
           <span className="text-2xl">🏃</span>
         </div>
-        <h1 className="font-display text-2xl tracking-tight" style={{ color: 'var(--ns-forest)', letterSpacing: '-0.03em' }}>NextSplit</h1>
+        <h1 className="font-display text-2xl tracking-tight" style={{ color: 'var(--ns-cyan)', letterSpacing: '-0.03em' }}>NextSplit</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
           Track. Log. Level up.
         </p>

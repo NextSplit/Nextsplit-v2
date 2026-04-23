@@ -180,7 +180,7 @@ interface SplityEmailOptions {
 }
 
 function splityEmail({ name, mood, headline, body, cta, footer }: SplityEmailOptions): string {
-  const accentColor = mood === 'urgent' ? '#ff4d6d' : mood === 'happy' ? '#c49a3c' : '#2b5c3f'
+  const accentColor = mood === 'urgent' ? '#ff4d6d' : mood === 'happy' ? '#c49a3c' : '#06b6d4'
   const splityMoodEmoji = mood === 'happy' ? '😄' : mood === 'urgent' ? '⚡' : mood === 'encouraging' ? '💪' : '👟'
 
   return `<!DOCTYPE html>
@@ -202,7 +202,7 @@ function splityEmail({ name, mood, headline, body, cta, footer }: SplityEmailOpt
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <span style="font-size:20px;font-weight:800;color:#2b5c3f;letter-spacing:-0.03em;">NextSplit</span>
+                    <span style="font-size:20px;font-weight:800;color:#06b6d4;letter-spacing:-0.03em;">NextSplit</span>
                   </td>
                   <td align="right">
                     <span style="font-size:11px;color:#9e9c97;">from Splity ${splityMoodEmoji}</span>
@@ -217,7 +217,7 @@ function splityEmail({ name, mood, headline, body, cta, footer }: SplityEmailOpt
             <td style="background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #e8e6e3;">
 
               <!-- Accent bar -->
-              <div style="height:4px;background:linear-gradient(90deg,#2b5c3f,${accentColor},#c49a3c);"></div>
+              <div style="height:4px;background:linear-gradient(90deg,#06b6d4,${accentColor},#c49a3c);"></div>
 
               <div style="padding:28px 28px 24px;">
 

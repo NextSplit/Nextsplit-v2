@@ -200,7 +200,7 @@ export default function PlanClient() {
                 width: `${(plan.current_week / plan.total_weeks) * 100}%`,
                 background: plan.current_week / plan.total_weeks >= 0.8
                   ? 'linear-gradient(90deg, var(--ns-cobalt), #ff8c5a)'
-                  : 'linear-gradient(90deg, var(--ns-forest), var(--ns-forest-mid))',
+                  : 'linear-gradient(90deg, var(--ns-cobalt), var(--ns-cobalt-mid))',
               }} />
           </div>
         </div>

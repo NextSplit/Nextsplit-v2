@@ -58,7 +58,7 @@ export default function WeeklyCoachingSummary() {
             loading
               ? 'bg-gray-100 text-gray-400'
               : generated
-              ? 'bg-[var(--ns-ember-light)] text-[var(--ns-ember)] border border-[var(--ns-forest-light)]'
+              ? 'bg-[var(--ns-ember-light)] text-[var(--ns-ember)] border border-[var(--ns-violet-light)]'
               : 'bg-[var(--ns-ember)] text-white'
           }`}
         >

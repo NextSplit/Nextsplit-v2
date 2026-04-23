@@ -150,7 +150,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
           {/* Step 3.5 — Rebuilding (loading) */}
           {step === 'rebuilding' && (
             <div className="text-center py-6">
-              <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-[var(--ns-forest)] animate-spin mx-auto mb-4" />
+              <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-[var(--ns-cyan)] animate-spin mx-auto mb-4" />
               <p className="text-sm font-semibold text-gray-700">Rebuilding your plan…</p>
               <p className="text-xs text-gray-400 mt-1">Looking at what moved and what's still on track</p>
             </div>

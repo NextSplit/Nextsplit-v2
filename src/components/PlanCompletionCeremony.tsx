@@ -114,7 +114,7 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
   return (
     <div
       className={`fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0'}`}
-      style={{ background: 'linear-gradient(160deg, #0f172a 0%, var(--ns-forest) 60%, #065F46 100%)' }}
+      style={{ background: 'linear-gradient(160deg, #0f172a 0%, var(--ns-magenta) 60%, #065F46 100%)' }}
     >
       {/* Confetti canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
@@ -137,7 +137,7 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-3 mb-6 w-full">
           <div className="text-white/60 text-xs uppercase tracking-wider mb-0.5">Plan finished</div>
           <div className="text-white font-bold text-base">{plan.name}</div>
-          <div className="text-[var(--ns-forest-light)] text-xs">{planDurationWeeks} weeks · {plan.goal ?? 'Running'}</div>
+          <div className="text-[var(--ns-cyan-light)] text-xs">{planDurationWeeks} weeks · {plan.goal ?? 'Running'}</div>
         </div>
 
         {/* Stats row */}
