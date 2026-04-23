@@ -177,6 +177,44 @@ body {
 .dark .text-gray-700, .dark .text-gray-600 { color: var(--color-text-secondary) !important; }
 .dark .text-gray-500, .dark .text-gray-400 { color: var(--color-text-tertiary) !important; }
 
+
+/* ─── Session card — dark mode overrides (Option A) ──────────────────────── */
+/* Light mode: full colour gradient (set inline in SessionCard.tsx)           */
+/* Dark mode:  rgba tint on dark surface, coloured accents                    */
+
+.dark .ns-session-card[data-type^="easy"]     { background: rgba(34,197,94,0.10)  !important; border: 1.5px solid rgba(34,197,94,0.25);   box-shadow: none !important; }
+.dark .ns-session-card[data-type^="tempo"]    { background: rgba(234,179,8,0.10)  !important; border: 1.5px solid rgba(234,179,8,0.25);   box-shadow: none !important; }
+.dark .ns-session-card[data-type^="interval"] { background: rgba(249,115,22,0.10) !important; border: 1.5px solid rgba(249,115,22,0.25);  box-shadow: none !important; }
+.dark .ns-session-card[data-type^="speed"]    { background: rgba(249,115,22,0.10) !important; border: 1.5px solid rgba(249,115,22,0.25);  box-shadow: none !important; }
+.dark .ns-session-card[data-type^="long"]     { background: rgba(59,130,246,0.10) !important; border: 1.5px solid rgba(59,130,246,0.25);  box-shadow: none !important; }
+.dark .ns-session-card[data-type^="recovery"] { background: rgba(74,222,128,0.10) !important; border: 1.5px solid rgba(74,222,128,0.25);  box-shadow: none !important; }
+.dark .ns-session-card[data-type^="gym"]      { background: rgba(139,92,246,0.10) !important; border: 1.5px solid rgba(139,92,246,0.25);  box-shadow: none !important; }
+.dark .ns-session-card[data-type^="rest"]     { background: rgba(156,163,175,0.08)!important; border: 1.5px solid rgba(156,163,175,0.15); box-shadow: none !important; }
+.dark .ns-session-card[data-type^="race"]     { background: rgba(236,72,153,0.10) !important; border: 1.5px solid rgba(236,72,153,0.25);  box-shadow: none !important; }
+
+/* Dark mode — text/icon colours switch from white to vivid colour */
+.dark .ns-card-bar       { background: var(--ns-cyan) !important; }
+.dark .ns-card-icon      { background: rgba(255,255,255,0.06) !important; }
+.dark .ns-card-type      { color: rgba(255,255,255,0.85) !important; }
+.dark .ns-card-km        { color: var(--color-text-tertiary) !important; }
+.dark .ns-card-title     { color: var(--color-text-primary) !important; }
+.dark .ns-card-detail    { color: var(--color-text-secondary) !important; }
+.dark .ns-card-sublabel  { color: var(--color-text-tertiary) !important; }
+.dark .ns-card-pace      { background: rgba(255,255,255,0.06) !important; color: var(--color-text-secondary) !important; }
+.dark .ns-card-pace-sub  { color: var(--color-text-tertiary) !important; }
+.dark .ns-card-done-btn  { background: var(--color-surface-2) !important; border-color: var(--color-border-2) !important; }
+
+/* Dark — left bar colour matches session type */
+.dark .ns-session-card[data-type^="easy"]     .ns-card-bar { background: #22c55e !important; }
+.dark .ns-session-card[data-type^="tempo"]    .ns-card-bar { background: #eab308 !important; }
+.dark .ns-session-card[data-type^="interval"] .ns-card-bar { background: #f97316 !important; }
+.dark .ns-session-card[data-type^="speed"]    .ns-card-bar { background: #f97316 !important; }
+.dark .ns-session-card[data-type^="long"]     .ns-card-bar { background: #3b82f6 !important; }
+.dark .ns-session-card[data-type^="recovery"] .ns-card-bar { background: #4ade80 !important; }
+.dark .ns-session-card[data-type^="gym"]      .ns-card-bar { background: #8b5cf6 !important; }
+.dark .ns-session-card[data-type^="rest"]     .ns-card-bar { background: #9ca3af !important; }
+.dark .ns-session-card[data-type^="race"]     .ns-card-bar { background: #ec4899 !important; }
+
 /* ─── Safe area ───────────────────────────────────────────────────────────── */
 .safe-area-pb { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .safe-area-pt { padding-top: env(safe-area-inset-top, 0px); }
