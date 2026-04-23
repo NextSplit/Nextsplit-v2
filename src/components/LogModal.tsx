@@ -50,11 +50,15 @@ function LogModal({
     return m ? parseInt(m[1]) : null
   })()
 
-  // Keyboard avoidance
+  // Keyboard avoidance — use visualViewport when available
   useEffect(() => {
     const vv = window.visualViewport
     if (!vv) return
-    const onResize = () => setBottomInset(Math.max(0, window.innerHeight - vv!.height - vv!.offsetTop))
+    const onResize = () => {
+      // Only apply inset if keyboard is likely open (viewport shrunk significantly)
+      const shrinkage = window.innerHeight - vv.height
+      setBottomInset(shrinkage > 150 ? Math.max(0, shrinkage - vv.offsetTop) : 0)
+    }
     vv.addEventListener('resize', onResize)
     vv.addEventListener('scroll', onResize)
     return () => { vv.removeEventListener('resize', onResize); vv.removeEventListener('scroll', onResize) }
@@ -115,7 +119,7 @@ function LogModal({
           </p>
           <button onClick={() => handleSave(true)}
             className="w-full py-4 rounded-2xl text-sm font-bold text-white mb-2"
-            style={{ background: 'var(--ns-forest)' }}>
+            style={{ background: 'var(--ns-ember)' }}>
             {saving ? 'Logging…' : 'Log rest day ✓'}
           </button>
           <button onClick={onClose} className="w-full py-3 text-sm text-gray-400">Cancel</button>
@@ -141,7 +145,7 @@ function LogModal({
             {/* One-tap done */}
             <button onClick={() => handleSave(true)}
               className="w-full py-4 rounded-2xl text-base font-black text-white mb-3 active:scale-95 transition-all"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               {saving ? 'Logging…' : 'Done ✓'}
             </button>
 
@@ -161,7 +165,7 @@ function LogModal({
               <NotesInput notes={notes} setNotes={setNotes} />
               <button onClick={() => handleSave(true)} disabled={saving}
                 className="w-full py-3 rounded-2xl text-sm font-bold text-white"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 {saving ? 'Saving…' : 'Log it ✓'}
               </button>
             </div>
@@ -175,8 +179,8 @@ function LogModal({
   if (mode === 'full-debrief') {
     return (
       <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
-        <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col" style={{ background: "var(--color-surface)", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
-          <div className="overflow-y-auto flex-1 px-6 pt-6 pb-2 space-y-5">
+        <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl flex flex-col" style={{ background: "var(--color-surface)", maxHeight: "92dvh", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
+          <div className="overflow-y-auto flex-1 px-6 pt-6 pb-4 space-y-5" style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
             <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--color-border-2)' }} />
 
             <div>
@@ -204,7 +208,7 @@ function LogModal({
                     <button key={n} onClick={() => setRepsCompleted(n)}
                       className="w-10 h-10 rounded-xl text-sm font-bold border-2 transition-all"
                       style={repsCompleted === n
-                        ? { background: 'var(--ns-forest)', color: 'white', borderColor: 'var(--ns-forest)' }
+                        ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-ember)' }
                         : { background: 'white', color: '#374151', borderColor: '#e5e7eb' }}>
                       {n}
                     </button>
@@ -229,7 +233,7 @@ function LogModal({
                   <button key={opt} onClick={() => setPacingFeel(opt)}
                     className="flex-1 py-2.5 rounded-xl text-xs font-bold border-2 transition-all"
                     style={pacingFeel === opt
-                      ? { background: 'var(--ns-forest)', color: 'white', borderColor: 'var(--ns-forest)' }
+                      ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-ember)' }
                       : { background: 'white', color: '#6b7280', borderColor: '#e5e7eb' }}>
                     {opt === 'too-easy' ? '😌 Easy' : opt === 'spot-on' ? '✓ Spot on' : '🔥 Hard'}
                   </button>
@@ -265,7 +269,7 @@ function LogModal({
               </button>
               <button onClick={() => handleSave(true)} disabled={saving}
                 className="flex-1 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-50"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 {saving ? 'Saving…' : existingLog ? 'Update' : 'Log it ✓'}
               </button>
             </div>
@@ -278,8 +282,8 @@ function LogModal({
   // ── STANDARD (Tempo, Long, MP, default) ────────────────────────────────────
   return (
     <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }} onClick={handleBackdropClick}>
-      <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col" style={{ background: "var(--color-surface)", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
-        <div className="overflow-y-auto flex-1 px-6 pt-6 pb-2 space-y-5">
+      <div className="w-full max-w-lg mx-auto rounded-t-3xl shadow-2xl flex flex-col" style={{ background: "var(--color-surface)", maxHeight: "92dvh", marginBottom: bottomInset }} onClick={e => e.stopPropagation()}>
+        <div className="overflow-y-auto flex-1 px-6 pt-6 pb-4 space-y-5" style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
           <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--color-border-2)' }} />
 
           <div>
@@ -315,7 +319,7 @@ function LogModal({
                 <button key={n} onClick={() => { setFeelRating(n); setEffort(n * 2) }}
                   className="flex-1 py-3 rounded-xl text-sm font-bold border-2 transition-all"
                   style={feelRating === n
-                    ? { background: 'var(--ns-forest)', color: 'white', borderColor: 'var(--ns-forest)' }
+                    ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-ember)' }
                     : { background: 'white', color: '#6b7280', borderColor: '#e5e7eb' }}>
                   {n}
                 </button>
@@ -353,7 +357,7 @@ function LogModal({
             </button>
             <button onClick={() => handleSave(true)} disabled={saving}
               className="flex-1 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-50"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               {saving ? 'Saving…' : existingLog ? 'Update' : 'Log it ✓'}
             </button>
           </div>
