@@ -14,7 +14,6 @@ import { hapticLight } from '@/lib/haptics'
 import { useGymLog } from '@/hooks/useGymLog'
 import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/database'
 import LogModal from '@/components/LogModal'
-import DayDrawer from '@/components/plan/DayDrawer'
 import DayRow from '@/components/plan/DayRow'
 import WeekRow from '@/components/plan/WeekRow'
 
@@ -52,7 +51,6 @@ export default function PlanClient() {
   const [viewMode, setViewMode] = useState<'active' | 'full'>('active')
   const [completedExpanded, setCompletedExpanded] = useState(false)
   const [phaseFilter, setPhaseFilter] = useState<string>('all')
-  const [drawerDay, setDrawerDay] = useState<{ day: PlanDay; dayIndex: number; weekN: number; weekTitle: string } | null>(null)
   const [logModal, setLogModal] = useState<{ session: PlanSession; dayIndex: number; sessI: number; weekN: number } | null>(null)
   const currentWeekRef = useRef<HTMLDivElement>(null)
 
@@ -110,9 +108,7 @@ export default function PlanClient() {
     }
   }
 
-  function openDay(week: PlanWeek, day: PlanDay, dayIndex: number) {
-    setDrawerDay({ day: day as PlanDay, dayIndex, weekN: week.n, weekTitle: decodeHtml(week.title) })
-  }
+
 
   async function handleSaveLog(params: {
     week_n: number; day_i: number; session_i: number; done: boolean
@@ -374,21 +370,6 @@ export default function PlanClient() {
         })}
       </div>
 
-      {/* Day drawer */}
-      {drawerDay && (
-        <DayDrawer
-          day={drawerDay.day}
-          dayIndex={drawerDay.dayIndex}
-          weekN={drawerDay.weekN}
-          weekTitle={drawerDay.weekTitle}
-          logs={logs}
-          gymLogs={gymLogs}
-          isToday={drawerDay.weekN === plan.current_week && drawerDay.dayIndex === todayDayIndex}
-          isPast={drawerDay.weekN < plan.current_week}
-          onClose={() => setDrawerDay(null)}
-          onLogSession={handleLogSession}
-        />
-      )}
 
       {/* Log modal — opens when tapping Log in drawer or day row */}
       {logModal && plan && (

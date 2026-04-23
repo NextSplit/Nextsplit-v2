@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { CoachCard } from '@/components/coach/CoachCard'
 import TodayProgressStrip from './TodayProgressStrip'
 import type { TrainingLog } from '@/types/database'
@@ -32,6 +33,42 @@ interface Props {
   acwr:   number | null
 }
 
+function SecondarySection({ hasRunSessions, onReadiness }: { hasRunSessions: boolean; onReadiness: (s: number) => void }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div>
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between px-4 py-2.5 rounded-2xl text-left transition-all"
+        style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-sm">👟</span>
+          <span className="text-xs font-bold" style={{ color: 'var(--color-text-secondary)' }}>
+            Splity · Check-in & weather
+          </span>
+        </div>
+        <span className="text-sm transition-transform duration-200"
+          style={{ color: 'var(--color-text-tertiary)', display: 'inline-block', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+          ↓
+        </span>
+      </button>
+      {open && (
+        <div className="mt-2 space-y-2">
+          <CoachCard />
+          <WellnessCheckIn onReadiness={onReadiness} />
+          {hasRunSessions && (
+            <ProGate feature="ai_adaptive_suggestions" fallback={null}>
+              <WeatherWidget />
+            </ProGate>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+
 export default function TodayBelowFold({
   isToday, hasRunSessions, weeklyReport, planDay,
   isWeekDone, weekN, hasPlanNextWeek, onReadiness, onAdvanceWeek,
@@ -44,21 +81,14 @@ export default function TodayBelowFold({
 
   return (
     <>
-      {/* Progress strip — weekly stats at a glance */}
+      {/* Progress strip — always visible, compact */}
       <TodayProgressStrip logs={logs} streak={streak} acwr={acwr} weekN={weekN} />
 
-      {/* Coach card */}
-      <CoachCard />
-
-      {/* Wellness check-in */}
-      <WellnessCheckIn onReadiness={onReadiness} />
-
-      {/* Weather */}
-      {hasRunSessions && (
-        <ProGate feature="ai_adaptive_suggestions" fallback={null}>
-          <WeatherWidget />
-        </ProGate>
-      )}
+      {/* Secondary content — collapsed behind a toggle */}
+      <SecondarySection
+        hasRunSessions={hasRunSessions}
+        onReadiness={onReadiness}
+      />
 
       {/* Monday weekly report */}
       {weeklyReport && (

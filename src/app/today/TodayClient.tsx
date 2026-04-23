@@ -17,6 +17,7 @@ import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import { Analytics } from '@/lib/analytics'
 import TodayBelowFold from './TodayBelowFold'
 import AdaptPlanCard from '@/components/AdaptPlanCard'
+import FuelPlanCard from '@/components/FuelPlanCard'
 import StravaSyncButton from '@/components/StravaSyncButton'
 import { useToast } from '@/components/Toast'
 import { useRouter } from 'next/navigation'
@@ -485,16 +486,15 @@ export default function TodayClient() {
         {/* Sessions */}
         {!loading && plan && (
           <>
-            {/* Week note chip — compact, shown at top on today only */}
+            {/* Week note — tiny pill, doesn't compete with session */}
             {isToday && currentWeek?.note && (
-              <div className="bg-amber-50 rounded-2xl border border-amber-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-base mt-0.5">📋</span>
-                <div>
-                  <p className="text-[11px] font-bold text-amber-800 mb-0.5 uppercase tracking-wide">
-                    Week {weekN} · {currentWeek.title}
-                  </p>
-                  <p className="text-xs text-amber-700 leading-relaxed">{currentWeek.note}</p>
-                </div>
+              <div className="flex items-center gap-2 px-1">
+                <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: 'var(--color-text-tertiary)' }}>
+                  W{weekN}
+                </span>
+                <p className="text-[11px] leading-relaxed line-clamp-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                  {currentWeek.note}
+                </p>
               </div>
             )}
 
@@ -609,19 +609,17 @@ export default function TodayClient() {
               )
             })}
 
-            {/* ACWR risk flag — coach voice, per Product & UX Pillar spec */}
+            {/* ACWR risk — compact inline warning */}
             {isToday && acwrCurrent !== null && acwrCurrent > 1.3 && (
-              <AICoachingNote
-                type="acwr-risk"
-                what={acwrCurrent > 1.5
-                  ? `Your training load is very high — ACWR ${acwrCurrent.toFixed(2)}.`
-                  : `Your ACWR has been in the amber zone — ${acwrCurrent.toFixed(2)}.`}
-                why={acwrCurrent > 1.5
-                  ? "You haven't done anything wrong — it's cumulative load from a strong run of training. This is the zone where injury risk rises."
-                  : "You haven't done anything wrong — it's cumulative load from a strong fortnight. Your body is adapting."}
-                protects={`I've flagged this so you can make an informed call on today's session. ${acwrCurrent > 1.5 ? 'A lighter session today protects the next two weeks.' : 'An easy option is available below if you want it.'}`}
-                canOverride={false}
-              />
+              <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl"
+                style={{ background: acwrCurrent > 1.5 ? '#fef2f2' : '#fffbeb', border: `1px solid ${acwrCurrent > 1.5 ? '#fecaca' : '#fde68a'}` }}>
+                <span className="text-base flex-shrink-0">{acwrCurrent > 1.5 ? '⚠️' : '💡'}</span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-bold" style={{ color: acwrCurrent > 1.5 ? '#b91c1c' : '#92400e' }}>
+                    Splity · {acwrCurrent > 1.5 ? 'High load week — take it easy today' : 'Amber load zone — listen to your body'}
+                  </span>
+                </div>
+              </div>
             )}
 
             {/* Low readiness — coach voice per Product & UX Pillar spec */}
@@ -734,105 +732,42 @@ export default function TodayClient() {
               </div>
             )}
 
-            {/* Sleep note */}
+            {/* Sleep note — compact */}
             {planDay?.sleep && (
-              <div className="bg-[var(--ns-forest-light)] rounded-2xl border border-teal-100 px-4 py-3 flex items-start gap-2.5">
-                <span className="text-base mt-0.5">🌙</span>
-                <p className="text-xs text-[var(--ns-forest)] leading-relaxed">{planDay.sleep}</p>
+              <div className="flex items-center gap-2 px-1">
+                <span className="text-sm">🌙</span>
+                <p className="text-[11px] leading-relaxed line-clamp-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                  {planDay.sleep}
+                </p>
               </div>
             )}
 
-            {/* Add ad-hoc session */}
+            {/* Quick action row — compact, below sessions */}
             {isToday && (
-              <button
-                onClick={() => setShowAdHocModal(true)}
-                className="w-full flex items-center gap-3 border border-dashed border-gray-200 rounded-2xl px-4 py-3 text-left hover:border-teal-300 hover:bg-[var(--ns-forest-light)]/40 transition-all"
-              >
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-light flex-shrink-0" style={{ background: "var(--color-surface-2)", color: "var(--color-text-tertiary)" }}>+</div>
-                <div>
-                  <p className="text-xs font-semibold text-gray-600">Add a session</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">Log extra work that wasn&apos;t in your plan</p>
-                </div>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowAdHocModal(true)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95"
+                  style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}
+                >
+                  <span style={{ color: 'var(--ns-ember)' }}>+</span> Add session
+                </button>
+                <a href="/plan"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95"
+                  style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}
+                >
+                  📋 Full plan
+                </a>
+              </div>
             )}
 
-            {/* Contextual fuel card — secondary, below the fold */}
-            {isToday && planDay && planDay.nut && planDay.nut.length > 0 && (() => {
-              const now = new Date()
-              const currentHour = now.getHours() + now.getMinutes() / 60
-
-              function parseHour(t: string): number | null {
-                const m = t.match(/^(\d{1,2}):(\d{2})/)
-                if (m) return parseInt(m[1]) + parseInt(m[2]) / 60
-                if (/wake|morning/i.test(t)) return 6
-                if (/lunch/i.test(t)) return 12
-                if (/dinner|evening/i.test(t)) return 18
-                if (/during/i.test(t)) return currentHour
-                return null
-              }
-
-              const nutByPriority = planDay.nut
-                .map(n => ({ ...n, hour: parseHour(n.t) }))
-                .filter(n => {
-                  if (n.cat === 'macro') return false
-                  if (n.hour === null) return true
-                  return n.hour >= currentHour - 0.5 && n.hour <= currentHour + 4
-                })
-                .sort((a, b) => (a.hour ?? 99) - (b.hour ?? 99))
-                .slice(0, 4)
-
-              const macroEntry = planDay.nut.find(n => n.cat === 'macro')
-              if (nutByPriority.length === 0 && !macroEntry) return null
-
-              const catStyle: Record<string, { bg: string; icon: string; text: string; dot: string }> = {
-                hydration: { bg: 'bg-blue-50',   icon: '💧', text: 'text-blue-800',   dot: 'bg-blue-300'   },
-                food:      { bg: 'bg-green-50',  icon: '🍽️', text: 'text-green-800',  dot: 'bg-green-300'  },
-                fuel:      { bg: 'bg-amber-50',  icon: '⚡',  text: 'text-amber-800',  dot: 'bg-amber-300'  },
-                info:      { bg: 'bg-gray-50',   icon: 'ℹ️', text: 'text-gray-600',   dot: 'bg-gray-300'   },
-                macro:     { bg: 'bg-purple-50', icon: '📊', text: 'text-purple-800', dot: 'bg-purple-300' },
-              }
-
-              return (
-                <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-50">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm">🍽️</span>
-                      <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wide">Today&apos;s fuel plan</span>
-                    </div>
-                    <span className="text-[10px] text-gray-400">Next {nutByPriority.length > 0 ? nutByPriority.length : ''} entries</span>
-                  </div>
-                  <div className="divide-y divide-gray-50">
-                    {nutByPriority.map((n, i) => {
-                      const s = catStyle[n.cat] ?? catStyle.food
-                      return (
-                        <div key={i} className={`px-4 py-2.5 flex items-start gap-2.5 ${s.bg}`}>
-                          <span className="text-base flex-shrink-0 mt-0.5">{s.icon}</span>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className={`text-[10px] font-bold ${s.text}`}>{decodeHtml(n.t)}</span>
-                              <span className={`text-[11px] font-semibold ${s.text}`}>{decodeHtml(n.l)}</span>
-                            </div>
-                            <p className={`text-[11px] leading-relaxed ${s.text} opacity-80 mt-0.5`}>{decodeHtml(n.d)}</p>
-                          </div>
-                        </div>
-                      )
-                    })}
-                    {macroEntry && (
-                      <div className="px-4 py-2.5 flex items-center gap-2.5 bg-purple-50">
-                        <span className="text-base flex-shrink-0">📊</span>
-                        <div>
-                          <div className="text-[10px] font-bold text-purple-700 mb-0.5">Daily targets</div>
-                          <p className="text-[11px] text-purple-800 font-medium">{decodeHtml(macroEntry.d)}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )
-            })()}
+            {/* Fuel plan — collapsible, tappable header */}
+            {isToday && planDay && planDay.nut && planDay.nut.length > 0 && (
+              <FuelPlanCard planDay={planDay} />
+            )}
 
             {/* Adapt plan — shown when sessions missed mid-week */}
-            {isToday && plan && missedSessionsCount >= 2 && (
+            {isToday && plan && missedSessionsCount >= 3 && (
               <AdaptPlanCard
                 planId={plan.id}
                 weekN={weekN}
