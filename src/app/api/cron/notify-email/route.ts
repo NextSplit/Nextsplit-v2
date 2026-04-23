@@ -45,11 +45,11 @@ export async function GET(req: NextRequest) {
       .from('profiles')
       .select(`
         id, display_name, email,
-        notification_email_sent_at, at_risk_email_sent_at,
+        last_notification_at, at_risk_sent_at,
         notif_session_reminder, notif_streak_at_risk,
         notif_weekly_recap, notif_at_risk_reengagement, notif_race_countdown
       `)
-      .eq('email_notifications_enabled', true)
+      .eq('notifications_enabled', true)
       .not('email', 'is', null) as { data: AnyRecord[] | null }
 
     if (!profiles?.length) {
@@ -105,8 +105,8 @@ export async function GET(req: NextRequest) {
       const email     = profile.email as string
 
       // Rate limit: 1 email per day
-      if (profile.notification_email_sent_at) {
-        const lastSent = new Date(profile.notification_email_sent_at as string)
+      if (profile.last_notification_at) {
+        const lastSent = new Date(profile.last_notification_at as string)
         if ((now.getTime() - lastSent.getTime()) < 20 * 3600 * 1000) {
           results.push(`${uid}: skipped (rate_limit)`)
           continue
@@ -150,7 +150,7 @@ export async function GET(req: NextRequest) {
       // 4. At-risk re-engagement — if no log in 4+ days, once only
       if (!emailType && !hasLoggedToday && profile.notif_at_risk_reengagement !== false) {
         const daysSinceLog = streak === 0 ? 99 : 0
-        if (daysSinceLog >= 4 && !profile.at_risk_email_sent_at) {
+        if (daysSinceLog >= 4 && !profile.at_risk_sent_at) {
           emailType = 'at_risk_reengagement'
         }
       }
@@ -177,8 +177,8 @@ export async function GET(req: NextRequest) {
         await (supabase as any)
           .from('profiles')
           .update({
-            notification_email_sent_at: now.toISOString(),
-            ...(emailType === 'at_risk_reengagement' ? { at_risk_email_sent_at: now.toISOString() } : {}),
+            last_notification_at: now.toISOString(),
+            ...(emailType === 'at_risk_reengagement' ? { at_risk_sent_at: now.toISOString() } : {}),
           })
           .eq('id', uid)
 
