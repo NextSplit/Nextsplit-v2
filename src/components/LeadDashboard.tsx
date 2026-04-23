@@ -84,7 +84,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
     <div className="space-y-4">
       {/* Lead mode banner — spec: "persistent indicator, impossible to confuse which mode" */}
       <div className="rounded-2xl p-4 flex items-center justify-between"
-        style={{ background: 'var(--ns-forest)', color: 'white' }}>
+        style={{ background: 'var(--ns-ember)', color: 'white' }}>
         <div>
           <p className="text-xs font-bold opacity-60 uppercase tracking-wider mb-0.5">
             {isSplitLeader ? 'Split Leader' : 'Coach'} mode
@@ -129,7 +129,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
             <button
               onClick={generateInvite}
               className="text-xs font-bold px-4 py-2 rounded-xl text-white"
-              style={{ background: 'var(--ns-forest)' }}
+              style={{ background: 'var(--ns-ember)' }}
             >
               Generate invite link →
             </button>
@@ -213,7 +213,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
                       <div className="h-full rounded-full transition-all"
                         style={{
                           width: `${pct}%`,
-                          background: pct >= 100 ? '#10b981' : pct >= 60 ? 'var(--ns-forest)' : '#f59e0b',
+                          background: pct >= 100 ? '#10b981' : pct >= 60 ? 'var(--ns-ember)' : '#f59e0b',
                         }} />
                     </div>
                   </div>
@@ -228,7 +228,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
       {athletes.length > 0 && !atCap && (
         <button
           onClick={generateInvite}
-          className="w-full py-3 rounded-2xl border-2 border-dashed border-gray-200 text-xs font-bold text-gray-400 active:border-[var(--ns-forest)] active:text-[var(--ns-forest)] transition-all"
+          className="w-full py-3 rounded-2xl border-2 border-dashed border-gray-200 text-xs font-bold text-gray-400 active:border-[var(--ns-ember)] active:text-[var(--ns-ember)] transition-all"
         >
           + Invite another runner ({athleteCount}/{isSplitLeader ? MAX_SPLIT_LEADER_ATHLETES : '∞'})
         </button>
@@ -248,7 +248,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
               <p className="text-xs text-gray-600 font-mono flex-1 truncate">{inviteUrl}</p>
               <button onClick={copyInvite}
                 className="text-xs font-bold flex-shrink-0"
-                style={{ color: 'var(--ns-forest)' }}>
+                style={{ color: 'var(--ns-ember)' }}>
                 Copy
               </button>
             </div>

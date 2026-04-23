@@ -79,7 +79,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
               </p>
               <button onClick={() => setStep('reason')}
                 className="w-full py-4 rounded-2xl text-sm font-bold text-white mb-3"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 Yes, rebuild the plan →
               </button>
               <button onClick={onMarkMissed}
@@ -105,7 +105,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                     onClick={() => { setReason(opt.id); setStep('feeling') }}
                     className="py-3 px-4 rounded-2xl text-sm font-semibold border-2 text-left transition-all active:scale-95"
                     style={reason === opt.id
-                      ? { background: 'var(--ns-forest)', color: 'white', borderColor: 'var(--ns-forest)' }
+                      ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-ember)' }
                       : { background: 'white', color: '#374151', borderColor: '#e5e7eb' }}>
                     {opt.label}
                   </button>
@@ -132,7 +132,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                     onClick={() => setFeeling(opt.id)}
                     className="w-full py-3 px-4 rounded-2xl text-sm font-semibold border-2 text-left transition-all"
                     style={feeling === opt.id
-                      ? { background: 'var(--ns-forest)', color: 'white', borderColor: 'var(--ns-forest)' }
+                      ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-ember)' }
                       : { background: 'white', color: '#374151', borderColor: '#e5e7eb' }}>
                     {opt.label}
                   </button>
@@ -140,7 +140,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
               </div>
               <button onClick={handleAdapt} disabled={!feeling || loading}
                 className="w-full py-4 rounded-2xl text-sm font-bold text-white disabled:opacity-40"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 Rebuild my plan →
               </button>
               <button onClick={onClose} className="w-full py-2 text-xs text-gray-400 mt-2">Cancel</button>
@@ -170,7 +170,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                   <ul className="space-y-1">
                     {adaptation.changes.slice(0, 2).map((c, i) => (
                       <li key={i} className="text-xs text-gray-500 flex items-start gap-1.5">
-                        <span style={{ color: 'var(--ns-forest)' }}>→</span>{c}
+                        <span style={{ color: 'var(--ns-ember)' }}>→</span>{c}
                       </li>
                     ))}
                   </ul>
@@ -181,8 +181,8 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                 </div>
               </div>
 
-              <div className="bg-[var(--ns-forest-light)] rounded-2xl p-4 mb-4">
-                <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-forest)' }}>
+              <div className="bg-[var(--ns-ember-light)] rounded-2xl p-4 mb-4">
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-ember)' }}>
                   <span className="font-bold">NextSplit Pro</span> adapts your plan every time life intervenes —
                   through missed weeks, illness, and busy periods. £4.99/month.
                 </p>
@@ -190,7 +190,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
 
               <button onClick={() => window.location.href = '/profile?upgrade=1'}
                 className="w-full py-4 rounded-2xl text-sm font-bold text-white mb-3"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 Unlock Pro — £4.99/month →
               </button>
               <button onClick={onMarkMissed} className="w-full py-2 text-xs text-gray-400">
@@ -205,14 +205,14 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
               <div className="text-2xl mb-3 text-center">✓</div>
               <h2 className="text-base font-bold text-gray-900 mb-1 text-center">Plan updated</h2>
 
-              <div className="bg-[var(--ns-forest-light)] rounded-2xl p-4 mb-4">
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--ns-forest)' }}>
+              <div className="bg-[var(--ns-ember-light)] rounded-2xl p-4 mb-4">
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--ns-ember)' }}>
                   {adaptation.summary}
                 </p>
                 {adaptation.changes.length > 0 && (
                   <ul className="mt-2 space-y-1">
                     {adaptation.changes.map((c, i) => (
-                      <li key={i} className="text-xs flex items-start gap-1.5" style={{ color: 'var(--ns-forest)' }}>
+                      <li key={i} className="text-xs flex items-start gap-1.5" style={{ color: 'var(--ns-ember)' }}>
                         <span>→</span>{c}
                       </li>
                     ))}
@@ -226,7 +226,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
 
               <button onClick={onClose}
                 className="w-full py-4 rounded-2xl text-sm font-bold text-white"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 Got it ✓
               </button>
             </div>

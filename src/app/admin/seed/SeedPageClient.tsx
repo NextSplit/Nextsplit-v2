@@ -42,7 +42,7 @@ export default function SeedPageClient() {
           <button
             onClick={runSeed}
             disabled={running}
-            className="w-full py-4 bg-[var(--ns-forest)] text-white rounded-xl font-semibold text-sm disabled:opacity-50"
+            className="w-full py-4 bg-[var(--ns-ember)] text-white rounded-xl font-semibold text-sm disabled:opacity-50"
           >
             {running ? 'Seeding…' : 'Seed Plans Now'}
           </button>

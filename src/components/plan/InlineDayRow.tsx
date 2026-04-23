@@ -212,7 +212,7 @@ export default function InlineDayRow({ day, dayIndex, weekN, logs, gymLogs, isTo
                     {/* Show log data if done */}
                     {done && log && (
                       <div className="flex gap-3 flex-wrap">
-                        {log.km && <span className="text-[11px] font-data font-bold" style={{ color: 'var(--ns-forest)' }}>{log.km}km</span>}
+                        {log.km && <span className="text-[11px] font-data font-bold" style={{ color: 'var(--ns-ember)' }}>{log.km}km</span>}
                         {log.duration_secs && <span className="text-[11px] font-data" style={{ color: 'var(--color-text-tertiary)' }}>{Math.round(log.duration_secs / 60)}min</span>}
                         {log.pace && <span className="text-[11px] font-data" style={{ color: 'var(--color-text-tertiary)' }}>{log.pace}/km</span>}
                         {log.effort && <span className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>RPE {log.effort}</span>}

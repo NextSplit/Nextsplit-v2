@@ -52,7 +52,7 @@ export default function CoachAcceptClient({
             {coachName} wants to coach you
           </h1>
           {coachVerified && (
-            <span className="inline-flex items-center gap-1 bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] text-[var(--ns-forest)] text-xs font-bold px-2.5 py-1 rounded-full">
+            <span className="inline-flex items-center gap-1 bg-[var(--ns-forest-light)] border border-[var(--ns-forest-light)] text-[var(--ns-ember)] text-xs font-bold px-2.5 py-1 rounded-full">
               ✅ Verified coach
             </span>
           )}
@@ -87,7 +87,7 @@ export default function CoachAcceptClient({
                 <p className="text-sm font-semibold text-gray-800">{item.label}</p>
                 <p className="text-xs text-gray-400">{item.desc}</p>
               </div>
-              <div className="w-8 h-5 bg-[var(--ns-forest)] rounded-full flex items-center justify-end pr-0.5">
+              <div className="w-8 h-5 bg-[var(--ns-ember)] rounded-full flex items-center justify-end pr-0.5">
                 <div className="w-4 h-4 bg-white rounded-full" />
               </div>
             </div>
@@ -105,7 +105,7 @@ export default function CoachAcceptClient({
               </div>
               <button
                 onClick={() => item.set(!item.value)}
-                className={`w-8 h-5 rounded-full flex items-center transition-all ${item.value ? 'bg-[var(--ns-forest)] justify-end pr-0.5' : 'bg-gray-200 justify-start pl-0.5'}`}
+                className={`w-8 h-5 rounded-full flex items-center transition-all ${item.value ? 'bg-[var(--ns-ember)] justify-end pr-0.5' : 'bg-gray-200 justify-start pl-0.5'}`}
               >
                 <div className="w-4 h-4 bg-white rounded-full shadow" />
               </button>
@@ -122,7 +122,7 @@ export default function CoachAcceptClient({
         <button
           onClick={handleAccept}
           disabled={loading}
-          className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-base font-black disabled:opacity-50 active:scale-95 transition-all"
+          className="w-full bg-[var(--ns-ember)] text-white py-4 rounded-2xl text-base font-black disabled:opacity-50 active:scale-95 transition-all"
         >
           {loading ? 'Connecting…' : `Accept ${coachName} as my coach →`}
         </button>

@@ -51,11 +51,11 @@ function AIFuelCoach({
   if (!tip && !loading) {
     return (
       <button onClick={fetchTip}
-        className="w-full flex items-center gap-3 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-4 text-left">
+        className="w-full flex items-center gap-3 bg-gradient-to-r from-orange-500 to-emerald-500 rounded-2xl p-4 text-left">
         <span className="text-2xl flex-shrink-0">🧠</span>
         <div className="flex-1">
           <p className="text-white text-xs font-bold">AI Nutrition Coach</p>
-          <p className="text-teal-100 text-[10px] mt-0.5">Tap for today's personalised fuel tip</p>
+          <p className="text-orange-50 text-[10px] mt-0.5">Tap for today's personalised fuel tip</p>
         </div>
         <span className="text-white text-lg">›</span>
       </button>
@@ -63,11 +63,11 @@ function AIFuelCoach({
   }
 
   return (
-    <div className="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-4">
+    <div className="bg-gradient-to-r from-orange-500 to-emerald-500 rounded-2xl p-4">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-lg">🧠</span>
         <span className="text-white text-xs font-bold">AI Nutrition Coach</span>
-        <span className="text-teal-200 text-[9px] ml-auto">Today · {dayType}</span>
+        <span className="text-orange-200 text-[9px] ml-auto">Today · {dayType}</span>
       </div>
       {loading ? (
         <div className="flex items-center gap-2">
@@ -77,14 +77,14 @@ function AIFuelCoach({
         </div>
       ) : error ? (
         <div className="flex items-center justify-between">
-          <p className="text-teal-100 text-xs">Couldn't load tip right now.</p>
+          <p className="text-orange-50 text-xs">Couldn't load tip right now.</p>
           <button onClick={fetchTip} className="text-white text-xs font-bold underline">Retry</button>
         </div>
       ) : (
         <div>
           <p className="text-white text-sm leading-relaxed">{tip}</p>
           <button onClick={() => { setTip(null); sessionStorage.removeItem(cacheKey) }}
-            className="text-teal-200 text-[10px] mt-2 font-medium">
+            className="text-orange-200 text-[10px] mt-2 font-medium">
             ↻ New tip
           </button>
         </div>

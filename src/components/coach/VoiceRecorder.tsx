@@ -165,7 +165,7 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
                 height: `${h}px`,
                 background: state === 'recording'
                   ? `hsl(${142 - (i / 30) * 20}, 60%, ${40 + (h / 40) * 20}%)`
-                  : 'var(--ns-forest)',
+                  : 'var(--ns-ember)',
                 opacity: state === 'idle' ? 0.2 : 0.8,
               }}
             />
@@ -179,7 +179,7 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
               className="h-full rounded-full transition-all duration-1000"
               style={{
                 width: `${progressPct}%`,
-                background: progressPct > 80 ? '#ef4444' : 'var(--ns-forest)',
+                background: progressPct > 80 ? '#ef4444' : 'var(--ns-ember)',
               }}
             />
           </div>
@@ -228,7 +228,7 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
             <button
               onClick={startRecording}
               className="flex-1 py-3.5 rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2 active:scale-95 transition-all"
-              style={{ background: 'var(--ns-forest)' }}
+              style={{ background: 'var(--ns-ember)' }}
             >
               <span className="w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse" />
               Start recording
@@ -256,7 +256,7 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
               <button
                 onClick={send}
                 className="flex-1 py-3.5 rounded-2xl text-sm font-bold text-white active:scale-95 transition-all"
-                style={{ background: 'var(--ns-forest)' }}
+                style={{ background: 'var(--ns-ember)' }}
               >
                 Send →
               </button>
@@ -265,7 +265,7 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
 
           {state === 'sending' && (
             <div className="flex-1 py-3.5 rounded-2xl text-sm font-bold text-white text-center opacity-70"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               Sending…
             </div>
           )}

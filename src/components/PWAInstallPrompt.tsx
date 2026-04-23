@@ -164,7 +164,7 @@ export default function PWAInstallPrompt() {
               ].map(({ icon, text }) => (
                 <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, fontSize: 14, color: 'var(--color-text-primary, #111827)' }}>
                   <div style={{
-                    width: 28, height: 28, borderRadius: '50%', background: 'var(--ns-forest)',
+                    width: 28, height: 28, borderRadius: '50%', background: 'var(--ns-ember)',
                     color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 13, fontWeight: 700, flexShrink: 0,
                   }}>{icon}</div>
@@ -182,7 +182,7 @@ export default function PWAInstallPrompt() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <button onClick={handleInstall} disabled={installing} style={{
                 width: '100%', padding: '14px', borderRadius: 12, border: 'none',
-                background: 'var(--ns-forest)', color: 'white', fontSize: 15, fontWeight: 700,
+                background: 'var(--ns-ember)', color: 'white', fontSize: 15, fontWeight: 700,
                 cursor: installing ? 'wait' : 'pointer', opacity: installing ? 0.75 : 1,
               }}>
                 {installing ? 'Installing…' : 'Install App'}

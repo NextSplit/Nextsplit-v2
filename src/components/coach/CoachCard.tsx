@@ -14,7 +14,7 @@ interface Annotation {
 
 const REACTION_CONFIG = {
   great:   { emoji: '🌟', colour: 'text-amber-600 bg-amber-50 border-amber-200' },
-  good:    { emoji: '👍', colour: 'text-[var(--ns-forest)] bg-[var(--ns-forest-light)] border-green-200' },
+  good:    { emoji: '👍', colour: 'text-[var(--ns-ember)] bg-[var(--ns-ember-light)] border-green-200' },
   concern: { emoji: '⚠️', colour: 'text-orange-600 bg-orange-50 border-orange-200' },
   flag:    { emoji: '🚩', colour: 'text-red-600 bg-red-50 border-red-200' },
 }
@@ -71,29 +71,29 @@ export function CoachCard() {
   return (
     <>
       <div className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${
-        hasUnread ? 'border-[var(--ns-forest)]' : 'border-gray-100'
+        hasUnread ? 'border-[var(--ns-ember)]' : 'border-gray-100'
       }`}>
         {/* Header */}
         <button
           onClick={() => setExpanded(!expanded)}
           className="w-full px-4 py-3 flex items-center gap-3 text-left"
         >
-          <div className="w-9 h-9 rounded-full bg-[var(--ns-forest-light)] flex items-center justify-center text-lg shrink-0">
+          <div className="w-9 h-9 rounded-full bg-[var(--ns-ember-light)] flex items-center justify-center text-lg shrink-0">
             🏃
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <p className="text-sm font-bold text-gray-900">{coach.display_name}</p>
-              {coach.verified && <span className="text-[10px] text-[var(--ns-forest)]">✅</span>}
+              {coach.verified && <span className="text-[10px] text-[var(--ns-ember)]">✅</span>}
             </div>
             <p className="text-xs text-gray-400">Your coach</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {hasUnread && (
-              <span className="w-2 h-2 rounded-full" style={{ background: 'var(--ns-forest)' }} />
+              <span className="w-2 h-2 rounded-full" style={{ background: 'var(--ns-ember)' }} />
             )}
             {totalUnread > 0 && (
-              <span className="text-[10px] font-bold text-white rounded-full px-1.5 py-0.5" style={{ background: 'var(--ns-forest)' }}>
+              <span className="text-[10px] font-bold text-white rounded-full px-1.5 py-0.5" style={{ background: 'var(--ns-ember)' }}>
                 {totalUnread}
               </span>
             )}
@@ -138,7 +138,7 @@ export function CoachCard() {
               </div>
               <div className="flex items-center gap-1.5">
                 {unreadMessages > 0 && (
-                  <span className="text-xs font-bold text-white rounded-full px-2 py-0.5" style={{ background: 'var(--ns-forest)' }}>
+                  <span className="text-xs font-bold text-white rounded-full px-2 py-0.5" style={{ background: 'var(--ns-ember)' }}>
                     {unreadMessages}
                   </span>
                 )}

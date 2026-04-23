@@ -65,7 +65,7 @@ export default function CookieConsentBanner() {
             ].map(item => (
               <p key={item.text} className="text-[11px] text-gray-500 flex items-start gap-2">
                 <span className={`font-bold flex-shrink-0 ${item.emoji === '✗' ? 'text-gray-400' : ''}`}
-                  style={item.emoji === '✓' ? { color: 'var(--ns-forest)' } : {}}>
+                  style={item.emoji === '✓' ? { color: 'var(--ns-ember)' } : {}}>
                   {item.emoji}
                 </span>
                 {item.text}
@@ -84,7 +84,7 @@ export default function CookieConsentBanner() {
             <button
               onClick={accept}
               className="flex-1 py-3 rounded-2xl text-white text-sm font-bold active:scale-[0.98] transition-all"
-              style={{ background: 'var(--ns-forest)' }}
+              style={{ background: 'var(--ns-ember)' }}
             >
               Accept analytics
             </button>

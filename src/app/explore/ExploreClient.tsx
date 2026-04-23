@@ -75,7 +75,7 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
                     ? 'text-white'
                     : 'text-[var(--color-text-tertiary)]'
                 }`}
-                style={tab === t.id ? { background: 'var(--ns-forest)' } : {}}>
+                style={tab === t.id ? { background: 'var(--ns-ember)' } : {}}>
                 {t.label}
               </button>
             ))}
@@ -116,7 +116,7 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
                       </p>
                       {coach.verified && (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                          style={{ background: 'var(--ns-forest)', color: 'white' }}>✓ Verified</span>
+                          style={{ background: 'var(--ns-ember)', color: 'white' }}>✓ Verified</span>
                       )}
                     </div>
                     <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
@@ -152,7 +152,7 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
               </p>
               <Link href="/coach/setup"
                 className="inline-block text-xs font-bold px-4 py-2 rounded-xl"
-                style={{ background: 'var(--ns-forest)', color: 'white' }}>
+                style={{ background: 'var(--ns-ember)', color: 'white' }}>
                 Apply to coach →
               </Link>
             </div>
@@ -285,7 +285,7 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
                       msg.role === 'user' ? 'rounded-br-sm' : 'rounded-bl-sm'
                     }`}
                       style={msg.role === 'user'
-                        ? { background: 'var(--ns-forest)', color: 'white' }
+                        ? { background: 'var(--ns-ember)', color: 'white' }
                         : { background: 'var(--color-surface-2)', color: 'var(--color-text-primary)' }
                       }>
                       {msg.text}
@@ -321,7 +321,7 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
                 onClick={askAI}
                 disabled={!aiMessage.trim() || aiLoading}
                 className="px-4 py-3 rounded-2xl font-bold text-sm text-white disabled:opacity-40 transition-all"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 →
               </button>
             </div>

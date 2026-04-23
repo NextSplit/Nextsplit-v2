@@ -154,7 +154,7 @@ function PlanDetailModal({
           {canGet ? (
             <button onClick={handleGet} disabled={loading}
               className="w-full py-4 rounded-2xl text-base font-black text-white disabled:opacity-50 active:scale-95 transition-all"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               {loading ? 'Starting plan…' : plan.owned && !isFree ? 'Start plan again →' : 'Start this plan →'}
             </button>
           ) : (
@@ -171,7 +171,7 @@ function PlanDetailModal({
               )}
               <button onClick={handleGet} disabled={loading}
                 className="w-full py-4 rounded-2xl text-base font-black text-white disabled:opacity-50 active:scale-95 transition-all"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 {loading ? 'Processing…' : `Get for £${plan.price_gbp} →`}
               </button>
               <p className="text-center text-[10px] text-gray-400">
@@ -314,7 +314,7 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
             {(['browse', 'purchased'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
                 className={`flex-1 py-2.5 text-xs font-bold capitalize border-b-2 transition-all ${
-                  tab === t ? 'border-b-[var(--ns-forest)] text-[var(--ns-forest)]' : 'border-transparent text-gray-400'
+                  tab === t ? 'border-b-[var(--ns-forest)] text-[var(--ns-ember)]' : 'border-transparent text-gray-400'
                 }`}
                 style={tab === t ? { borderBottomColor: 'var(--ns-forest)', color: 'var(--ns-forest)' } : {}}>
                 {t === 'browse' ? '🔍 Browse' : '✓ My Plans'}
@@ -330,13 +330,13 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
           <div className="max-w-lg mx-auto space-y-2">
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search plans or coaches…"
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] transition-colors" />
+              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] transition-colors" />
             <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
               {DISTANCES.map(d => (
                 <button key={d} onClick={() => setDistance(d)}
                   className="px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all flex-shrink-0"
                   style={distance === d
-                    ? { background: 'var(--ns-forest)', color: 'white', borderColor: 'var(--ns-forest)' }
+                    ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-forest)' }
                     : { background: 'white', color: '#6b7280', borderColor: '#e5e7eb' }}>
                   {d}
                 </button>

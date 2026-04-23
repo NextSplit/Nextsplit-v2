@@ -61,7 +61,7 @@ function WeeklyXPChart({ logs, weeks }: {
                 <div
                   className={`w-full rounded-t-lg transition-all duration-500 ${
                     bar.isToday ? 'bg-[var(--ns-ember)]' :
-                    bar.xp > 0 ? 'bg-teal-200' : 'bg-gray-100'
+                    bar.xp > 0 ? 'bg-orange-200' : 'bg-gray-100'
                   }`}
                   style={{ height: bar.xp > 0 ? `${Math.max(heightPct, 15)}%` : '6px' }}
                 />

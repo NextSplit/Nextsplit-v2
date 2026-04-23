@@ -120,7 +120,7 @@ export function YourLifeScreen() {
             <label className="text-xs font-bold uppercase tracking-wider" style={labelStyle}>
               Which days can you train?
             </label>
-            <span className="text-xs font-black" style={{ color: 'var(--ns-forest)' }}>
+            <span className="text-xs font-black" style={{ color: 'var(--ns-ember)' }}>
               {trainingDays.length}d / week
             </span>
           </div>
@@ -131,9 +131,9 @@ export function YourLifeScreen() {
                 <button key={day} onClick={() => toggleDay(day)}
                   className="aspect-square rounded-xl text-xs font-black transition-all active:scale-95"
                   style={{
-                    background: active ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                    background: active ? 'var(--ns-ember)' : 'var(--color-surface-2)',
                     color:      active ? 'white' : 'var(--color-text-tertiary)',
-                    border:     `1px solid ${active ? 'var(--ns-forest)' : 'var(--color-border)'}`,
+                    border:     `1px solid ${active ? 'var(--ns-ember)' : 'var(--color-border)'}`,
                   }}>
                   {day.slice(0, 1)}
                 </button>
@@ -167,7 +167,7 @@ export function YourLifeScreen() {
                 className="p-3 rounded-xl text-left transition-all"
                 style={{
                   background:  runTime === t.id ? 'var(--color-surface-2)' : 'transparent',
-                  border:      `1px solid ${runTime === t.id ? 'var(--ns-forest)' : 'var(--color-border)'}`,
+                  border:      `1px solid ${runTime === t.id ? 'var(--ns-ember)' : 'var(--color-border)'}`,
                 }}>
                 <p className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>{t.label}</p>
                 <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>{t.desc}</p>
@@ -186,9 +186,9 @@ export function YourLifeScreen() {
               <button key={d} onClick={() => setLongRunDay(d)}
                 className="px-3 py-2 rounded-xl text-xs font-bold transition-all"
                 style={{
-                  background:  longRunDay === d ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                  background:  longRunDay === d ? 'var(--ns-ember)' : 'var(--color-surface-2)',
                   color:       longRunDay === d ? 'white' : 'var(--color-text-secondary)',
-                  border:      `1px solid ${longRunDay === d ? 'var(--ns-forest)' : 'var(--color-border)'}`,
+                  border:      `1px solid ${longRunDay === d ? 'var(--ns-ember)' : 'var(--color-border)'}`,
                 }}>
                 {d}
               </button>
@@ -202,7 +202,7 @@ export function YourLifeScreen() {
           className="w-full py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2"
           style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)' }}>
           {showDetails ? '▲ Hide day detail' : '＋ Add day-by-day detail (optional)'}
-          <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: 'var(--color-surface-2)', color: 'var(--ns-forest)' }}>
+          <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: 'var(--color-surface-2)', color: 'var(--ns-ember)' }}>
             Improves plan accuracy
           </span>
         </button>
@@ -217,7 +217,7 @@ export function YourLifeScreen() {
                     <p className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>{day}</p>
                     {isTrain && (
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(43,92,63,0.2)', color: 'var(--ns-forest)' }}>
+                        style={{ background: 'rgba(43,92,63,0.2)', color: 'var(--ns-ember)' }}>
                         Training day
                       </span>
                     )}
@@ -251,7 +251,7 @@ export function YourLifeScreen() {
                             onClick={() => setDayTime(day, t.id)}
                             className="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all"
                             style={{
-                              background:  (dayTimes[day] ?? runTime) === t.id ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                              background:  (dayTimes[day] ?? runTime) === t.id ? 'var(--ns-ember)' : 'var(--color-surface-2)',
                               color:       (dayTimes[day] ?? runTime) === t.id ? 'white' : 'var(--color-text-tertiary)',
                             }}>
                             {t.label.split(' ')[0]}

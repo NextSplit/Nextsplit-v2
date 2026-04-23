@@ -11,7 +11,7 @@ export default function TermsPage() {
       <div className="max-w-2xl mx-auto px-6 py-12">
 
         <div className="mb-10">
-          <Link href="/" className="text-[var(--ns-forest)] text-sm font-semibold hover:underline">← NextSplit</Link>
+          <Link href="/" className="text-[var(--ns-ember)] text-sm font-semibold hover:underline">← NextSplit</Link>
           <h1 className="text-3xl font-black text-gray-900 mt-4">Terms of Service</h1>
           <p className="text-gray-500 text-sm mt-2">Last updated: April 2026</p>
         </div>
@@ -76,7 +76,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">8. Data and privacy</h2>
-            <p>Your use of NextSplit is also governed by our <Link href="/privacy" className="text-[var(--ns-forest)] hover:underline">Privacy Policy</Link>. You own your training data. We do not sell it. You can export or delete it at any time.</p>
+            <p>Your use of NextSplit is also governed by our <Link href="/privacy" className="text-[var(--ns-ember)] hover:underline">Privacy Policy</Link>. You own your training data. We do not sell it. You can export or delete it at any time.</p>
           </section>
 
           <section>
@@ -101,13 +101,13 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">13. Contact</h2>
-            <p>Questions about these terms: <a href="mailto:legal@nextsplit.com" className="text-[var(--ns-forest)] hover:underline">legal@nextsplit.com</a></p>
+            <p>Questions about these terms: <a href="mailto:legal@nextsplit.com" className="text-[var(--ns-ember)] hover:underline">legal@nextsplit.com</a></p>
           </section>
 
         </div>
 
         <div className="mt-12 pt-6 border-t border-gray-100 flex gap-4 text-sm">
-          <Link href="/privacy" className="text-[var(--ns-forest)] hover:underline">Privacy Policy</Link>
+          <Link href="/privacy" className="text-[var(--ns-ember)] hover:underline">Privacy Policy</Link>
           <Link href="/" className="text-gray-400 hover:underline">Back to NextSplit</Link>
         </div>
       </div>

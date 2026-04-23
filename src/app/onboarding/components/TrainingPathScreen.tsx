@@ -26,7 +26,7 @@ const PATHS: PathOption[] = [
     desc:      'Evidence-based methodology, tailored to you',
     detail:    'Our plans are built on established training principles — progressive overload, polarised intensity, periodisation. We match you to the right plan based on your goal, current fitness, and time available, then personalise the paces and dates around you.',
     tag:       'Most popular',
-    tagColour: 'bg-[var(--ns-forest)]',
+    tagColour: 'bg-[var(--ns-ember)]',
     methodology: 'Based on Daniels\' Running Formula and polarised training principles used by club runners at every level.',
   },
   {
@@ -97,7 +97,7 @@ export function TrainingPathScreen() {
           <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>How do you want to train?</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
             Based on your profile, we think{' '}
-            <span className="text-[var(--ns-forest)] font-semibold">
+            <span className="text-[var(--ns-ember)] font-semibold">
               {PATHS.find(p => p.id === recommended)?.label}
             </span>{' '}
             suits you best — but the choice is yours.
@@ -116,7 +116,7 @@ export function TrainingPathScreen() {
                 key={path.id}
                 className={`rounded-2xl border-2 transition-all ${
                   isSelected
-                    ? 'border-[var(--ns-forest)]'
+                    ? 'border-[var(--ns-ember)]'
                     : 'bg-white border-gray-100'
                 }`}
                 style={isSelected ? { background: 'var(--ns-forest-light)' } : {}}
@@ -143,7 +143,7 @@ export function TrainingPathScreen() {
                         )}
                         {isRecommended && !isSelected && (
                           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
-                            style={{ color: 'var(--ns-forest)', background: 'var(--ns-forest-light)', border: '1px solid var(--ns-forest)30' }}>
+                            style={{ color: 'var(--ns-ember)', background: 'var(--ns-forest-light)', border: '1px solid var(--ns-forest)30' }}>
                             ✦ For you
                           </span>
                         )}
@@ -152,7 +152,7 @@ export function TrainingPathScreen() {
                       <p className="text-xs text-gray-400 mt-0.5">{path.desc}</p>
                       {/* Methodology — credibility layer visible without expansion */}
                       {path.methodology && isSelected && (
-                        <p className="text-xs mt-1.5 leading-relaxed" style={{ color: 'var(--ns-forest)' }}>
+                        <p className="text-xs mt-1.5 leading-relaxed" style={{ color: 'var(--ns-ember)' }}>
                           {path.methodology}
                         </p>
                       )}
@@ -168,9 +168,9 @@ export function TrainingPathScreen() {
                       </button>
                       {/* Select indicator */}
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        isSelected ? 'border-[var(--ns-forest)]' : 'border-gray-300'
+                        isSelected ? 'border-[var(--ns-ember)]' : 'border-gray-300'
                       }`}
-                        style={isSelected ? { background: 'var(--ns-forest)' } : {}}>
+                        style={isSelected ? { background: 'var(--ns-ember)' } : {}}>
                         {isSelected && <span className="text-white text-xs font-bold">✓</span>}
                       </div>
                     </div>
@@ -183,7 +183,7 @@ export function TrainingPathScreen() {
                     <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 space-y-2">
                       <p className="text-xs text-gray-600 leading-relaxed">{path.detail}</p>
                       {path.methodology && (
-                        <p className="text-xs leading-relaxed font-medium" style={{ color: 'var(--ns-forest)' }}>
+                        <p className="text-xs leading-relaxed font-medium" style={{ color: 'var(--ns-ember)' }}>
                           {path.methodology}
                         </p>
                       )}

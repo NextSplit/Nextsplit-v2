@@ -58,8 +58,8 @@ export default function WeeklyCoachingSummary() {
             loading
               ? 'bg-gray-100 text-gray-400'
               : generated
-              ? 'bg-[var(--ns-forest-light)] text-[var(--ns-forest)] border border-[var(--ns-forest-light)]'
-              : 'bg-[var(--ns-forest)] text-white'
+              ? 'bg-[var(--ns-ember-light)] text-[var(--ns-ember)] border border-[var(--ns-forest-light)]'
+              : 'bg-[var(--ns-ember)] text-white'
           }`}
         >
           {loading ? '✨ Analysing…' : generated ? '↻ Refresh' : '✨ Generate'}
@@ -74,7 +74,7 @@ export default function WeeklyCoachingSummary() {
             Get a coach-quality debrief of your last 4 weeks — what the data means, what to focus on, and any flags to watch.
           </p>
           <button onClick={generate}
-            className="bg-[var(--ns-forest)] text-white text-sm font-bold px-6 py-2.5 rounded-xl active:scale-95">
+            className="bg-[var(--ns-ember)] text-white text-sm font-bold px-6 py-2.5 rounded-xl active:scale-95">
             Generate my summary →
           </button>
         </div>
@@ -94,7 +94,7 @@ export default function WeeklyCoachingSummary() {
       {error && (
         <div className="px-4 py-4 text-center">
           <p className="text-xs text-red-500">{error}</p>
-          <button onClick={generate} className="text-xs text-[var(--ns-forest)] mt-2 font-semibold">Try again</button>
+          <button onClick={generate} className="text-xs text-[var(--ns-ember)] mt-2 font-semibold">Try again</button>
         </div>
       )}
 

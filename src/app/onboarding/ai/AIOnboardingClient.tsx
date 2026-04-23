@@ -68,7 +68,7 @@ function OptionCard({ onClick, emoji, title, desc, selected = false }: {
         <p className="text-sm font-bold text-white">{title}</p>
         <p className="text-xs text-zinc-400 mt-0.5 leading-snug">{desc}</p>
       </div>
-      {selected && <span className="text-xs font-black" style={{ color: 'var(--ns-forest)' }}>✓</span>}
+      {selected && <span className="text-xs font-black" style={{ color: 'var(--ns-ember)' }}>✓</span>}
     </button>
   )
 }
@@ -79,7 +79,7 @@ function Breadcrumb({ items }: { items: string[] }) {
       {items.map((item, i) => (
         <span key={i} className="flex items-center gap-1.5">
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-            style={{ background: 'rgba(43,92,63,0.2)', color: 'var(--ns-forest)' }}>
+            style={{ background: 'rgba(43,92,63,0.2)', color: 'var(--ns-ember)' }}>
             {item}
           </span>
           {i < items.length - 1 && <span className="text-zinc-600 text-xs">›</span>}
@@ -202,7 +202,7 @@ export default function AIOnboardingClient() {
       {/* ── GOAL ── */}
       {step === 'goal' && (
         <div className="animate-slide-up">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--ns-forest)' }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--ns-ember)' }}>
             AI Bespoke
           </p>
           <h1 className="font-display text-3xl italic text-white mb-1">What's your goal?</h1>
@@ -306,20 +306,20 @@ export default function AIOnboardingClient() {
                 <ellipse cx="18" cy="8" rx="5.5" ry="6" fill={skin} />
                 <circle cx="16" cy="7" r="0.8" fill="#1e293b" /><circle cx="20" cy="7" r="0.8" fill="#1e293b" />
                 <path d="M12 14 Q13 12 18 12 Q23 12 24 14 L25 26 Q23 27 18 27 Q13 27 11 26 Z" fill={kit} />
-                <rect x="16" y="13" width="4" height="2.5" rx="0.5" fill={skin} />
+                <rect y="13" width="4" height="2.5" rx="0.5" fill={skin} />
                 <g style={{ transformOrigin:'12px 15px', animation:'ai-arm 0.4s ease-in-out infinite' }}>
-                  <line x1="12" y1="15" x2="6" y2="22" stroke={skin} strokeWidth="2.5" strokeLinecap="round"/>
+                  <line x1="12" y1="15" y2="22" stroke={skin} strokeWidth="2.5" strokeLinecap="round"/>
                 </g>
                 <g style={{ transformOrigin:'24px 15px', animation:'ai-arm 0.4s ease-in-out infinite reverse' }}>
-                  <line x1="24" y1="15" x2="30" y2="20" stroke={skin} strokeWidth="2.5" strokeLinecap="round"/>
+                  <line x1="24" y1="15" y2="20" stroke={skin} strokeWidth="2.5" strokeLinecap="round"/>
                 </g>
                 <path d="M13 25 Q15 30 16 33 L20 33 Q21 30 23 25 Z" fill={kit} opacity="0.9"/>
                 <g style={{ transformOrigin:'16px 33px', animation:'ai-leg-l 0.4s ease-in-out infinite' }}>
-                  <line x1="16" y1="33" x2="10" y2="43" stroke={skin} strokeWidth="3" strokeLinecap="round"/>
+                  <line x1="16" y1="33" y2="43" stroke={skin} strokeWidth="3" strokeLinecap="round"/>
                   <path d="M8 42 Q6 44 5 45 Q8 46 11 45 Q11 43 10 43 Z" fill={shoe}/>
                 </g>
                 <g style={{ transformOrigin:'20px 33px', animation:'ai-leg-r 0.4s ease-in-out infinite' }}>
-                  <line x1="20" y1="33" x2="26" y2="42" stroke={skin} strokeWidth="3" strokeLinecap="round"/>
+                  <line x1="20" y1="33" y2="42" stroke={skin} strokeWidth="3" strokeLinecap="round"/>
                   <path d="M26 42 Q29 41 31 42 Q29 45 26 45 Q24 44 26 42 Z" fill={shoe}/>
                 </g>
               </svg>
@@ -332,7 +332,7 @@ export default function AIOnboardingClient() {
           <div className="flex gap-1.5">
             {[0,1,2].map(i => (
               <div key={i} className="w-1.5 h-1.5 rounded-full animate-bounce"
-                style={{ background: 'var(--ns-forest)', animationDelay: `${i * 0.15}s` }} />
+                style={{ background: 'var(--ns-ember)', animationDelay: `${i * 0.15}s` }} />
             ))}
           </div>
         </div>

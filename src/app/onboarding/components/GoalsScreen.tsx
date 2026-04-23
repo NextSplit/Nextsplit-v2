@@ -30,19 +30,19 @@ interface GoalCardProps {
 function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: GoalCardProps) {
   return (
     <div className={`bg-white rounded-2xl border shadow-sm p-4 space-y-4 ${
-      goal.priority === 'A' ? 'border-[var(--ns-forest)]' : 'border-gray-200'
+      goal.priority === 'A' ? 'border-[var(--ns-ember)]' : 'border-gray-200'
     }`}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className={`text-xs font-black px-2 py-1 rounded-full ${
-            goal.priority === 'A' ? 'bg-[var(--ns-forest)] text-white' :
+            goal.priority === 'A' ? 'bg-[var(--ns-ember)] text-white' :
             goal.priority === 'B' ? 'bg-amber-400 text-white' :
             'bg-slate-300 text-gray-700'
           }`}>
             {goal.priority || 'B'} Race
           </span>
-          {goal.priority === 'A' && <span className="text-xs text-[var(--ns-forest)] font-semibold">Primary goal</span>}
+          {goal.priority === 'A' && <span className="text-xs text-[var(--ns-ember)] font-semibold">Primary goal</span>}
         </div>
         <div className="flex items-center gap-2">
           {/* Priority selector */}
@@ -56,7 +56,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
                   disabled={isLocked}
                   title={isLocked ? 'Only one A race allowed' : undefined}
                   className={`w-6 h-6 rounded-full text-xs font-bold transition-all ${
-                    goal.priority === p ? 'bg-[var(--ns-forest)] text-white' :
+                    goal.priority === p ? 'bg-[var(--ns-ember)] text-white' :
                     isLocked ? 'opacity-30 cursor-not-allowed' : ''
                   }`}
                   style={goal.priority !== p && !isLocked ? { background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' } : {}}
@@ -84,7 +84,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
               key={t.id}
               onClick={() => onUpdate({ ...goal, goal_type: t.id as UserGoal['goal_type'] })}
               className={`w-full text-left px-3 py-2 rounded-xl border text-xs transition-all ${
-                goal.goal_type === t.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-white' : 'border-[var(--color-border)] text-[var(--color-text-secondary)]'
+                goal.goal_type === t.id ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)] text-white' : 'border-[var(--color-border)] text-[var(--color-text-secondary)]'
               }`}
               style={goal.goal_type !== t.id ? { background: 'var(--color-surface-2)' } : {}}
             >
@@ -105,7 +105,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
               value={goal.race_name ?? ''}
               onChange={e => onUpdate({ ...goal, race_name: e.target.value })}
               placeholder="e.g. London Marathon 2025"
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20"
+              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -115,7 +115,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
                 type="date"
                 value={goal.race_date ?? ''}
                 onChange={e => onUpdate({ ...goal, race_date: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)]"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]"
               />
             </div>
             <div className="space-y-1.5">
@@ -123,7 +123,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
               <select
                 value={goal.race_distance_label ?? ''}
                 onChange={e => onUpdate({ ...goal, race_distance_label: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] bg-white"
               >
                 <option value="">Select</option>
                 {DISTANCES.map(d => <option key={d} value={d}>{d}</option>)}
@@ -148,7 +148,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
               <select
                 value={goal.race_distance_label ?? ''}
                 onChange={e => onUpdate({ ...goal, race_distance_label: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] bg-white"
               >
                 <option value="">Select</option>
                 {DISTANCES.map(d => <option key={d} value={d}>{d}</option>)}
@@ -176,9 +176,9 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
                   onClick={() => onUpdate({ ...goal, race_distance_label: d })}
                   className="py-2 rounded-xl text-xs font-semibold border transition-all"
                   style={{
-                    background:  goal.race_distance_label === d ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                    background:  goal.race_distance_label === d ? 'var(--ns-ember)' : 'var(--color-surface-2)',
                     color:       goal.race_distance_label === d ? 'white' : 'var(--color-text-secondary)',
-                    borderColor: goal.race_distance_label === d ? 'var(--ns-forest)' : 'var(--color-border)',
+                    borderColor: goal.race_distance_label === d ? 'var(--ns-ember)' : 'var(--color-border)',
                   }}
                 >
                   {d}
@@ -194,9 +194,9 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
                   onClick={() => onUpdate({ ...goal, notes: `milestone_freq:${freq}` })}
                   className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all"
                   style={{
-                    background:  goal.notes === `milestone_freq:${freq}` ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                    background:  goal.notes === `milestone_freq:${freq}` ? 'var(--ns-ember)' : 'var(--color-surface-2)',
                     color:       goal.notes === `milestone_freq:${freq}` ? 'white' : 'var(--color-text-secondary)',
-                    borderColor: goal.notes === `milestone_freq:${freq}` ? 'var(--ns-forest)' : 'var(--color-border)',
+                    borderColor: goal.notes === `milestone_freq:${freq}` ? 'var(--ns-ember)' : 'var(--color-border)',
                   }}>
                   {freq}
                 </button>
@@ -215,7 +215,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
             onChange={e => onUpdate({ ...goal, notes: e.target.value })}
             placeholder="e.g. Run 3x per week consistently, lose 5kg, feel energised..."
             rows={2}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none"
+            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] resize-none"
           />
         </div>
       )}
@@ -298,7 +298,7 @@ export function GoalsScreen() {
         {goals.length < 5 && (
           <button
             onClick={addGoal}
-            className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-300 text-sm font-semibold text-gray-400 hover:border-teal-300 hover:text-[var(--ns-forest-mid)] transition-all"
+            className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-300 text-sm font-semibold text-gray-400 hover:border-orange-300 hover:text-[var(--ns-ember)] transition-all"
           >
             + Add another goal
           </button>

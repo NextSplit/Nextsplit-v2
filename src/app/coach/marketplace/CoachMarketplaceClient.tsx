@@ -77,7 +77,7 @@ export default function CoachMarketplaceClient({ plans, purchases, coachTier }: 
           </div>
           <Link href="/coach/plan-builder"
             className="text-sm font-bold px-4 py-2 rounded-xl text-white"
-            style={{ background: 'var(--ns-forest)' }}>
+            style={{ background: 'var(--ns-ember)' }}>
             + New plan
           </Link>
         </div>
@@ -110,7 +110,7 @@ export default function CoachMarketplaceClient({ plans, purchases, coachTier }: 
             <p className="text-xs text-gray-400 mb-4">Create a training plan and publish it to the marketplace.</p>
             <Link href="/coach/plan-builder"
               className="text-sm font-bold px-4 py-2 rounded-xl text-white inline-block"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               Build your first plan →
             </Link>
           </div>
@@ -200,7 +200,7 @@ export default function CoachMarketplaceClient({ plans, purchases, coachTier }: 
             </p>
             <Link href="/coach/setup"
               className="text-sm font-bold px-4 py-2 rounded-xl text-white inline-block"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               Upgrade to Pro →
             </Link>
           </div>

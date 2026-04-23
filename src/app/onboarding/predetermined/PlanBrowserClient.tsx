@@ -125,7 +125,7 @@ export default function PlanBrowserClient({ templates }: Props) {
           <div className="text-center py-12">
             <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>No plans match those filters</p>
             <button onClick={() => { setSelectedDistance('all'); setSelectedLevel('all'); setMaxWeeks(0) }}
-              className="text-xs font-bold mt-2" style={{ color: 'var(--ns-forest)' }}>
+              className="text-xs font-bold mt-2" style={{ color: 'var(--ns-ember)' }}>
               Clear filters
             </button>
           </div>
@@ -157,7 +157,7 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
       className={`flex-shrink-0 text-xs font-bold px-3 py-1.5 rounded-xl border-2 transition-all ${
         active ? 'text-white border-transparent' : 'border-gray-200 text-gray-600 bg-white'
       }`}
-      style={active ? { background: 'var(--ns-ember)', borderColor: 'var(--ns-forest)' } : {}}
+      style={active ? { background: 'var(--ns-ember)', borderColor: 'var(--ns-ember)' } : {}}
     >
       {label}
     </button>
@@ -200,7 +200,7 @@ function PlanCard({ plan, onClick, onPreview }: { plan: PlanTemplate; onClick: (
           {(plan as any).avg_completion_rate && (
             <Stat label="completion" value={`${Math.round((plan as any).avg_completion_rate as number)}%`} />
           )}
-          <div className="ml-auto" style={{ color: 'var(--ns-forest)' }}>
+          <div className="ml-auto" style={{ color: 'var(--ns-ember)' }}>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
@@ -347,18 +347,18 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
         {/* Plan hero card */}
         <div className="rounded-2xl border overflow-hidden" style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-          <div className="bg-gradient-to-r from-teal-600 to-teal-500 px-5 py-4">
+          <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-5 py-4">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-white/20 text-white`}>
                   {LEVEL_LABEL[plan.level]}
                 </span>
                 <h1 className="text-xl font-black text-white mt-2 leading-tight">{plan.name}</h1>
-                {plan.subtitle && <p className="text-sm text-teal-100 mt-0.5">{plan.subtitle}</p>}
+                {plan.subtitle && <p className="text-sm text-orange-50 mt-0.5">{plan.subtitle}</p>}
               </div>
               <div className="text-right shrink-0">
                 <div className="text-3xl font-black text-white leading-none">{plan.weeks_min}</div>
-                <div className="text-xs text-teal-200 mt-0.5">weeks</div>
+                <div className="text-xs text-orange-200 mt-0.5">weeks</div>
               </div>
             </div>
           </div>
@@ -398,7 +398,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
 
         {/* Coach notes — promoted to be visible early */}
         {(meta.coach_notes as string) && (
-          <div className="bg-[var(--color-surface-2)] rounded-2xl border border-teal-100 p-4">
+          <div className="bg-[var(--color-surface-2)] rounded-2xl border border-orange-50 p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-base">🧠</span>
               <span className="text-xs font-bold text-teal-800 uppercase tracking-wide">Coach notes</span>
@@ -422,7 +422,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           <div>
             <label className="text-xs font-semibold text-gray-500 block mb-1.5">Plan name</label>
             <input type="text" value={planName} onChange={e => setPlanName(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors" />
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 transition-colors" />
           </div>
 
           <div>
@@ -430,7 +430,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
               Race date <span className="text-gray-300 font-normal">(optional)</span>
             </label>
             <input type="date" value={raceDateInput} onChange={e => setRaceDateInput(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors" />
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 transition-colors" />
             <p className="text-[10px] text-gray-400 mt-1">
               We'll align your training weeks to build up to race day.
             </p>

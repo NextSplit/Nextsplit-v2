@@ -208,7 +208,7 @@ export default function AdaptTestClient({ plans }: { plans: Plan[] }) {
                   onClick={() => setSelectedPlan(p.id)}
                   className={`text-xs px-3 py-2 rounded-xl border-2 font-semibold transition-all ${
                     selectedPlan === p.id
-                      ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)] text-[var(--ns-forest)]'
+                      ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)] text-[var(--ns-ember)]'
                       : 'border-gray-200 text-gray-600'
                   }`}
                 >
@@ -268,7 +268,7 @@ export default function AdaptTestClient({ plans }: { plans: Plan[] }) {
           onClick={runAll}
           disabled={running || (plans.length === 0)}
           className="w-full py-3 rounded-2xl text-white text-sm font-bold disabled:opacity-50 transition-all"
-          style={{ background: 'var(--ns-forest)' }}
+          style={{ background: 'var(--ns-ember)' }}
         >
           {running ? 'Running all scenarios…' : `Run all ${SCENARIOS.length} scenarios`}
         </button>

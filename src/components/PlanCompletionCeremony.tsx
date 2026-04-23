@@ -17,7 +17,7 @@ interface Particle {
   color: string; size: number; rotation: number; rotSpeed: number; opacity: number
 }
 
-const COLORS = ['var(--ns-forest)','#34D399','#FCD34D','#F87171','#A78BFA','#60A5FA','#FB923C']
+const COLORS = ['var(--ns-ember)','#34D399','#FCD34D','#F87171','#A78BFA','#60A5FA','#FB923C']
 
 function useConfetti(canvasRef: React.RefObject<HTMLCanvasElement | null>, active: boolean) {
   const particles = useRef<Particle[]>([])
@@ -131,7 +131,7 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
         </div>
 
         <h1 className="text-3xl font-black text-white mb-1">Plan Complete!</h1>
-        <p className="text-teal-200 text-sm mb-6">{completedAt}</p>
+        <p className="text-orange-200 text-sm mb-6">{completedAt}</p>
 
         {/* Plan name */}
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-3 mb-6 w-full">
@@ -144,15 +144,15 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
         <div className="grid grid-cols-3 gap-3 w-full mb-6">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
             <div className="text-2xl font-black text-white">{stats.totalKm > 0 ? stats.totalKm.toFixed(0) : '—'}</div>
-            <div className="text-teal-200 text-[10px] uppercase tracking-wide">km logged</div>
+            <div className="text-orange-200 text-[10px] uppercase tracking-wide">km logged</div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
             <div className="text-2xl font-black text-white">{stats.totalSessions}</div>
-            <div className="text-teal-200 text-[10px] uppercase tracking-wide">sessions</div>
+            <div className="text-orange-200 text-[10px] uppercase tracking-wide">sessions</div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
             <div className="text-2xl font-black text-white">{stats.avgEffort > 0 ? stats.avgEffort : '—'}</div>
-            <div className="text-teal-200 text-[10px] uppercase tracking-wide">avg effort</div>
+            <div className="text-orange-200 text-[10px] uppercase tracking-wide">avg effort</div>
           </div>
         </div>
 
@@ -163,7 +163,7 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
               <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl">
                 {b.emoji}
               </div>
-              <div className="text-teal-200 text-[9px] text-center leading-tight max-w-[48px]">{b.label}</div>
+              <div className="text-orange-200 text-[9px] text-center leading-tight max-w-[48px]">{b.label}</div>
             </div>
           ))}
         </div>
@@ -172,7 +172,7 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
         <button
           onClick={() => setShowShare(true)}
           className="w-full py-4 bg-white rounded-2xl text-base font-black mb-3 shadow-xl active:scale-95 transition-transform"
-          style={{ color: 'var(--ns-forest)' }}
+          style={{ color: 'var(--ns-ember)' }}
         >
           Share your achievement →
         </button>

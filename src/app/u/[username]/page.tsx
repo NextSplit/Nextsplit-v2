@@ -103,7 +103,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4">
         <div className="max-w-lg mx-auto flex items-center justify-between">
-          <a href="/" className="text-[var(--ns-forest)] font-black text-lg tracking-tight">NextSplit</a>
+          <a href="/" className="text-[var(--ns-ember)] font-black text-lg tracking-tight">NextSplit</a>
           <a href="/auth/login"
             className="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">
             Get the app →
@@ -119,7 +119,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
             <div className="flex items-start gap-4 mb-4">
               <div className="relative flex-shrink-0">
                 <div dangerouslySetInnerHTML={{ __html: svgAvatar }} />
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[var(--ns-forest)] text-white text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-lg">
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[var(--ns-ember)] text-white text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-lg">
                   Lv.{level.level}
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
             <div className="grid grid-cols-2 gap-2">
               {pbs.map(pb => (
                 <div key={pb.distanceKm} className="bg-[var(--ns-forest-light)] border border-teal-100 rounded-xl p-3">
-                  <div className="text-[10px] text-[var(--ns-forest)] font-bold">
+                  <div className="text-[10px] text-[var(--ns-ember)] font-bold">
                     {Object.entries(RACE_LABELS).find(([km]) => Math.abs(Number(km) - pb.distanceKm) < 0.1)?.[1] ?? `${pb.distanceKm}km`}
                   </div>
                   <div className="text-lg font-black text-gray-900">{pb.timeStr}</div>
@@ -200,7 +200,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           <p className="text-white font-black text-base mb-1">Track your runs with NextSplit</p>
           <p className="text-teal-100 text-xs mb-4">AI coaching, gamification, and real training plans</p>
           <a href="/auth/login"
-            className="inline-block bg-white text-[var(--ns-forest)] font-bold text-sm px-6 py-2.5 rounded-xl">
+            className="inline-block bg-white text-[var(--ns-ember)] font-bold text-sm px-6 py-2.5 rounded-xl">
             Start for free →
           </a>
         </div>

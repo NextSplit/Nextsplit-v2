@@ -60,7 +60,7 @@ function ShoppingList({ entries }: { entries: MealPlanEntryWithRecipe[] }) {
           <span className="text-[10px] text-gray-400 ml-2">{aggregated.length} items</span>
         </div>
         <button onClick={copyList}
-          className="text-[11px] font-semibold text-[var(--ns-forest)]">
+          className="text-[11px] font-semibold text-[var(--ns-ember)]">
           {copied ? '✓ Copied' : '📋 Copy'}
         </button>
       </div>
@@ -77,7 +77,7 @@ function ShoppingList({ entries }: { entries: MealPlanEntryWithRecipe[] }) {
                     const n = new Set(s); n.has(key) ? n.delete(key) : n.add(key); return n
                   })}
                     className="w-full flex items-center gap-3 text-left">
-                    <div className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${done ? 'border-[var(--ns-forest)] bg-[var(--ns-forest)]' : 'border-gray-300'}`}>
+                    <div className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${done ? 'border-[var(--ns-ember)] bg-[var(--ns-ember)]' : 'border-gray-300'}`}>
                       {done && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                     </div>
                     <span className={`text-sm flex-1 ${done ? 'line-through text-gray-300' : 'text-gray-700'}`}>

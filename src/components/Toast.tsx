@@ -36,7 +36,7 @@ export function useToast(): ToastContextValue {
 const TOAST_CONFIG: Record<ToastType, { bg: string; icon: string; text: string }> = {
   success: { bg: 'bg-emerald-500', icon: '✓',  text: 'text-white' },
   error:   { bg: 'bg-red-500',     icon: '✕',  text: 'text-white' },
-  info:    { bg: 'bg-[var(--ns-forest)]',   icon: 'ℹ',  text: 'text-white' },
+  info:    { bg: 'bg-[var(--ns-ember)]',   icon: 'ℹ',  text: 'text-white' },
   warning: { bg: 'bg-amber-500',   icon: '!',  text: 'text-white' },
 }
 

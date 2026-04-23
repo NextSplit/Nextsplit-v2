@@ -67,7 +67,7 @@ function SignupForm() {
     <main className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
       {/* Brand header */}
       <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-16 pb-10 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--ns-forest)]/20 border border-[var(--ns-forest)]/30 mb-4">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--ns-ember)]/20 border border-[var(--ns-ember)]/30 mb-4">
           <span className="text-2xl">🏃</span>
         </div>
         <h1 className="text-2xl font-black text-white tracking-tight">NextSplit</h1>
@@ -87,9 +87,9 @@ function SignupForm() {
 
           {/* Referral banner */}
           {refCode && (
-            <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest)]30 rounded-xl px-3 py-2.5 flex items-center gap-2">
+            <div className="bg-[var(--ns-ember-light)] border border-[var(--ns-ember)]30 rounded-xl px-3 py-2.5 flex items-center gap-2">
               <span>🎁</span>
-              <p className="text-xs leading-snug" style={{ color: 'var(--ns-forest)' }}>
+              <p className="text-xs leading-snug" style={{ color: 'var(--ns-ember)' }}>
                 <span className="font-bold">Referral applied.</span>{' '}
                 Your first month is free when you upgrade to Pro.
               </p>

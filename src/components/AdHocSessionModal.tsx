@@ -81,9 +81,9 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
         <div className="grid grid-cols-3 gap-2 mb-4">
           {AD_HOC_TYPES.map(t => (
             <button key={t.c} onClick={() => setSelected(s => s === t.c ? null : t.c)}
-              className={`rounded-xl border p-3 text-left transition-all ${selected === t.c ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]' : 'border-gray-100 bg-white'}`}>
+              className={`rounded-xl border p-3 text-left transition-all ${selected === t.c ? 'border-[var(--ns-ember)] bg-[var(--ns-ember-light)]' : 'border-gray-100 bg-white'}`}>
               <div className="text-xl mb-1">{t.emoji}</div>
-              <div className={`text-[11px] font-bold ${selected === t.c ? 'text-[var(--ns-forest)]' : 'text-gray-700'}`}>{t.label}</div>
+              <div className={`text-[11px] font-bold ${selected === t.c ? 'text-[var(--ns-ember)]' : 'text-gray-700'}`}>{t.label}</div>
               <div className="text-[9px] text-gray-400 mt-0.5 leading-tight">{t.desc}</div>
               {t.activityType && (
                 <div className="text-[8px] text-[var(--ns-forest-mid)] font-semibold mt-1">+TDEE</div>
@@ -99,13 +99,13 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
               <div className="flex items-center gap-1.5 flex-1">
                 <input type="number" inputMode="numeric" value={duration} onChange={e => setDuration(e.target.value)}
                   placeholder="e.g. 45"
-                  className="w-24 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20" />
+                  className="w-24 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20" />
                 <span className="text-xs text-gray-400">min</span>
               </div>
             </div>
             {AD_HOC_TYPES.find(t => t.c === selected)?.activityType && duration && (
-              <div className="flex items-center gap-2 bg-[var(--ns-forest-light)] rounded-xl px-3 py-2">
-                <span className="text-xs text-[var(--ns-forest)] font-medium">
+              <div className="flex items-center gap-2 bg-[var(--ns-ember-light)] rounded-xl px-3 py-2">
+                <span className="text-xs text-[var(--ns-ember)] font-medium">
                   🔥 This will update your calorie target in the Fuel tab
                 </span>
               </div>
@@ -115,7 +115,7 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
               <textarea value={notes} onChange={e => setNotes(e.target.value)}
                 placeholder="Optional — what did you do?"
                 rows={2}
-                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] focus:ring-2 focus:ring-[var(--ns-forest)]/20 resize-none" />
+                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 resize-none" />
             </div>
           </div>
         )}
@@ -126,7 +126,7 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
             Cancel
           </button>
           <button onClick={handleSave} disabled={!selected || saving}
-            className="flex-1 py-3 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-bold disabled:opacity-40">
+            className="flex-1 py-3 rounded-xl bg-[var(--ns-ember)] text-white text-sm font-bold disabled:opacity-40">
             {saving ? 'Saving…' : 'Log it ✓'}
           </button>
         </div>

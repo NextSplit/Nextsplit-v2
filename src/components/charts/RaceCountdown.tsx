@@ -11,14 +11,14 @@ function RaceCountdown({ raceDate, planName }: { raceDate: string; planName: str
   const weeks = Math.floor(days / 7)
   const remaining = days % 7
 
-  const urgency = days <= 14 ? 'text-red-500' : days <= 42 ? 'text-orange-500' : 'text-[var(--ns-forest)]'
+  const urgency = days <= 14 ? 'text-red-500' : days <= 42 ? 'text-orange-500' : 'text-[var(--ns-ember)]'
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
       <div className="bg-gradient-to-r from-[var(--ns-forest)] to-[#0891B2] px-5 py-4">
-        <div className="text-xs font-semibold text-teal-100 uppercase tracking-wide mb-1">Race Day</div>
+        <div className="text-xs font-semibold text-orange-50 uppercase tracking-wide mb-1">Race Day</div>
         <div className="text-white font-bold text-base">{planName}</div>
-        <div className="text-teal-100 text-xs mt-0.5">{fmtRaceDate(raceDate)}</div>
+        <div className="text-orange-50 text-xs mt-0.5">{fmtRaceDate(raceDate)}</div>
       </div>
       <div className="px-5 py-4 flex items-center justify-between">
         <div>

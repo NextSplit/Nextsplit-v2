@@ -89,7 +89,7 @@ function LevelUpScreen({
         )}
 
         <button onClick={onDismiss}
-          className="px-8 py-3 rounded-2xl bg-[var(--ns-forest)] text-white text-sm font-black animate-slide-up"
+          className="px-8 py-3 rounded-2xl bg-[var(--ns-ember)] text-white text-sm font-black animate-slide-up"
           style={{ animationDelay: '0.5s' }}>
           Let's go →
         </button>

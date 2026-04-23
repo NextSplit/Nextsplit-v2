@@ -80,20 +80,20 @@ export default function ManualOnboardingClient() {
 
       {step === 'details' && (
         <div>
-          <div className="inline-flex items-center gap-1.5 bg-[var(--ns-forest)]/15 border border-[var(--ns-forest)]/30 rounded-full px-3 py-1 mb-6">
-            <span className="text-xs font-bold text-[var(--ns-forest-mid)]">{selected?.label} · {selected?.weeks} ✓</span>
+          <div className="inline-flex items-center gap-1.5 bg-[var(--ns-ember)]/15 border border-[var(--ns-ember)]/30 rounded-full px-3 py-1 mb-6">
+            <span className="text-xs font-bold text-[var(--ns-ember)]">{selected?.label} · {selected?.weeks} ✓</span>
           </div>
           <h1 className="text-2xl font-black text-white mb-1">Set up your plan</h1>
           <p className="text-zinc-400 text-sm mb-6">Name it, set a race date, and choose whether to include strength sessions.</p>
           <div className="space-y-3 mb-6">
             <input value={planName} onChange={e => setPlanName(e.target.value)}
               placeholder={`${selected?.label} ${new Date().getFullYear()}`}
-              className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
+              className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]"
               style={{ background: 'rgba(255,255,255,0.07)' }} />
             <div>
               <p className="text-xs text-zinc-500 mb-2 font-medium">Race date (optional)</p>
               <input type="date" value={raceDate} onChange={e => setRaceDate(e.target.value)} min={today}
-                className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]"
+                className="w-full rounded-2xl border border-white/20 px-4 py-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]"
                 style={{ background: 'rgba(255,255,255,0.07)' }} />
             </div>
 
@@ -117,7 +117,7 @@ export default function ManualOnboardingClient() {
           </div>
           {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
           <button onClick={save} disabled={!planName.trim()}
-            className="w-full bg-[var(--ns-forest)] text-white py-4 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-[0.98] transition-transform">
+            className="w-full bg-[var(--ns-ember)] text-white py-4 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-[0.98] transition-transform">
             Start tracking →
           </button>
         </div>

@@ -43,15 +43,15 @@ export default function CoachingCard() {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-teal-600 to-teal-500 px-5 py-4">
+      <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-5 py-4">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-lg">🧠</span>
           <span className="text-white font-bold text-sm">AI Coach</span>
-          <span className="text-teal-100 text-[10px] bg-white/15 px-2 py-0.5 rounded-full ml-auto">
+          <span className="text-orange-50 text-[10px] bg-white/15 px-2 py-0.5 rounded-full ml-auto">
             Powered by Claude
           </span>
         </div>
-        <p className="text-teal-100 text-xs">Personalised insights from your training data</p>
+        <p className="text-orange-50 text-xs">Personalised insights from your training data</p>
       </div>
 
       <div className="p-5">
@@ -63,7 +63,7 @@ export default function CoachingCard() {
               onClick={() => { setMode(m.id); setNote(null); setError(null) }}
               className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${
                 mode === m.id
-                  ? 'bg-[var(--ns-forest)] text-white'
+                  ? 'bg-[var(--ns-ember)] text-white'
                   : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
               }`}
             >
@@ -81,7 +81,7 @@ export default function CoachingCard() {
             <p className="text-xs text-gray-400 mb-5">{selectedMode.desc}</p>
             <button
               onClick={() => fetchNote(mode)}
-              className="px-6 py-2.5 bg-[var(--ns-forest)] text-white rounded-xl text-sm font-semibold active:scale-95 transition-transform"
+              className="px-6 py-2.5 bg-[var(--ns-ember)] text-white rounded-xl text-sm font-semibold active:scale-95 transition-transform"
             >
               Get coaching note
             </button>
@@ -141,13 +141,13 @@ export default function CoachingCard() {
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => fetchNote(mode)}
-                className="flex-1 py-2.5 rounded-xl border border-[var(--ns-forest-light)] text-[var(--ns-forest)] text-xs font-semibold active:scale-95 transition-transform"
+                className="flex-1 py-2.5 rounded-xl border border-[var(--ns-forest-light)] text-[var(--ns-ember)] text-xs font-semibold active:scale-95 transition-transform"
               >
                 ↻ Refresh
               </button>
               <button
                 onClick={() => { setNote(null); setError(null) }}
-                className="flex-1 py-2.5 rounded-xl bg-[var(--ns-forest-light)] text-[var(--ns-forest)] text-xs font-semibold active:scale-95 transition-transform"
+                className="flex-1 py-2.5 rounded-xl bg-[var(--ns-ember-light)] text-[var(--ns-ember)] text-xs font-semibold active:scale-95 transition-transform"
               >
                 Try another
               </button>

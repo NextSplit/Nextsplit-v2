@@ -70,7 +70,7 @@ function RecipeFormModal({
               <label className="text-xs font-semibold text-gray-600 block mb-1">Recipe name</label>
               <input value={name} onChange={e => setName(e.target.value)}
                 placeholder="e.g. Overnight oats"
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]" />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-600 block mb-1">
@@ -103,7 +103,7 @@ function RecipeFormModal({
                   <label className="text-[10px] text-gray-500 block mb-1">{label}</label>
                   <input type="number" value={val} onChange={e => set(e.target.value)}
                     placeholder="0"
-                    className={`w-full border ${colour} rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--ns-forest)]`} />
+                    className={`w-full border ${colour} rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]`} />
                 </div>
               ))}
             </div>
@@ -122,17 +122,17 @@ function RecipeFormModal({
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-semibold text-gray-600">Ingredients</label>
               <button onClick={addIngredient}
-                className="text-[11px] font-semibold text-[var(--ns-forest)]">+ Add</button>
+                className="text-[11px] font-semibold text-[var(--ns-ember)]">+ Add</button>
             </div>
             <div className="space-y-2">
               {ingredients.map((ing, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <input value={ing.name} onChange={e => updateIngredient(i, 'name', e.target.value)}
                     placeholder="Ingredient"
-                    className="flex-1 border border-gray-200 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--ns-forest)]" />
+                    className="flex-1 border border-gray-200 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
                   <input type="number" value={ing.quantity || ''} onChange={e => updateIngredient(i, 'quantity', Number(e.target.value))}
                     placeholder="Qty"
-                    className="w-14 border border-gray-200 rounded-xl px-2 py-2 text-xs text-center focus:outline-none focus:ring-1 focus:ring-[var(--ns-forest)]" />
+                    className="w-14 border border-gray-200 rounded-xl px-2 py-2 text-xs text-center focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
                   <select value={ing.unit} onChange={e => updateIngredient(i, 'unit', e.target.value)}
                     className="border border-gray-200 rounded-xl px-1.5 py-2 text-xs focus:outline-none">
                     {['g','ml','cup','tbsp','tsp','piece','slice'].map(u => (
@@ -154,7 +154,7 @@ function RecipeFormModal({
             <textarea value={notes} onChange={e => setNotes(e.target.value)}
               placeholder="Preparation notes, tips..."
               rows={2}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-[var(--ns-forest)]" />
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
           </div>
         </div>
 
@@ -164,7 +164,7 @@ function RecipeFormModal({
             Cancel
           </button>
           <button onClick={handleSave} disabled={saving || !name.trim()}
-            className="flex-1 py-3 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-semibold disabled:opacity-50">
+            className="flex-1 py-3 rounded-xl bg-[var(--ns-ember)] text-white text-sm font-semibold disabled:opacity-50">
             {saving ? 'Saving…' : existing ? 'Update' : 'Save recipe'}
           </button>
         </div>

@@ -204,7 +204,7 @@ export function StravaConnectScreen() {
           </div>
 
           {/* Prefill summary */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
+          <div className="rounded-2xl" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
             <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>We'll pre-fill these for you</p>
             <div className="space-y-2">
               {[
@@ -230,8 +230,8 @@ export function StravaConnectScreen() {
                     const m = Math.floor((secs % 3600) / 60)
                     const s = secs % 60
                     return (
-                      <div key={dist} className="bg-[var(--ns-forest-light)] rounded-xl p-2 text-center">
-                        <p className="text-xs text-[var(--ns-forest)] font-bold uppercase">{dist}</p>
+                      <div key={dist} className="bg-[var(--ns-ember-light)] rounded-xl p-2 text-center">
+                        <p className="text-xs text-[var(--ns-ember)] font-bold uppercase">{dist}</p>
                         <p className="text-sm font-black text-white">
                           {`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
                         </p>
@@ -286,7 +286,7 @@ export function StravaConnectScreen() {
         </div>
 
         {/* What we import */}
-        <div className="w-full max-w-xs bg-white rounded-2xl border border-gray-200 p-4 text-left space-y-2">
+        <div className="w-full max-w-xs rounded-2xl" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">We'll import</p>
           {[
             '📊 Current weekly mileage',

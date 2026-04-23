@@ -380,32 +380,32 @@ export function PlanGenerationScreen() {
             {/* Torso */}
             <path d="M14 17 Q15 15 21 15 Q27 15 28 17 L29 30 Q27 31 21 31 Q15 31 13 30 Z" fill={kit} />
             {/* Neck */}
-            <rect x="19" y="15" width="4" height="3" rx="1" fill={skin} />
+            <rect y="15" width="4" height="3" rx="1" fill={skin} />
             {/* Left arm (animated) */}
             <g style={{ transformOrigin: '14px 18px', animation: 'arm-swing 0.4s ease-in-out infinite' }}>
-              <line x1="14" y1="18" x2="8" y2="26" stroke={skin} strokeWidth="3" strokeLinecap="round" />
+              <line x1="14" y1="18" y2="26" stroke={skin} strokeWidth="3" strokeLinecap="round" />
               <circle cx="8" cy="27" r="2" fill={skin} />
             </g>
             {/* Right arm */}
             <g style={{ transformOrigin: '28px 18px', animation: 'arm-swing 0.4s ease-in-out infinite reverse' }}>
-              <line x1="28" y1="18" x2="34" y2="24" stroke={skin} strokeWidth="3" strokeLinecap="round" />
+              <line x1="28" y1="18" y2="24" stroke={skin} strokeWidth="3" strokeLinecap="round" />
               <circle cx="34" cy="25" r="2" fill={skin} />
             </g>
             {/* Shorts */}
             <path d="M15 29 Q17 34 19 39 L23 39 Q25 34 27 29 Z" fill={kit} opacity="0.9" />
             {/* Left leg */}
             <g style={{ transformOrigin: '19px 39px', animation: 'stride-L 0.4s ease-in-out infinite' }}>
-              <line x1="19" y1="39" x2="13" y2="49" stroke={skin} strokeWidth="3.5" strokeLinecap="round" />
+              <line x1="19" y1="39" y2="49" stroke={skin} strokeWidth="3.5" strokeLinecap="round" />
               <path d="M11 48 Q9 51 7 52 Q11 53 14 52 Q14 49 13 49 Z" fill={shoe} />
             </g>
             {/* Right leg */}
             <g style={{ transformOrigin: '23px 39px', animation: 'stride-R 0.4s ease-in-out infinite' }}>
-              <line x1="23" y1="39" x2="29" y2="48" stroke={skin} strokeWidth="3.5" strokeLinecap="round" />
+              <line x1="23" y1="39" y2="48" stroke={skin} strokeWidth="3.5" strokeLinecap="round" />
               <path d="M29 48 Q32 47 34 48 Q32 51 29 51 Q27 50 29 48 Z" fill={shoe} />
             </g>
             {/* Bib */}
-            <rect x="17" y="20" width="8" height="6" rx="1" fill="white" opacity="0.9" />
-            <text x="21" y="25" textAnchor="middle" fontSize="3.5" fontWeight="bold" fill={kit}>NS</text>
+            <rect y="20" width="8" height="6" rx="1" fill="white" opacity="0.9" />
+            <text y="25" textAnchor="middle" fontSize="3.5" fontWeight="bold" fill={kit}>NS</text>
           </svg>
         </div>
       </div>

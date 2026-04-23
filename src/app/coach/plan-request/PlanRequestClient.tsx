@@ -113,7 +113,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
                     isDone    ? 'bg-emerald-100 text-emerald-700' :
                     isCurrent ? 'text-white' : 'bg-gray-100 text-gray-400'
-                  }`} style={isCurrent ? { background: 'var(--ns-forest)' } : {}}>
+                  }`} style={isCurrent ? { background: 'var(--ns-ember)' } : {}}>
                     {isDone ? '✓' : s.emoji}
                   </div>
                   <div>
@@ -125,7 +125,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
                     )}
                   </div>
                   {isCurrent && (
-                    <div className="ml-auto w-4 h-4 rounded-full border-2 border-t-transparent border-[var(--ns-forest)] animate-spin" />
+                    <div className="ml-auto w-4 h-4 rounded-full border-2 border-t-transparent border-[var(--ns-ember)] animate-spin" />
                   )}
                 </div>
               )
@@ -138,7 +138,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
 
           <Link href="/today"
             className="block w-full py-3 rounded-2xl text-center text-sm font-bold text-white"
-            style={{ background: 'var(--ns-forest)' }}>
+            style={{ background: 'var(--ns-ember)' }}>
             Back to training →
           </Link>
         </div>
@@ -171,7 +171,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
                     ? 'text-white border-transparent'
                     : 'border-gray-200 text-gray-600'
                 }`}
-                style={data.goal === g ? { background: 'var(--ns-forest)', borderColor: 'var(--ns-forest)' } : {}}
+                style={data.goal === g ? { background: 'var(--ns-ember)', borderColor: 'var(--ns-forest)' } : {}}
               >
                 {g}
               </button>
@@ -187,7 +187,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
               <button key={l.id}
                 onClick={() => update('level', l.id)}
                 className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all ${
-                  data.level === l.id ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]' : 'border-gray-200'
+                  data.level === l.id ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)]' : 'border-gray-200'
                 }`}
               >
                 <p className="text-sm font-bold text-gray-900">{l.label}</p>
@@ -213,7 +213,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
                 value={data[f.field as keyof IntakeData]}
                 onChange={e => update(f.field as keyof IntakeData, e.target.value)}
                 placeholder={f.placeholder}
-                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-forest)]"
+                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-ember)]"
               />
             </div>
           ))}
@@ -233,7 +233,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
                 value={data[f.field as keyof IntakeData]}
                 onChange={e => update(f.field as keyof IntakeData, e.target.value)}
                 rows={f.rows}
-                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-forest)] resize-none"
+                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-ember)] resize-none"
               />
             </div>
           ))}
@@ -249,7 +249,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
           onClick={handleSubmit}
           disabled={!canSubmit || submitting}
           className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-40 transition-all active:scale-[0.98]"
-          style={{ background: 'var(--ns-forest)' }}
+          style={{ background: 'var(--ns-ember)' }}
         >
           {submitting ? 'Sending to coach…' : 'Send intake to coach →'}
         </button>

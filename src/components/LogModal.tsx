@@ -197,9 +197,9 @@ function LogModal({
               <h2 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>{session.n}</h2>
               {technical && <p className="text-sm text-gray-500 mt-1 leading-relaxed">{technical}</p>}
               {rationale && (
-                <div className="flex items-start gap-2 bg-[var(--ns-forest-light)] border border-[var(--ns-forest)]20 rounded-xl px-3 py-2.5 mt-2">
+                <div className="flex items-start gap-2 bg-[var(--ns-ember-light)] border border-[var(--ns-ember)]20 rounded-xl px-3 py-2.5 mt-2">
                   <span className="text-sm mt-0.5">🧠</span>
-                  <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-forest)' }}>{rationale}</p>
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-ember)' }}>{rationale}</p>
                 </div>
               )}
               {/* Strava import hint */}
@@ -230,7 +230,7 @@ function LogModal({
                   ))}
                 </div>
                 {repsCompleted === targetReps && (
-                  <p className="text-xs mt-1.5 font-semibold" style={{ color: 'var(--ns-forest)' }}>
+                  <p className="text-xs mt-1.5 font-semibold" style={{ color: 'var(--ns-ember)' }}>
                     Full session — +15 XP bonus ✓
                   </p>
                 )}
@@ -315,9 +315,9 @@ function LogModal({
             <h2 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>{session.n}</h2>
             {technical && <p className="text-sm text-gray-500 mt-1 leading-relaxed">{technical}</p>}
             {rationale && (
-              <div className="flex items-start gap-2 bg-[var(--ns-forest-light)] rounded-xl px-3 py-2.5 mt-2">
+              <div className="flex items-start gap-2 bg-[var(--ns-ember-light)] rounded-xl px-3 py-2.5 mt-2">
                 <span className="text-sm mt-0.5">🧠</span>
-                <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-forest)' }}>{rationale}</p>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-ember)' }}>{rationale}</p>
               </div>
             )}
           </div>
@@ -396,7 +396,7 @@ function EffortSlider({ effort, setEffort }: { effort: number; setEffort: (n: nu
     <div>
       <div className="flex justify-between items-center mb-2">
         <label className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Effort (RPE)</label>
-        <span className="text-2xl font-bold" style={{ color: 'var(--ns-forest)' }}>
+        <span className="text-2xl font-bold" style={{ color: 'var(--ns-ember)' }}>
           {effort}<span className="text-sm text-gray-400">/10</span>
         </span>
       </div>
@@ -496,11 +496,11 @@ function PaceInput({ paceInput, setPaceInput, autoPace, onBlur, showKm }: {
         <input type="text" inputMode="decimal" value={paceInput}
           onChange={e => setPaceInput(e.target.value)} onBlur={onBlur}
           placeholder={autoPace ? `Auto: ${autoPace}` : '5:30'}
-          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)] pr-14" />
+          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)] pr-14" />
         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">/km</span>
       </div>
       {autoPace && !paceInput && (
-        <p className="text-[10px] mt-1" style={{ color: 'var(--ns-forest)' }}>Auto: {autoPace}/km</p>
+        <p className="text-[10px] mt-1" style={{ color: 'var(--ns-ember)' }}>Auto: {autoPace}/km</p>
       )}
     </div>
   )
@@ -512,7 +512,7 @@ function NotesInput({ notes, setNotes, placeholder }: { notes: string; setNotes:
       <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>Notes</label>
       <textarea value={notes} onChange={e => setNotes(e.target.value)}
         placeholder={placeholder ?? 'How did it feel? Any issues?'} rows={2}
-        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
+        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]" />
     </div>
   )
 }

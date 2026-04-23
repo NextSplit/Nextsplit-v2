@@ -36,11 +36,11 @@ export default function Splity({ size = 32, mood = 'default', className = '' }: 
       {/* Shoe upper */}
       <path d="M 4 22 Q 4 10 16 10 Q 28 10 28 22" fill="#e8c45a" />
       {/* Laces */}
-      <line x1="10" y1="17" x2="22" y2="17" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="11" y1="19.5" x2="21" y2="19.5" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+      <line x1="10" y1="17" y2="17" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="11" y1="19.5" y2="19.5" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
       {/* Lace cross detail */}
-      <line x1="13" y1="15" x2="16" y2="17" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
-      <line x1="19" y1="15" x2="16" y2="17" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
+      <line x1="13" y1="15" y2="17" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
+      <line x1="19" y1="15" y2="17" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
 
       {/* Face */}
       {/* Eyes */}
@@ -62,16 +62,16 @@ export default function Splity({ size = 32, mood = 'default', className = '' }: 
       {/* Celebration stars */}
       {mood === 'celebrating' && (
         <>
-          <text x="1" y="8" fontSize="6">✨</text>
-          <text x="24" y="6" fontSize="5">⭐</text>
+          <text y="8" fontSize="6">✨</text>
+          <text y="6" fontSize="5">⭐</text>
         </>
       )}
 
       {/* Motion lines when encouraging */}
       {mood === 'encouraging' && (
         <>
-          <line x1="1" y1="20" x2="4" y2="20" stroke="#e85d26" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-          <line x1="1" y1="23" x2="3" y2="23" stroke="#e85d26" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+          <line x1="1" y1="20" y2="20" stroke="#e85d26" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+          <line x1="1" y1="23" y2="23" stroke="#e85d26" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
         </>
       )}
     </svg>

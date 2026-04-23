@@ -525,7 +525,7 @@ export default function ProfileClient({
                 href={`/u/${encodeURIComponent(displayName)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[11px] font-semibold text-[var(--ns-forest)] bg-[var(--ns-forest-light)] border border-teal-100 px-3 py-1.5 rounded-xl"
+                className="text-[11px] font-semibold text-[var(--ns-ember)] bg-[var(--ns-forest-light)] border border-teal-100 px-3 py-1.5 rounded-xl"
               >
                 Preview →
               </a>

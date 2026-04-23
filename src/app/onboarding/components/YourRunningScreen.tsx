@@ -66,12 +66,12 @@ function RaceTimeInput({ label, value, onChange }: {
         onChange={e => setRaw(e.target.value)}
         onBlur={handleBlur}
         placeholder="e.g. 25:30"
-        className={`w-full px-3 py-2 rounded-xl border text-sm outline-none focus:ring-2 focus:ring-[var(--ns-forest)]/20 transition-colors ${
-          error ? 'border-red-300' : 'border-gray-200 focus:border-[var(--ns-forest)]'
+        className={`w-full px-3 py-2 rounded-xl border text-sm outline-none focus:ring-2 focus:ring-[var(--ns-ember)]/20 transition-colors ${
+          error ? 'border-red-300' : 'border-gray-200 focus:border-[var(--ns-ember)]'
         }`}
       />
       {error && <p className="text-xs text-red-500">{error}</p>}
-      {value && !error && <p className="text-xs text-[var(--ns-forest)]">✓ {secsToMMSS(value)}</p>}
+      {value && !error && <p className="text-xs text-[var(--ns-ember)]">✓ {secsToMMSS(value)}</p>}
     </div>
   )
 }
@@ -140,8 +140,8 @@ export function YourRunningScreen() {
 
         {/* Deeper question for AI Bespoke — signals intelligence (Product Pillar spec) */}
         {data.trainingPath === 'ai_bespoke' && (
-          <div className="bg-[var(--ns-forest-light)] border border-[var(--ns-forest)]20 rounded-2xl p-4">
-            <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--ns-forest)' }}>
+          <div className="bg-[var(--ns-ember-light)] border border-[var(--ns-ember)]20 rounded-2xl p-4">
+            <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--ns-ember)' }}>
               One important question first
             </p>
             <p className="text-sm font-semibold text-gray-900 mb-3 leading-snug">
@@ -161,7 +161,7 @@ export function YourRunningScreen() {
                     onClick={() => update({ prevPlanDropReason: opt.id } as never)}
                     className="w-full text-left px-3 py-2.5 rounded-xl border-2 text-xs font-semibold transition-all"
                     style={isOn
-                      ? { background: 'var(--ns-forest)', color: 'white', borderColor: 'var(--ns-forest)' }
+                      ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-ember)' }
                       : { background: 'white', color: '#374151', borderColor: '#e5e7eb' }}>
                     {opt.label}
                   </button>
@@ -181,7 +181,7 @@ export function YourRunningScreen() {
                 onClick={() => setExperience(o.id)}
                 className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all`}
                 style={experience === o.id
-                  ? { background: 'var(--ns-forest-light)', borderColor: 'var(--ns-forest)' }
+                  ? { background: 'var(--ns-forest-light)', borderColor: 'var(--ns-ember)' }
                   : { background: 'white', borderColor: '#e5e7eb' }}
               >
                 <p className={`text-sm font-bold ${experience === o.id ? 'text-white' : 'text-gray-700'}`}>{o.label}</p>
@@ -200,9 +200,9 @@ export function YourRunningScreen() {
               min={0} max={120} step={5}
               value={weeklyKm}
               onChange={e => setWeeklyKm(Number(e.target.value))}
-              className="flex-1 accent-teal-500"
+              className="flex-1 accent-orange-500"
             />
-            <span className="text-lg font-black text-[var(--ns-forest)] w-16 text-right">{weeklyKm}km</span>
+            <span className="text-lg font-black text-[var(--ns-ember)] w-16 text-right">{weeklyKm}km</span>
           </div>
           <div className="flex justify-between text-xs text-gray-400">
             <span>0km</span><span>60km</span><span>120km</span>
@@ -232,7 +232,7 @@ export function YourRunningScreen() {
             <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>
               Longest run in last 4 weeks
             </label>
-            <span className="text-lg font-black font-data" style={{ color: 'var(--ns-forest)' }}>
+            <span className="text-lg font-black font-data" style={{ color: 'var(--ns-ember)' }}>
               {longestRun === 0 ? '—' : longestRun >= 50 ? '50km+' : `${longestRun}km`}
             </span>
           </div>
@@ -241,7 +241,7 @@ export function YourRunningScreen() {
             min={0} max={50} step={0.5}
             value={longestRun}
             onChange={e => setLongestRun(Number(e.target.value))}
-            className="w-full accent-teal-500"
+            className="w-full accent-orange-500"
           />
           <div className="flex justify-between text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
             <span>0</span><span>10km</span><span>21km</span><span>42km</span><span>50km+</span>
@@ -262,7 +262,7 @@ export function YourRunningScreen() {
                 key={o.id}
                 onClick={() => toggleSurface(o.id)}
                 className={`py-2.5 px-3 rounded-xl text-sm font-semibold border transition-all text-left ${
-                  surfaces.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)] text-white' : 'bg-white border-gray-200 text-gray-700'
+                  surfaces.includes(o.id) ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)] text-white' : 'bg-white border-gray-200 text-gray-700'
                 }`}
               >
                 {o.label}

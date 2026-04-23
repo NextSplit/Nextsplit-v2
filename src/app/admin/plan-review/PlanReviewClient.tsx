@@ -271,7 +271,7 @@ export default function PlanReviewClient() {
                     onClick={() => { setSelectedPreset(i); setUseCustom(false) }}
                     className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${
                       !useCustom && selectedPreset === i
-                        ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)] text-[var(--ns-forest)]'
+                        ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)] text-[var(--ns-ember)]'
                         : 'border-gray-100 text-gray-600 hover:border-gray-200'
                     }`}
                   >
@@ -283,7 +283,7 @@ export default function PlanReviewClient() {
               <button
                 onClick={() => setUseCustom(true)}
                 className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${
-                  useCustom ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)] text-[var(--ns-forest)]' : 'border-gray-100 text-gray-500'
+                  useCustom ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)] text-[var(--ns-ember)]' : 'border-gray-100 text-gray-500'
                 }`}
               >
                 Custom profile →
@@ -305,7 +305,7 @@ export default function PlanReviewClient() {
                         type={f.type}
                         value={customProfile[f.key as keyof PlanProfile]?.toString() ?? ''}
                         onChange={e => setCustomProfile(p => ({ ...p, [f.key]: f.type === 'number' ? Number(e.target.value) : e.target.value }))}
-                        className="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:border-[var(--ns-forest)]"
+                        className="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:border-[var(--ns-ember)]"
                       />
                     </div>
                   ))}
@@ -317,7 +317,7 @@ export default function PlanReviewClient() {
               onClick={generate}
               disabled={generating}
               className="w-full py-3 rounded-2xl text-white text-sm font-bold disabled:opacity-50 transition-all active:scale-[0.98]"
-              style={{ background: 'var(--ns-forest)' }}
+              style={{ background: 'var(--ns-ember)' }}
             >
               {generating ? 'Generating…' : '⚡ Generate plan'}
             </button>

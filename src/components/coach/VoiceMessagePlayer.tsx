@@ -91,19 +91,19 @@ export default function VoiceMessagePlayer({ message, myId, onListened }: Props)
 
   return (
     <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl ${
-      isFromMe ? 'bg-[var(--ns-forest)] ml-8' : 'bg-gray-100 mr-8'
+      isFromMe ? 'bg-[var(--ns-ember)] ml-8' : 'bg-gray-100 mr-8'
     }`}>
       {/* Play button */}
       <button
         onClick={handlePlay}
         className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform ${
-          isFromMe ? 'bg-white/20 text-white' : 'bg-[var(--ns-forest)] text-white'
+          isFromMe ? 'bg-white/20 text-white' : 'bg-[var(--ns-ember)] text-white'
         }`}
       >
         {playing ? (
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <rect x="6" y="4" width="4" height="16" rx="1"/>
-            <rect x="14" y="4" width="4" height="16" rx="1"/>
+            <rect y="4" width="4" height="16" rx="1"/>
+            <rect y="4" width="4" height="16" rx="1"/>
           </svg>
         ) : (
           <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@ export default function VoiceMessagePlayer({ message, myId, onListened }: Props)
         >
           <div
             className={`h-full rounded-full transition-all ${
-              isFromMe ? 'bg-white' : 'bg-[var(--ns-forest)]'
+              isFromMe ? 'bg-white' : 'bg-[var(--ns-ember)]'
             }`}
             style={{ width: `${progress}%` }}
           />

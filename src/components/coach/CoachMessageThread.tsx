@@ -149,7 +149,7 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
                 {item.kind === 'text' ? (
                   <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm ${isMine ? 'text-white rounded-br-sm' : 'bg-gray-100 text-gray-800 rounded-bl-sm'}`}
-                      style={isMine ? { background: 'var(--ns-forest)' } : {}}>
+                      style={isMine ? { background: 'var(--ns-ember)' } : {}}>
                       <p className="leading-relaxed">{item.body}</p>
                       <p className={`text-[10px] mt-1 ${isMine ? 'text-white/60 text-right' : 'text-gray-400'}`}>
                         {fmt(item.created_at)}{isMine && item.read_at && ' · Read'}
@@ -189,10 +189,10 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
           <textarea value={body} onChange={e => setBody(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
             placeholder="Message…" rows={1}
-            className="flex-1 px-3 py-2.5 rounded-2xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none max-h-32 transition-colors" />
+            className="flex-1 px-3 py-2.5 rounded-2xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] resize-none max-h-32 transition-colors" />
           <button onClick={send} disabled={!body.trim() || sending}
             className="w-10 h-10 text-white rounded-full flex items-center justify-center disabled:opacity-40 active:scale-90 transition-all shrink-0"
-            style={{ background: 'var(--ns-forest)' }}>
+            style={{ background: 'var(--ns-ember)' }}>
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 rotate-90"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z" /></svg>
           </button>
         </div>

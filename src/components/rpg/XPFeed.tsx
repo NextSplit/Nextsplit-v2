@@ -49,7 +49,7 @@ function XPFeed({ logs, weeks }: {
               <p className="text-xs font-semibold text-gray-800">{r.name}</p>
               <p className="text-[10px] text-gray-400">{r.date}{r.km ? ` · ${r.km}km` : ''}</p>
             </div>
-            <div className="text-sm font-black text-[var(--ns-forest)]">+{r.xp} XP</div>
+            <div className="text-sm font-black text-[var(--ns-ember)]">+{r.xp} XP</div>
           </div>
         ))}
       </div>

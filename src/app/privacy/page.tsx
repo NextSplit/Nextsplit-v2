@@ -12,7 +12,7 @@ export default function PrivacyPage() {
 
         {/* Header */}
         <div className="mb-10">
-          <Link href="/" className="text-[var(--ns-forest)] text-sm font-semibold hover:underline">← NextSplit</Link>
+          <Link href="/" className="text-[var(--ns-ember)] text-sm font-semibold hover:underline">← NextSplit</Link>
           <h1 className="text-3xl font-black text-gray-900 mt-4">Privacy Policy</h1>
           <p className="text-gray-500 text-sm mt-2">Last updated: April 2026</p>
         </div>
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">Who we are</h2>
             <p>NextSplit (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) is a training platform for runners and endurance athletes. We are the data controller for personal data collected through nextsplit-v2.vercel.app and associated mobile applications.</p>
-            <p className="mt-2">Contact: <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-forest)] hover:underline">privacy@nextsplit.com</a></p>
+            <p className="mt-2">Contact: <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-ember)] hover:underline">privacy@nextsplit.com</a></p>
           </section>
 
           <section>
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
                 { title: 'Device data', desc: 'Browser type, device type, and IP address for security and analytics purposes.' },
               ].map(item => (
                 <div key={item.title} className="flex gap-3">
-                  <span className="text-[var(--ns-forest)] font-bold shrink-0">→</span>
+                  <span className="text-[var(--ns-ember)] font-bold shrink-0">→</span>
                   <div><span className="font-semibold text-gray-800">{item.title}:</span> {item.desc}</div>
                 </div>
               ))}
@@ -87,8 +87,8 @@ export default function PrivacyPage() {
                 { name: 'Stripe', purpose: 'Payment processing (if you subscribe)', link: 'https://stripe.com/gb/privacy' },
               ].map(s => (
                 <div key={s.name} className="flex gap-3">
-                  <span className="text-[var(--ns-forest)] font-bold shrink-0">→</span>
-                  <div><span className="font-semibold text-gray-800">{s.name}:</span> {s.purpose}. <a href={s.link} target="_blank" rel="noopener noreferrer" className="text-[var(--ns-forest)] hover:underline">Privacy policy</a></div>
+                  <span className="text-[var(--ns-ember)] font-bold shrink-0">→</span>
+                  <div><span className="font-semibold text-gray-800">{s.name}:</span> {s.purpose}. <a href={s.link} target="_blank" rel="noopener noreferrer" className="text-[var(--ns-ember)] hover:underline">Privacy policy</a></div>
                 </div>
               ))}
             </div>
@@ -123,7 +123,7 @@ export default function PrivacyPage() {
               <li><strong>Withdraw consent</strong> — turn off notifications in Settings at any time</li>
               <li><strong>Object</strong> — contact us at privacy@nextsplit.com to object to any processing</li>
             </ul>
-            <p className="mt-2">To exercise any right not available in-app, email <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-forest)] hover:underline">privacy@nextsplit.com</a>. We will respond within 30 days.</p>
+            <p className="mt-2">To exercise any right not available in-app, email <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-ember)] hover:underline">privacy@nextsplit.com</a>. We will respond within 30 days.</p>
           </section>
 
           <section>
@@ -143,13 +143,13 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">Contact</h2>
-            <p>For privacy questions or to exercise your rights: <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-forest)] hover:underline">privacy@nextsplit.com</a></p>
+            <p>For privacy questions or to exercise your rights: <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-ember)] hover:underline">privacy@nextsplit.com</a></p>
           </section>
 
         </div>
 
         <div className="mt-12 pt-6 border-t border-gray-100 flex gap-4 text-sm">
-          <Link href="/terms" className="text-[var(--ns-forest)] hover:underline">Terms of Service</Link>
+          <Link href="/terms" className="text-[var(--ns-ember)] hover:underline">Terms of Service</Link>
           <Link href="/" className="text-gray-400 hover:underline">Back to NextSplit</Link>
         </div>
       </div>

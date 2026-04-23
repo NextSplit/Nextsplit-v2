@@ -67,11 +67,11 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
 
   if (adaptation) {
     return (
-      <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl border border-teal-100 overflow-hidden">
-        <div className="px-4 pt-4 pb-3 border-b border-teal-100/50">
+      <div className="bg-gradient-to-br from-orange-50 to-emerald-50 rounded-2xl border border-orange-50 overflow-hidden">
+        <div className="px-4 pt-4 pb-3 border-b border-orange-50/50">
           <div className="flex items-center gap-2">
             <span className="text-base">🧠</span>
-            <p className="text-sm font-bold text-teal-800">Plan adapted</p>
+            <p className="text-sm font-bold text-[var(--color-surface-2)]">Plan adapted</p>
           </div>
           <p className="text-xs text-[var(--ns-ember)] mt-1 leading-relaxed">{adaptation.recommendation}</p>
         </div>
@@ -84,10 +84,10 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
               <div key={day.day}>
                 <p className="text-xs font-semibold text-[var(--ns-ember)] mb-1">{day.day}</p>
                 {day.sessions.map((sess, i) => (
-                  <div key={i} className="flex items-start gap-2 py-1.5 border-t border-teal-100/50">
+                  <div key={i} className="flex items-start gap-2 py-1.5 border-t border-orange-50/50">
                     <span className="text-sm shrink-0">{SESSION_EMOJI[sess.c] ?? '🏃'}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-teal-800">{sess.n}
+                      <p className="text-xs font-semibold text-[var(--color-surface-2)]">{sess.n}
                         {sess.km > 0 && <span className="text-[var(--ns-forest-mid)] font-normal ml-1">{sess.km}km</span>}
                       </p>
                       <p className="text-[10px] text-[var(--ns-ember)] leading-relaxed mt-0.5">{sess.det}</p>
@@ -111,7 +111,7 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
 
         {/* Key message */}
         {adaptation.key_message && (
-          <div className="px-4 py-3 border-t border-teal-100/50">
+          <div className="px-4 py-3 border-t border-orange-50/50">
             <p className="text-xs text-[var(--ns-ember)] font-semibold italic">&ldquo;{adaptation.key_message}&rdquo;</p>
           </div>
         )}

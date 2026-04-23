@@ -176,7 +176,7 @@ export default async function SquadJoinPage({ params }: Props) {
               {squad.name} has reached the maximum of 5 members.
             </p>
             <Link href="/auth/signup" className="block w-full py-3 rounded-xl font-bold text-sm text-white text-center"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               Start your own squad on NextSplit →
             </Link>
           </div>

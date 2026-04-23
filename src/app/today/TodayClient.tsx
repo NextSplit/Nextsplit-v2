@@ -693,7 +693,7 @@ export default function TodayClient() {
                   )}
                   <button
                     onClick={() => setShowWeeklyShare(true)}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-[var(--ns-forest)] bg-white border border-[var(--ns-forest-light)] px-3 py-1.5 rounded-full"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-[var(--ns-ember)] bg-white border border-[var(--ns-forest-light)] px-3 py-1.5 rounded-full"
                   >
                     📊 Week card
                   </button>

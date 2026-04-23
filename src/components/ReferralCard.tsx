@@ -89,7 +89,7 @@ export default function ReferralCard({ trigger = 'profile' }: Props) {
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 flex items-center gap-2"
-        style={{ background: 'var(--ns-forest)', color: 'white' }}>
+        style={{ background: 'var(--ns-ember)', color: 'white' }}>
         <span className="text-base">🎁</span>
         <div className="flex-1">
           <p className="text-xs font-bold opacity-70 uppercase tracking-wider">Referral</p>
@@ -107,11 +107,11 @@ export default function ReferralCard({ trigger = 'profile' }: Props) {
         {/* Reward explanation — legible, not discount-coded */}
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-gray-50 rounded-xl p-3 text-center">
-            <p className="text-base font-black" style={{ color: 'var(--ns-forest)' }}>1 month</p>
+            <p className="text-base font-black" style={{ color: 'var(--ns-ember)' }}>1 month</p>
             <p className="text-[10px] text-gray-500 mt-0.5">free for you</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-3 text-center">
-            <p className="text-base font-black" style={{ color: 'var(--ns-forest)' }}>1 month</p>
+            <p className="text-base font-black" style={{ color: 'var(--ns-ember)' }}>1 month</p>
             <p className="text-[10px] text-gray-500 mt-0.5">free for them</p>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function ReferralCard({ trigger = 'profile' }: Props) {
           <button
             onClick={copyCode}
             className="text-xs font-bold flex-shrink-0 transition-colors"
-            style={{ color: copied ? '#10b981' : 'var(--ns-forest)' }}
+            style={{ color: copied ? '#10b981' : 'var(--ns-ember)' }}
           >
             {copied ? '✓ Copied' : 'Copy'}
           </button>
@@ -137,7 +137,7 @@ export default function ReferralCard({ trigger = 'profile' }: Props) {
         <button
           onClick={handleShare}
           className="w-full py-3 rounded-2xl text-white text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
-          style={{ background: 'var(--ns-forest)' }}
+          style={{ background: 'var(--ns-ember)' }}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />

@@ -47,14 +47,14 @@ function AthleteProfileSection() {
           <input type="number" value={weightKg}
             onChange={e => setWeightKg(e.target.value)}
             placeholder="e.g. 75"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-forest)]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]" />
         </div>
         <div>
           <label className="text-[10px] font-semibold text-gray-500 block mb-1">Injury notes</label>
           <textarea value={injuryNotes}
             onChange={e => setInjuryNotes(e.target.value)}
             rows={2} placeholder="Any current niggles or injury history..."
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-[var(--ns-forest)]" />
+            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
         </div>
         <button onClick={save} disabled={saving}
           className="w-full py-2.5 rounded-xl bg-gray-900 text-white text-xs font-bold disabled:opacity-50">

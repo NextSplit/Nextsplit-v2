@@ -46,7 +46,7 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
     <div className="bg-white rounded-2xl border border-gray-100 p-5">
       <div className="flex items-baseline justify-between mb-3">
         <div className="text-sm font-bold text-gray-900">Pace Trend</div>
-        <div className={`text-xs font-semibold ${improving ? 'text-[var(--ns-forest)]' : 'text-orange-500'}`}>
+        <div className={`text-xs font-semibold ${improving ? 'text-[var(--ns-ember)]' : 'text-orange-500'}`}>
           {improving ? '↗ Getting faster' : '↘ Slower recently'}
         </div>
       </div>

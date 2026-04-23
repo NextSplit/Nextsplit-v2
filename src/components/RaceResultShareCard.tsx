@@ -151,7 +151,7 @@ export default function RaceResultShareCard({
 
           {/* Branding */}
           <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-5 h-5 rounded-full bg-[var(--ns-forest)] flex items-center justify-center">
+            <div className="w-5 h-5 rounded-full bg-[var(--ns-ember)] flex items-center justify-center">
               <span className="text-[10px] font-black text-white">N</span>
             </div>
             <span className="text-white/40 text-xs font-semibold tracking-wider">NEXTSPLIT</span>
@@ -164,7 +164,7 @@ export default function RaceResultShareCard({
             onClick={handleShare}
             disabled={sharing}
             className="w-full py-4 rounded-2xl text-sm font-bold text-white disabled:opacity-50 active:scale-95 transition-all flex items-center justify-center gap-2"
-            style={{ background: 'var(--ns-forest)' }}
+            style={{ background: 'var(--ns-ember)' }}
           >
             {sharing ? (
               'Sharing…'

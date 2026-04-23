@@ -93,9 +93,9 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[var(--ns-forest)]/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[var(--ns-ember)]/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="relative max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-[var(--ns-forest)]/10 border border-[var(--ns-forest)]/20 rounded-full px-4 py-1.5 mb-8 text-sm text-[var(--ns-forest-light)] font-medium">
+          <div className="inline-flex items-center gap-2 bg-[var(--ns-ember)]/10 border border-[var(--ns-ember)]/20 rounded-full px-4 py-1.5 mb-8 text-sm text-[var(--ns-forest-light)] font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--ns-forest-mid)] animate-pulse" />
             500 founding spots — £7.99/mo locked in forever
           </div>
@@ -111,7 +111,7 @@ export default function LandingPage() {
             Built for serious amateur runners who want more than a PDF.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/auth/signup" className="w-full sm:w-auto bg-[var(--ns-forest)] hover:bg-[var(--ns-forest-mid)] text-white font-black text-base px-8 py-4 rounded-xl transition-all">
+            <Link href="/auth/signup" className="w-full sm:w-auto bg-[var(--ns-ember)] hover:bg-[var(--ns-forest-mid)] text-white font-black text-base px-8 py-4 rounded-xl transition-all">
               Start training free →
             </Link>
             <Link href="/auth/login" className="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-base px-8 py-4 rounded-xl transition-all">
@@ -170,7 +170,7 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {PLAN_TYPES.map(p => (
-              <div key={p.label} className="bg-[#0a0a0a] border border-white/8 rounded-2xl p-5 text-center hover:border-[var(--ns-forest)]/30 hover:bg-[var(--ns-forest)]/5 transition-all">
+              <div key={p.label} className="bg-[#0a0a0a] border border-white/8 rounded-2xl p-5 text-center hover:border-[var(--ns-ember)]/30 hover:bg-[var(--ns-ember)]/5 transition-all">
                 <span className="text-3xl mb-3 block">{p.emoji}</span>
                 <p className="text-sm font-bold text-white mb-1">{p.label}</p>
                 <p className="text-[11px] text-white/40 leading-snug">{p.desc}</p>
@@ -183,8 +183,8 @@ export default function LandingPage() {
       {/* Coach platform */}
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="relative bg-gradient-to-br from-teal-950 via-[#0a2a24] to-[#0a0a0a] rounded-3xl border border-[var(--ns-forest)]/20 p-10 overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--ns-forest)]/10 rounded-full blur-3xl" />
+          <div className="relative bg-gradient-to-br from-teal-950 via-[#0a2a24] to-[#0a0a0a] rounded-3xl border border-[var(--ns-ember)]/20 p-10 overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--ns-ember)]/10 rounded-full blur-3xl" />
             <div className="relative grid sm:grid-cols-2 gap-10 items-center">
               <div>
                 <p className="text-xs font-bold text-[var(--ns-forest-mid)] uppercase tracking-widest mb-4">For coaches</p>
@@ -193,7 +193,7 @@ export default function LandingPage() {
                   See every athlete's training load, wellness, ACWR, and adherence in real time.
                   Leave annotations. Message directly. Publish plans. Get paid.
                 </p>
-                <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-[var(--ns-forest)] text-white font-bold text-sm px-5 py-3 rounded-xl hover:bg-[var(--ns-forest-mid)] transition-all">
+                <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-[var(--ns-ember)] text-white font-bold text-sm px-5 py-3 rounded-xl hover:bg-[var(--ns-forest-mid)] transition-all">
                   Become a coach →
                 </Link>
               </div>
@@ -257,9 +257,9 @@ export default function LandingPage() {
                 Get started
               </Link>
             </div>
-            <div className="bg-teal-950 border border-[var(--ns-forest)]/30 rounded-2xl p-6 text-left relative overflow-hidden">
+            <div className="bg-teal-950 border border-[var(--ns-ember)]/30 rounded-2xl p-6 text-left relative overflow-hidden">
               <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full">⭐ FOUNDING</div>
-              <div className="absolute bottom-0 right-0 w-32 h-32 bg-[var(--ns-forest)]/10 rounded-full blur-2xl" />
+              <div className="absolute bottom-0 right-0 w-32 h-32 bg-[var(--ns-ember)]/10 rounded-full blur-2xl" />
               <p className="text-base font-black text-white mb-1">Elite</p>
               <div className="flex items-baseline gap-2 mb-4">
                 <p className="text-3xl font-black text-white">£7.99</p>
@@ -270,7 +270,7 @@ export default function LandingPage() {
                   <li key={f} className="flex items-center gap-2"><span className="text-[var(--ns-forest-mid)]">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/auth/signup" className="relative block w-full text-center bg-[var(--ns-forest)] hover:bg-[var(--ns-forest-mid)] text-white font-black py-3 rounded-xl transition-all text-sm">
+              <Link href="/auth/signup" className="relative block w-full text-center bg-[var(--ns-ember)] hover:bg-[var(--ns-forest-mid)] text-white font-black py-3 rounded-xl transition-all text-sm">
                 Claim founding spot →
               </Link>
               <p className="text-[10px] text-[var(--ns-forest-light)]/50 text-center mt-2">7-day free trial · cancel anytime</p>

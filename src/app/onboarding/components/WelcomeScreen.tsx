@@ -17,10 +17,10 @@ export function WelcomeScreen() {
 
         {/* NextSplit wordmark — large Cormorant display */}
         <div className="mb-8">
-          <h1 className="font-display text-5xl tracking-tight mb-1" style={{ color: 'var(--ns-forest)', letterSpacing: '-0.03em', fontStyle: 'italic' }}>
+          <h1 className="font-display text-5xl tracking-tight mb-1" style={{ color: 'var(--ns-ember)', letterSpacing: '-0.03em', fontStyle: 'italic' }}>
             NextSplit
           </h1>
-          <div className="w-12 h-0.5 mx-auto rounded-full" style={{ background: 'var(--ns-forest)', opacity: 0.4 }} />
+          <div className="w-12 h-0.5 mx-auto rounded-full" style={{ background: 'var(--ns-ember)', opacity: 0.4 }} />
         </div>
 
         {/* Hero statement — direct, confident */}

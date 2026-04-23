@@ -37,7 +37,7 @@ function CharSelectModal({
               <div className="flex gap-1">
                 {PREVIEW_LEVELS.map(l => (
                   <button key={l} onClick={() => setPreviewLevel(l)}
-                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${previewLevel === l ? 'bg-[var(--ns-forest)] text-white' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${previewLevel === l ? 'bg-[var(--ns-ember)] text-white' : 'bg-white text-gray-400 border border-gray-200'}`}>
                     L{l}
                   </button>
                 ))}
@@ -59,10 +59,10 @@ function CharSelectModal({
               return (
                 <button key={ch.id}
                   onClick={() => setSelected(ch.id)}
-                  className={`rounded-2xl border-2 p-3 text-center transition-all ${isSel ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)] shadow-md' : 'border-gray-100 bg-white'}`}
+                  className={`rounded-2xl border-2 p-3 text-center transition-all ${isSel ? 'border-[var(--ns-ember)] bg-[var(--ns-ember-light)] shadow-md' : 'border-gray-100 bg-white'}`}
                 >
                   <div dangerouslySetInnerHTML={{ __html: renderCharSVG(ch.id, previewLevel, 60, 76) }} />
-                  <div className={`text-xs font-bold mt-1 ${isSel ? 'text-[var(--ns-forest)]' : 'text-gray-700'}`}>{ch.label}</div>
+                  <div className={`text-xs font-bold mt-1 ${isSel ? 'text-[var(--ns-ember)]' : 'text-gray-700'}`}>{ch.label}</div>
                   <div className="text-[9px] text-gray-400 mt-0.5">{ch.specialty}</div>
                 </button>
               )
@@ -75,7 +75,7 @@ function CharSelectModal({
               Cancel
             </button>
             <button onClick={() => { onSelect(selected); onClose() }}
-              className="flex-1 py-3 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-bold">
+              className="flex-1 py-3 rounded-xl bg-[var(--ns-ember)] text-white text-sm font-bold">
               Select character
             </button>
           </div>

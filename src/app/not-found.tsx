@@ -10,7 +10,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/today"
-        className="inline-block bg-[var(--ns-forest)] text-white px-6 py-3 rounded-xl text-sm font-semibold"
+        className="inline-block bg-[var(--ns-ember)] text-white px-6 py-3 rounded-xl text-sm font-semibold"
       >
         Back to Today →
       </Link>

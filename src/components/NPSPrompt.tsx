@@ -111,7 +111,7 @@ export default function NPSPrompt({ firstSessionAt }: Props) {
                         : 'text-gray-600 border-gray-200 hover:border-gray-300'
                     }`}
                     style={score === i ? {
-                      background: i >= 9 ? 'var(--ns-forest)' : i >= 7 ? '#f59e0b' : '#ef4444',
+                      background: i >= 9 ? 'var(--ns-ember)' : i >= 7 ? '#f59e0b' : '#ef4444',
                       borderColor: 'transparent',
                     } : {}}
                   >
@@ -135,7 +135,7 @@ export default function NPSPrompt({ firstSessionAt }: Props) {
                     "What's not working for you?"
                   }
                   rows={2}
-                  className="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-forest)] resize-none mb-3"
+                  className="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-ember)] resize-none mb-3"
                 />
               )}
 
@@ -150,7 +150,7 @@ export default function NPSPrompt({ firstSessionAt }: Props) {
                   onClick={handleSubmit}
                   disabled={score === null}
                   className="flex-1 py-3 rounded-2xl text-white text-sm font-bold disabled:opacity-40 transition-all"
-                  style={{ background: 'var(--ns-forest)' }}
+                  style={{ background: 'var(--ns-ember)' }}
                 >
                   Submit
                 </button>

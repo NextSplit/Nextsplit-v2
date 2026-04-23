@@ -44,7 +44,7 @@ function PWAProfileCard() {
             <p className="text-sm font-semibold text-gray-900">App installed</p>
             <p className="text-xs text-gray-400 mt-0.5">Running in standalone mode</p>
           </div>
-          <span className="ml-auto text-[var(--ns-forest)] text-lg">✓</span>
+          <span className="ml-auto text-[var(--ns-ember)] text-lg">✓</span>
         </div>
       </div>
     )
@@ -61,7 +61,7 @@ function PWAProfileCard() {
         {isIOS ? (
           <button
             onClick={() => setShowIOSSteps(s => !s)}
-            className="bg-[var(--ns-forest)] text-white text-xs font-semibold px-3 py-1.5 rounded-lg"
+            className="bg-[var(--ns-ember)] text-white text-xs font-semibold px-3 py-1.5 rounded-lg"
           >
             How to
           </button>
@@ -69,7 +69,7 @@ function PWAProfileCard() {
           <button
             onClick={handleInstall}
             disabled={installing || !_installPrompt}
-            className={`text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-opacity disabled:opacity-50 ${_installPrompt ? 'bg-[var(--ns-forest)]' : 'bg-gray-400'}`}
+            className={`text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-opacity disabled:opacity-50 ${_installPrompt ? 'bg-[var(--ns-ember)]' : 'bg-gray-400'}`}
           >
             {installing ? 'Installing…' : _installPrompt ? 'Install' : 'Open in Chrome'}
           </button>
@@ -81,7 +81,7 @@ function PWAProfileCard() {
         </p>
       )}
       {showIOSSteps && (
-        <div className="mt-3 px-3 py-2.5 bg-[var(--ns-forest-light)] rounded-xl border border-teal-100 text-xs text-[var(--ns-forest)] leading-relaxed">
+        <div className="mt-3 px-3 py-2.5 bg-[var(--ns-ember-light)] rounded-xl border border-orange-50 text-xs text-[var(--ns-ember)] leading-relaxed">
           1. Tap the <strong>Share ↑</strong> button in Safari<br />
           2. Scroll and tap <strong>&quot;Add to Home Screen&quot;</strong><br />
           3. Tap <strong>Add</strong> to confirm

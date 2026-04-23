@@ -344,7 +344,7 @@ export default function AthleteDetailClient({
                               onClick={() => sendReaction(key, r.id)}
                               className={`text-base px-2 py-1 rounded-xl border transition-all ${
                                 reacted === r.id
-                                  ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)] scale-110'
+                                  ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)] scale-110'
                                   : 'border-gray-100 hover:border-gray-200 bg-white'
                               }`}
                               title={r.label}
@@ -394,7 +394,7 @@ export default function AthleteDetailClient({
                           onClick={() => sendReaction(key, r.id)}
                           className={`text-sm px-1.5 py-1 rounded-lg border transition-all ${
                             reactions[key] === r.id
-                              ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]'
+                              ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)]'
                               : 'border-gray-100 bg-white'
                           }`}
                           title={r.label}

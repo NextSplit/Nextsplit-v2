@@ -21,7 +21,7 @@ const SKIN_COLOURS: Record<string, string> = {
   'tone-4': '#C68642', 'tone-5': '#8D5524', 'tone-6': '#4A2912',
 }
 
-const KIT_COLOURS  = ['var(--ns-forest)','#3b82f6','#ef4444','#f59e0b','#8b5cf6','#ec4899','#10b981','#f97316','#1e293b','#ffffff']
+const KIT_COLOURS  = ['var(--ns-ember)','#3b82f6','#ef4444','#f59e0b','#8b5cf6','#ec4899','#10b981','#f97316','#1e293b','#ffffff']
 const HAIR_COLOURS = ['#3b2314','#1a0a00','#8b6914','#d4a017','#c0392b','#808080','#f5f5f5','#e8c4a0']
 
 // ── Randomise helper ──────────────────────────────────────────────────────────
@@ -106,14 +106,14 @@ function CharacterPreview({ config, size = 160 }: { config: CharacterConfig; siz
         {/* ── CROWN (Split Leader) ── */}
         {config.accessories?.includes('crown') && (
           <>
-            <rect x="21" y="4" width="18" height="3.5" rx="1" fill="#c49a3c" />
+            <rect y="4" width="18" height="3.5" rx="1" fill="#c49a3c" />
             <polygon points="21,4 23,0 25,4" fill="#c49a3c" />
             <polygon points="25,4 27,1 29,4" fill="#c49a3c" />
             <polygon points="29,4 30,0 31,4" fill="#e8b84b" />
             <polygon points="31,4 33,1 35,4" fill="#c49a3c" />
             <polygon points="35,4 37,0 39,4" fill="#c49a3c" />
             <circle cx="30" cy="1.5" r="1" fill="#e85d26" opacity="0.9" />
-            <rect x="22" y="4.5" width="16" height="1" rx="0.5" fill="white" opacity="0.2" />
+            <rect y="4.5" width="16" height="1" rx="0.5" fill="white" opacity="0.2" />
           </>
         )}
         {config.accessories?.includes('cap') && (
@@ -144,9 +144,9 @@ function CharacterPreview({ config, size = 160 }: { config: CharacterConfig; siz
         {/* ── SUNGLASSES ── */}
         {config.accessories?.includes('sunglasses') && (
           <>
-            <rect x="24.5" y="10" width="5" height="2.5" rx="1.2" fill="#1e293b" opacity="0.9"/>
-            <rect x="30.5" y="10" width="5" height="2.5" rx="1.2" fill="#1e293b" opacity="0.9"/>
-            <line x1="29.5" y1="11.2" x2="30.5" y2="11.2" stroke="#1e293b" strokeWidth="0.8" />
+            <rect y="10" width="5" height="2.5" rx="1.2" fill="#1e293b" opacity="0.9"/>
+            <rect y="10" width="5" height="2.5" rx="1.2" fill="#1e293b" opacity="0.9"/>
+            <line x1="29.5" y1="11.2" y2="11.2" stroke="#1e293b" strokeWidth="0.8" />
           </>
         )}
 
@@ -175,13 +175,13 @@ function CharacterPreview({ config, size = 160 }: { config: CharacterConfig; siz
         <path d="M42 60 Q46 58 48 59 Q46 63 42 63 Q40 62 42 60 Z" fill={shoe} />
 
         {/* ── RUNNING NUMBER BIB ── */}
-        <rect x="25" y="30" width="10" height="8" rx="1" fill="white" opacity="0.9"/>
-        <text x="30" y="37" textAnchor="middle" fontSize="4" fontWeight="bold" fill={kit} fontFamily="monospace">42K</text>
+        <rect y="30" width="10" height="8" rx="1" fill="white" opacity="0.9"/>
+        <text y="37" textAnchor="middle" fontSize="4" fontWeight="bold" fill={kit} fontFamily="monospace">42K</text>
 
 
         {/* ── WATCH ── */}
         {config.accessories?.includes('watch') && (
-          <rect x="9" y="36" width="4" height="3" rx="1" fill="#1e293b" opacity="0.8" />
+          <rect y="36" width="4" height="3" rx="1" fill="#1e293b" opacity="0.8" />
         )}
       </svg>
 
@@ -203,7 +203,7 @@ function ColourPicker({ colours, value, onChange }: { colours: string[]; value: 
         <button
           key={c}
           onClick={() => onChange(c)}
-          className={`w-7 h-7 rounded-full border-2 transition-all ${value === c ? 'border-[var(--ns-forest)] scale-110' : 'border-transparent'}`}
+          className={`w-7 h-7 rounded-full border-2 transition-all ${value === c ? 'border-[var(--ns-ember)] scale-110' : 'border-transparent'}`}
           style={{ background: c === '#ffffff' ? '#f8fafc' : c, boxShadow: c === '#ffffff' ? 'inset 0 0 0 1px #e2e8f0' : undefined }}
         />
       ))}
@@ -225,8 +225,8 @@ function PillPicker<T extends string>({ options, value, onChange }: {
           onClick={() => onChange(o.id)}
           className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
             value === o.id
-              ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
-              : 'bg-white text-gray-600 border-gray-200 hover:border-teal-300'
+              ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]'
+              : 'bg-white text-gray-600 border-gray-200 hover:border-orange-300'
           }`}
         >
           {o.label}
@@ -341,7 +341,7 @@ export function CharacterCreationScreen() {
             <button
               onClick={() => { setShowWelcome(false); next() }}
               className="w-full py-4 rounded-2xl text-white font-black text-base active:scale-95 transition-all"
-              style={{ background: 'var(--ns-forest)' }}>
+              style={{ background: 'var(--ns-ember)' }}>
               Let's go →
             </button>
           </div>
@@ -400,7 +400,7 @@ export function CharacterCreationScreen() {
               {handleError && <p className="text-xs text-red-500">{handleError}</p>}
               {checkingHandle && <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Checking…</p>}
               {handle.length >= 3 && !handleError && !checkingHandle && (
-                <p className="text-xs text-[var(--ns-forest)]">✓ @{handle} is available</p>
+                <p className="text-xs text-[var(--ns-ember)]">✓ @{handle} is available</p>
               )}
               <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>This is how other runners will find and follow you</p>
             </Section>
@@ -417,7 +417,7 @@ export function CharacterCreationScreen() {
                   <button
                     key={t}
                     onClick={() => patch({ skinTone: t })}
-                    className={`w-8 h-8 rounded-full border-2 transition-all ${config.skinTone === t ? 'border-[var(--ns-forest)] scale-110' : 'border-transparent'}`}
+                    className={`w-8 h-8 rounded-full border-2 transition-all ${config.skinTone === t ? 'border-[var(--ns-ember)] scale-110' : 'border-transparent'}`}
                     style={{ backgroundColor: SKIN_COLOURS[t] }}
                   />
                 ))}
@@ -458,7 +458,7 @@ export function CharacterCreationScreen() {
                     onClick={() => toggleAccessory(a.id as 'cap' | 'sunglasses' | 'watch')}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                       config.accessories?.includes(a.id as 'cap' | 'sunglasses' | 'watch')
-                        ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
+                        ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]'
                         : 'bg-white text-gray-600 border-gray-200'
                     }`}
                   >
@@ -479,7 +479,7 @@ export function CharacterCreationScreen() {
                     onClick={() => patch({ startingTitle: t })}
                     className={`px-3 py-2 rounded-xl text-xs font-semibold border text-left transition-all ${
                       config.startingTitle === t
-                        ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
+                        ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]'
                         : 'bg-white text-gray-600 border-gray-200'
                     }`}
                   >

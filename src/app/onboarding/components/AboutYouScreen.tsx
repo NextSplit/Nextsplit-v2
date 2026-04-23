@@ -19,9 +19,9 @@ function TogglePill({ label, selected, onToggle }: { label: string; selected: bo
     <button onClick={onToggle}
       className="px-3 py-2 rounded-xl text-xs font-semibold border transition-all"
       style={{
-        background:   selected ? 'var(--ns-forest)' : 'var(--color-surface)',
+        background:   selected ? 'var(--ns-ember)' : 'var(--color-surface)',
         color:        selected ? 'white' : 'var(--color-text-secondary)',
-        borderColor:  selected ? 'var(--ns-forest)' : 'var(--color-border)',
+        borderColor:  selected ? 'var(--ns-ember)' : 'var(--color-border)',
       }}>
       {label}
     </button>
@@ -211,9 +211,9 @@ export function AboutYouScreen() {
                 <button key={val} onClick={() => setSex(val)}
                   className="flex-1 py-2 rounded-xl text-xs font-bold border transition-all"
                   style={{
-                    background:  sex === val ? 'var(--ns-forest)' : 'var(--color-surface-2)',
+                    background:  sex === val ? 'var(--ns-ember)' : 'var(--color-surface-2)',
                     color:       sex === val ? 'white' : 'var(--color-text-secondary)',
-                    borderColor: sex === val ? 'var(--ns-forest)' : 'var(--color-border)',
+                    borderColor: sex === val ? 'var(--ns-ember)' : 'var(--color-border)',
                   }}>
                   {val === 'prefer_not_to_say' ? 'Prefer not to say' : val.charAt(0).toUpperCase() + val.slice(1)}
                 </button>

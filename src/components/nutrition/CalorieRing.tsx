@@ -7,7 +7,7 @@ function CalorieRing({ actual, target }: { actual: number; target: number }) {
   const r = 34
   const circ = 2 * Math.PI * r
   const dash = pct * circ
-  const colour = pct > 1.05 ? '#EF4444' : pct >= 0.9 ? '#10B981' : 'var(--ns-forest)'
+  const colour = pct > 1.05 ? '#EF4444' : pct >= 0.9 ? '#10B981' : 'var(--ns-ember)'
 
   return (
     <div className="flex flex-col items-center">

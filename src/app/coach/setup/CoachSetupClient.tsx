@@ -71,7 +71,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
           <p className="text-sm text-gray-500 mt-1">Step {step} of 3</p>
           <div className="flex gap-1 mt-3">
             {[1,2,3].map(s => (
-              <div key={s} className={`flex-1 h-1 rounded-full ${s <= step ? 'bg-[var(--ns-forest)]' : 'bg-gray-200'}`} />
+              <div key={s} className={`flex-1 h-1 rounded-full ${s <= step ? 'bg-[var(--ns-ember)]' : 'bg-gray-200'}`} />
             ))}
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
                 key={option.id}
                 onClick={() => setTier(option.id)}
                 className={`w-full text-left rounded-2xl border-2 p-4 transition-all ${
-                  tier === option.id ? 'border-[var(--ns-forest)] bg-[var(--ns-forest-light)]' : 'border-gray-200 bg-white'
+                  tier === option.id ? 'border-[var(--ns-ember)] bg-[var(--ns-forest-light)]' : 'border-gray-200 bg-white'
                 }`}
               >
                 <div className="flex items-start gap-3">
@@ -108,13 +108,13 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-bold text-gray-900">{option.title}</p>
-                      {tier === option.id && <span className="text-xs text-[var(--ns-forest)] font-bold">Selected ✓</span>}
+                      {tier === option.id && <span className="text-xs text-[var(--ns-ember)] font-bold">Selected ✓</span>}
                     </div>
                     <p className="text-xs text-gray-500 mt-0.5">{option.desc}</p>
                     <ul className="mt-2 space-y-1">
                       {option.detail.map(d => (
                         <li key={d} className="text-xs text-gray-600 flex items-center gap-1.5">
-                          <span className="w-1 h-1 rounded-full bg-[var(--ns-forest)] shrink-0" />{d}
+                          <span className="w-1 h-1 rounded-full bg-[var(--ns-ember)] shrink-0" />{d}
                         </li>
                       ))}
                     </ul>
@@ -124,7 +124,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
             ))}
             <button
               onClick={() => setStep(2)}
-              className="w-full bg-[var(--ns-forest)] text-white py-3.5 rounded-2xl text-sm font-bold active:scale-95"
+              className="w-full bg-[var(--ns-ember)] text-white py-3.5 rounded-2xl text-sm font-bold active:scale-95"
             >
               Continue →
             </button>
@@ -140,7 +140,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Coach name</label>
                 <input value={displayName} onChange={e => setDisplayName(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)]"
+                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]"
                   placeholder="e.g. Sarah Jones Running" />
               </div>
 
@@ -156,7 +156,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Bio</label>
                 <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] resize-none"
                   placeholder="Tell athletes about your background and coaching style…" />
               </div>
 
@@ -164,7 +164,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Credentials</label>
                   <textarea value={credentials} onChange={e => setCredentials(e.target.value)} rows={2}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)] resize-none"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] resize-none"
                     placeholder="e.g. UKA Level 3, 10 years coaching marathons…" />
                 </div>
               )}
@@ -172,14 +172,14 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Location (optional)</label>
                 <input value={location} onChange={e => setLocation(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)]"
+                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]"
                   placeholder="e.g. London, UK" />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Instagram (optional)</label>
                 <input value={instagram} onChange={e => setInstagram(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)]"
+                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]"
                   placeholder="@yourhandle" />
               </div>
 
@@ -187,7 +187,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Monthly coaching rate (£)</label>
                   <input value={rate} onChange={e => setRate(e.target.value)} type="number" min="0"
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-forest)]"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]"
                     placeholder="e.g. 80" />
                   <p className="text-xs text-gray-400">Recommended: £40–£200/mo depending on level</p>
                 </div>
@@ -197,7 +197,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
             <div className="flex gap-3">
               <button onClick={() => setStep(1)} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
               <button onClick={() => setStep(3)} disabled={!displayName || !slug}
-                className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-40">
+                className="flex-1 bg-[var(--ns-ember)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-40">
                 Continue →
               </button>
             </div>
@@ -217,7 +217,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
                   onClick={() => toggleSpeciality(s)}
                   className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
                     specialities.includes(s)
-                      ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]'
+                      ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]'
                       : 'bg-white text-gray-600 border-gray-200'
                   }`}
                 >
@@ -231,7 +231,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
             <div className="flex gap-3 pt-2">
               <button onClick={() => setStep(2)} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
               <button onClick={handleSubmit} disabled={loading}
-                className="flex-1 bg-[var(--ns-forest)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
+                className="flex-1 bg-[var(--ns-ember)] text-white py-3 rounded-2xl text-sm font-bold disabled:opacity-40 active:scale-95">
                 {loading ? 'Creating profile…' : 'Create coach profile →'}
               </button>
             </div>

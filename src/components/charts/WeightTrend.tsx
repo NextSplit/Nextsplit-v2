@@ -78,7 +78,7 @@ function WeightTrend() {
           {weights.map((w, i) => (
             <circle key={i} cx={i * 20 + 10} cy={60 - ((w - min) / range) * 52}
               r={i === weights.length - 1 ? 3.5 : 2}
-              fill={i === weights.length - 1 ? 'var(--ns-forest)' : '#CCFBF1'}
+              fill={i === weights.length - 1 ? 'var(--ns-ember)' : '#CCFBF1'}
               stroke="var(--ns-forest)" strokeWidth="1.5"
             />
           ))}

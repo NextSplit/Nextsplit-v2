@@ -22,12 +22,12 @@ function PBCard({ logs }: { logs: Record<string, TrainingLog> }) {
         {PB_SLOTS.map(dist => {
           const pb = pbs.find(p => p.distance === dist)
           return (
-            <div key={dist} className={`rounded-xl p-3 ${pb ? 'bg-[var(--ns-forest-light)] border border-teal-100' : 'bg-gray-50 border border-gray-100'}`}>
+            <div key={dist} className={`rounded-xl p-3 ${pb ? 'bg-[var(--ns-ember-light)] border border-orange-50' : 'bg-gray-50 border border-gray-100'}`}>
               <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-0.5">{dist}</div>
               {pb ? (
                 <>
                   <div className="text-lg font-black text-gray-900 leading-tight">{pb.timeStr}</div>
-                  <div className="text-[10px] text-[var(--ns-forest)] font-medium">{fmtPaceForUnits(pb.pacePerKm, units)}</div>
+                  <div className="text-[10px] text-[var(--ns-ember)] font-medium">{fmtPaceForUnits(pb.pacePerKm, units)}</div>
                   <div className="text-[9px] text-gray-400 mt-0.5">Week {pb.weekN}</div>
                 </>
               ) : (

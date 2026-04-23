@@ -33,9 +33,9 @@ function daysUntil(dateStr: string): number {
 
 function StatPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[var(--ns-forest-light)] border border-teal-100 rounded-2xl px-4 py-3 text-center">
-      <p className="text-lg font-black text-[var(--ns-forest)]">{value}</p>
-      <p className="text-xs text-[var(--ns-forest-mid)] mt-0.5">{label}</p>
+    <div className="bg-[var(--ns-ember-light)] border border-orange-50 rounded-2xl px-4 py-3 text-center">
+      <p className="text-lg font-black text-[var(--ns-ember)]">{value}</p>
+      <p className="text-xs text-[var(--ns-ember)] mt-0.5">{label}</p>
     </div>
   )
 }
@@ -156,7 +156,7 @@ export function PlanPreviewScreen() {
                 <h2 className="text-lg font-black" style={{ color: 'var(--color-text-primary)' }}>{plan.name}</h2>
                 <div className="flex items-center gap-3 mt-1">
                   {plan.totalWeeks > 0 && (
-                    <span className="text-xs font-bold" style={{ color: 'var(--ns-forest)' }}>{plan.totalWeeks} weeks</span>
+                    <span className="text-xs font-bold" style={{ color: 'var(--ns-ember)' }}>{plan.totalWeeks} weeks</span>
                   )}
                   {aGoal?.race_date && (
                     <span className="text-xs font-bold" style={{ color: 'var(--ns-track)' }}>Race in {daysUntil(aGoal.race_date)} days</span>
@@ -178,7 +178,7 @@ export function PlanPreviewScreen() {
                 Week {week.weekNum} — {week.title}
               </p>
               {week.weekNum === 1 && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: 'var(--ns-forest)' }}>Starts today</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: 'var(--ns-ember)' }}>Starts today</span>
               )}
             </div>
             <div className="space-y-2">
@@ -190,7 +190,7 @@ export function PlanPreviewScreen() {
                     <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>{s.day}</p>
                   </div>
                   {s.km > 0 && (
-                    <span className="text-xs font-black font-data flex-shrink-0" style={{ color: 'var(--ns-forest)' }}>{s.km}km</span>
+                    <span className="text-xs font-black font-data flex-shrink-0" style={{ color: 'var(--ns-ember)' }}>{s.km}km</span>
                   )}
                 </div>
               ))}
@@ -217,7 +217,7 @@ export function PlanPreviewScreen() {
                   </p>
                 )}
                 {aGoal.target_time_secs && (
-                  <p className="text-xs font-semibold mt-0.5" style={{ color: 'var(--ns-forest)' }}>
+                  <p className="text-xs font-semibold mt-0.5" style={{ color: 'var(--ns-ember)' }}>
                     Target: {Math.floor(aGoal.target_time_secs / 3600)}h {String(Math.floor((aGoal.target_time_secs % 3600) / 60)).padStart(2,'0')}m
                   </p>
                 )}
@@ -227,22 +227,22 @@ export function PlanPreviewScreen() {
         )}
 
         {/* XP unlock */}
-        <div className="bg-gradient-to-r from-teal-500 to-teal-400 rounded-2xl p-4 text-white">
+        <div className="bg-gradient-to-r from-orange-500 to-orange-400 rounded-2xl p-4 text-white">
           <div className="flex items-center gap-3">
             <span className="text-2xl">⚡</span>
             <div>
               <p className="text-sm font-black">+150 XP — Onboarding complete!</p>
-              <p className="text-xs text-teal-100 mt-0.5">Your character is ready and waiting</p>
+              <p className="text-xs text-orange-50 mt-0.5">Your character is ready and waiting</p>
             </div>
           </div>
         </div>
 
         {/* Adapt section — paywall reveal moment (Product Pillar spec) */}
         <div className="rounded-2xl border-2 overflow-hidden"
-          style={{ borderColor: 'var(--ns-forest)' }}>
+          style={{ borderColor: 'var(--ns-ember)' }}>
           {/* Header — always visible */}
           <div className="px-4 py-3 flex items-center gap-2"
-            style={{ background: 'var(--ns-forest)', color: 'white' }}>
+            style={{ background: 'var(--ns-ember)', color: 'white' }}>
             <span className="text-base">🧠</span>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider opacity-70">NextSplit Pro</p>
@@ -278,7 +278,7 @@ export function PlanPreviewScreen() {
               </p>
               <a href="/profile?upgrade=1"
                 className="inline-block text-white text-xs font-bold px-4 py-2 rounded-xl"
-                style={{ background: 'var(--ns-forest)' }}>
+                style={{ background: 'var(--ns-ember)' }}>
                 Unlock with Pro — £4.99/mo →
               </a>
               <p className="text-[10px] text-gray-400 mt-2">Cancel any time. Free plan continues working without this.</p>
@@ -320,7 +320,7 @@ export function PlanPreviewScreen() {
           onClick={handleEnter}
           disabled={entering}
           className="w-full text-white py-4 rounded-2xl text-base font-black tracking-tight transition-all active:scale-95 disabled:opacity-70"
-          style={{ background: 'var(--ns-forest)' }}
+          style={{ background: 'var(--ns-ember)' }}
         >
           {entering ? 'Let\'s go…' : 'Start training →'}
         </button>

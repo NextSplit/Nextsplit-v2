@@ -150,7 +150,7 @@ function ImportModal({ activity, session, onConfirm, onCancel }: ImportModalProp
         <div className="mb-5">
           <div className="flex justify-between items-center mb-2">
             <label className="text-sm font-semibold text-gray-700">Effort</label>
-            <span className="text-xl font-bold text-[var(--ns-forest)]">{effort}<span className="text-sm text-gray-400">/10</span></span>
+            <span className="text-xl font-bold text-[var(--ns-ember)]">{effort}<span className="text-sm text-gray-400">/10</span></span>
           </div>
           <input
             type="range" min={1} max={10} value={effort}
@@ -211,7 +211,7 @@ function ActivityPicker({ activities, session, onSelect, onCancel }: ActivityPic
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {a.is_today && (
-                    <span className="text-[10px] font-bold text-[var(--ns-forest)] bg-[var(--ns-forest-light)] px-2 py-0.5 rounded-full">Today</span>
+                    <span className="text-[10px] font-bold text-[var(--ns-ember)] bg-[var(--ns-ember-light)] px-2 py-0.5 rounded-full">Today</span>
                   )}
                   {score >= 90 && (
                     <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Match</span>

@@ -48,13 +48,13 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
             <p className="text-[10px] text-gray-400">{s === 'female' ? 'Female' : 'Male'} · {h}cm · {a}yo</p>
           </div>
         </div>
-        <span className="text-[10px] text-[var(--ns-forest)] font-semibold">Edit ✎</span>
+        <span className="text-[10px] text-[var(--ns-ember)] font-semibold">Edit ✎</span>
       </button>
     )
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-teal-100 p-4">
+    <div className="bg-white rounded-2xl border border-orange-50 p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-base">⚖️</span>
@@ -73,7 +73,7 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
             type="number" inputMode="numeric" value={height}
             onChange={e => setHeight(e.target.value)}
             placeholder="175"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
         </div>
         <div>
@@ -82,7 +82,7 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
             type="number" inputMode="numeric" value={age}
             onChange={e => setAge(e.target.value)}
             placeholder="30"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
         </div>
       </div>
@@ -92,7 +92,7 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
         <div className="flex gap-2">
           {(['male', 'female'] as const).map(s => (
             <button key={s} onClick={() => setSex(s)}
-              className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${sex === s ? 'bg-[var(--ns-forest)] text-white' : 'bg-gray-100 text-gray-500'}`}>
+              className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${sex === s ? 'bg-[var(--ns-ember)] text-white' : 'bg-gray-100 text-gray-500'}`}>
               {s === 'male' ? '♂ Male' : '♀ Female'}
             </button>
           ))}
@@ -100,7 +100,7 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
       </div>
 
       <button onClick={handleSave}
-        className="w-full py-2.5 rounded-xl bg-[var(--ns-forest)] text-white text-sm font-bold">
+        className="w-full py-2.5 rounded-xl bg-[var(--ns-ember)] text-white text-sm font-bold">
         Save profile
       </button>
     </div>

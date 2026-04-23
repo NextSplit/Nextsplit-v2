@@ -39,10 +39,10 @@ const TYPE_CONFIG = {
   'adaptation': {
     icon: '🔄',
     label: 'Plan updated',
-    bg: 'bg-[var(--ns-forest-light)]',
-    border: 'border-[var(--ns-forest)]',
-    labelColor: 'text-[var(--ns-forest)]',
-    textColor: 'text-[var(--ns-forest)]',
+    bg: 'bg-[var(--ns-ember-light)]',
+    border: 'border-[var(--ns-ember)]',
+    labelColor: 'text-[var(--ns-ember)]',
+    textColor: 'text-[var(--ns-ember)]',
   },
   'readiness': {
     icon: '🔋',
@@ -55,18 +55,18 @@ const TYPE_CONFIG = {
   'on-demand': {
     icon: '🧠',
     label: 'Coaching insight',
-    bg: 'bg-[var(--ns-forest-light)]',
-    border: 'border-[var(--ns-forest)]',
-    labelColor: 'text-[var(--ns-forest)]',
-    textColor: 'text-[var(--ns-forest)]',
+    bg: 'bg-[var(--ns-ember-light)]',
+    border: 'border-[var(--ns-ember)]',
+    labelColor: 'text-[var(--ns-ember)]',
+    textColor: 'text-[var(--ns-ember)]',
   },
   'weekly': {
     icon: '📋',
     label: 'Weekly summary',
-    bg: 'bg-[var(--ns-forest-light)]',
-    border: 'border-[var(--ns-forest)]',
-    labelColor: 'text-[var(--ns-forest)]',
-    textColor: 'text-[var(--ns-forest)]',
+    bg: 'bg-[var(--ns-ember-light)]',
+    border: 'border-[var(--ns-ember)]',
+    labelColor: 'text-[var(--ns-ember)]',
+    textColor: 'text-[var(--ns-ember)]',
   },
 }
 

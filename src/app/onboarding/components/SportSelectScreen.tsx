@@ -65,7 +65,7 @@ export function SportSelectScreen() {
                 className="rounded-2xl border p-4 transition-all"
                 style={{
                   background: isSelected ? 'var(--color-surface-2)' : 'var(--color-surface)',
-                  borderColor: isSelected ? 'var(--ns-forest)' : 'var(--color-border)',
+                  borderColor: isSelected ? 'var(--ns-ember)' : 'var(--color-border)',
                   opacity: sport.active ? 1 : 0.6,
                 }}
               >
@@ -81,7 +81,7 @@ export function SportSelectScreen() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>{sport.label}</p>
                       {sport.id === 'running' && (
-                        <span className="text-[9px] font-bold text-white bg-[var(--ns-forest)] px-1.5 py-0.5 rounded-full">
+                        <span className="text-[9px] font-bold text-white bg-[var(--ns-ember)] px-1.5 py-0.5 rounded-full">
                           Core
                         </span>
                       )}
@@ -106,7 +106,7 @@ export function SportSelectScreen() {
                       disabled={sport.id === 'running'}
                       className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                         isSelected
-                          ? 'bg-[var(--ns-forest)] border-[var(--ns-forest)]'
+                          ? 'bg-[var(--ns-ember)] border-[var(--ns-ember)]'
                           : 'border-slate-300'
                       }`}
                     >
@@ -117,7 +117,7 @@ export function SportSelectScreen() {
                       onClick={() => handleNotify(sport.id)}
                       className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all flex-shrink-0 ${
                         isNotified
-                          ? 'bg-[var(--ns-forest-light)] border-teal-300 text-[var(--ns-forest)]'
+                          ? 'bg-[var(--ns-ember-light)] border-orange-300 text-[var(--ns-ember)]'
                           : 'bg-white border-gray-200 text-gray-500 hover:border-[var(--ns-forest-light)]'
                       }`}
                     >

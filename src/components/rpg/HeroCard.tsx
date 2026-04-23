@@ -74,7 +74,7 @@ function HeroCard({
                   style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>
                   {displayName}
                 </h2>
-                <p className="text-xs font-bold mt-0.5" style={{ color: 'var(--ns-forest)' }}>
+                <p className="text-xs font-bold mt-0.5" style={{ color: 'var(--ns-ember)' }}>
                   {stats.level.name}
                 </p>
                 <p className="text-[10px] mt-0.5 font-semibold" style={{ color: stateConfig.color }}>

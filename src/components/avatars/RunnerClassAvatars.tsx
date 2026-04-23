@@ -25,7 +25,7 @@ export function WarmingUpAvatar({ size = 64, className = '' }: AvatarProps) {
       <circle cx="32" cy="22" r="6" fill="#fbbf24" opacity="0.6" />
       {/* Runner silhouette — slow jog, upright */}
       <ellipse cx="32" cy="18" rx="5" ry="5" fill="#94a3b8" />
-      <rect x="29" y="23" width="6" height="14" rx="3" fill="#94a3b8" />
+      <rect y="23" width="6" height="14" rx="3" fill="#94a3b8" />
       {/* Arms — relaxed swing */}
       <path d="M29 27 L22 32" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
       <path d="M35 27 L42 30" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
@@ -46,8 +46,8 @@ export function MarathonRunnerAvatar({ size = 64, className = '' }: AvatarProps)
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className}>
       <circle cx="32" cy="32" r="28" fill="#edf4f0" />
       {/* Distance markers — subtle road lines */}
-      <line x1="10" y1="50" x2="54" y2="50" stroke="#d1fae5" strokeWidth="2" />
-      <line x1="20" y1="53" x2="44" y2="53" stroke="#d1fae5" strokeWidth="1.5" />
+      <line x1="10" y1="50" y2="50" stroke="#d1fae5" strokeWidth="2" />
+      <line x1="20" y1="53" y2="53" stroke="#d1fae5" strokeWidth="1.5" />
       {/* Head */}
       <ellipse cx="32" cy="14" rx="5.5" ry="5.5" fill="#2b5c3f" />
       {/* Torso — slight forward lean */}
@@ -65,8 +65,8 @@ export function MarathonRunnerAvatar({ size = 64, className = '' }: AvatarProps)
       <ellipse cx="15" cy="51" rx="4.5" ry="2.5" fill="#2b5c3f" />
       <ellipse cx="43" cy="51" rx="4.5" ry="2.5" fill="#2b5c3f" />
       {/* Race number bib */}
-      <rect x="26" y="24" width="8" height="6" rx="1" fill="white" opacity="0.8" />
-      <text x="30" y="29" textAnchor="middle" fontSize="3.5" fill="#2b5c3f" fontWeight="bold">42</text>
+      <rect y="24" width="8" height="6" rx="1" fill="white" opacity="0.8" />
+      <text y="29" textAnchor="middle" fontSize="3.5" fill="#2b5c3f" fontWeight="bold">42</text>
     </svg>
   )
 }
@@ -78,9 +78,9 @@ export function SpeedMerchantAvatar({ size = 64, className = '' }: AvatarProps) 
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className}>
       <circle cx="32" cy="32" r="28" fill="#fff7ed" />
       {/* Speed lines */}
-      <line x1="6" y1="30" x2="18" y2="30" stroke="#fed7aa" strokeWidth="2" strokeLinecap="round" />
-      <line x1="4" y1="35" x2="16" y2="35" stroke="#fed7aa" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="6" y1="40" x2="15" y2="40" stroke="#fed7aa" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="6" y1="30" y2="30" stroke="#fed7aa" strokeWidth="2" strokeLinecap="round" />
+      <line x1="4" y1="35" y2="35" stroke="#fed7aa" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="6" y1="40" y2="40" stroke="#fed7aa" strokeWidth="1.5" strokeLinecap="round" />
       {/* Head — tilted forward, aggressive */}
       <ellipse cx="36" cy="13" rx="5" ry="5" fill="#e85d26" />
       {/* Torso — deep lean */}
@@ -113,7 +113,7 @@ export function TrailBlazerAvatar({ size = 64, className = '' }: AvatarProps) {
       <path d="M46 52 L49 44 L52 52 Z" fill="#7c5c2e" opacity="0.3" />
       {/* Head — cap */}
       <ellipse cx="32" cy="14" rx="5.5" ry="5" fill="#7c5c2e" />
-      <rect x="25" y="12" width="14" height="3" rx="1.5" fill="#5c3d11" opacity="0.8" />
+      <rect y="12" width="14" height="3" rx="1.5" fill="#5c3d11" opacity="0.8" />
       {/* Torso — vest/pack */}
       <path d="M30 19 L29 34" stroke="#7c5c2e" strokeWidth="5" strokeLinecap="round" />
       {/* Hydration pack bump */}
@@ -122,8 +122,8 @@ export function TrailBlazerAvatar({ size = 64, className = '' }: AvatarProps) {
       <path d="M30 22 L22 30" stroke="#7c5c2e" strokeWidth="3" strokeLinecap="round" />
       <path d="M30 24 L40 20" stroke="#7c5c2e" strokeWidth="3" strokeLinecap="round" />
       {/* Trekking poles */}
-      <line x1="22" y1="30" x2="18" y2="42" stroke="#7c5c2e" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="40" y1="20" x2="44" y2="34" stroke="#7c5c2e" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="22" y1="30" y2="42" stroke="#7c5c2e" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="40" y1="20" y2="34" stroke="#7c5c2e" strokeWidth="1.5" strokeLinecap="round" />
       {/* Legs — high step on trail */}
       <path d="M29 34 L24 44" stroke="#7c5c2e" strokeWidth="4" strokeLinecap="round" />
       <path d="M31 34 L38 42" stroke="#7c5c2e" strokeWidth="4" strokeLinecap="round" />
@@ -141,14 +141,14 @@ export function BaseBuilderAvatar({ size = 64, className = '' }: AvatarProps) {
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className}>
       <circle cx="32" cy="32" r="28" fill="#eff6ff" />
       {/* Foundation/structure */}
-      <rect x="10" y="46" width="44" height="6" rx="2" fill="#bfdbfe" opacity="0.5" />
+      <rect y="46" width="44" height="6" rx="2" fill="#bfdbfe" opacity="0.5" />
       {/* Building block metaphor */}
-      <rect x="18" y="38" width="12" height="8" rx="1.5" fill="#93c5fd" opacity="0.3" />
-      <rect x="34" y="38" width="12" height="8" rx="1.5" fill="#93c5fd" opacity="0.3" />
+      <rect y="38" width="12" height="8" rx="1.5" fill="#93c5fd" opacity="0.3" />
+      <rect y="38" width="12" height="8" rx="1.5" fill="#93c5fd" opacity="0.3" />
       {/* Head */}
       <ellipse cx="32" cy="14" rx="5.5" ry="5.5" fill="#0984e3" />
       {/* Torso — upright, solid */}
-      <rect x="28" y="19" width="8" height="15" rx="4" fill="#0984e3" />
+      <rect y="19" width="8" height="15" rx="4" fill="#0984e3" />
       {/* Arms — balanced */}
       <path d="M29 24 L21 28" stroke="#0984e3" strokeWidth="3" strokeLinecap="round" />
       <path d="M35 24 L43 28" stroke="#0984e3" strokeWidth="3" strokeLinecap="round" />
@@ -250,7 +250,7 @@ export function RunnerClassAvatar({
       <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className}>
         <circle cx="32" cy="32" r="28" fill="#f1f5f9" />
         <ellipse cx="32" cy="20" rx="6" ry="6" fill="#94a3b8" />
-        <rect x="28" y="26" width="8" height="16" rx="4" fill="#94a3b8" />
+        <rect y="26" width="8" height="16" rx="4" fill="#94a3b8" />
         <path d="M28 34 L22 46" stroke="#94a3b8" strokeWidth="4" strokeLinecap="round" />
         <path d="M36 34 L42 46" stroke="#94a3b8" strokeWidth="4" strokeLinecap="round" />
       </svg>

@@ -77,7 +77,7 @@ export function GymConfigScreen() {
             </div>
             <button
               onClick={() => setGymEnabled(!gymEnabled)}
-              className={`relative w-12 h-6 rounded-full transition-all ${gymEnabled ? 'bg-[var(--ns-forest)]' : 'bg-slate-300'}`}
+              className={`relative w-12 h-6 rounded-full transition-all ${gymEnabled ? 'bg-[var(--ns-ember)]' : 'bg-slate-300'}`}
             >
               <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${gymEnabled ? 'left-6' : 'left-0.5'}`} />
             </button>
@@ -100,7 +100,7 @@ export function GymConfigScreen() {
                     key={n}
                     onClick={() => setSessionsPerWeek(n)}
                     className={`flex-1 py-3 rounded-xl text-sm font-black border transition-all ${
-                      sessionsPerWeek === n ? 'bg-[var(--ns-forest)] text-white border-[var(--ns-forest)]' : 'bg-white text-gray-600 border-gray-200'
+                      sessionsPerWeek === n ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]' : 'bg-white text-gray-600 border-gray-200'
                     }`}
                   >
                     {n}x
@@ -126,7 +126,7 @@ export function GymConfigScreen() {
                     key={o.id}
                     onClick={() => toggleEquipment(o.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                      equipment.includes(o.id) ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-gray-200'
+                      equipment.includes(o.id) ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)]' : 'bg-white border-gray-200'
                     }`}
                   >
                     <p className={`text-sm font-bold ${equipment.includes(o.id) ? 'text-white' : 'text-gray-700'}`}>
@@ -147,7 +147,7 @@ export function GymConfigScreen() {
                     key={o.id}
                     onClick={() => setFocus(o.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                      focus === o.id ? 'bg-[var(--ns-forest-light)] border-[var(--ns-forest)]' : 'bg-white border-gray-200'
+                      focus === o.id ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)]' : 'bg-white border-gray-200'
                     }`}
                   >
                     <p className={`text-sm font-bold ${focus === o.id ? 'text-white' : 'text-gray-700'}`}>{o.label}</p>

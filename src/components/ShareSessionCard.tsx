@@ -212,7 +212,7 @@ export default function ShareSessionCard({ session, log, weekN, onClose }: Props
           <div className="p-5">
             {/* Top bar */}
             <div className="flex items-center justify-between mb-4">
-              <span className="font-display text-sm" style={{ color: 'var(--ns-forest)', letterSpacing: '-0.02em' }}>NextSplit</span>
+              <span className="font-display text-sm" style={{ color: 'var(--ns-ember)', letterSpacing: '-0.02em' }}>NextSplit</span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                 style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
                 Week {weekN}

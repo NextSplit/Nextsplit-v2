@@ -12,7 +12,7 @@ interface Props {
 
 function RunnerSprite({ character, size = 32 }: { character: CharacterConfig; size?: number }) {
   const skin = SKIN_TONES[character.skinTone as keyof typeof SKIN_TONES] ?? SKIN_TONES['tone-3']
-  const kit  = character.kitColour ?? 'var(--ns-forest)'
+  const kit  = character.kitColour ?? 'var(--ns-ember)'
   const hair = character.hairColour ?? '#3b2314'
   const shoe = character.shoeColour ?? '#1e293b'
 
@@ -24,17 +24,17 @@ function RunnerSprite({ character, size = 32 }: { character: CharacterConfig; si
       {character.hairStyle !== 'none' && (
         <ellipse cx="16" cy="3" rx="5" ry="3" fill={hair} />
       )}
-      <rect x="11" y="11" width="10" height="10" rx="2" fill={kit} />
-      <line x1="11" y1="13" x2="6" y2="19" stroke={skin} strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="21" y1="13" x2="26" y2="17" stroke={skin} strokeWidth="2.5" strokeLinecap="round" />
-      <rect x="11" y="20" width="5" height="5" rx="1" fill={kit} opacity="0.8" />
-      <rect x="16" y="20" width="5" height="5" rx="1" fill={kit} opacity="0.8" />
-      <line x1="13" y1="25" x2="8" y2="34" stroke={skin} strokeWidth="2.5" strokeLinecap="round" />
-      <rect x="5" y="33" width="5" height="2.5" rx="1" fill={shoe} />
-      <line x1="19" y1="25" x2="22" y2="33" stroke={skin} strokeWidth="2.5" strokeLinecap="round" />
-      <rect x="20" y="32" width="5" height="2.5" rx="1" fill={shoe} />
+      <rect y="11" width="10" height="10" rx="2" fill={kit} />
+      <line x1="11" y1="13" y2="19" stroke={skin} strokeWidth="2.5" strokeLinecap="round" />
+      <line x1="21" y1="13" y2="17" stroke={skin} strokeWidth="2.5" strokeLinecap="round" />
+      <rect y="20" width="5" height="5" rx="1" fill={kit} opacity="0.8" />
+      <rect y="20" width="5" height="5" rx="1" fill={kit} opacity="0.8" />
+      <line x1="13" y1="25" y2="34" stroke={skin} strokeWidth="2.5" strokeLinecap="round" />
+      <rect y="33" width="5" height="2.5" rx="1" fill={shoe} />
+      <line x1="19" y1="25" y2="33" stroke={skin} strokeWidth="2.5" strokeLinecap="round" />
+      <rect y="32" width="5" height="2.5" rx="1" fill={shoe} />
       {character.accessories?.includes('cap') && (
-        <rect x="11" y="1" width="10" height="3" rx="1" fill={kit} />
+        <rect y="1" width="10" height="3" rx="1" fill={kit} />
       )}
     </svg>
   )
@@ -86,7 +86,7 @@ function BugReportButton() {
             style={{ background: 'var(--color-surface)' }}>
             <h3 className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>Report a problem</h3>
             {sent ? (
-              <p className="text-sm text-center py-2" style={{ color: 'var(--ns-forest)' }}>✓ Thanks — we'll look into it</p>
+              <p className="text-sm text-center py-2" style={{ color: 'var(--ns-ember)' }}>✓ Thanks — we'll look into it</p>
             ) : (
               <>
                 <textarea value={msg} onChange={e => setMsg(e.target.value)}
@@ -103,7 +103,7 @@ function BugReportButton() {
                   </button>
                   <button onClick={submit} disabled={!msg.trim()}
                     className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40"
-                    style={{ background: 'var(--ns-forest)' }}>
+                    style={{ background: 'var(--ns-ember)' }}>
                     Send
                   </button>
                 </div>
