@@ -174,7 +174,7 @@ export async function GET(req: NextRequest) {
         const { subject, html, text } = buildNotificationEmail(emailType, emailCtx)
 
         await resend.emails.send({
-          from:    'Splity at NextSplit <coach@nextsplit.app>',
+          from:    'Splity at NextSplit <onboarding@resend.dev>',
           to:      email,
           subject,
           html,
