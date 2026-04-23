@@ -238,16 +238,11 @@ export default function TodayClient() {
     if (session) setShareSession({ session, log })
   }, [plan, logSession, undoInfo, planDay, logs])
 
-  const handleQuickDone = useCallback(async (dayI: number, sessI: number, session: PlanSession) => {
-    const key = `${weekN}_${dayI}_${sessI}`
-    const existing = logs[key]
-    // If already done, open edit modal instead
-    if (existing?.done) {
-      setModalSession({ session, dayI, sessI })
-      return
-    }
-    await handleLogSession({ week_n: weekN, day_i: dayI, session_i: sessI, done: true, km: session.km || undefined })
-  }, [weekN, logs, handleLogSession])
+  const handleQuickDone = useCallback((dayI: number, sessI: number, session: PlanSession) => {
+    // Always open the log modal — gives user control over distance/effort/notes
+    // Quick-done button is just a shortcut to open the modal, not auto-complete
+    setModalSession({ session, dayI, sessI })
+  }, [])
 
   const handleUndo = useCallback(async () => {
     if (!undoInfo) return

@@ -202,6 +202,14 @@ function LogModal({
                   <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-forest)' }}>{rationale}</p>
                 </div>
               )}
+              {/* Strava import hint */}
+              <div className="flex items-center gap-2 mt-2 px-1">
+                <span className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
+                  🔗 Ran with Strava? Use the{' '}
+                  <span className="font-bold" style={{ color: '#fc4c02' }}>⚡ Strava</span>
+                  {' '}button on Today to import your activity automatically.
+                </span>
+              </div>
             </div>
 
             {/* Reps completed — intervals key question */}
@@ -405,20 +413,39 @@ function EffortSlider({ effort, setEffort }: { effort: number; setEffort: (n: nu
 function KmPicker({ km, setKm, planned }: { km: number; setKm: (n: number) => void; planned?: number }) {
   return (
     <div>
-      <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>Distance (km)</label>
-      <div className="flex items-center gap-3">
-        <button onClick={() => setKm(Math.max(0, Math.round((km - 0.5) * 10) / 10))}
-          className="w-10 h-10 rounded-full font-bold text-lg flex items-center justify-center" style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>−</button>
-        <div className="flex-1 text-center">
-          <span className="font-data text-3xl text-gray-900">{km.toFixed(1)}</span>
-          <span className="text-sm text-gray-400 ml-1">km</span>
-        </div>
-        <button onClick={() => setKm(Math.round((km + 0.5) * 10) / 10)}
-          className="w-10 h-10 rounded-full bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center">+</button>
+      <div className="flex items-center justify-between mb-1.5">
+        <label className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Distance</label>
+        {planned && planned > 0 && (
+          <button onClick={() => setKm(planned)}
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{ background: 'var(--ns-ember-light)', color: 'var(--ns-ember)' }}>
+            Use planned {planned}km
+          </button>
+        )}
       </div>
-      {planned && planned > 0 && (
-        <p className="text-[11px] text-gray-400 text-center mt-1">Planned: {planned}km</p>
-      )}
+      <div className="relative">
+        <input
+          type="number"
+          inputMode="decimal"
+          step="0.1"
+          min="0"
+          max="200"
+          value={km || ''}
+          onChange={e => {
+            const v = parseFloat(e.target.value)
+            setKm(isNaN(v) ? 0 : Math.round(v * 10) / 10)
+          }}
+          placeholder={planned ? `${planned}` : '0.0'}
+          className="w-full rounded-xl px-4 py-3 text-lg font-data font-bold focus:outline-none focus:ring-2"
+          style={{
+            background: 'var(--color-surface-2)',
+            border: '1px solid var(--color-border)',
+            color: 'var(--color-text-primary)',
+          }}
+        />
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold"
+          style={{ color: 'var(--color-text-tertiary)' }}>km</span>
+      </div>
     </div>
   )
 }
@@ -426,16 +453,30 @@ function KmPicker({ km, setKm, planned }: { km: number; setKm: (n: number) => vo
 function DurationPicker({ mins, setMins }: { mins: number; setMins: (n: number) => void }) {
   return (
     <div>
-      <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>Duration (optional)</label>
-      <div className="flex items-center gap-3">
-        <button onClick={() => setMins(Math.max(0, mins - 5))}
-          className="w-10 h-10 rounded-full font-bold text-lg flex items-center justify-center" style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>−</button>
-        <div className="flex-1 text-center">
-          <span className="font-data text-3xl text-gray-900">{mins}</span>
-          <span className="text-sm text-gray-400 ml-1">min</span>
-        </div>
-        <button onClick={() => setMins(mins + 5)}
-          className="w-10 h-10 rounded-full bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center">+</button>
+      <label className="text-sm font-bold block mb-1.5" style={{ color: 'var(--color-text-primary)' }}>
+        Time <span className="text-[10px] font-normal" style={{ color: 'var(--color-text-tertiary)' }}>minutes</span>
+      </label>
+      <div className="relative">
+        <input
+          type="number"
+          inputMode="numeric"
+          min="0"
+          max="600"
+          value={mins || ''}
+          onChange={e => {
+            const v = parseInt(e.target.value)
+            setMins(isNaN(v) ? 0 : Math.max(0, v))
+          }}
+          placeholder="0"
+          className="w-full rounded-xl px-4 py-3 text-lg font-data font-bold focus:outline-none focus:ring-2"
+          style={{
+            background: 'var(--color-surface-2)',
+            border: '1px solid var(--color-border)',
+            color: 'var(--color-text-primary)',
+          }}
+        />
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold"
+          style={{ color: 'var(--color-text-tertiary)' }}>min</span>
       </div>
     </div>
   )
