@@ -17,8 +17,8 @@ export default async function HomePage() {
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('user_plans').select('id,name,plan_type,current_week,total_weeks,race_date,weeks_data,goal,meta')
       .eq('user_id', user.id).eq('status', 'active').maybeSingle(),
-    supabase.from('coach_athletes').select('coach_id,status').eq('athlete_id', user.id).eq('status', 'active').maybeSingle(),
-    supabase.from('squad_members').select('squad_id').eq('user_id', user.id).maybeSingle(),
+    (supabase as any).from('coach_athletes').select('coach_id,status').eq('athlete_id', user.id).eq('status', 'active').maybeSingle(),
+    (supabase as any).from('squad_members').select('squad_id').eq('user_id', user.id).maybeSingle(),
   ])
 
   // Load coach profile if has coach
@@ -34,11 +34,11 @@ export default async function HomePage() {
 
   // Load squad if member
   let squad = null
-  if (squadRes.data?.squad_id) {
+  if ((squadRes.data as any)?.squad_id) {
     const { data } = await supabase
       .from('squads')
       .select('id,name,colour,leader_id,goal_type,goal_value,goal_month')
-      .eq('id', squadRes.data.squad_id)
+      .eq('id', (squadRes.data as any).squad_id)
       .single()
     squad = data
   }
