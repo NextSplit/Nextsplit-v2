@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 
 /**
  * Applies dark_mode and text_size from localStorage to <html>.
  * Dark mode is the DEFAULT — if no preference is stored, dark is applied and saved.
  */
-export default function ThemeWrapper({ children }: { children: React.ReactNode }) {
+export default function ThemeWrapper({ children }: { children: ReactNode }) {
   useEffect(() => {
     function applyTheme() {
       try {
