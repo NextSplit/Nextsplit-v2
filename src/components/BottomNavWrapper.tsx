@@ -3,8 +3,12 @@
 import { usePathname } from 'next/navigation'
 import BottomNav from './BottomNav'
 
-// Pages where the bottom nav should appear
-const APP_PATHS = ['/home', '/train', '/nutrition', '/dashboard', '/profile', '/coach', '/marketplace', '/community']
+const APP_PATHS = [
+  '/home', '/train', '/explore', '/you',
+  '/coach', '/plan', '/today', '/profile', '/community',
+  '/squad', '/nutrition', '/dashboard', '/marketplace', '/history',
+  '/races', '/gym', '/settings',
+]
 
 export default function BottomNavWrapper() {
   const pathname = usePathname()
