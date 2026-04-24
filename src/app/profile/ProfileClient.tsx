@@ -109,7 +109,7 @@ export default function ProfileClient({
   // RPG state — persisted in localStorage, charId optionally in Supabase
   const [charId, setCharId] = useState('m1')
   const [showCharSelect, setShowCharSelect] = useState(false)
-  const [profileTab, setProfileTab] = useState<'character' | 'stats' | 'records'>('character')
+  const [profileTab, setProfileTab] = useState<'character' | 'stats' | 'records'>('records')
   const [badgeToast, setBadgeToast] = useState<RPGBadge | null>(null)
   const [seenBadgeIds, setSeenBadgeIds] = useState<string[]>([])
   const [kitColour, setKitColour] = useState('var(--ns-cyan)')
@@ -368,9 +368,9 @@ export default function ProfileClient({
         {/* Tab switcher */}
         <div className="flex gap-1 mt-3 rounded-xl p-1" style={{ background: 'var(--color-surface-2)' }}>
           {([
-            { id: 'character', label: '🏃 Character' },
-            { id: 'stats',     label: '📊 Stats'     },
-            { id: 'records',   label: '🏆 Records'   },
+            { id: 'records',   label: '🏆 Achievements' },
+            { id: 'character', label: '🏃 Character'   },
+            { id: 'stats',     label: '📊 Stats'       },
           ] as const).map(tab => (
             <button
               key={tab.id}
@@ -381,7 +381,7 @@ export default function ProfileClient({
                   : ''
               }`}
               style={profileTab === tab.id
-                ? { background: 'var(--ns-ember)', color: 'white' }
+                ? { background: '#f0a500', color: 'white' }
                 : { color: 'var(--color-text-tertiary)' }
               }
             >
@@ -621,7 +621,7 @@ export default function ProfileClient({
               </div>
               <span className="text-lg" style={{ color: "var(--color-text-tertiary)" }}>›</span>
             </a>
-            <a href="/dashboard" className="flex items-center justify-between rounded-2xl px-4 py-3.5" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
+            <a href="/dashboard" className="flex items-center justify-between rounded-2xl px-4 py-3.5" style={{ background: "rgba(37,99,235,0.08)", border: "1.5px solid rgba(37,99,235,0.2)" }}>
               <div className="flex items-center gap-3">
                 <span className="text-xl">📈</span>
                 <div>
