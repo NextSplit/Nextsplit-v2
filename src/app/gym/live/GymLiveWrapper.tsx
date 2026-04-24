@@ -27,7 +27,7 @@ export default function GymLiveWrapper({ weekN, dayIndex, sessionIndex }: Props)
   }
 
   if (!plan) {
-    router.replace('/today')
+    router.replace('/home')
     return null
   }
 
@@ -43,7 +43,7 @@ export default function GymLiveWrapper({ weekN, dayIndex, sessionIndex }: Props)
           <p className="text-sm font-semibold text-gray-900 mb-1">Session not found</p>
           <p className="text-xs text-gray-400 mb-5">Week {weekN}, Day {dayIndex}, Session {sessionIndex}</p>
           <button
-            onClick={() => router.replace('/today')}
+            onClick={() => router.replace('/home')}
             className="text-sm font-semibold text-[var(--ns-ember)]"
           >
             Back to Today
@@ -59,7 +59,7 @@ export default function GymLiveWrapper({ weekN, dayIndex, sessionIndex }: Props)
       dayIndex={dayIndex}
       sessionIndex={sessionIndex}
       session={session}
-      onDone={() => router.replace('/today')}
+      onDone={() => router.replace('/home')}
     />
   )
 }

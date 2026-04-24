@@ -67,13 +67,13 @@ test.describe('Phase F: Pre-Alpha Gates', () => {
   // ── F1.2 — Unauthenticated protection ──────────────────────────────────────
 
   test('Today tab redirects unauthenticated users', async ({ page }) => {
-    await page.goto('/today')
+    await page.goto('/home')
     await page.waitForLoadState('networkidle')
     expect(page.url()).toContain('/auth')
   })
 
   test('Plan tab redirects unauthenticated users', async ({ page }) => {
-    await page.goto('/plan')
+    await page.goto('/train')
     await page.waitForLoadState('networkidle')
     expect(page.url()).toContain('/auth')
   })
@@ -83,7 +83,7 @@ test.describe('Phase F: Pre-Alpha Gates', () => {
     await page.waitForLoadState('networkidle')
     // Should redirect to auth or today, not show admin content
     const url = page.url()
-    expect(url.includes('/auth') || url.includes('/today')).toBe(true)
+    expect(url.includes('/auth') || url.includes('/home')).toBe(true)
   })
 
   // ── F1.3 — API routes return proper errors without auth ─────────────────────

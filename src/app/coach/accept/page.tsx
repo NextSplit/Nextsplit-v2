@@ -8,7 +8,7 @@ export default async function CoachAcceptPage({
   searchParams: Promise<{ token?: string }>
 }) {
   const { token } = await searchParams
-  if (!token) redirect('/today')
+  if (!token) redirect('/home')
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -30,7 +30,7 @@ export default async function CoachAcceptPage({
           <div className="text-4xl">❌</div>
           <h1 className="text-lg font-bold text-gray-800">Invalid invite link</h1>
           <p className="text-sm text-gray-500">This link has already been used or has expired.</p>
-          <a href="/today" className="text-[var(--ns-ember)] text-sm font-semibold hover:underline block mt-4">
+          <a href="/home" className="text-[var(--ns-ember)] text-sm font-semibold hover:underline block mt-4">
             Go to dashboard →
           </a>
         </div>

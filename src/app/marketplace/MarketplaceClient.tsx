@@ -46,7 +46,7 @@ function PlanDetailModal({
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed')
       onActivated()
-      router.push('/today?notice=plan_activated')
+      router.push('/home?notice=plan_activated')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
     } finally { setLoading(false) }

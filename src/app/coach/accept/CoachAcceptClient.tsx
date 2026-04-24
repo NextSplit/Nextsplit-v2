@@ -31,7 +31,7 @@ export default function CoachAcceptClient({
       })
       const data = await res.json()
       if (data.error) { setError(data.error); return }
-      router.push('/today?notice=coach_connected')
+      router.push('/home?notice=coach_connected')
     } catch {
       setError('Something went wrong — please try again')
     } finally {
@@ -128,7 +128,7 @@ export default function CoachAcceptClient({
         </button>
 
         <button
-          onClick={() => router.push('/today')}
+          onClick={() => router.push('/home')}
           className="w-full text-gray-400 text-sm py-2"
         >
           Decline

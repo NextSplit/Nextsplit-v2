@@ -29,7 +29,7 @@ export default function Error({
           Try again
         </button>
         <a
-          href="/today"
+          href="/home"
           className="border border-gray-200 text-gray-600 px-5 py-3 rounded-xl text-sm font-semibold bg-white"
         >
           Go home

@@ -9,7 +9,7 @@ import { zodError } from '@/lib/schemas'
 const SendNotifSchema = z.object({
   title: z.string().min(1).max(100),
   body:  z.string().min(1).max(300),
-  url:   z.string().max(200).default('/today'),
+  url:   z.string().max(200).default('/home'),
 })
 
 export async function POST(req: NextRequest) {

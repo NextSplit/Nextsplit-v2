@@ -47,12 +47,12 @@ export async function updateSession(request: NextRequest) {
       .maybeSingle()
 
     // New users may have no profile row yet — treat as incomplete
-    url.pathname = profile?.onboarding_complete ? '/today' : '/onboarding'
+    url.pathname = profile?.onboarding_complete ? '/home' : '/onboarding'
     return NextResponse.redirect(url)
   }
 
   // Logged in + hitting app routes + onboarding not done → onboarding
-  const appRoutes = ['/today', '/plan', '/nutrition', '/profile', '/settings', '/dashboard', '/gym', '/history', '/races', '/character', '/coach', '/marketplace', '/community']
+  const appRoutes = ['/home', '/train', '/nutrition', '/profile', '/settings', '/dashboard', '/gym', '/history', '/races', '/character', '/coach', '/marketplace', '/community']
   const isAppRoute = appRoutes.some(r => url.pathname.startsWith(r))
 
   if (user && isAppRoute && !isOnboarding) {

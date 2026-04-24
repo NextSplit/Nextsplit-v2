@@ -53,7 +53,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 Try again
               </button>
               <button
-                onClick={() => { window.location.href = '/today' }}
+                onClick={() => { window.location.href = '/home' }}
                 className="px-4 py-2 border border-gray-300 text-gray-600 text-sm font-semibold rounded-xl"
               >
                 Go home

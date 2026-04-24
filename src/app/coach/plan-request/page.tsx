@@ -14,7 +14,7 @@ export default async function PlanRequestPage({
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
-  if (!coachId) redirect('/today')
+  if (!coachId) redirect('/home')
 
   // Verify the coach exists and is active
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,7 +24,7 @@ export default async function PlanRequestPage({
     .eq('user_id', coachId)
     .maybeSingle()
 
-  if (!coach) redirect('/today')
+  if (!coach) redirect('/home')
 
   return (
     <PlanRequestClient

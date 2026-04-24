@@ -11,7 +11,7 @@ describe('buildNotification', () => {
     })
     expect(n.title).toContain('Alex')
     expect(n.body).toContain('8km')
-    expect(n.url).toBe('/today')
+    expect(n.url).toBe('/home')
   })
 
   it('at_risk_reengagement is warm and not accusatory', () => {
@@ -28,7 +28,7 @@ describe('buildNotification', () => {
       daysToRace: 21,
     })
     expect(n.title.toLowerCase()).toMatch(/race|weeks|go/)
-    expect(n.url).toBe('/today')
+    expect(n.url).toBe('/home')
   })
 
   it('adaptation_alert surfaces the change', () => {

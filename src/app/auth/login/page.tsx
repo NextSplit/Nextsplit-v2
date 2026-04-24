@@ -15,7 +15,7 @@ export default function LoginPage() {
     try {
       const result = await login(formData)
       if (result?.error) { setError(result.error); setLoading(false) }
-      else router.push('/today')
+      else router.push('/home')
     } catch { setError('Something went wrong'); setLoading(false) }
   }
 

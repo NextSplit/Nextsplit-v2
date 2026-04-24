@@ -136,7 +136,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
             You'll get a message when your plan is ready. Usually within 24–48 hours.
           </p>
 
-          <Link href="/today"
+          <Link href="/home"
             className="block w-full py-3 rounded-2xl text-center text-sm font-bold text-white"
             style={{ background: 'var(--ns-ember)' }}>
             Back to training →
@@ -152,7 +152,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
 
         {/* Header */}
         <div>
-          <Link href="/today" className="text-sm font-semibold" style={{ color: 'var(--ns-violet)' }}>← Back</Link>
+          <Link href="/home" className="text-sm font-semibold" style={{ color: 'var(--ns-violet)' }}>← Back</Link>
           <h1 className="text-2xl font-black text-gray-900 mt-3">Request a bespoke plan</h1>
           <p className="text-sm text-gray-500 mt-1">
             {coachName} will use this to build a plan tailored to you. Be specific — the more detail, the better the plan.

@@ -120,7 +120,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to activate plan')
-      router.push('/today?notice=plan_activated')
+      router.push('/home?notice=plan_activated')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
       setActivating(false)
@@ -249,7 +249,7 @@ export default function PlanBrowseClient({ templates }: Props) {
         style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <div className="max-w-lg mx-auto">
           <div className="flex items-center gap-3 mb-3">
-            <Link href="/today" className="text-sm font-medium" style={{ color: 'var(--color-text-tertiary)' }}>
+            <Link href="/home" className="text-sm font-medium" style={{ color: 'var(--color-text-tertiary)' }}>
               ← Back
             </Link>
             <span className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>

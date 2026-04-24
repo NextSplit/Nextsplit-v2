@@ -9,7 +9,7 @@ export default function NotFound() {
         Looks like you took a wrong turn. This page doesn't exist.
       </p>
       <Link
-        href="/today"
+        href="/home"
         className="inline-block bg-[var(--ns-ember)] text-white px-6 py-3 rounded-xl text-sm font-semibold"
       >
         Back to Today →

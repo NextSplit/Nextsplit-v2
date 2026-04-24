@@ -61,7 +61,7 @@ export default function SquadPageClient({ userId }: Props) {
   return (
     <main className="min-h-screen pb-28" style={{ background: 'var(--color-bg)' }}>
       <div className="px-4 pt-12 pb-2 flex items-center gap-3">
-        <Link href="/today" className="text-sm font-medium" style={{ color: 'var(--color-text-tertiary)' }}>
+        <Link href="/home" className="text-sm font-medium" style={{ color: 'var(--color-text-tertiary)' }}>
           ← Today
         </Link>
       </div>

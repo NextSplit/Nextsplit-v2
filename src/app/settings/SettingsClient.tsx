@@ -638,7 +638,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
       })
       if (!res.ok) throw new Error('Reset failed')
       success('Plan reset to Week 1')
-      router.push('/plan')
+      router.push('/train')
       router.refresh()
     } catch {
       toastError('Failed to reset plan')

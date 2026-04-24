@@ -324,9 +324,9 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
       }
       const result = await res.json()
       if (result.raceTooSoon) {
-        window.location.href = '/today?notice=race_soon'
+        window.location.href = '/home?notice=race_soon'
       } else {
-        window.location.href = '/today'
+        window.location.href = '/home'
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')

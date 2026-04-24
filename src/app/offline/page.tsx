@@ -73,7 +73,7 @@ export default function OfflinePage() {
         </div>
         <h1>You're offline</h1>
         <p>No connection right now. Your cached sessions are still available once you navigate back.</p>
-        <a href="/today" className="btn">Go to Today</a>
+        <a href="/home" className="btn">Go to Today</a>
         <p className="tip">Tip: any sessions you've already viewed are cached and ready offline.</p>
       </body>
     </html>

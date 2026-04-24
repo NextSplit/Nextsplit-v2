@@ -393,7 +393,7 @@ export default function TodayClient() {
                 ? "Head to the Plan tab to add sessions to your week."
                 : "Your plan is building — check the Plan tab for your full schedule."}
             </p>
-            <a href="/plan"
+            <a href="/train"
               className="inline-block text-white text-xs font-bold px-5 py-2.5 rounded-xl" style={{ background: 'var(--ns-ember)' }}>
               Go to Plan →
             </a>
@@ -762,7 +762,7 @@ export default function TodayClient() {
                 >
                   <span style={{ color: 'var(--ns-ember)' }}>+</span> Add session
                 </button>
-                <a href="/plan"
+                <a href="/train"
                   className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95"
                   style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}
                 >

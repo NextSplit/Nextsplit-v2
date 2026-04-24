@@ -120,7 +120,7 @@ export function PlanPreviewScreen() {
       localStorage.removeItem('nextsplit_onboarding_data')
       localStorage.removeItem('nextsplit_onboarding_step')
     } catch { /* ignore */ }
-    router.push('/today')
+    router.push('/home')
   }
 
   if (loading) {

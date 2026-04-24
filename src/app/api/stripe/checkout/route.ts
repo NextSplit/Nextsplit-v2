@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
           is_founding:      String(isFoundingPrice),
         },
       },
-      success_url: `${config.siteUrl}/today?upgrade=success`,
+      success_url: `${config.siteUrl}/home?upgrade=success`,
       cancel_url:  `${config.siteUrl}/profile?upgrade=cancelled`,
       metadata: {
         supabase_user_id: user.id,

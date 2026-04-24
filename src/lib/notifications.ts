@@ -69,7 +69,7 @@ export function buildNotification(
         ? `${ctx.sessionName} is on the plan today. Start easy, find your rhythm.`
         : `Your session is ready. Keep the momentum going.`
 
-      return { type, title, body, url: '/today' }
+      return { type, title, body, url: '/home' }
     }
 
     case 'streak_at_risk': {
@@ -82,7 +82,7 @@ export function buildNotification(
         : streak >= 7
         ? `You've been consistent for ${streak} days. Today matters. Even a short run keeps it alive.`
         : `Your ${streak}-day streak is on the line. Splity believes in you. Log today.`
-      return { type, title, body, url: '/today' }
+      return { type, title, body, url: '/home' }
     }
 
     case 'at_risk_reengagement': {
@@ -98,7 +98,7 @@ export function buildNotification(
         `Splity here — your training is paused, not cancelled. Ready when you are.`,
       ]
       const i = new Date().getDay() % 3
-      return { type, title: titles[i], body: bodies[i], url: '/today' }
+      return { type, title: titles[i], body: bodies[i], url: '/home' }
     }
 
     case 'weekly_recap': {
@@ -108,7 +108,7 @@ export function buildNotification(
       const body = ctx.weekN && ctx.totalWeeks
         ? `${ctx.weekN} of ${ctx.totalWeeks} weeks complete${ctx.planName ? ` on ${ctx.planName}` : ''}. See how this week went.`
         : `Another training week in the books. Check your recap and see what's coming next.`
-      return { type, title, body, url: '/today' }
+      return { type, title, body, url: '/home' }
     }
 
     case 'race_countdown': {
@@ -122,7 +122,7 @@ export function buildNotification(
         : days <= 14
         ? `Two weeks out. The hard work is done — now it's about staying sharp.`
         : `${weeks} weeks to race day. Every session now is an investment.`
-      return { type, title, body, url: '/today' }
+      return { type, title, body, url: '/home' }
     }
 
     case 'adaptation_alert': {
@@ -130,7 +130,7 @@ export function buildNotification(
         type,
         title: `Plan updated, ${name}`,
         body: ctx.adaptationNote ?? 'Your plan has been adjusted to keep you on track. Tap to see what changed.',
-        url: '/today',
+        url: '/home',
       }
     }
 
@@ -139,7 +139,7 @@ export function buildNotification(
         type,
         title: ctx.coachName ? `Message from ${ctx.coachName}` : 'New coaching message',
         body: `Your coach left you a note. Tap to read it.`,
-        url: '/today',
+        url: '/home',
       }
     }
 
@@ -160,7 +160,7 @@ export function buildNotification(
         type,
         title: `NextSplit · Splity`,
         body: `Time to check in on your training.`,
-        url: '/today',
+        url: '/home',
       }
   }
 }

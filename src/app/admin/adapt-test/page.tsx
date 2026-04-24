@@ -16,7 +16,7 @@ export default async function AdaptTestPage() {
   const isAdmin = profile?.is_admin === true ||
     process.env.ADMIN_EMAILS?.split(',').includes(profile?.email ?? '')
 
-  if (!isAdmin) redirect('/today')
+  if (!isAdmin) redirect('/home')
 
   // Fetch user's active plans to test against
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

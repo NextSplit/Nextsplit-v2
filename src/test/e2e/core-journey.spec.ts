@@ -14,13 +14,13 @@ test.describe('Core user journey', () => {
     // Should show the primary tagline or redirect to auth
     const hasTagline = await page.locator('text=keeps up with your life').isVisible()
       .catch(() => false)
-    const hasAuthRedirect = page.url().includes('/auth') || page.url().includes('/today')
+    const hasAuthRedirect = page.url().includes('/auth') || page.url().includes('/home')
     expect(hasTagline || hasAuthRedirect).toBe(true)
   })
 
   test('Today tab loads within 3 seconds for authenticated users', async ({ page }) => {
     // This test skips if not authenticated
-    await page.goto('/today')
+    await page.goto('/home')
     const start = Date.now()
 
     // Wait for either the Today header or auth redirect
@@ -40,7 +40,7 @@ test.describe('Core user journey', () => {
   test('unauthenticated users are redirected to auth', async ({ page }) => {
     // Clear any session
     await page.context().clearCookies()
-    await page.goto('/today')
+    await page.goto('/home')
     // Should redirect to login
     await expect(page).toHaveURL(/auth|login/, { timeout: 5000 })
   })

@@ -42,7 +42,7 @@ export default function ManualOnboardingClient() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed')
-      router.push(data.raceTooSoon ? '/today?notice=race_soon' : '/today')
+      router.push(data.raceTooSoon ? '/home?notice=race_soon' : '/home')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
       setStep('details')
