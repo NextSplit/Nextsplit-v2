@@ -49,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body style={{ fontFamily: 'system-ui, -apple-system, sans-serif', margin: 0 }}>
         <ThemeWrapper>
           <ToastProvider>

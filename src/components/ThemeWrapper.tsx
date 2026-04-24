@@ -3,16 +3,22 @@
 import { useEffect } from 'react'
 
 /**
- * Reads dark_mode and text_size from localStorage (written by Settings page)
- * and applies the corresponding classes to <html>.
- * This runs client-side only to avoid SSR mismatch.
+ * Applies dark_mode and text_size from localStorage to <html>.
+ * Dark mode is the DEFAULT — if no preference is stored, dark is applied and saved.
  */
 export default function ThemeWrapper({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     function applyTheme() {
       try {
-        const dark    = localStorage.getItem('nextsplit_dark_mode') === 'true'
-        const size    = localStorage.getItem('nextsplit_text_size') ?? 'default'
+        const stored = localStorage.getItem('nextsplit_dark_mode')
+
+        // If never set before — default to dark and store it
+        if (stored === null) {
+          localStorage.setItem('nextsplit_dark_mode', 'true')
+        }
+
+        const dark = stored === null ? true : stored === 'true'
+        const size = localStorage.getItem('nextsplit_text_size') ?? 'default'
 
         const html = document.documentElement
         html.classList.toggle('dark', dark)
@@ -22,8 +28,6 @@ export default function ThemeWrapper({ children }: { children: React.ReactNode }
     }
 
     applyTheme()
-
-    // Re-apply if storage changes (e.g. Settings page saves)
     window.addEventListener('nextsplit-theme-change', applyTheme)
     return () => window.removeEventListener('nextsplit-theme-change', applyTheme)
   }, [])
@@ -31,7 +35,7 @@ export default function ThemeWrapper({ children }: { children: React.ReactNode }
   return <>{children}</>
 }
 
-// ─── Helper used by Settings page to persist + apply immediately ─────────────
+// ─── Helper used by Settings to persist + apply immediately ──────────────────
 
 export function setThemePreference(key: 'dark_mode' | 'text_size', value: string | boolean) {
   try {
