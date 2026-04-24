@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { useSquad } from '@/hooks/useSquad'
 import { useSubscription } from '@/hooks/useSubscription'
@@ -26,7 +26,7 @@ const TABS: { id: Tab; label: string; colour: string }[] = [
 export default function ExploreClient({ coaches, featuredPlans, activePlanId }: Props) {
   const [tab, setTab]             = useState<Tab>('coaches')
   const [aiMessage, setAiMessage] = useState('')
-  const [aiThread, setAiThread]   = useState<{ role: 'user' | 'ai'; text: string }[]>([])
+  const [aiThread, setAiThread]   = useState<Array<{ role: 'user' | 'ai'; text: string }>>([])
   const [aiLoading, setAiLoading] = useState(false)
   const { squad }                 = useSquad()
   const { isPro }                 = useSubscription()
@@ -37,7 +37,7 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
     if (!aiMessage.trim()) return
     const msg = aiMessage.trim()
     setAiMessage('')
-    setAiThread(t => [...t, { role: 'user', text: msg }])
+    setAiThread((prev: Array<{role:'user'|'ai';text:string}>) => [...prev, { role: 'user' as const, text: msg }])
     setAiLoading(true)
     try {
       const res  = await fetch('/api/ai/coach', {
@@ -45,9 +45,9 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
         body: JSON.stringify({ message: msg, mode: 'advice' }),
       })
       const data = await res.json()
-      setAiThread(t => [...t, { role: 'ai', text: data.response ?? data.error ?? 'No response' }])
+      setAiThread((prev: Array<{role:'user'|'ai';text:string}>) => [...prev, { role: 'ai' as const, text: data.response ?? data.error ?? 'No response' }])
     } catch {
-      setAiThread(t => [...t, { role: 'ai', text: 'Something went wrong. Try again.' }])
+      setAiThread((prev: Array<{role:'user'|'ai';text:string}>) => [...prev, { role: 'ai' as const, text: 'Something went wrong. Try again.' }])
     } finally { setAiLoading(false) }
   }
 
@@ -337,7 +337,7 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
 
             {aiThread.length > 0 && (
               <div className="space-y-3 max-h-80 overflow-y-auto">
-                {aiThread.map((msg, i) => (
+                {aiThread.map((msg: { role: string; text: string }, i: number) => (
                   <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className="max-w-[85%] rounded-2xl px-3 py-2.5 text-xs leading-relaxed"
                       style={msg.role === 'user'
@@ -362,8 +362,8 @@ export default function ExploreClient({ coaches, featuredPlans, activePlanId }: 
             <div className="flex gap-2">
               <input
                 value={aiMessage}
-                onChange={e => setAiMessage(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && askAI()}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAiMessage(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && !e.shiftKey && askAI()}
                 placeholder="Ask your AI coach…"
                 className="flex-1 text-sm px-4 py-3 rounded-2xl outline-none"
                 style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border-2)', color: 'var(--color-text-primary)' }}
