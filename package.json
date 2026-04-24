@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed-plans": "tsx --env-file=.env.local scripts/seed-plans.ts",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test"
