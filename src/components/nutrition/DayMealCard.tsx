@@ -98,7 +98,7 @@ function DayMealCard({
                                 {pp.protein > 0 && ` · ${pp.protein}g P`}
                               </p>
                             </div>
-                            <button onClick={() => onRemove(e.id)}
+                            <button aria-label="Close" onClick={() => onRemove(e.id)}
                               className="text-gray-300 text-xl leading-none ml-2">×</button>
                           </div>
                         )

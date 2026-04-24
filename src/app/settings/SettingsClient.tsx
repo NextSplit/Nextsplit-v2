@@ -498,7 +498,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
   const { consent: cookieConsent, accept: acceptCookies, decline: declineCookies } = useCookieConsent()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const coachTier = (profile as any)?.coach_tier ?? null
+  const coachTier = (profile as Record<string, unknown>)?.coach_tier as string ?? null
 
   // Use live profile if loaded, fall back to server-rendered initial
   const p = profile ?? initialProfile

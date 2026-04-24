@@ -45,8 +45,8 @@ export default function PlanBrowserClient({ templates }: Props) {
       if (sortBy === 'level')       return LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level)
       if (sortBy === 'weeks_asc')   return (a.weeks_min ?? 0) - (b.weeks_min ?? 0)
       if (sortBy === 'weeks_desc')  return (b.weeks_min ?? 0) - (a.weeks_min ?? 0)
-      if (sortBy === 'rating')      return ((b as any).avg_rating ?? 0) - ((a as any).avg_rating ?? 0)
-      if (sortBy === 'completion')  return ((b as any).avg_completion_rate ?? 0) - ((a as any).avg_completion_rate ?? 0)
+      if (sortBy === 'rating')      return (((b as Record<string,unknown>).avg_rating as number) ?? 0) - (((a as Record<string,unknown>).avg_rating as number) ?? 0)
+      if (sortBy === 'completion')  return (((b as Record<string,unknown>).avg_completion_rate as number) ?? 0) - (((a as Record<string,unknown>).avg_completion_rate as number) ?? 0)
       return 0
     })
     return list
@@ -194,11 +194,11 @@ function PlanCard({ plan, onClick, onPreview }: { plan: PlanTemplate; onClick: (
         <div className="flex gap-4 mt-3 pt-3 border-t items-center" style={{ borderColor: 'var(--color-border)' }}>
           <Stat label="runs/wk" value={String(plan.runs_per_week)} />
           {plan.peak_km_week && <Stat label="peak km" value={`${plan.peak_km_week}`} />}
-          {(plan as any).avg_rating && (plan as any).review_count > 0 && (
-            <Stat label="rating" value={`★ ${((plan as any).avg_rating as number).toFixed(1)}`} />
+          {(plan as Record<string, unknown>).avg_rating && (plan as Record<string, unknown>).review_count > 0 && (
+            <Stat label="rating" value={`★ ${((plan as Record<string, unknown>).avg_rating as number).toFixed(1)}`} />
           )}
-          {(plan as any).avg_completion_rate && (
-            <Stat label="completion" value={`${Math.round((plan as any).avg_completion_rate as number)}%`} />
+          {(plan as Record<string, unknown>).avg_completion_rate && (
+            <Stat label="completion" value={`${Math.round((plan as Record<string, unknown>).avg_completion_rate as number)}%`} />
           )}
           <div className="ml-auto" style={{ color: 'var(--ns-ember)' }}>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -229,10 +229,10 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose: () => void; onSelect: () => void }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const weeks = (plan as any).weeks_data as any[] ?? []
+  const weeks = ((plan as Record<string, unknown>).weeks_data as unknown[]) ?? []
   const week1 = weeks[0]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const days  = (week1?.days ?? []) as any[]
+  const days  = (week1?.days ?? []) as unknown[]
 
   return (
     <>

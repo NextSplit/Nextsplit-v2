@@ -84,7 +84,7 @@ export function useCommunity() {
           challenges:  challengesData.challenges ?? [],
           races:       racesData.races ?? [],
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          leaderboard: ((leaderRes.data ?? []) as any[]).map(p => ({ ...p, user_id: p.id })) as LeaderboardEntry[],
+          leaderboard: ((leaderRes.data ?? []) as Array<Record<string,unknown>>).map(p => ({ ...p, user_id: p.id as string })) as LeaderboardEntry[],
           season:      seasonRes.data ?? null,
           loading:     false,
         })

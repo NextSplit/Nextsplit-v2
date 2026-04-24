@@ -401,11 +401,13 @@ export default function TrainClient() {
               {/* Upcoming weeks */}
               {upcomingWeeks.map((week: PlanWeek) => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const W = WeekRow as any
                 return <W
                   key={week.n}
                   week={week}
                   status="upcoming"
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   logs={logs as any}
                   gymLogs={{} as Record<string, unknown>}

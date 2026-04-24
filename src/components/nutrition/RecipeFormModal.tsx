@@ -140,7 +140,7 @@ function RecipeFormModal({
                     ))}
                   </select>
                   {ingredients.length > 1 && (
-                    <button onClick={() => removeIngredient(i)}
+                    <button aria-label="Close" onClick={() => removeIngredient(i)}
                       className="text-gray-300 text-base leading-none">×</button>
                   )}
                 </div>

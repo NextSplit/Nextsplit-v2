@@ -61,6 +61,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch emails via service role (auth.users not accessible with anon key)
     const { createServiceClient } = await import('@/lib/supabase/server')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const svc = createServiceClient() as any
     const emailByUser: Record<string, string> = {}
     for (const uid of userIds) {

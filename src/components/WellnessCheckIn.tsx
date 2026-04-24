@@ -168,7 +168,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
     <div className="bg-white rounded-2xl border border-gray-100 p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="text-sm font-bold text-gray-900">How are you feeling?</div>
-        <button onClick={() => setOpen(false)} className="text-gray-400 text-lg leading-none">×</button>
+        <button aria-label="Close" onClick={() => setOpen(false)} className="text-gray-400 text-lg leading-none">×</button>
       </div>
       <div className="space-y-5 mb-5">
         <SliderRow label="Sleep quality" emoji="😴" value={sleep} onChange={setSleep} lowLabel="Terrible" highLabel="Great" />

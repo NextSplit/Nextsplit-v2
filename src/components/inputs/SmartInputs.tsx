@@ -138,7 +138,7 @@ export function SmartTimeInput({
           className="flex-1 px-2 py-2.5 text-sm font-mono font-bold text-gray-800 bg-transparent outline-none placeholder:text-gray-300 placeholder:font-normal"
         />
         {raw && !error && (
-          <button
+          <button aria-label="Clear"
             onClick={() => { setRaw(''); onChange(null) }}
             className="pr-3 text-gray-300 hover:text-gray-500 text-lg leading-none"
           >×</button>

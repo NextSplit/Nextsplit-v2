@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
       .eq('done', true)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const doneLogs  = (logs ?? []) as any[]
+    const doneLogs  = (logs ?? []) as unknown[]
     const totalKm   = doneLogs.reduce((s, l) => s + (l.km ?? 0), 0)
     const totalRuns = doneLogs.length
 

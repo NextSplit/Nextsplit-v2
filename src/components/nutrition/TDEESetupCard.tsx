@@ -63,7 +63,7 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
             <p className="text-[10px] text-gray-400">For accurate TDEE calculation</p>
           </div>
         </div>
-        {saved && <button onClick={() => setOpen(false)} className="text-gray-300 text-lg">×</button>}
+        {saved && <button aria-label="Close" onClick={() => setOpen(false)} className="text-gray-300 text-lg">×</button>}
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-3">

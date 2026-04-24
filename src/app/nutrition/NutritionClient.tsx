@@ -275,7 +275,7 @@ export default function NutritionClient() {
                                     {e.portions}x · {pp.kcal > 0 ? `${pp.kcal} kcal` : ''}{pp.protein > 0 ? ` · ${pp.protein}g P` : ''}
                                   </p>
                                 </div>
-                                <button onClick={() => removeMeal(e.id)}
+                                <button aria-label="Close" onClick={() => removeMeal(e.id)}
                                   className="text-gray-300 text-lg leading-none">×</button>
                               </div>
                             )

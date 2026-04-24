@@ -138,7 +138,7 @@ export default function AdaptPlanCard({ planId, weekN, missedCount, onAdapted }:
             Your AI coach can restructure the rest of your week to recover lost training without overloading you.
           </p>
         </div>
-        <button onClick={() => setDismissed(true)} className="text-amber-300 text-lg shrink-0">×</button>
+        <button aria-label="Close" onClick={() => setDismissed(true)} className="text-amber-300 text-lg shrink-0">×</button>
       </div>
 
       {error && <p className="text-xs text-red-500">{error}</p>}
