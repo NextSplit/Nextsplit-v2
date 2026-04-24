@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 /**
  * GET /api/profile/character?user_id=X
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch profile — public fields only
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profile } = await (supabase as any)
+    const { data: profile } = await db(supabase)
       .from('profiles')
       .select('id, display_name, handle, runner_class, runner_class_revealed')
       .eq('id', targetId)
@@ -31,7 +32,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch XP and training stats from training_logs
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: logs } = await (supabase as any)
+    const { data: logs } = await db(supabase)
       .from('training_logs')
       .select('done, km, logged_at, week_n')
       .eq('user_id', targetId)

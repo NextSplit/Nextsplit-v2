@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { redirect } from 'next/navigation'
 import AdaptTestClient from './AdaptTestClient'
 
@@ -10,7 +11,7 @@ export default async function AdaptTestPage() {
   if (!user) redirect('/auth/login')
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: profile } = await (supabase as any)
+  const { data: profile } = await db(supabase)
     .from('profiles').select('is_admin, email').eq('id', user.id).single()
 
   const isAdmin = profile?.is_admin === true ||
@@ -20,7 +21,7 @@ export default async function AdaptTestPage() {
 
   // Fetch user's active plans to test against
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: plans } = await (supabase as any)
+  const { data: plans } = await db(supabase)
     .from('user_plans')
     .select('id, name, current_week, total_weeks, race_date')
     .eq('user_id', user.id)

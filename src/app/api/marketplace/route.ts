@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch plans
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const query = (supabase as any)
+    const query = db(supabase)
       .from('plan_templates')
       .select(`
         id, slug, name, subtitle, distance, level,
@@ -38,14 +38,14 @@ export async function GET(req: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const coachIds = [...new Set(((plans ?? []) as any[]).filter(p => p.author_id).map(p => p.author_id))]
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: coaches } = coachIds.length > 0 ? await (supabase as any)
+    const { data: coaches } = coachIds.length > 0 ? await db(supabase)
       .from('coach_profiles')
       .select('user_id, display_name, slug, verified, photo_url')
       .in('user_id', coachIds) : { data: [] }
 
     // Fetch this user's purchases to flag what they own
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: purchases } = await (supabase as any)
+    const { data: purchases } = await db(supabase)
       .from('plan_purchases')
       .select('template_id')
       .eq('athlete_id', user.id)
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     // Verify user is a Pro Coach
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profile } = await (supabase as any)
+    const { data: profile } = await db(supabase)
       .from('profiles')
       .select('coach_tier, is_coach')
       .eq('id', user.id)
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
     const slug = `coach_${user.id.slice(0, 8)}_${Date.now()}`
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
+    const { data, error } = await db(supabase)
       .from('plan_templates')
       .insert({
         slug,

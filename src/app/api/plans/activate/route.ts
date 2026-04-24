@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import type { PlanTemplate } from '@/types/database'
 import { z } from 'zod'
 import { zodError } from '@/lib/schemas'
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
 
   // VDOT pace personalisation — fetch user's recent race times from profile
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: profileData } = await (supabase as any)
+  const { data: profileData } = await db(supabase)
     .from('profiles')
     .select('recent_race_times, recent_race_5k_secs, recent_race_10k_secs, recent_race_half_secs, recent_race_marathon_secs')
     .eq('id', user.id)

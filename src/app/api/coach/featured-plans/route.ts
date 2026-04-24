@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { CoachFeaturedPlansSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest) {
 
     // Get this week's featured plans with template + coach info
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: featured } = await (supabase as any)
+    const { data: featured } = await db(supabase)
       .from('featured_plans')
       .select(`
         id, position, feature_type, impressions, clicks, conversions,
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
     if (!featured?.length) {
       // Fall back to top-rated plans
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: topPlans } = await (supabase as any)
+      const { data: topPlans } = await db(supabase)
         .from('plan_templates')
         .select('id, name, distance, level, description, meta, author_type, author_id, avg_rating, total_starts, review_count')
         .eq('is_public', true)
@@ -65,14 +66,14 @@ export async function POST(req: NextRequest) {
 
     // Remove existing for this week
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any)
+    await db(supabase)
       .from('featured_plans')
       .delete()
       .eq('week_start', week_start)
 
     // Insert new featured plans
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any)
+    await db(supabase)
       .from('featured_plans')
       .insert(
         template_ids.map((id: string, i: number) => ({

@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
     // Must be a coach
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: coach } = await (supabase as any)
+    const { data: coach } = await db(supabase)
       .from('coach_profiles')
       .select('user_id, stripe_account_id')
       .eq('user_id', user.id)
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
       // Save to coach_profiles
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('coach_profiles')
         .update({ stripe_account_id: accountId })
         .eq('user_id', user.id)
@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: coach } = await (supabase as any)
+    const { data: coach } = await db(supabase)
       .from('coach_profiles')
       .select('stripe_account_id')
       .eq('user_id', user.id)

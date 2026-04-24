@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { serverConfig } from '@/lib/config'
 import { buildNotificationEmail } from '@/lib/notificationEmails'
 import type { NotificationEmailType } from '@/lib/notificationEmails'
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch all users with email notifications enabled
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profiles } = await (supabase as any)
+    const { data: profiles } = await db(supabase)
       .from('profiles')
       .select(`
         id, display_name,
@@ -69,7 +70,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch active plans
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: plans } = await (supabase as any)
+    const { data: plans } = await db(supabase)
       .from('user_plans')
       .select('user_id, name, current_week, total_weeks, race_date')
       .in('user_id', userIds)
@@ -80,7 +81,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch today's training logs
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: todayLogs } = await (supabase as any)
+    const { data: todayLogs } = await db(supabase)
       .from('training_logs')
       .select('user_id, done, week_n')
       .in('user_id', userIds)
@@ -91,7 +92,7 @@ export async function GET(req: NextRequest) {
     // Fetch streaks (last 7 days of logs)
     const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: recentLogs } = await (supabase as any)
+    const { data: recentLogs } = await db(supabase)
       .from('training_logs')
       .select('user_id, logged_at, done')
       .in('user_id', userIds)
@@ -184,7 +185,7 @@ export async function GET(req: NextRequest) {
 
         // Update last sent timestamp
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase as any)
+        await db(supabase)
           .from('profiles')
           .update({
             last_notification_at: now.toISOString(),

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { redirect } from 'next/navigation'
 import InviteLandingClient from './InviteLandingClient'
 
@@ -12,7 +13,7 @@ export default async function InvitePage({
 
   // Fetch invite + coach info
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: invite } = await (supabase as any)
+  const { data: invite } = await db(supabase)
     .from('coach_invites')
     .select('coach_id, expires_at, used_at')
     .eq('token', token)
@@ -34,7 +35,7 @@ export default async function InvitePage({
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: coach } = await (supabase as any)
+  const { data: coach } = await db(supabase)
     .from('coach_profiles')
     .select('display_name, bio, verified, specialities, photo_url, location')
     .eq('user_id', invite.coach_id)

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { redirect } from 'next/navigation'
 import CreateSquadClient from './CreateSquadClient'
 
@@ -11,7 +12,7 @@ export default async function CreateSquadPage() {
 
   // If they already lead a squad, redirect to squad dashboard
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: existing } = await (supabase as any)
+  const { data: existing } = await db(supabase)
     .from('squads')
     .select('id')
     .eq('leader_id', user.id)

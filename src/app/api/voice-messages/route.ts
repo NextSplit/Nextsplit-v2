@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { VoiceMessageListenSchema, zodError } from '@/lib/schemas'
 
 /**
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
       // OR user is the coach for this athlete — verified below via DB
     if (!isParty) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: rel } = await (supabase as any)
+      const { data: rel } = await db(supabase)
         .from('coach_athletes')
         .select('id')
         .eq('coach_id', user.id)
@@ -35,7 +36,7 @@ export async function GET(req: NextRequest) {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
+    const { data, error } = await db(supabase)
       .from('voice_messages')
       .select('*')
       .or(`coach_id.eq.${user.id},athlete_id.eq.${user.id}`)
@@ -101,7 +102,7 @@ export async function POST(req: NextRequest) {
 
     // Create DB record
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error: dbErr } = await (supabase as any)
+    const { data, error: dbErr } = await db(supabase)
       .from('voice_messages')
       .insert({
         coach_id:    user.id,
@@ -136,7 +137,7 @@ export async function PATCH(req: NextRequest) {
     const { message_id } = parsed.data
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any)
+    const { error } = await db(supabase)
       .from('voice_messages')
       .update({ listened_at: new Date().toISOString() })
       .eq('id', message_id)

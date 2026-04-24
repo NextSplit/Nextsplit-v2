@@ -28,7 +28,7 @@ type SupabaseClient = Awaited<ReturnType<typeof import('@/lib/supabase/server').
 /** Get current founding member count */
 export async function getFoundingCount(supabase: SupabaseClient): Promise<number> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data } = await (supabase as any)
+  const { data } = await db(supabase)
     .from('app_config')
     .select('value')
     .eq('key', 'founding_member_count')
@@ -45,14 +45,14 @@ export async function isFoundingAvailable(supabase: SupabaseClient): Promise<boo
 /** Increment founding member count */
 export async function incrementFoundingCount(supabase: SupabaseClient): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data } = await (supabase as any)
+  const { data } = await db(supabase)
     .from('app_config')
     .select('value')
     .eq('key', 'founding_member_count')
     .single()
   const current = parseInt(data?.value ?? '0', 10)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (supabase as any)
+  await db(supabase)
     .from('app_config')
     .update({ value: String(current + 1), updated_at: new Date().toISOString() })
     .eq('key', 'founding_member_count')

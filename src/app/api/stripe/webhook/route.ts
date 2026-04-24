@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
             // Record earnings entry
             const periodMonth = new Date().toISOString().slice(0, 7)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (supabase as any).from('coach_earnings').insert({
+            await db(supabase).from('coach_earnings').insert({
               coach_id:        coachId,
               athlete_id:      athleteId,
               source_type:     'subscription',

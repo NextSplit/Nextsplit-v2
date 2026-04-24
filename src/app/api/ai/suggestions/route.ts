@@ -2,6 +2,7 @@ import { serverConfig } from '@/lib/config'
 import { NextResponse } from 'next/server'
 import { AiSuggestionsSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
+import { getServerSubscription, requirePro } from '@/lib/serverSubscription'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
 
@@ -15,6 +16,11 @@ export async function POST(req: Request) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+  // Server-side subscription enforcement — prevents client-side ProGate bypass
+  const sub = await getServerSubscription(supabase, user.id)
+  const proBlock = requirePro(sub)
+  if (proBlock) return proBlock
 
   const rateCheck = await checkAndIncrementAIUsage(user.id, 'free')
   if (!rateCheck.allowed) {

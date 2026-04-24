@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { redirect } from 'next/navigation'
 import CoachAcceptClient from './CoachAcceptClient'
 
@@ -16,7 +17,7 @@ export default async function CoachAcceptPage({
 
   // Pre-fetch coach info from the token
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: invite } = await (supabase as any)
+  const { data: invite } = await db(supabase)
     .from('coach_athletes')
     .select('coach_id, athlete_goal')
     .eq('invite_token', token)
@@ -39,7 +40,7 @@ export default async function CoachAcceptPage({
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: coach } = await (supabase as any)
+  const { data: coach } = await db(supabase)
     .from('coach_profiles')
     .select('display_name, bio, specialities, verified, photo_url')
     .eq('user_id', invite.coach_id)

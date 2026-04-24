@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { z } from 'zod'
 import { zodError } from '@/lib/schemas'
 
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
   const { message, context, url } = parsed.data
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (supabase as any).from('bug_reports').insert({
+  await db(supabase).from('bug_reports').insert({
     user_id:    user?.id ?? null,
     message,
     context:    context ?? 'unknown',

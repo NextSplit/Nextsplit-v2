@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
   // Logged in + hitting auth pages → check onboarding
   if (user && isAuthRoute && !url.pathname.startsWith('/auth/callback')) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profile } = await (supabase as any)
+    const { data: profile } = await db(supabase)
       .from('profiles')
       .select('onboarding_complete')
       .eq('id', user.id)
@@ -57,7 +57,7 @@ export async function updateSession(request: NextRequest) {
 
   if (user && isAppRoute && !isOnboarding) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profile } = await (supabase as any)
+    const { data: profile } = await db(supabase)
       .from('profiles')
       .select('onboarding_complete')
       .eq('id', user.id)

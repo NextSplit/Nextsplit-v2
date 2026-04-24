@@ -137,7 +137,7 @@ export function AboutYouScreen() {
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any).from('profiles').update({
+      await db(supabase).from('profiles').update({
         display_name:    displayName.trim(),
         age:             age,
         date_of_birth:   dob || null,

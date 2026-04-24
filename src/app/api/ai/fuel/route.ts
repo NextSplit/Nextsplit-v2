@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
+import { AiFuelSchema, zodError } from '@/lib/schemas'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -20,7 +21,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
   }
 
-  const { dayType, planName, targets, totals } = await req.json()
+  const parsed = AiFuelSchema.safeParse(await req.json())
+  if (!parsed.success) return zodError(parsed.error)
+  const { dayType, planName, targets, totals } = parsed.data
 
   const kcalGap = targets?.kcal > 0 ? targets.kcal - Math.round(totals?.kcal ?? 0) : null
   const prompt = `You are a sports nutrition coach for a runner. Give ONE specific, practical nutrition tip for today.

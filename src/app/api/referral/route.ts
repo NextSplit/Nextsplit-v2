@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { generateReferralCode, buildReferralUrl } from '@/lib/referral'
 import { ReferralCodeSchema, zodError } from '@/lib/schemas'
 
@@ -17,7 +18,7 @@ export async function GET() {
 
     // Check if user already has a code
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profile } = await (supabase as any)
+    const { data: profile } = await db(supabase)
       .from('profiles')
       .select('referral_code, referral_count, display_name')
       .eq('id', user.id)
@@ -29,7 +30,7 @@ export async function GET() {
       // Generate and store
       code = generateReferralCode(user.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('profiles')
         .update({ referral_code: code })
         .eq('id', user.id)
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
 
     // Find the referrer
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: referrer } = await (supabase as any)
+    const { data: referrer } = await db(supabase)
       .from('profiles')
       .select('id, display_name')
       .eq('referral_code', code.toUpperCase())
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest) {
 
     // Check if this user was already referred
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await db(supabase)
       .from('profiles')
       .select('referred_by')
       .eq('id', user.id)
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
 
     // Store referral relationship
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any)
+    await db(supabase)
       .from('profiles')
       .update({ referred_by: referrer.id })
       .eq('id', user.id)

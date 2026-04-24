@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     // Find the invite from coach_invites
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: invite } = await (supabase as any)
+    const { data: invite } = await db(supabase)
       .from('coach_invites')
       .select('id, coach_id, athlete_goal, coach_notes, expires_at, used_at')
       .eq('token', token)
@@ -73,14 +73,14 @@ export async function POST(req: NextRequest) {
 
     // Mark invite as used
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any)
+    await db(supabase)
       .from('coach_invites')
       .update({ used_at: new Date().toISOString(), used_by: user.id })
       .eq('id', invite.id)
 
     // Get coach info for confirmation
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: coach } = await (supabase as any)
+    const { data: coach } = await db(supabase)
       .from('coach_profiles')
       .select('display_name, slug')
       .eq('user_id', invite.coach_id)

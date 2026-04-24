@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { PurchasePlanSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 /**
  * POST /api/marketplace/purchase
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     // Fetch plan details
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: plan, error: planErr } = await (supabase as any)
+    const { data: plan, error: planErr } = await db(supabase)
       .from('plan_templates')
       .select('id, name, meta, is_public, author_type, author_id, weeks_data, weeks_min, weeks_max, distance, level, total_starts')
       .eq('id', template_id)
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     // Check if already purchased
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await db(supabase)
       .from('plan_purchases')
       .select('id')
       .eq('athlete_id', user.id)
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     if (!existing) {
       // Record purchase with full schema: athlete_id, template_id, coach_id, amount_gbp
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('plan_purchases')
         .insert({
           athlete_id:        user.id,
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
 
       // Increment total_starts on the template
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('plan_templates')
         .update({ total_starts: (plan.total_starts ?? 0) + 1 })
         .eq('id', template_id)
@@ -85,7 +86,7 @@ export async function POST(req: NextRequest) {
       .eq('status', 'active')
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: newPlan, error: createErr } = await (supabase as any)
+    const { data: newPlan, error: createErr } = await db(supabase)
       .from('user_plans')
       .insert({
         user_id:      user.id,

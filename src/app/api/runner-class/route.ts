@@ -56,7 +56,7 @@ export async function POST() {
 
     // Fetch current profile
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profile } = await (supabase as any)
+    const { data: profile } = await db(supabase)
       .from('profiles')
       .select('runner_class, runner_class_revealed, first_session_logged_at')
       .eq('id', user.id)
@@ -69,7 +69,7 @@ export async function POST() {
     // If first_session_logged_at not yet set, write it now
     if (!profile?.first_session_logged_at && firstSessionAt) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('profiles')
         .update({ first_session_logged_at: firstSessionAt })
         .eq('id', user.id)
@@ -91,7 +91,7 @@ export async function POST() {
     const shouldUpdate = changed || (revealReady && !alreadyRevealed)
     if (shouldUpdate) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('profiles')
         .update({
           runner_class: newClass,

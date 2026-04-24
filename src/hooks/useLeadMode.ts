@@ -34,7 +34,7 @@ export function useLeadMode(): UseLeadModeReturn {
       if (!user) return
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(supabase as any)
+      ;db(supabase)
         .from('profiles')
         .select('coach_tier, is_coach')
         .eq('id', user.id)

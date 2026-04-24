@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { redirect } from 'next/navigation'
 import ExploreClient from './ExploreClient'
 
@@ -11,7 +12,7 @@ export default async function ExplorePage() {
 
   // Fetch featured coaches
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: coaches } = await (supabase as any)
+  const { data: coaches } = await db(supabase)
     .from('coach_profiles')
     .select('user_id, display_name, slug, verified, photo_url, profiles(runner_class)')
     .eq('verified', true)
@@ -19,7 +20,7 @@ export default async function ExplorePage() {
 
   // Fetch featured marketplace plans
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: plans } = await (supabase as any)
+  const { data: plans } = await db(supabase)
     .from('plan_templates')
     .select('id, name, subtitle, distance, level, weeks_min, peak_km_week, avg_rating, review_count, meta')
     .eq('author_type', 'coach')
@@ -29,7 +30,7 @@ export default async function ExplorePage() {
 
   // Fetch user's active plan for AI coaching context
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: activePlan } = await (supabase as any)
+  const { data: activePlan } = await db(supabase)
     .from('user_plans')
     .select('id, name, current_week, total_weeks')
     .eq('user_id', user.id)

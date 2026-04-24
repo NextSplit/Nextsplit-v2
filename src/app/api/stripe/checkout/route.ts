@@ -3,6 +3,8 @@ import { config } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getStripe, PRICES, isFoundingAvailable } from '@/lib/stripe'
+import { StripeCheckoutSchema, zodError } from '@/lib/schemas'
+import { stripeRateLimit } from '@/lib/rateLimit'
 import { db } from '@/lib/supabase/db'
 
 export async function POST(req: NextRequest) {
@@ -11,11 +13,19 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    const { interval } = await req.json() // 'monthly' | 'annual'
+    // Rate limit: 5 checkout attempts per hour per user
+    const rl = stripeRateLimit(user.id)
+    if (!rl.allowed) {
+      return NextResponse.json({ error: 'Too many requests. Try again later.' }, { status: 429 })
+    }
+
+    const parsed = StripeCheckoutSchema.safeParse(await req.json())
+    if (!parsed.success) return zodError(parsed.error)
+    const { interval } = parsed.data
 
     // Get or create Stripe customer
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profile } = await (supabase as any)
+    const { data: profile } = await db(supabase)
       .from('profiles')
       .select('stripe_customer_id, display_name, is_pro')
       .eq('id', user.id)

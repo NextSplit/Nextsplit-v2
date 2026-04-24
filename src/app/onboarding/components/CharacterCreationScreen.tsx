@@ -300,7 +300,7 @@ export function CharacterCreationScreen() {
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any).from('profiles').update({
+      await db(supabase).from('profiles').update({
         handle,
         character_config: config,
         display_name: handle,

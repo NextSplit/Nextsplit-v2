@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { redirect, notFound } from 'next/navigation'
 import ClubDetailClient from './ClubDetailClient'
 
@@ -13,7 +14,7 @@ export default async function ClubDetailPage({
   if (!user) redirect('/auth/login')
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: club } = await (supabase as any)
+  const { data: club } = await db(supabase)
     .from('clubs')
     .select('*')
     .eq('id', clubId)
@@ -23,7 +24,7 @@ export default async function ClubDetailPage({
 
   // Check membership
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: membership } = await (supabase as any)
+  const { data: membership } = await db(supabase)
     .from('club_members')
     .select('role, weekly_km, season_xp')
     .eq('club_id', clubId)
@@ -34,7 +35,7 @@ export default async function ClubDetailPage({
 
   // Leaderboard (top members by weekly km)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: members } = await (supabase as any)
+  const { data: members } = await db(supabase)
     .from('club_members')
     .select('user_id, role, weekly_km, season_xp, profiles(display_name, handle, current_league)')
     .eq('club_id', clubId)
@@ -43,7 +44,7 @@ export default async function ClubDetailPage({
 
   // Recent feed
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: feed } = await (supabase as any)
+  const { data: feed } = await db(supabase)
     .from('club_feed')
     .select('*, profiles(display_name, handle)')
     .eq('club_id', clubId)

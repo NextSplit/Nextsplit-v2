@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { CommunityProgressSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 
 // Called after a session is logged — updates challenge progress + club feed + season XP
 export async function POST(req: NextRequest) {
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     // 1. Update challenge progress
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: activeEntries } = await (supabase as any)
+    const { data: activeEntries } = await db(supabase)
       .from('challenge_entries')
       .select('id, challenge_id, progress, challenges(challenge_type, target_value, reward_xp, reward_title, reward_badge)')
       .eq('user_id', user.id)
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
       const completed = newProgress >= challenge.target_value
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any).from('challenge_entries').update({
+      await db(supabase).from('challenge_entries').update({
         progress:     newProgress,
         completed,
         completed_at: completed ? new Date().toISOString() : null,
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
 
       if (completed) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase as any).rpc('increment_profile_xp', {
+        await db(supabase).rpc('increment_profile_xp', {
           p_user_id:   user.id,
           p_xp:        challenge.reward_xp ?? 0,
           p_season_xp: challenge.reward_xp ?? 0,
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Update club member weekly_km + post to feed
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: memberships } = await (supabase as any)
+    const { data: memberships } = await db(supabase)
       .from('club_members')
       .select('club_id, weekly_km, share_feed')
       .eq('user_id', user.id)
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
       // Batch-fetch all clubs in one query instead of N individual fetches
       const clubIds = (memberships ?? []).map((m: { club_id: string }) => m.club_id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: clubs } = await (supabase as any)
+      const { data: clubs } = await db(supabase)
         .from('clubs')
         .select('id, weekly_km, total_km')
         .in('id', clubIds)
@@ -96,7 +97,7 @@ export async function POST(req: NextRequest) {
     // 3. Award base session XP to season_xp
     const sessionXP = Math.round((km ?? 0) * 10) + 50 // 50 base + 10 per km
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any).rpc('increment_season_xp', { p_user_id: user.id, p_xp: sessionXP })
+    await db(supabase).rpc('increment_season_xp', { p_user_id: user.id, p_xp: sessionXP })
 
     return NextResponse.json({ success: true, xp_awarded: sessionXP })
 

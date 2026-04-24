@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { serverConfig } from '@/lib/config'
 import { buildNotificationEmail } from '@/lib/notificationEmails'
 
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest) {
       if (!user) return NextResponse.json({ error: 'Not logged in — add ?secret=YOUR_CRON_SECRET to the URL' }, { status: 401 })
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: profile } = await (supabase as any)
+      const { data: profile } = await db(supabase)
         .from('profiles')
         .select('display_name, email')
         .eq('id', user.id)

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { redirect } from 'next/navigation'
 import PlanRequestClient from './PlanRequestClient'
 
@@ -18,7 +19,7 @@ export default async function PlanRequestPage({
 
   // Verify the coach exists and is active
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: coach } = await (supabase as any)
+  const { data: coach } = await db(supabase)
     .from('coach_profiles')
     .select('user_id, display_name, verified')
     .eq('user_id', coachId)

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { redirect } from 'next/navigation'
 import MarketplaceClient from './MarketplaceClient'
 
@@ -9,7 +10,7 @@ export default async function MarketplacePage() {
 
   // Fetch all public plan templates with author info
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: plans } = await (supabase as any)
+  const { data: plans } = await db(supabase)
     .from('plan_templates')
     .select(`
       id, slug, name, subtitle, distance, level,
@@ -25,14 +26,14 @@ export default async function MarketplacePage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const coachIds = [...new Set(((plans ?? []) as any[]).filter(p => p.author_id).map((p: any) => p.author_id))]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: coaches } = coachIds.length > 0 ? await (supabase as any)
+  const { data: coaches } = coachIds.length > 0 ? await db(supabase)
     .from('coach_profiles')
     .select('user_id, display_name, slug, verified, photo_url')
     .in('user_id', coachIds) : { data: [] }
 
   // Fetch user's purchases to flag owned plans
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: purchases } = await (supabase as any)
+  const { data: purchases } = await db(supabase)
     .from('plan_purchases')
     .select('template_id')
     .eq('athlete_id', user.id)

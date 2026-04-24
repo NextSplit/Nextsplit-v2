@@ -70,7 +70,7 @@ export function useCommunity() {
             .order('season_xp', { ascending: false })
             .limit(20),
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (supabase as any).from('seasons').select('number, name, ends_at').eq('is_active', true).single(),
+          db(supabase).from('seasons').select('number, name, ends_at').eq('is_active', true).single(),
         ])
 
         if (cancelled) return

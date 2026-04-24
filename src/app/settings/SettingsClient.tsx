@@ -203,11 +203,11 @@ function CoachAccessSection() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data } = await (supabase as any).from('coach_athletes').select('*').eq('athlete_id', user.id).eq('status', 'active').maybeSingle()
+      const { data } = await db(supabase).from('coach_athletes').select('*').eq('athlete_id', user.id).eq('status', 'active').maybeSingle()
       if (data) {
         setRel(data)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: coach } = await (supabase as any).from('coach_profiles').select('display_name').eq('user_id', data.coach_id).single()
+        const { data: coach } = await db(supabase).from('coach_profiles').select('display_name').eq('user_id', data.coach_id).single()
         setCoachName(coach?.display_name ?? 'Your coach')
       }
     }
@@ -227,7 +227,7 @@ function CoachAccessSection() {
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any).from('coach_athletes').update({ [field]: updated[field] }).eq('coach_id', rel.coach_id).eq('athlete_id', user.id)
+      await db(supabase).from('coach_athletes').update({ [field]: updated[field] }).eq('coach_id', rel.coach_id).eq('athlete_id', user.id)
     }
     setSaving(false)
   }
@@ -239,7 +239,7 @@ function CoachAccessSection() {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (user) await (supabase as any).from('coach_athletes').update({ status: 'ended' }).eq('coach_id', rel.coach_id).eq('athlete_id', user.id)
+    if (user) await db(supabase).from('coach_athletes').update({ status: 'ended' }).eq('coach_id', rel.coach_id).eq('athlete_id', user.id)
     setRel(null)
   }
 
@@ -284,7 +284,7 @@ function SplitLeaderSection({ coachTier, isPro }: { coachTier: string | null; is
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase as any)
+      const { error } = await db(supabase)
         .from('profiles')
         .update({ is_coach: true, coach_tier: 'split_leader' })
         .eq('id', user.id)
@@ -654,7 +654,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (supabase as any).rpc('export_user_data', { p_user_id: user.id })
+      const { data, error } = await db(supabase).rpc('export_user_data', { p_user_id: user.id })
       if (error) throw error
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
       const url  = URL.createObjectURL(blob)
@@ -681,7 +681,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any).rpc('delete_user_account', { p_user_id: user.id })
+      await db(supabase).rpc('delete_user_account', { p_user_id: user.id })
       router.push('/')
     } catch {
       toastError('Deletion failed — contact support@nextsplit.com')

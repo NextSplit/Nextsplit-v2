@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { redirect } from 'next/navigation'
 import PlanReviewClient from './PlanReviewClient'
 
@@ -19,7 +20,7 @@ export default async function PlanReviewPage() {
 
   // Gate to admin users only
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: profile } = await (supabase as any)
+  const { data: profile } = await db(supabase)
     .from('profiles')
     .select('is_admin, email')
     .eq('id', user.id)

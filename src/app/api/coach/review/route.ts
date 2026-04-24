@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     // Check not already reviewed
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await db(supabase)
       .from('coach_reviews')
       .select('id')
       .eq('coach_id', coach_id)
@@ -43,13 +43,13 @@ export async function POST(req: NextRequest) {
     if (existing) {
       // Update existing review
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('coach_reviews')
         .update({ rating, review_text: review_text ?? null })
         .eq('id', existing.id)
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('coach_reviews')
         .insert({
           coach_id,
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
 
     // Update coach plan_templates avg_rating + review_count
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: reviews } = await (supabase as any)
+    const { data: reviews } = await db(supabase)
       .from('coach_reviews')
       .select('rating')
       .eq('coach_id', coach_id)
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       const avg = reviews.reduce((a: number, r: { rating: number }) => a + r.rating, 0) / reviews.length
       // Mark all reviews visible
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await db(supabase)
         .from('coach_reviews')
         .update({ is_visible: true })
         .eq('coach_id', coach_id)
@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
     if (!coach_id) return NextResponse.json({ error: 'coach_id required' }, { status: 400 })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = await (supabase as any)
+    const { data } = await db(supabase)
       .from('coach_reviews')
       .select('id, rating, review_text, coach_reply, created_at')
       .eq('coach_id', coach_id)

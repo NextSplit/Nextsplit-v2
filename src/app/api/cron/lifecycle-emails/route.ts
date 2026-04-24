@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/supabase/db'
 import { serverConfig } from '@/lib/config'
 import { LIFECYCLE_EMAILS, buildLifecycleEmailHtml } from '@/lib/lifecycleEmails'
 import type { LifecycleEmailId } from '@/lib/lifecycleEmails'
@@ -35,7 +36,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch all users with email + signup date + lifecycle tracking
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profiles } = await (supabase as any)
+    const { data: profiles } = await db(supabase)
       .from('profiles')
       .select(`
         id, display_name, email, created_at, lifecycle_email_sent,
@@ -48,7 +49,7 @@ export async function GET(req: NextRequest) {
     // Batch-check who has active plans
     const userIds = profiles.map(p => p.id as string)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: plans } = await (supabase as any)
+    const { data: plans } = await db(supabase)
       .from('user_plans')
       .select('user_id, name, current_week, total_weeks, race_date')
       .in('user_id', userIds)
@@ -60,7 +61,7 @@ export async function GET(req: NextRequest) {
     // Batch-check session logs (last 30 days)
     const thirtyDaysAgo = new Date(nowUtc.getTime() - 30 * 86400000).toISOString()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: recentLogs } = await (supabase as any)
+    const { data: recentLogs } = await db(supabase)
       .from('training_logs')
       .select('user_id, logged_at, km')
       .in('user_id', userIds)
@@ -174,7 +175,7 @@ export async function GET(req: NextRequest) {
         // Record this email as sent
         const updatedSent = [...sentSet, emailToSend]
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase as any)
+        await db(supabase)
           .from('profiles')
           .update({ lifecycle_email_sent: updatedSent })
           .eq('id', uid)
