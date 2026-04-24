@@ -1,325 +1,240 @@
 # NextSplit — Master Delivery Plan
-**Version:** 3.3 | **23 April 2026** | **End of Session 5**
+**Version:** 3.4 | **25 April 2026** | **End of Session 6**
 **Status:** Living document — reviewed at milestones, not calendar dates
 
 ---
 
 ## Current Position
 
-**All code complete. All SQL migrations confirmed in production. Build green.**
-The only items standing between now and alpha invites are two founder admin
-actions (ICO + Companies House) and the F1 E2E test on iPhone.
+**All SQL migrations confirmed in production. All Phase I cleanup complete. Nav v2 live.**
+The app now has Home / Train / Explore / You navigation with a smart dynamic Home dashboard.
+Phase I engineering debt cleared. Ready for F1 E2E test and alpha invites.
 
 ---
 
-## Three Core Pillars
+## Navigation Architecture v2 (live as of Session 6)
 
-```
-Pillar 1 — Bespoke Digital Coaching     ✅ BUILT + DEPLOYED
-Pillar 2 — Split Leader                 ✅ BUILT + DEPLOYED + SQL IN PROD
-Pillar 3 — Coaching Marketplace + Hub  ✅ BUILT + DEPLOYED + SQL IN PROD
-```
+| Tab | Colour | Serves | Content |
+|-----|--------|--------|---------|
+| 🏠 Home | Cyan `#06b6d4` | All users | Smart dashboard — 6 dynamic states |
+| 📅 Train | Coral `#ff4d6d` | Athletes | Today sessions + stats + full plan |
+| 🔍 Explore | Lime `#84cc16` | Athletes | Coaches / Squads / Plans / AI |
+| ⭐ You | Amber `#f0a500` | All users | Achievements / Character / Stats |
+| 🎓 Coach | Violet `#8b5cf6` | Coaches only | Dashboard / Athletes / Earnings |
+
+**Home tab — 6 states (reads 8 live signals on load):**
+1. No plan → Bold 4-path onboarding picker
+2. Active training day → Coral hero with session pills + Start
+3. Rest day → Muted hero, next session preview, stats strip
+4. Has coach + unread → Violet hero with coach name + message
+5. Squad leader → Squad colour hero with nudge + leaderboard
+6. Streak at risk (≥3 days, not logged today, evening) → Amber warning
+
+**Routes:**
+- `/home` — smart dashboard (new)
+- `/train` — Today + Plan merged (replaces `/today` and `/plan`)
+- `/explore` — coaches, squads, marketplace (was buried)
+- `/you` — profile renamed, achievements first (was `/profile`)
+- All old routes redirect: `/today→/train`, `/profile→/you`, `/community→/explore`
+
+---
+
+## Colour Language System (complete)
+
+| Colour | Hex | Area |
+|--------|-----|------|
+| Cyan | `#06b6d4` | Brand anchor, wordmark, landing, onboarding progress, PB toast |
+| Coral | `#ff4d6d` | Athlete/Today tab, log session, streak, all athlete CTAs |
+| Cobalt | `#2563eb` | Plan tab, ACWR, pace zones, analytics |
+| Lime | `#84cc16` | Squad, Split Leader, trophy room |
+| Amber | `#f0a500` | XP, badges, Splity, character tab |
+| Violet | `#8b5cf6` | Coach dashboard, messaging, verified badge |
+| Magenta | `#ec4899` | Level-up screen, plan completion ceremony, special moments |
+
+**Dark mode:** Default on first visit. `<html class="dark">` from first paint, no flicker.
+**Light mode:** Session cards use full colour gradients (Option C). Toggle in Settings.
+**Runner colour:** 12-colour picker in Settings → Appearance. Applies to HeroCard + share cards.
+
+---
+
+## Phase I Cleanup — COMPLETE ✅
+
+| Item | Status |
+|------|--------|
+| `(supabase as any)` → `db(supabase)` wrapper (41 files) | ✅ |
+| Remaining `as any` typed or annotated | ✅ |
+| Zod validation on ai/fuel, coach/apply, stripe/checkout | ✅ |
+| Rate limiter utility — stripe (5/hr), coach/apply (3/hr) | ✅ |
+| CSP header in vercel.json | ✅ |
+| Server-side `requirePro()` on 3 AI routes | ✅ |
+| `no-console` ESLint rule | ✅ |
+| AVIF/WebP image formats, phosphor tree-shaking | ✅ |
+| `@types/node` in tsconfig | ✅ |
+| CI — only Build is hard gate, others continue-on-error | ✅ |
+| aria-label on all × close buttons | ✅ |
+| Supabase staging environment | ⬜ Founder action |
+| Full aria-label audit (non-close buttons) | ⬜ Phase J |
+| Load testing | ⬜ Before beta |
 
 ---
 
 ## Full Build Status
 
 ### ✅ Core Product
-
-| Feature | Status |
-|---------|--------|
-| Auth (email + Google OAuth) | ✅ |
-| All 4 onboarding paths | ✅ |
-| VDOT pace personalisation | ✅ |
-| 17+ seeded plan templates | ✅ |
-| Today tab — full daily loop | ✅ |
-| Plan tab — inline expand | ✅ |
-| Log modal — all modes | ✅ |
-| Date navigation | ✅ |
-| Plan adaptation engine | ✅ |
-| Character system | ✅ |
-| Plan history | ✅ |
-| Personal bests | ✅ |
-| Strava sync | ✅ |
-| Offline queue | ✅ |
-| Nutrition tab | ✅ |
+Auth (email + Google OAuth), all 4 onboarding paths, VDOT pace personalisation,
+17+ seeded plan templates, Train tab (Today + Plan merged), Plan adaptation engine,
+Character system, Plan history, Personal bests, Strava sync, Offline queue, Nutrition tab.
 
 ### ✅ Social / Split Leader
-
-| Feature | Status |
-|---------|--------|
-| Squad creation flow | ✅ |
-| Invite landing page (/squad/join/[code]) | ✅ |
-| Squad join (logged in + logged out) | ✅ |
-| Squad dashboard | ✅ |
-| Squad leaderboard | ✅ |
-| Nudge system | ✅ |
-| Inactivity monitoring | ✅ |
-| Leadership transfer | ✅ |
-| Trophy room | ✅ |
-| Squad seasons | ✅ |
-| Squad achievements | ✅ |
-| Community feed | ✅ |
-| Public profiles | ✅ |
-| **SQL in production** | ✅ All 8 squad tables confirmed |
+Squad creation, invite landing, join flow, dashboard, leaderboard, nudge system,
+inactivity monitoring, leadership transfer, trophy room, squad seasons, achievements,
+community feed, public profiles. **SQL in production ✅**
 
 ### ✅ Coaching Platform
-
-| Feature | Status |
-|---------|--------|
-| Coach setup / apply | ✅ |
-| Coach public profile | ✅ |
-| Coach browse + filter | ✅ |
-| Hire flow | ✅ |
-| Athlete invite + accept | ✅ |
-| Coach squad view | ✅ |
-| Voice messages | ✅ |
-| Coach messaging + read receipts | ✅ |
-| Message reactions | ✅ |
-| Scheduled messages (Coach Pro gated) | ✅ |
-| Plan builder | ✅ |
-| Coach annotations + broadcast | ✅ |
-| Coach digest preferences | ✅ |
-| Athlete capacity management | ✅ |
-| Coach earnings dashboard | ✅ |
-| Stripe Connect (payouts) | ✅ |
-| Commission model | ✅ |
-| Coach Pro subscription | ✅ |
-| Coach dispute resolution | ✅ |
-| **SQL in production** | ✅ All coaching tables confirmed |
+Coach setup/apply, public profile, browse + filter, hire flow, athlete invite,
+coach squad view, voice messages, messaging + read receipts, message reactions,
+scheduled messages (Coach Pro gated), plan builder, coach annotations + broadcast,
+coach digest preferences, athlete capacity management, coach earnings dashboard,
+Stripe Connect (payouts), commission model, Coach Pro subscription, dispute resolution.
+**SQL in production ✅**
 
 ### ✅ Notifications + Comms
-
-| Feature | Status |
-|---------|--------|
-| Push notifications (8 types) | ✅ VAPID keys set |
-| Per-type preferences + quiet hours | ✅ |
-| Email notifications (5 types) | ✅ coach@nextsplit.app |
-| Lifecycle emails (7-email sequence) | ✅ |
-| GitHub Actions daily cron | ✅ 9am UTC |
-| Splity character (4 moods) | ✅ |
+Push notifications (8 types), per-type preferences + quiet hours,
+email notifications (5 types), lifecycle emails (7-email sequence),
+GitHub Actions daily cron (9am UTC), Splity character (4 moods).
 
 ### ✅ Revenue Infrastructure (not yet activated)
-
-| Feature | Status |
-|---------|--------|
-| Stripe checkout + webhook + portal | ✅ |
-| Stripe Connect (coach payouts) | ✅ |
-| ProGate component | ✅ |
-| Feature flags (PREMIUM_ENFORCED, REFERRAL_ENABLED) | ✅ Both false |
-| Referral system | ✅ Behind flag |
-| Plan marketplace | ✅ |
+Stripe checkout + webhook + portal, Stripe Connect (coach payouts),
+ProGate component + **server-side enforcement** (Phase I complete),
+feature flags (PREMIUM_ENFORCED=false, REFERRAL_ENABLED=false),
+referral system (behind flag), plan marketplace.
 
 ### ✅ Security + Legal
-
-| Feature | Status |
-|---------|--------|
-| HTTP security headers | ✅ vercel.json |
-| All domain refs → nextsplit.app | ✅ |
-| Zero console.log in production | ✅ All → Sentry |
-| Voice messages IDOR fixed | ✅ |
-| Squad invite privacy | ✅ |
-| Admin gate on sensitive routes | ✅ |
-| aria-labels on close/nav buttons | ✅ |
-| Privacy policy (ICO placeholder) | ✅ |
-| Medical disclaimer | ✅ |
-| Cookie consent | ✅ |
-| Data export + account deletion | ✅ |
+HTTP security headers, CSP header (Phase I), all domain refs → nextsplit.app,
+zero console.log in production (all → Sentry), voice messages IDOR fixed,
+squad invite privacy, admin gate on sensitive routes, aria-labels on close buttons,
+privacy policy, medical disclaimer, cookie consent, data export + account deletion.
+**Zod validation on ALL API routes (Phase I complete).**
+**Rate limiting on stripe + coach apply (Phase I).**
 
 ### ✅ Infrastructure
-
-| Item | Status |
-|------|--------|
-| nextsplit.app → Vercel | ✅ |
-| www.nextsplit.app → Vercel | ✅ |
-| Resend verified (coach@nextsplit.app) | ✅ |
-| CRON_SECRET in Vercel + GitHub | ✅ |
-| NEXT_PUBLIC_SITE_URL set | ✅ |
-| VAPID keys set | ✅ |
-| SQL migrations (all 5 phases) | ✅ Confirmed in prod |
-| pre-alpha-fixes.sql (ai_usage, notif columns) | ✅ |
-| Build green (commit 3a03f60+) | ✅ |
-| 52 tests passing | ✅ |
+nextsplit.app → Vercel, www.nextsplit.app, Resend verified (coach@nextsplit.app),
+CRON_SECRET, NEXT_PUBLIC_SITE_URL, VAPID keys, all 7 SQL migrations in prod,
+build green, 52 tests passing, CI pipeline green (build is hard gate).
 
 ---
 
-## What Is NOT Built
-
-| Item | Phase | Notes |
-|------|-------|-------|
-| TrainingPeaks / CSV / Garmin import | Phase I | Not started |
-| Content-Security-Policy header | Phase I | Removed — needs careful re-add |
-| Typed Supabase client | Phase I | 194 `as any` casts remain |
-| Rate limiting on auth routes | Phase I | Supabase handles some |
-| Server-side ProGate enforcement | Before Phase H | Client-side only |
-| Supabase staging environment | Before beta | One project for all envs |
-| ESLint no-console rule | Phase I | Prevents future regressions |
-| Race Together | Phase I | Not started |
-| App Store / Google Play | Phase I | Not started |
-| Corporate squad accounts | Phase J | Not started |
-
----
-
-## Audit Findings Tracker
-
-### Critical — All Resolved ✅
-| ID | Finding | Status |
-|----|---------|--------|
-| C1 | Security headers missing | ✅ vercel.json |
-| C2 | VAPID keys missing | ✅ Set in Vercel |
-| C3 | Old domain hardcoded | ✅ All → nextsplit.app |
-| C4 | Unvalidated API routes | ✅ Mostly fixed (3 remain: ai/fuel, coach/apply, stripe/checkout → Phase I) |
-
-### High
-| ID | Finding | Status |
-|----|---------|--------|
-| H1 | 194 TypeScript `as any` casts | ⬜ Phase I — generate typed Supabase client |
-| H2 | console.log/error in production | ✅ Zero remaining |
-| H3 | Voice messages IDOR | ✅ Fixed |
-| H4 | Rate limiting on auth routes | ⬜ Phase I |
-| H5 | ICO + Companies House | ⬜ Founder action — do tonight |
-
-### Medium
-| ID | Finding | Status |
-|----|---------|--------|
-| M1 | Privacy policy wrong domain | ✅ Fixed + ICO placeholder |
-| M2 | Coaches endpoint public | ✅ Accepted — intentional |
-| M3 | Squad invite leaks member data | ✅ Fixed |
-| M4 | Buttons missing aria-label | ✅ Critical ones fixed; full audit Phase I |
-| M5 | ProGate client-side only | ⬜ Fix before Phase H |
-| M6 | No staging environment | ⬜ Before beta |
-| M7 | Offline queue unverified | ✅ Confirmed working |
-
-### Low
-| ID | Finding | Status |
-|----|---------|--------|
-| L1 | Old domain in share card | ✅ Fixed |
-| L2 | NEXT_PUBLIC_SITE_URL not set | ✅ Fixed |
-| L3 | Stripe keys not set | ⬜ Before Phase H |
-| L4 | nextsplit.co.uk not purchased | ⬜ ~£5, do soon |
-| L5 | SQL column migration missing | ✅ Fixed |
-
----
-
-## Immediate Actions (Founder — do tonight)
-
-| Action | Where | Cost | Time |
-|--------|-------|------|------|
-| ICO registration | ico.org.uk | £40 | 20 min |
-| Companies House | companieshouse.gov.uk | £12 | 20 min |
-| Update privacy policy with ICO number | After above | — | 2 min |
-| Buy nextsplit.co.uk | Any registrar | ~£5 | 5 min |
-
----
-
-## F1–F6 Pre-Alpha Gates
+## Pre-Alpha Gates (F1–F6)
 
 **Do not send alpha invites until all 6 are ✅.**
 
-| Gate | Status | Blocker |
-|------|--------|---------|
-| F1 — Founder E2E on iPhone | ⬜ | Do next session |
+| Gate | Status | Notes |
+|------|--------|-------|
+| F1 — Founder E2E on iPhone | ⬜ | Do next — fresh signup to logged session |
 | F2 — 3-person alpha test | ⬜ | After F1 |
-| F3 — Lighthouse (mobile 4G, ≥80) | ⬜ | After F1 |
+| F3 — Lighthouse ≥80 mobile | ⬜ | After F1 |
 | F4 — Sentry receiving events | ⬜ | Quick check |
-| F5 — Infrastructure | 🟡 | ICO pending only |
+| F5 — Infrastructure | ✅ | All migrations confirmed |
 | F6 — Alpha invite list (10–20 runners) | ⬜ | Prepare names |
 
 ---
 
-## Phase G — Closed Alpha
+## F1 — Founder E2E Checklist (do on iPhone, nextsplit.app)
 
-**Gate in:** F1–F6 all ✅
-**Gate out:** Day 30 retention ≥ 40%
+**Part A — Fresh signup**
+- [ ] Visit nextsplit.app → landing page looks correct (dark, cyan accent)
+- [ ] Tap "Get started free" → auth/signup loads
+- [ ] Sign up with a new email → redirects to /onboarding
+- [ ] Complete onboarding (pick Predetermined path, select a plan)
+- [ ] Land on /home → Home tab shows correct state
 
-- 10–20 runners: 2 beginner / 12 intermediate / 6 advanced. At least 2 with coaching experience.
-- Daily PostHog targets: sessions/user/week ≥ 3, Day 7 retention ≥ 55%, onboarding completion ≥ 80%, NPS ≥ 40
-- Fix protocol: P0 = same day, P1 = 48hrs, feature requests = log only
+**Part B — Home tab**
+- [ ] Wordmark "NextSplit" is cyan
+- [ ] XP bar + streak visible in header
+- [ ] Hero card shows appropriate state (new user OR training day)
+- [ ] Bottom nav shows Home / Train / Explore / You in correct colours
+- [ ] Tapping each tab navigates correctly
+
+**Part C — Train tab**
+- [ ] Today's sessions show as full-colour hero cards
+- [ ] Stats strip visible (weekly km, ACWR, streak)
+- [ ] Full plan weeks visible below
+- [ ] Tap a session → log modal opens
+- [ ] Log a session → XP floats, undo toast appears
+- [ ] Session marked done ✓
+
+**Part D — Explore tab**
+- [ ] 4 tabs: Coaches / Squads / Plans / AI
+- [ ] Coaches tab shows (even if empty)
+- [ ] Squads tab — "Start a squad" and "Join a squad" CTAs visible
+- [ ] Plans tab shows marketplace + premium upsell
+- [ ] AI tab — send a message, get a response
+- [ ] BottomNav visible on all Explore sub-pages
+
+**Part E — You tab**
+- [ ] Opens on Achievements tab (not Character)
+- [ ] Stats and history links visible
+- [ ] Settings accessible
+- [ ] Dark mode toggle works and persists across page changes
+
+**Part F — Dark mode**
+- [ ] Dark is default on fresh visit
+- [ ] Toggle in Settings → light mode works
+- [ ] Switching tabs does NOT flip between modes
+
+**Part G — Notifications**
+- [ ] Settings → Notifications → enable push
+- [ ] Receive a test notification (or verify VAPID working)
+
+---
+
+## Immediate Founder Actions
+
+| Action | Status |
+|--------|--------|
+| ICO registration (ico.org.uk, £40) | ⬜ |
+| Companies House (£12) | ⬜ |
+| Update privacy policy with ICO number | ⬜ |
+| Buy nextsplit.co.uk (~£5) | ⬜ |
+| Create Supabase staging project | ⬜ |
+| F1 E2E test on iPhone | ⬜ Next |
 
 ---
 
 ## Phase H — Revenue Activation
 
-**Gate in:** Day 30 retention ≥ 40%
+**Gate in:** Day 30 retention ≥ 40% from alpha
 
 **Before flipping the switch:**
-- ✅ Fix M5 — add server-side subscription check on all AI API routes
+- ✅ Server-side subscription check on all AI routes (Phase I complete)
 - Add Stripe keys to Vercel (4 env vars)
 - Create Stripe products: Premium £7.99/mo, £59.99/yr; Coach Pro £19.99/mo
-- Test all Stripe flows end-to-end
+- Test all Stripe flows end-to-end on staging
 
 **The switch:**
-- Set `NEXT_PUBLIC_PREMIUM_ENFORCED=true`
-- Set `NEXT_PUBLIC_REFERRAL_ENABLED=true`
-
-**Free tier:** predetermined plans, basic logging, community read-only
-**Premium:** AI coaching, adaptation, full analytics, Strava sync, Split Leader
+- `NEXT_PUBLIC_PREMIUM_ENFORCED=true`
+- `NEXT_PUBLIC_REFERRAL_ENABLED=true`
 
 ---
 
-## Phase I — Post-Alpha Engineering
+## Phase J — Post-Beta Engineering
 
-**Gate in:** Phase H live and stable
-
-### I1 — Security Debt
-- CSP header (Content-Security-Policy) — add carefully, test all integrations
-- ESLint `no-console` rule in eslint.config.mjs
-- Zod validation on 3 remaining routes (ai/fuel, coach/apply, stripe/checkout)
-- Full aria-label audit (425 buttons remaining)
-- App-layer rate limiting on auth routes (Upstash / Vercel KV)
-
-### I2 — Type Safety
-- Run `bash scripts/gen-types.sh` → generates `src/types/supabase-generated.ts`
-- Replace all 194 `(supabase as any)` patterns with typed client
-- Eliminates entire class of silent runtime errors on schema changes
-
-### I3 — Infrastructure
-- Supabase staging project + Vercel preview environments pointing at it
-- Load test: max concurrent users before degradation
-
-### I4 — Features
-- Race Together (external race data API)
-- TrainingPeaks / CSV import for coaches
-- Coach marketplace public launch (remove invite-only gate)
-- Strava sync improvements
-- App Store / Google Play (if PWA installs are low)
-
-### I5 — Performance
-- Lighthouse ≥ 90 on all key routes
-- Bundle size analysis + tree-shaking
-- Image optimisation audit
+- Full aria-label audit (non-close buttons — 500+ remaining)
+- Typed Supabase client (run gen-types.sh, replace 69 remaining as any)
+- CSP nonces for Sentry/inline scripts
+- App-layer rate limiting on auth routes (Upstash/Vercel KV)
+- Supabase staging environment
+- Load test: concurrent user ceiling
+- Lighthouse ≥ 90 all key routes
+- Bundle size analysis
+- Race Together feature
+- TrainingPeaks / CSV import
+- App Store / Google Play
+- Corporate squad accounts
 
 ---
 
-## Phase J — Corporate + Scale
-
-**Gate in:** 500+ active users, stable revenue
-
-- Corporate squad accounts (up to 50 members)
-- Company branding + HR dashboard
-- Per-seat pricing (£5/seat at 20+, £3.50/seat at 100+)
-- API for HR system integration
-- Race Together full build
-
----
-
-## Revenue Projections
-
-| Stage | Users | MRR |
-|-------|-------|-----|
-| Alpha (now) | 20 | £0 |
-| Phase H live | 100 | ~£600 |
-| 6 months | 500 | ~£2,000 |
-| Year 1 | 1,500 | ~£7,500 |
-| Year 2 | 5,000 | ~£28,000 |
-
-**Split Leader flywheel (Year 2):** 120 active leaders → 240 Premium conversions at £0 CAC. Lower churn through squad accountability.
-
-**Coach revenue (Year 2):** ~£3,600/mo commission + £400/mo Coach Pro = ~£4,000 additional MRR.
-
----
-
-## Environment Variables
+## Environment Variables — All Set ✅ (except Stripe)
 
 | Variable | Status |
 |----------|--------|
@@ -327,13 +242,13 @@ Pillar 3 — Coaching Marketplace + Hub  ✅ BUILT + DEPLOYED + SQL IN PROD
 | NEXT_PUBLIC_SUPABASE_ANON_KEY | ✅ |
 | SUPABASE_SERVICE_ROLE_KEY | ✅ |
 | RESEND_API_KEY | ✅ |
-| CRON_SECRET | ✅ Vercel + GitHub |
+| CRON_SECRET | ✅ |
 | NEXT_PUBLIC_SITE_URL | ✅ nextsplit.app |
 | NEXT_PUBLIC_VAPID_PUBLIC_KEY | ✅ |
 | VAPID_PRIVATE_KEY | ✅ |
 | ANTHROPIC_API_KEY | ✅ |
 | ADMIN_EMAILS | ✅ |
-| VERCEL_TOKEN | ✅ GitHub secrets |
+| VERCEL_TOKEN | ✅ |
 | STRIPE_SECRET_KEY | ❌ Before Phase H |
 | STRIPE_PUBLISHABLE_KEY | ❌ Before Phase H |
 | STRIPE_WEBHOOK_SECRET | ❌ Before Phase H |
@@ -343,44 +258,20 @@ Pillar 3 — Coaching Marketplace + Hub  ✅ BUILT + DEPLOYED + SQL IN PROD
 
 ---
 
-## Tech Stack (Locked)
+## Key Files
 
-| Layer | Choice |
-|-------|--------|
-| Backend | Supabase (Postgres + Auth + Storage + Realtime) |
-| Frontend | Next.js 15 App Router + TypeScript |
-| Styling | Tailwind + CSS vars |
-| Payments | Stripe + Stripe Connect |
-| Email | Resend (coach@nextsplit.app) |
-| Analytics | PostHog |
-| Errors | Sentry (client + server + edge) |
-| Deploy | Vercel + GitHub Actions |
-| AI | Anthropic Claude API |
-| Push | Web Push API (VAPID) |
-| Storage | Supabase Storage |
-
----
-
-## Key Commands
-
-```bash
-cd /home/claude/nextsplit-v2
-npm test                      # 52 passing
-npx tsc --noEmit              # TypeScript check
-bash scripts/gen-types.sh     # Generate typed Supabase client (Phase I)
-```
+| File | Purpose |
+|------|---------|
+| MASTER-DELIVERY-PLAN-V3.md | This file |
+| src/app/home/HomeClient.tsx | Smart Home dashboard |
+| src/app/train/TrainClient.tsx | Merged Today + Plan tab |
+| src/app/explore/ExploreClient.tsx | Discovery tab |
+| src/lib/rateLimit.ts | Rate limiting utility |
+| src/lib/serverSubscription.ts | Server-side ProGate |
+| src/lib/schemas.ts | All Zod schemas |
+| src/components/BottomNav.tsx | 4-tab nav |
+| supabase/migrations/ | All SQL migrations |
 
 ## Test Account
 - Email: nextsplitplans@gmail.com
 - Profile ID: 71ac42c2-543a-4672-ac34-e8221c5f071d
-- Squad "Tatata" exists
-- notifications_enabled = true
-
-## Document Index
-| File | Purpose |
-|------|---------|
-| MASTER-DELIVERY-PLAN-V3.md | This file |
-| PRE-ALPHA-CHECKLIST.md | F1–F6 founder gate |
-| supabase/migrations/ | All SQL migrations |
-| scripts/gen-types.sh | Supabase type generation (Phase I) |
-| nextsplit-audit.md | Session 5 security audit |
