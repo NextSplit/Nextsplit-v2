@@ -50,6 +50,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('nextsplit_dark_mode');if(s===null){localStorage.setItem('nextsplit_dark_mode','true');s='true';}if(s!=='false'){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){document.documentElement.classList.add('dark');}})();`
+          }}
+        />
+      </head>
       <body style={{ fontFamily: 'system-ui, -apple-system, sans-serif', margin: 0 }}>
         <ThemeWrapper>
           <ToastProvider>

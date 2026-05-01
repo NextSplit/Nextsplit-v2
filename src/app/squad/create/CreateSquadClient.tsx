@@ -56,6 +56,13 @@ export default function CreateSquadClient() {
 
   return (
     <main className="min-h-screen pb-20" style={{ background: 'var(--color-bg)' }}>
+      <div className="max-w-lg mx-auto px-4 pt-12 pb-2">
+        <a href="/explore" aria-label="Back to Explore"
+          className="inline-flex items-center gap-2 text-sm mb-4"
+          style={{ color: 'var(--color-text-tertiary)' }}>
+          ← Back
+        </a>
+      </div>
 
       {/* Header */}
       <div className="px-4 pt-14 pb-6" style={{

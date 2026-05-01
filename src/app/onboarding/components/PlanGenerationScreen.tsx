@@ -62,11 +62,13 @@ PRIMARY GOAL:
 Generate a ${weeksOut}-week plan with periodisation (base → build → peak → taper if applicable).
 
 Rules:
-- Include ${data.trainingDays} sessions per week total (run + gym combined)
-- ${data.gymEnabled ? `Include ${data.gymSessionsPerWeek} gym session(s) per week` : 'No gym sessions'}
-- Progress weekly km by no more than 10% week-on-week (ACWR safety)
-- Include at least 1 rest or easy recovery day per week
+- Schedule ${data.trainingDays} RUNNING days per week
+- ${data.gymEnabled ? `ALSO include ${data.gymSessionsPerWeek} gym/strength session(s) per week — these can be on the SAME day as a run (double session days are allowed and encouraged)` : 'No gym sessions'}
+- Double session days: pair gym with an easy run on the same day (gym in morning, run in evening or vice versa)
+- Progress weekly running km by no more than 10% week-on-week (ACWR safety)
+- Include at least 1 full rest day per week
 - Long run on ${data.preferredLongRunDay || 'Sunday'}
+- Each day's "sessions" array can contain MULTIPLE sessions (e.g. a run AND a gym session)
 
 Respond ONLY with valid JSON, no markdown, no explanation:
 {

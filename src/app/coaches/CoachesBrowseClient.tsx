@@ -242,8 +242,11 @@ export default function CoachesBrowseClient({ initialCoaches, viewerLoggedIn, ac
       <div className="px-4 pt-14 pb-4 sticky top-0 z-40 border-b"
         style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <div className="max-w-lg mx-auto">
-          <div className="flex items-center justify-between mb-3">
-            <h1 className="font-display text-2xl font-black" style={{ color: 'var(--color-text-primary)' }}>
+          <div className="flex items-center gap-3 mb-3">
+            <a href="/explore" aria-label="Back to Explore"
+              className="w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0"
+              style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>←</a>
+            <h1 className="font-display text-2xl font-black flex-1" style={{ color: 'var(--color-text-primary)' }}>
               Find a Coach
             </h1>
             <button onClick={() => setShowFilters(f => !f)}

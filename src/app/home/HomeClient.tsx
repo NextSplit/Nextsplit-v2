@@ -8,6 +8,7 @@ import { useActivePlan } from '@/hooks/useActivePlan'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
 import { useProfile } from '@/hooks/useProfile'
 import { useSubscription } from '@/hooks/useSubscription'
+import DarkModeToggle from '@/components/DarkModeToggle'
 import { getLevelForXP, getXPProgress, getSessionXP } from '@/lib/rpg'
 import { computeStreak } from '@/lib/streak'
 import { getSessionType, fmtKm } from '@/lib/sessionUtils'
@@ -415,9 +416,12 @@ export default function HomeClient() {
             <span className="text-base font-black tracking-tight" style={{ color: '#06b6d4', letterSpacing: '-0.02em' }}>
               NextSplit
             </span>
-            <Link href="/you" className="text-lg" style={{ color: 'var(--color-text-tertiary)' }} aria-label="Settings">
-              ⚙
-            </Link>
+            <div className="flex items-center gap-2">
+              <DarkModeToggle />
+              <Link href="/you" className="text-lg" style={{ color: 'var(--color-text-tertiary)' }} aria-label="Settings">
+                ⚙
+              </Link>
+            </div>
           </div>
           <XPBar xp={xp} streak={streak} />
         </div>
