@@ -277,10 +277,12 @@ export function CharacterCreationScreen() {
     setCheckingHandle(true)
     try {
       const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
       const { data: existing } = await supabase
         .from('profiles')
         .select('id')
         .ilike('handle', cleaned)
+        .neq('id', user?.id ?? '')
         .maybeSingle()
       if (existing) setHandleError('This handle is taken — try another')
     } finally {

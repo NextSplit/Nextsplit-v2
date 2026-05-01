@@ -49,9 +49,15 @@ function OnboardingFlow() {
   }
 }
 
-export default function OnboardingEntry() {
+export default function OnboardingEntry({
+  initialStep = 1,
+  existingProfile = null,
+}: {
+  initialStep?: number
+  existingProfile?: Record<string, string | null> | null
+}) {
   return (
-    <OnboardingProvider initialStep={1}>
+    <OnboardingProvider initialStep={initialStep} existingProfile={existingProfile}>
       <OnboardingFlow />
     </OnboardingProvider>
   )

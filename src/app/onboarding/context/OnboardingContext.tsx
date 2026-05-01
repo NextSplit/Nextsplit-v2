@@ -108,9 +108,10 @@ interface OnboardingContextValue {
 
 const OnboardingContext = createContext<OnboardingContextValue | null>(null)
 
-export function OnboardingProvider({ children, initialStep = 1 }: {
+export function OnboardingProvider({ children, initialStep = 1, existingProfile = null }: {
   children: React.ReactNode
   initialStep?: number
+  existingProfile?: Record<string, string | null> | null
 }) {
   // Load from localStorage on mount (survives page refresh/crash)
   const [step, setStep] = useState(() => {

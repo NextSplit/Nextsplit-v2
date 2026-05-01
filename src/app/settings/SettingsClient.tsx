@@ -625,8 +625,8 @@ export default function SettingsClient({ email, initialProfile }: Props) {
     setArchiving(true)
     try {
       await archivePlan()
-      success('Plan archived — choose a new plan to get started')
-      router.push('/onboarding')
+      success('Plan archived — pick a new training path')
+      router.push('/onboarding?step=7')
     } catch {
       toastError('Failed to archive plan')
     } finally {
@@ -801,7 +801,7 @@ export default function SettingsClient({ email, initialProfile }: Props) {
         {!plan && (
           <Section title="Plan">
             <ButtonRow label="No active plan" sublabel="Choose a plan to get started"
-              buttonLabel="Browse plans" onClick={() => router.push('/onboarding')} />
+              buttonLabel="Browse plans" onClick={() => router.push('/onboarding?step=10')} />
           </Section>
         )}
 
