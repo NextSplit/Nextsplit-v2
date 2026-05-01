@@ -109,7 +109,7 @@ export default function ProfileClient({
   // RPG state — persisted in localStorage, charId optionally in Supabase
   const [charId, setCharId] = useState('m1')
   const [showCharSelect, setShowCharSelect] = useState(false)
-  const [profileTab, setProfileTab] = useState<'character' | 'stats' | 'records'>('records')
+  const [profileTab, setProfileTab] = useState<'character' | 'stats' | 'records' | 'account'>('records')
   const [badgeToast, setBadgeToast] = useState<RPGBadge | null>(null)
   const [seenBadgeIds, setSeenBadgeIds] = useState<string[]>([])
   const [kitColour, setKitColour] = useState('var(--ns-cyan)')
@@ -366,16 +366,17 @@ export default function ProfileClient({
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-1 mt-3 rounded-xl p-1" style={{ background: 'var(--color-surface-2)' }}>
+        <div className="flex gap-1 mt-3 rounded-xl p-1 overflow-x-auto scrollbar-none" style={{ background: 'var(--color-surface-2)' }}>
           {([
             { id: 'records',   label: '🏆 Achievements' },
             { id: 'character', label: '🏃 Character'   },
             { id: 'stats',     label: '📊 Stats'       },
+            { id: 'account',   label: '⚙️ Account'     },
           ] as const).map(tab => (
             <button
               key={tab.id}
               onClick={() => setProfileTab(tab.id)}
-              className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
                 profileTab === tab.id
                   ? 'text-white'
                   : ''
@@ -634,8 +635,8 @@ export default function ProfileClient({
           </div>
         )}
 
-        {/* Account section — only under Achievements tab */}
-        {profileTab === 'records' && <>
+        {/* Account section — only under Account tab */}
+        {profileTab === 'account' && <>
 
         {/* Upgrade card — shown to free users */}
         {!isPro && (
