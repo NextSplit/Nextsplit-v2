@@ -1,5 +1,5 @@
-import { db } from '@/lib/supabase/db'
 'use client'
+import { db } from '@/lib/supabase/db'
 
 import { useState, useEffect, useRef } from 'react'
 import { useOnboarding } from '../context/OnboardingContext'
