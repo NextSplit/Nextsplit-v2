@@ -158,7 +158,33 @@ export function PlanPreviewScreen() {
                   {plan.totalWeeks > 0 && (
                     <span className="text-xs font-bold" style={{ color: 'var(--ns-ember)' }}>{plan.totalWeeks} weeks</span>
                   )}
-                  {aGoal?.race_date && (
+      
+            {/* Race date alignment warning */}
+            {plan.raceDate && plan.totalWeeks > 0 && (() => {
+              const raceDays = Math.ceil((new Date(plan.raceDate).getTime() - Date.now()) / 86400000)
+              const planDays = plan.totalWeeks * 7
+              const gap = Math.abs(raceDays - planDays)
+              if (gap > 21) {
+                return (
+                  <div className="rounded-xl px-4 py-3 flex gap-3 items-start"
+                    style={{ background: 'rgba(240,165,0,0.12)', border: '1px solid rgba(240,165,0,0.35)' }}>
+                    <span className="text-lg flex-shrink-0">⚠️</span>
+                    <div>
+                      <p className="text-sm font-black" style={{ color: '#f0a500' }}>
+                        Plan timing heads-up
+                      </p>
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                        Your race is in {raceDays} days but this plan is {planDays} days long.
+                        {raceDays < planDays ? " We've started from the most relevant week for your timeline." : " You'll finish the plan with time to taper."}
+                      </p>
+                    </div>
+                  </div>
+                )
+              }
+              return null
+            })()}
+
+            {aGoal?.race_date && (
                     <span className="text-xs font-bold" style={{ color: 'var(--ns-track)' }}>Race in {daysUntil(aGoal.race_date)} days</span>
                   )}
                 </div>

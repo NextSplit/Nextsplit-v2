@@ -101,7 +101,7 @@ function HeroTraining({ sessions, planName, weekN, totalWeeks }: {
             <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: '#ff4d6d' }}>
               Today · Week {weekN} of {totalWeeks}
             </p>
-            <p className="text-2xl font-black text-white leading-tight" style={{ letterSpacing: '-0.02em' }}>
+            <p className="text-2xl font-black leading-tight" style={{ color: "var(--color-text-primary)" }} style={{ letterSpacing: '-0.02em' }}>
               {sessions.length} session{sessions.length !== 1 ? 's' : ''}
               {totalKm > 0 ? ` · ${fmtKm(totalKm)}` : ''}
             </p>
@@ -140,8 +140,8 @@ function HeroRestDay({ planName, weekN, totalWeeks }: { planName: string; weekN:
       <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
         Today · Week {weekN} of {totalWeeks}
       </p>
-      <p className="text-2xl font-black text-white mb-1">Rest day 😴</p>
-      <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+      <p className="text-2xl font-black mb-1" style={{ color: "var(--color-text-primary)" }}>Rest day 😴</p>
+      <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
         {planName} · Recovery is training. Next session tomorrow.
       </p>
     </div>
@@ -427,7 +427,7 @@ export default function HomeClient() {
 
         {/* Greeting */}
         <div className="mb-1">
-          <p className="text-2xl font-black text-white leading-tight" style={{ letterSpacing: '-0.02em' }}>
+          <p className="text-2xl font-black leading-tight" style={{ color: "var(--color-text-primary)" }} style={{ letterSpacing: '-0.02em' }}>
             {greeting}, {firstName} 👋
           </p>
           {plan && (

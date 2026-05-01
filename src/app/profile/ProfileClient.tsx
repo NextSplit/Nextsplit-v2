@@ -634,6 +634,9 @@ export default function ProfileClient({
           </div>
         )}
 
+        {/* Account section — only under Achievements tab */}
+        {profileTab === 'records' && <>
+
         {/* Upgrade card — shown to free users */}
         {!isPro && (
           <button
@@ -739,6 +742,8 @@ export default function ProfileClient({
             Sign out
           </button>
         </form>
+
+        </> /* end account section */}
 
       </div>
 

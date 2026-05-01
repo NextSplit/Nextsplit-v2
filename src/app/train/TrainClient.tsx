@@ -15,6 +15,7 @@ import DarkModeToggle from '@/components/DarkModeToggle'
 import WeekRow from '@/components/plan/WeekRow'
 import { TodayModals } from '../today/TodayModals'
 import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
+import FuelPlanCard from '@/components/FuelPlanCard'
 
 // ── Session colour system ──────────────────────────────────────────────────────
 const SESSION_COLOURS: Record<string, { gradient: string; tint: string; border: string; dot: string; label: string }> = {
@@ -419,6 +420,22 @@ export default function TrainClient() {
               })}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Fuel tab */}
+      {plan && planTab === 'fuel' && (
+        <div className="max-w-lg mx-auto px-4 pt-4">
+          {currentWeek?.days[todayDayIndex] ? (
+            <FuelPlanCard planDay={currentWeek.days[todayDayIndex]} />
+          ) : (
+            <div className="rounded-2xl p-8 text-center"
+              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+              <div className="text-4xl mb-3">🥗</div>
+              <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>No fuel plan for today</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>Fuel guidance appears on active training days.</p>
+            </div>
+          )}
         </div>
       )}
 
