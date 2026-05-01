@@ -50,8 +50,7 @@ export default function ManualOnboardingClient() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col px-5 pt-14 pb-10" style={{ background: "var(--color-bg)" }}
-      style={{ background: 'linear-gradient(160deg, #0f172a 0%, #18181b 60%, #0f172a 100%)' }}>
+    <div className="min-h-screen flex flex-col px-5 pt-14 pb-10" style={{ background: 'linear-gradient(160deg, #0f172a 0%, #18181b 60%, #0f172a 100%)' }}>
 
       {step !== 'saving' && (
         <OnboardingProgress current={step === 'base' ? 1 : 2} total={2} onBack={handleBack} />

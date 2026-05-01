@@ -197,7 +197,7 @@ export default function AIOnboardingClient() {
   const bg = { background: 'var(--color-bg)' }
 
   return (
-    <div className="min-h-screen flex flex-col px-5 pt-14 pb-10" style={{ background: "var(--color-bg)" }} style={bg}>
+    <div className="min-h-screen flex flex-col px-5 pt-14 pb-10" style={bg}>
 
       {/* ── GOAL ── */}
       {step === 'goal' && (

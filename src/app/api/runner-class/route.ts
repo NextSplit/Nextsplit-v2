@@ -44,7 +44,8 @@ export async function POST() {
     const sessionTypeMap = new Map<string, string>()
     if (planData?.weeks_data) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const weeks = planData.weeks_data as unknown[]
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const weeks = planData.weeks_data as any[]
       for (const week of weeks) {
         for (let di = 0; di < (week.days ?? []).length; di++) {
           for (let si = 0; si < (week.days[di]?.sessions ?? []).length; si++) {

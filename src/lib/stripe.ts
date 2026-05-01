@@ -1,4 +1,5 @@
 import Stripe from 'stripe'
+import { db } from '@/lib/supabase/db'
 import { serverConfig, config } from '@/lib/config'
 
 // Lazy singleton — only initialises when first called (not at build time)

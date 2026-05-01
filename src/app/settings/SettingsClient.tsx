@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { db } from '@/lib/supabase/db'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/useProfile'

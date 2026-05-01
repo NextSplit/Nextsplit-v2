@@ -1,3 +1,4 @@
+import { db } from '@/lib/supabase/db'
 import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe, incrementFoundingCount, PRICES } from '@/lib/stripe'
@@ -93,7 +94,8 @@ export async function POST(req: NextRequest) {
       // ── Coaching subscription activated ─────────────────────────────────────
       case 'checkout.session.completed': {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const session = event.data.object as Record<string, unknown>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const session = event.data.object as any
         const source  = session.metadata?.source
 
         if (source === 'coaching_subscription') {
@@ -120,8 +122,8 @@ export async function POST(req: NextRequest) {
               commission_gbp:         commissionGbp,
               coach_payout_gbp:       netGbp,
               billing_interval:       'month',
-              current_period_start:   stripeSub ? new Date(((stripeSub as Record<string,number>).current_period_start) * 1000).toISOString() : new Date().toISOString(),
-              current_period_end:     stripeSub ? new Date(((stripeSub as Record<string,number>).current_period_end) * 1000).toISOString() : null,
+              current_period_start:   stripeSub ? new Date(((stripeSub as any).current_period_start) * 1000).toISOString() : new Date().toISOString(),
+              current_period_end:     stripeSub ? new Date(((stripeSub as any).current_period_end) * 1000).toISOString() : null,
               updated_at:             new Date().toISOString(),
             }, { onConflict: 'coach_id,athlete_id' })
 

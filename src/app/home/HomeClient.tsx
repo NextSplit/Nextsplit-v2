@@ -101,7 +101,7 @@ function HeroTraining({ sessions, planName, weekN, totalWeeks }: {
             <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: '#ff4d6d' }}>
               Today · Week {weekN} of {totalWeeks}
             </p>
-            <p className="text-2xl font-black leading-tight" style={{ color: "var(--color-text-primary)" }} style={{ letterSpacing: '-0.02em' }}>
+            <p className="text-2xl font-black leading-tight" style={{ color: "var(--color-text-primary)", letterSpacing: '-0.02em' }}>
               {sessions.length} session{sessions.length !== 1 ? 's' : ''}
               {totalKm > 0 ? ` · ${fmtKm(totalKm)}` : ''}
             </p>
@@ -427,7 +427,7 @@ export default function HomeClient() {
 
         {/* Greeting */}
         <div className="mb-1">
-          <p className="text-2xl font-black leading-tight" style={{ color: "var(--color-text-primary)" }} style={{ letterSpacing: '-0.02em' }}>
+          <p className="text-2xl font-black leading-tight" style={{ color: "var(--color-text-primary)", letterSpacing: '-0.02em' }}>
             {greeting}, {firstName} 👋
           </p>
           {plan && (

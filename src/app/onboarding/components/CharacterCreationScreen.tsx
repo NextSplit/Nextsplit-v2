@@ -6,6 +6,7 @@ import { OnboardingProgressBar } from './OnboardingProgressBar'
 import { STARTING_TITLES } from '@/types/database'
 import type { CharacterConfig } from '@/types/database'
 import { createClient } from '@/lib/supabase/client'
+import { db } from '@/lib/supabase/db'
 import { useRef } from 'react'
 
 // ── Options ───────────────────────────────────────────────────────────────────
@@ -312,7 +313,7 @@ export function CharacterCreationScreen() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: 'var(--color-bg)' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-bg)' }}>
       <OnboardingProgressBar step={step} character={config} showFinishLine />
 
       {/* Character completion welcome modal */}

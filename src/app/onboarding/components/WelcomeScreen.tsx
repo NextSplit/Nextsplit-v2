@@ -7,7 +7,7 @@ export function WelcomeScreen() {
   const { next } = useOnboarding()
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: 'var(--color-bg)' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-bg)' }}>
       {/* Atmospheric gradient overlay */}
       <div className="absolute inset-0 pointer-events-none" style={{
         background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(43,92,63,0.18) 0%, transparent 70%)',

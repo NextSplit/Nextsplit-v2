@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { db } from '@/lib/supabase/db'
 import { createClient } from '@/lib/supabase/client'
 
 interface UseLeadModeReturn {

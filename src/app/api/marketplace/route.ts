@@ -36,8 +36,9 @@ export async function GET(req: NextRequest) {
 
     // Batch-fetch coach profiles for authored plans
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    type PlanRecord = Record<string, unknown>
-    const coachIds = [...new Set(((plans ?? []) as PlanRecord[]).filter(p => p.author_id).map(p => p.author_id as string))]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anyPlans = (plans ?? []) as any[]
+    const coachIds = [...new Set(anyPlans.filter(p => p.author_id).map(p => p.author_id as string))]
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: coaches } = coachIds.length > 0 ? await db(supabase)
       .from('coach_profiles')
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest) {
     )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const enriched = ((plans ?? []) as PlanRecord[]).map(p => ({
+    const enriched = anyPlans.map(p => ({
       ...p,
       price_gbp: (p.meta as Record<string, unknown>)?.price_gbp ?? null,
       coach: coaches?.find((c: { user_id: string }) => c.user_id === p.author_id) ?? null,

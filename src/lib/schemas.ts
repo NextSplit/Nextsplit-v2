@@ -271,3 +271,9 @@ export const AiRecommendSchema = z.object({
 export const SquadTransferSchema = z.object({
   squad_id: z.string().uuid(),
 })
+
+// ─── Stripe checkout ─────────────────────────────────────────────────────────
+
+export const StripeCheckoutSchema = z.object({
+  interval: z.enum(['monthly', 'annual']),
+})

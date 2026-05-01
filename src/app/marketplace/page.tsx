@@ -24,8 +24,9 @@ export default async function MarketplacePage() {
 
   // Batch-fetch coach profiles
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  type PlanRec = Record<string, unknown>
-  const coachIds = [...new Set(((plans ?? []) as PlanRec[]).filter(p => p.author_id).map(p => p.author_id as string))]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const anyPlans = (plans ?? []) as any[]
+  const coachIds = [...new Set(anyPlans.filter(p => p.author_id).map(p => p.author_id as string))]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: coaches } = coachIds.length > 0 ? await db(supabase)
     .from('coach_profiles')
@@ -45,7 +46,7 @@ export default async function MarketplacePage() {
   )
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const initialPlans = ((plans ?? []) as PlanRec[]).map(p => ({
+  const initialPlans = anyPlans.map(p => ({
     ...p,
     price_gbp: (p.meta as Record<string, unknown>)?.price_gbp ?? null,
     coach: coaches?.find((c: { user_id: string }) => c.user_id === p.author_id) ?? null,

@@ -194,11 +194,11 @@ function PlanCard({ plan, onClick, onPreview }: { plan: PlanTemplate; onClick: (
         <div className="flex gap-4 mt-3 pt-3 border-t items-center" style={{ borderColor: 'var(--color-border)' }}>
           <Stat label="runs/wk" value={String(plan.runs_per_week)} />
           {plan.peak_km_week && <Stat label="peak km" value={`${plan.peak_km_week}`} />}
-          {(plan as Record<string, unknown>).avg_rating && (plan as Record<string, unknown>).review_count > 0 && (
-            <Stat label="rating" value={`★ ${((plan as Record<string, unknown>).avg_rating as number).toFixed(1)}`} />
+          {(plan as any).avg_rating && (plan as any).review_count > 0 && (
+            <Stat label="rating" value={`★ ${Number((plan as any).avg_rating).toFixed(1)}`} />
           )}
-          {(plan as Record<string, unknown>).avg_completion_rate && (
-            <Stat label="completion" value={`${Math.round((plan as Record<string, unknown>).avg_completion_rate as number)}%`} />
+          {(plan as any).avg_completion_rate && (
+            <Stat label="completion" value={`${Math.round(Number((plan as any).avg_completion_rate))}%`} />
           )}
           <div className="ml-auto" style={{ color: 'var(--ns-ember)' }}>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -229,10 +229,12 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose: () => void; onSelect: () => void }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const weeks = ((plan as Record<string, unknown>).weeks_data as unknown[]) ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const weeks = ((plan as Record<string, unknown>).weeks_data as any[]) ?? []
   const week1 = weeks[0]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const days  = (week1?.days ?? []) as unknown[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const days  = (week1?.days ?? []) as any[]
 
   return (
     <>
