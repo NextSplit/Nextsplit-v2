@@ -89,7 +89,7 @@ export function TrainingPathScreen() {
   const recommended = getRecommendation()
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: "var(--color-bg)" }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
@@ -117,7 +117,7 @@ export function TrainingPathScreen() {
                 className={`rounded-2xl border-2 transition-all ${
                   isSelected
                     ? 'border-[var(--ns-ember)]'
-                    : 'bg-white border-gray-100'
+                    : ' border-[var(--color-border)]'
                 }`}
                 style={isSelected ? { background: 'var(--ns-cyan-light)' } : {}}
               >
@@ -128,7 +128,7 @@ export function TrainingPathScreen() {
                 >
                   <div className="flex items-start gap-3">
                     <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl flex-shrink-0 mt-0.5 ${
-                      isSelected ? 'bg-white' : 'bg-gray-50'
+                      isSelected ? '' : 'bg-transparent'
                     }`}>
                       {path.emoji}
                     </div>
@@ -149,7 +149,7 @@ export function TrainingPathScreen() {
                         )}
                       </div>
                       <span className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{path.label}</span>
-                      <p className="text-xs text-gray-400 mt-0.5">{path.desc}</p>
+                      <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{path.desc}</p>
                       {/* Methodology — credibility layer visible without expansion */}
                       {path.methodology && isSelected && (
                         <p className="text-xs mt-1.5 leading-relaxed" style={{ color: 'var(--ns-ember)' }}>
@@ -162,7 +162,7 @@ export function TrainingPathScreen() {
                       {/* Info toggle */}
                       <button
                         onClick={e => { e.stopPropagation(); setExpanded(isExpanded ? null : path.id) }}
-                        className="text-gray-300 hover:text-gray-500 transition-colors text-sm font-bold w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
+                        className="text-gray-300 hover:text-[var(--color-text-tertiary)] transition-colors text-sm font-bold w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
                       >
                         {isExpanded ? '−' : 'i'}
                       </button>
@@ -180,8 +180,8 @@ export function TrainingPathScreen() {
                 {/* Expanded detail */}
                 {isExpanded && (
                   <div className="px-4 pb-4">
-                    <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 space-y-2">
-                      <p className="text-xs text-gray-600 leading-relaxed">{path.detail}</p>
+                    <div className="bg-transparent rounded-xl p-3 border border-[var(--color-border)] space-y-2">
+                      <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">{path.detail}</p>
                       {path.methodology && (
                         <p className="text-xs leading-relaxed font-medium" style={{ color: 'var(--ns-ember)' }}>
                           {path.methodology}
@@ -194,7 +194,7 @@ export function TrainingPathScreen() {
                             { emoji: '👫', label: 'Follow a Split Leader — friends or club leaders' },
                             { emoji: '🎓', label: 'Pro Coach — bespoke coaching and managed plan' },
                           ].map(item => (
-                            <div key={item.label} className="flex items-start gap-2 text-xs text-gray-500">
+                            <div key={item.label} className="flex items-start gap-2 text-xs text-[var(--color-text-tertiary)]">
                               <span>{item.emoji}</span>
                               <span>{item.label}</span>
                             </div>
@@ -209,13 +209,13 @@ export function TrainingPathScreen() {
           })}
         </div>
 
-        <p className="text-xs text-gray-400 text-center pb-2">
+        <p className="text-xs text-[var(--color-text-tertiary)] text-center pb-2">
           You can switch training path or start a new plan anytime from your profile
         </p>
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 px-4 py-4 flex gap-3 border-t" style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-text-secondary)]">←</button>
         <button
           onClick={handleContinue}
           disabled={!canContinue}

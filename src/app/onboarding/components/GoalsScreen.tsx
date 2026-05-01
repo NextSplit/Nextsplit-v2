@@ -29,8 +29,8 @@ interface GoalCardProps {
 
 function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: GoalCardProps) {
   return (
-    <div className={`bg-white rounded-2xl border shadow-sm p-4 space-y-4 ${
-      goal.priority === 'A' ? 'border-[var(--ns-ember)]' : 'border-gray-200'
+    <div className={` rounded-2xl border shadow-sm p-4 space-y-4 ${
+      goal.priority === 'A' ? 'border-[var(--ns-ember)]' : 'border-[var(--color-border)]'
     }`}>
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -38,7 +38,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
           <span className={`text-xs font-black px-2 py-1 rounded-full ${
             goal.priority === 'A' ? 'bg-[var(--ns-ember)] text-white' :
             goal.priority === 'B' ? 'bg-amber-400 text-white' :
-            'bg-slate-300 text-gray-700'
+            'bg-slate-300 text-[var(--color-text-secondary)]'
           }`}>
             {goal.priority || 'B'} Race
           </span>
@@ -90,7 +90,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
             >
               <span className="mr-2">{t.emoji}</span>
               <span className="font-semibold">{t.label}</span>
-              <span className="text-gray-400 ml-1">— {t.desc}</span>
+              <span className="text-[var(--color-text-tertiary)] ml-1">— {t.desc}</span>
             </button>
           ))}
         </div>
@@ -98,14 +98,14 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
 
       {/* Race-specific fields */}
       {goal.goal_type === 'race' && (
-        <div className="space-y-3 pt-1 border-t border-gray-100">
+        <div className="space-y-3 pt-1 border-t border-[var(--color-border)]">
           <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Race name</label>
             <input
               value={goal.race_name ?? ''}
               onChange={e => onUpdate({ ...goal, race_name: e.target.value })}
               placeholder="e.g. London Marathon 2025"
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20"
+              className="w-full px-3 py-2 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -115,7 +115,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
                 type="date"
                 value={goal.race_date ?? ''}
                 onChange={e => onUpdate({ ...goal, race_date: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]"
+                className="w-full px-3 py-2 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)]"
               />
             </div>
             <div className="space-y-1.5">
@@ -123,7 +123,7 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
               <select
                 value={goal.race_distance_label ?? ''}
                 onChange={e => onUpdate({ ...goal, race_distance_label: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)] "
               >
                 <option value="">Select</option>
                 {DISTANCES.map(d => <option key={d} value={d}>{d}</option>)}
@@ -141,14 +141,14 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
 
       {/* Time target fields */}
       {goal.goal_type === 'time_target' && (
-        <div className="space-y-3 pt-1 border-t border-gray-100">
+        <div className="space-y-3 pt-1 border-t border-[var(--color-border)]">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Distance</label>
               <select
                 value={goal.race_distance_label ?? ''}
                 onChange={e => onUpdate({ ...goal, race_distance_label: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)] "
               >
                 <option value="">Select</option>
                 {DISTANCES.map(d => <option key={d} value={d}>{d}</option>)}
@@ -208,14 +208,14 @@ function GoalCard({ goal, index, onUpdate, onRemove, canRemove, aIsTaken }: Goal
 
       {/* Notes */}
       {(goal.goal_type === 'general_fitness' || goal.goal_type === 'continuous') && (
-        <div className="space-y-1.5 pt-1 border-t border-gray-100">
+        <div className="space-y-1.5 pt-1 border-t border-[var(--color-border)]">
           <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>What does success look like?</label>
           <textarea
             value={goal.notes ?? ''}
             onChange={e => onUpdate({ ...goal, notes: e.target.value })}
             placeholder="e.g. Run 3x per week consistently, lose 5kg, feel energised..."
             rows={2}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] resize-none"
+            className="w-full px-3 py-2 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)] resize-none"
           />
         </div>
       )}
@@ -274,7 +274,7 @@ export function GoalsScreen() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: "var(--color-bg)" }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
@@ -298,21 +298,21 @@ export function GoalsScreen() {
         {goals.length < 5 && (
           <button
             onClick={addGoal}
-            className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-300 text-sm font-semibold text-gray-400 hover:border-orange-300 hover:text-[var(--ns-ember)] transition-all"
+            className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-300 text-sm font-semibold text-[var(--color-text-tertiary)] hover:border-orange-300 hover:text-[var(--ns-ember)] transition-all"
           >
             + Add another goal
           </button>
         )}
 
-        <p className="text-xs text-gray-400 text-center pb-2">
+        <p className="text-xs text-[var(--color-text-tertiary)] text-center pb-2">
           You can edit, add and remove goals anytime from your profile
         </p>
       </div>
 
       {/* Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 space-y-2">
+      <div className="fixed bottom-0 left-0 right-0  border-t border-[var(--color-border)] px-4 py-4 space-y-2">
         <div className="flex gap-3">
-          <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
+          <button onClick={back} className="px-5 py-3 rounded-2xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-text-secondary)]">←</button>
           <button
             onClick={handleContinue}
             disabled={!canContinue || saving}
@@ -326,7 +326,7 @@ export function GoalsScreen() {
             update({ goals: [{ goal_type: 'general_fitness', priority: 'A' }] })
             next()
           }}
-          className="w-full text-gray-400 text-xs py-1.5 hover:text-gray-600 transition-colors"
+          className="w-full text-[var(--color-text-tertiary)] text-xs py-1.5 hover:text-[var(--color-text-secondary)] transition-colors"
         >
           Skip — I'll set a goal later
         </button>

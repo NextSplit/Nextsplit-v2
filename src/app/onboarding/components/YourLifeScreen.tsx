@@ -101,7 +101,7 @@ export function YourLifeScreen() {
   const labelStyle = { color: 'var(--color-text-tertiary)' }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-bg)' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: 'var(--color-bg)' }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
@@ -249,12 +249,13 @@ export function YourLifeScreen() {
                         {TIME_SLOTS.map(t => (
                           <button key={t.id}
                             onClick={() => setDayTime(day, t.id)}
-                            className="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+                            className="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center"
                             style={{
                               background:  (dayTimes[day] ?? runTime) === t.id ? 'var(--ns-ember)' : 'var(--color-surface-2)',
                               color:       (dayTimes[day] ?? runTime) === t.id ? 'white' : 'var(--color-text-tertiary)',
                             }}>
-                            {t.label.split(' ')[0]}
+                            <span style={{fontSize:'14px'}}>{t.label.split(' ')[0]}</span>
+                            <span style={{fontSize:'8px', display:'block', marginTop:'2px', opacity:0.8}}>{t.label.split(' ').slice(1).join(' ')}</span>
                           </button>
                         ))}
                       </div>

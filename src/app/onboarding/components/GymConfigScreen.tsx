@@ -59,7 +59,7 @@ export function GymConfigScreen() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: "var(--color-bg)" }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
@@ -73,13 +73,13 @@ export function GymConfigScreen() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Include gym sessions?</p>
-              <p className="text-xs text-gray-400 mt-0.5">You can turn this on or off any time</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">You can turn this on or off any time</p>
             </div>
             <button
               onClick={() => setGymEnabled(!gymEnabled)}
               className={`relative w-12 h-6 rounded-full transition-all ${gymEnabled ? 'bg-[var(--ns-ember)]' : 'bg-slate-300'}`}
             >
-              <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${gymEnabled ? 'left-6' : 'left-0.5'}`} />
+              <span className={`absolute top-0.5 w-5 h-5  rounded-full shadow transition-all ${gymEnabled ? 'left-6' : 'left-0.5'}`} />
             </button>
           </div>
           {!gymEnabled && (
@@ -100,7 +100,7 @@ export function GymConfigScreen() {
                     key={n}
                     onClick={() => setSessionsPerWeek(n)}
                     className={`flex-1 py-3 rounded-xl text-sm font-black border transition-all ${
-                      sessionsPerWeek === n ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]' : 'bg-white text-gray-600 border-gray-200'
+                      sessionsPerWeek === n ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]' : ' text-[var(--color-text-secondary)] border-[var(--color-border)]'
                     }`}
                   >
                     {n}x
@@ -118,7 +118,7 @@ export function GymConfigScreen() {
             <div className="rounded-2xl p-4 space-y-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>What equipment do you have?</label>
-                <p className="text-xs text-gray-400 mt-1">Select all that apply — we'll build sessions around what you have</p>
+                <p className="text-xs text-[var(--color-text-tertiary)] mt-1">Select all that apply — we'll build sessions around what you have</p>
               </div>
               <div className="space-y-2">
                 {EQUIPMENT_OPTIONS.map(o => (
@@ -126,13 +126,13 @@ export function GymConfigScreen() {
                     key={o.id}
                     onClick={() => toggleEquipment(o.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                      equipment.includes(o.id) ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)]' : 'bg-white border-gray-200'
+                      equipment.includes(o.id) ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)]' : ' border-[var(--color-border)]'
                     }`}
                   >
-                    <p className={`text-sm font-bold ${equipment.includes(o.id) ? 'text-white' : 'text-gray-700'}`}>
+                    <p className={`text-sm font-bold ${equipment.includes(o.id) ? 'text-white' : 'text-[var(--color-text-secondary)]'}`}>
                       {o.label}
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">{o.desc}</p>
+                    <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{o.desc}</p>
                   </button>
                 ))}
               </div>
@@ -147,11 +147,11 @@ export function GymConfigScreen() {
                     key={o.id}
                     onClick={() => setFocus(o.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
-                      focus === o.id ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)]' : 'bg-white border-gray-200'
+                      focus === o.id ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)]' : ' border-[var(--color-border)]'
                     }`}
                   >
-                    <p className={`text-sm font-bold ${focus === o.id ? 'text-white' : 'text-gray-700'}`}>{o.label}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{o.desc}</p>
+                    <p className={`text-sm font-bold ${focus === o.id ? 'text-white' : 'text-[var(--color-text-secondary)]'}`}>{o.label}</p>
+                    <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{o.desc}</p>
                   </button>
                 ))}
               </div>
@@ -162,7 +162,7 @@ export function GymConfigScreen() {
 
       {/* Nav */}
       <div className="fixed bottom-0 left-0 right-0 px-4 py-4 flex gap-3 border-t" style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">←</button>
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-text-secondary)]">←</button>
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}

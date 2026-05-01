@@ -415,10 +415,10 @@ export function PlanGenerationScreen() {
       <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.5)' }}>Personalising every session for you</p>
 
       <div className="h-6 mb-6">
-        <p className="text-gray-400 text-sm">{MESSAGES[msgIndex]}</p>
+        <p className="text-[var(--color-text-tertiary)] text-sm">{MESSAGES[msgIndex]}</p>
       </div>
 
-      <div className="w-full max-w-xs bg-white/10 rounded-full h-1.5 overflow-hidden mb-4">
+      <div className="w-full max-w-xs /10 rounded-full h-1.5 overflow-hidden mb-4">
         <div
           className="h-full rounded-full transition-all duration-300 ease-out" style={{ background: "#06b6d4", width: `${progress}%` }}
         />
@@ -430,8 +430,8 @@ export function PlanGenerationScreen() {
         </div>
       )}
 
-      <div className="mt-8 text-left bg-white/5 rounded-2xl border border-white/10 p-4 w-full max-w-xs space-y-2">
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Your plan</p>
+      <div className="mt-8 text-left /5 rounded-2xl border border-white/10 p-4 w-full max-w-xs space-y-2">
+        <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">Your plan</p>
         {[
           { label: 'Path',     value: ({ predetermined: 'Structured plan', ai_bespoke: 'AI coached', manual: 'Build your own', lifestyle: 'Lifestyle', coach_marketplace: 'Coach / marketplace' } as Record<string,string>)[data.trainingPath ?? ''] ?? '—' },
           { label: 'Wkly km', value: `${data.weeklyKmCurrent}km starting` },
@@ -439,7 +439,7 @@ export function PlanGenerationScreen() {
           { label: 'Gym',     value: data.gymEnabled ? `${data.gymSessionsPerWeek}x / week` : 'Not included' },
         ].map(item => (
           <div key={item.label} className="flex justify-between text-xs">
-            <span className="text-gray-500">{item.label}</span>
+            <span className="text-[var(--color-text-tertiary)]">{item.label}</span>
             <span className="text-white font-semibold">{item.value}</span>
           </div>
         ))}

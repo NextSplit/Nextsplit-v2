@@ -179,11 +179,11 @@ export function StravaConnectScreen() {
   // ── Checking state ──────────────────────────────────────────────────────────
   if (status === 'checking' || status === 'importing') {
     return (
-      <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+      <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: "var(--color-bg)" }}>
         <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
         <div className="flex-1 flex flex-col items-center justify-center gap-4 px-6 text-center">
           <div className="text-4xl animate-pulse">🔄</div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[var(--color-text-tertiary)]">
             {status === 'checking' ? 'Checking Strava connection…' : 'Importing your training data…'}
           </p>
         </div>
@@ -194,7 +194,7 @@ export function StravaConnectScreen() {
   // ── Connected + prefill ready ───────────────────────────────────────────────
   if (status === 'connected' && prefill) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+      <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: "var(--color-bg)" }}>
         <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
         <div className="flex-1 px-4 pt-4 pb-32 space-y-4">
@@ -216,15 +216,15 @@ export function StravaConnectScreen() {
                 { label: 'Surfaces',          value: prefill.runSurfaces.join(', ') },
               ].map(item => (
                 <div key={item.label} className="flex justify-between items-center py-1 border-b border-slate-50 last:border-0">
-                  <span className="text-sm text-gray-500">{item.label}</span>
+                  <span className="text-sm text-[var(--color-text-tertiary)]">{item.label}</span>
                   <span className="text-sm font-bold text-gray-800 capitalize">{item.value}</span>
                 </div>
               ))}
             </div>
 
             {Object.keys(prefill.recentRaceTimes).length > 0 && (
-              <div className="pt-2 border-t border-gray-100">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Race times found</p>
+              <div className="pt-2 border-t border-[var(--color-border)]">
+                <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-2">Race times found</p>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.entries(prefill.recentRaceTimes).map(([dist, secs]) => {
                     const h = Math.floor(secs / 3600)
@@ -244,12 +244,12 @@ export function StravaConnectScreen() {
             )}
           </div>
 
-          <p className="text-xs text-gray-400 text-center px-4">
+          <p className="text-xs text-[var(--color-text-tertiary)] text-center px-4">
             You can review and adjust any of these on the next screens
           </p>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 space-y-2">
+        <div className="fixed bottom-0 left-0 right-0  border-t border-[var(--color-border)] px-4 py-4 space-y-2">
           <button
             onClick={handleUsePrefill}
             className="w-full py-3.5 rounded-2xl text-sm font-bold text-white active:scale-95 transition-all" style={{ background: 'var(--ns-ember)' }}
@@ -258,7 +258,7 @@ export function StravaConnectScreen() {
           </button>
           <button
             onClick={next}
-            className="w-full text-gray-400 py-2 text-sm"
+            className="w-full text-[var(--color-text-tertiary)] py-2 text-sm"
           >
             I'll fill it in manually instead
           </button>
@@ -269,7 +269,7 @@ export function StravaConnectScreen() {
 
   // ── Idle — prompt to connect ────────────────────────────────────────────────
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: "var(--color-bg)" }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 px-4 pt-6 pb-32 flex flex-col items-center justify-center gap-6 text-center">
@@ -281,14 +281,14 @@ export function StravaConnectScreen() {
 
         <div className="space-y-2">
           <h1 className="text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Connect Strava</h1>
-          <p className="text-sm text-gray-500 max-w-xs">
+          <p className="text-sm text-[var(--color-text-tertiary)] max-w-xs">
             Skip most of the setup — we'll pull your training history and pre-fill your profile automatically.
           </p>
         </div>
 
         {/* What we import */}
         <div className="w-full max-w-xs rounded-2xl" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">We'll import</p>
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">We'll import</p>
           {[
             '📊 Current weekly mileage',
             '🏃 Longest recent run',
@@ -297,7 +297,7 @@ export function StravaConnectScreen() {
             '🏅 Recent race times (estimated)',
             '🌲 Surfaces you run on',
           ].map(item => (
-            <div key={item} className="flex items-center gap-2 text-sm text-gray-600">
+            <div key={item} className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
               <span>{item}</span>
             </div>
           ))}
@@ -310,7 +310,7 @@ export function StravaConnectScreen() {
         )}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 space-y-2">
+      <div className="fixed bottom-0 left-0 right-0  border-t border-[var(--color-border)] px-4 py-4 space-y-2">
         <button
           onClick={handleConnectStrava}
           className="w-full bg-[#FC4C02] text-white py-3.5 rounded-2xl text-sm font-bold active:scale-95 transition-all flex items-center justify-center gap-2"
@@ -319,7 +319,7 @@ export function StravaConnectScreen() {
         </button>
         <button
           onClick={handleSkip}
-          className="w-full bg-gray-100 text-gray-600 font-semibold py-3 rounded-xl text-sm hover:bg-gray-200 transition-colors active:scale-95"
+          className="w-full bg-gray-100 text-[var(--color-text-secondary)] font-semibold py-3 rounded-xl text-sm hover:bg-gray-200 transition-colors active:scale-95"
         >
           Skip for now →
         </button>

@@ -226,7 +226,7 @@ function PillPicker<T extends string>({ options, value, onChange }: {
           className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
             value === o.id
               ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]'
-              : 'bg-white text-gray-600 border-gray-200 hover:border-orange-300'
+              : ' text-[var(--color-text-secondary)] border-[var(--color-border)] hover:border-orange-300'
           }`}
         >
           {o.label}
@@ -312,7 +312,7 @@ export function CharacterCreationScreen() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-bg)' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: 'var(--color-bg)' }}>
       <OnboardingProgressBar step={step} character={config} showFinishLine />
 
       {/* Character completion welcome modal */}
@@ -459,7 +459,7 @@ export function CharacterCreationScreen() {
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                       config.accessories?.includes(a.id as 'cap' | 'sunglasses' | 'watch')
                         ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]'
-                        : 'bg-white text-gray-600 border-gray-200'
+                        : ' text-[var(--color-text-secondary)] border-[var(--color-border)]'
                     }`}
                   >
                     {a.label}
@@ -480,7 +480,7 @@ export function CharacterCreationScreen() {
                     className={`px-3 py-2 rounded-xl text-xs font-semibold border text-left transition-all ${
                       config.startingTitle === t
                         ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]'
-                        : 'bg-white text-gray-600 border-gray-200'
+                        : ' text-[var(--color-text-secondary)] border-[var(--color-border)]'
                     }`}
                   >
                     {t}
@@ -494,7 +494,7 @@ export function CharacterCreationScreen() {
       </div>
 
       {/* Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 safe-area-pb">
+      <div className="fixed bottom-0 left-0 right-0  border-t border-[var(--color-border)] px-4 py-4 safe-area-pb">
         <button
           onClick={handleContinue}
           disabled={!canContinue || saving}

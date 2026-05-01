@@ -66,8 +66,8 @@ export default function PlanBrowserClient({ templates }: Props) {
       <div className="border-b px-4 pt-12 pb-3 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto">
           <div className="flex items-center gap-3 mb-3">
-            <Link href="/onboarding" className="text-gray-400 text-sm font-medium">← Back</Link>
-            <span className="text-base font-bold text-gray-900">Choose your plan</span>
+            <Link href="/onboarding" className="text-[var(--color-text-tertiary)] text-sm font-medium">← Back</Link>
+            <span className="text-base font-bold text-[var(--color-text-primary)]">Choose your plan</span>
             <span className="text-xs ml-auto" style={{ color: "var(--color-text-tertiary)" }}>{filtered.length} plans</span>
           </div>
 
@@ -155,7 +155,7 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
   return (
     <button onClick={onClick}
       className={`flex-shrink-0 text-xs font-bold px-3 py-1.5 rounded-xl border-2 transition-all ${
-        active ? 'text-white border-transparent' : 'border-gray-200 text-gray-600 bg-white'
+        active ? 'text-white border-transparent' : 'border-[var(--color-border)] text-[var(--color-text-secondary)] '
       }`}
       style={active ? { background: 'var(--ns-ember)', borderColor: 'var(--ns-ember)' } : {}}
     >
@@ -242,27 +242,27 @@ function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose
           <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="text-sm font-black text-gray-900">{plan.name}</h3>
-              <p className="text-xs text-gray-500 mt-0.5">Week 1 preview</p>
+              <h3 className="text-sm font-black text-[var(--color-text-primary)]">{plan.name}</h3>
+              <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Week 1 preview</p>
             </div>
-            <button aria-label="Close" onClick={onClose} className="text-gray-400 text-lg">✕</button>
+            <button aria-label="Close" onClick={onClose} className="text-[var(--color-text-tertiary)] text-lg">✕</button>
           </div>
 
           {days.length === 0 ? (
-            <p className="text-xs text-gray-400 text-center py-4">Week 1 preview not available for this plan</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] text-center py-4">Week 1 preview not available for this plan</p>
           ) : (
             <div className="space-y-2 mb-5">
               {days.map((d: any, i: number) => {
                 const sessions = d.sessions ?? []
                 if (sessions.length === 0) return (
                   <div key={i} className="flex gap-3 items-center">
-                    <span className="text-[10px] font-bold text-gray-400 w-8">{d.d}</span>
+                    <span className="text-[10px] font-bold text-[var(--color-text-tertiary)] w-8">{d.d}</span>
                     <span className="text-xs text-gray-300">Rest</span>
                   </div>
                 )
                 return (
                   <div key={i} className="flex gap-3 items-start">
-                    <span className="text-[10px] font-bold text-gray-400 w-8 pt-1">{d.d}</span>
+                    <span className="text-[10px] font-bold text-[var(--color-text-tertiary)] w-8 pt-1">{d.d}</span>
                     <div className="flex-1 space-y-1">
                       {sessions.map((s: any, j: number) => (
                         <div key={j} className={`text-xs px-2 py-1.5 rounded-lg ${
@@ -270,7 +270,7 @@ function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose
                           s.c?.includes('interval') ? 'bg-red-50 text-red-800' :
                           s.c?.includes('tempo')    ? 'bg-orange-50 text-orange-800' :
                           s.c?.includes('gym')      ? 'bg-purple-50 text-purple-800' :
-                          s.c?.includes('rest')     ? 'bg-gray-50 text-gray-400' :
+                          s.c?.includes('rest')     ? 'bg-transparent text-[var(--color-text-tertiary)]' :
                           'bg-emerald-50 text-emerald-800'
                         }`}>
                           <span className="font-bold">{s.n}</span>
@@ -286,7 +286,7 @@ function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose
 
           <div className="flex gap-3">
             <button onClick={onClose}
-              className="flex-1 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-500">
+              className="flex-1 py-3 rounded-2xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-text-tertiary)]">
               Back to browse
             </button>
             <button onClick={onSelect}
@@ -337,10 +337,10 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
   return (
     <main className="min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className=" border-b border-[var(--color-border)] px-4 pt-12 pb-4 sticky top-0 z-40">
         <div className="max-w-lg mx-auto flex items-center gap-3">
-          <button onClick={onBack} className="text-gray-400 text-sm font-medium">← Back</button>
-          <span className="text-base font-bold text-gray-900 truncate">{plan.name}</span>
+          <button onClick={onBack} className="text-[var(--color-text-tertiary)] text-sm font-medium">← Back</button>
+          <span className="text-base font-bold text-[var(--color-text-primary)] truncate">{plan.name}</span>
         </div>
       </div>
 
@@ -350,7 +350,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-5 py-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-white/20 text-white`}>
+                <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full /20 text-white`}>
                   {LEVEL_LABEL[plan.level]}
                 </span>
                 <h1 className="text-xl font-black text-white mt-2 leading-tight">{plan.name}</h1>
@@ -371,8 +371,8 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
               ...(plan.longest_run_km ? [{ label: 'Longest run', value: `${plan.longest_run_km}km` }] : []),
             ].slice(0, 3).map(s => (
               <div key={s.label} className="text-center py-4 px-3">
-                <div className="text-base font-black text-gray-900">{s.value}</div>
-                <div className="text-[10px] text-gray-400 mt-0.5">{s.label}</div>
+                <div className="text-base font-black text-[var(--color-text-primary)]">{s.value}</div>
+                <div className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">{s.label}</div>
               </div>
             ))}
           </div>
@@ -380,7 +380,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           {/* Description */}
           {plan.description && (
             <div className="px-5 py-4 border-b border-gray-50">
-              <p className="text-sm text-gray-600 leading-relaxed">{plan.description}</p>
+              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">{plan.description}</p>
             </div>
           )}
 
@@ -388,7 +388,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           {tags.length > 0 && (
             <div className="px-5 py-3 flex flex-wrap gap-1.5">
               {tags.map(tag => (
-                <span key={tag} className="text-[11px] font-medium text-gray-500 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-full">
+                <span key={tag} className="text-[11px] font-medium text-[var(--color-text-tertiary)] bg-transparent border border-[var(--color-border)] px-2.5 py-1 rounded-full">
                   {tag}
                 </span>
               ))}
@@ -410,28 +410,28 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
         {/* Target time */}
         {(meta.target_finish_time as string) && (
           <div className="rounded-2xl border px-4 py-3 flex items-center justify-between" style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-            <span className="text-sm text-gray-500">Target finish time</span>
-            <span className="text-sm font-bold text-gray-900">{meta.target_finish_time as string}</span>
+            <span className="text-sm text-[var(--color-text-tertiary)]">Target finish time</span>
+            <span className="text-sm font-bold text-[var(--color-text-primary)]">{meta.target_finish_time as string}</span>
           </div>
         )}
 
         {/* Activation form */}
         <div className="rounded-2xl border p-5 space-y-4" style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-          <h2 className="text-sm font-bold text-gray-900">Set up your plan</h2>
+          <h2 className="text-sm font-bold text-[var(--color-text-primary)]">Set up your plan</h2>
 
           <div>
-            <label className="text-xs font-semibold text-gray-500 block mb-1.5">Plan name</label>
+            <label className="text-xs font-semibold text-[var(--color-text-tertiary)] block mb-1.5">Plan name</label>
             <input type="text" value={planName} onChange={e => setPlanName(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 transition-colors" />
+              className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 transition-colors" />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-500 block mb-1.5">
+            <label className="text-xs font-semibold text-[var(--color-text-tertiary)] block mb-1.5">
               Race date <span className="text-gray-300 font-normal">(optional)</span>
             </label>
             <input type="date" value={raceDateInput} onChange={e => setRaceDateInput(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 transition-colors" />
-            <p className="text-[10px] text-gray-400 mt-1">
+              className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 transition-colors" />
+            <p className="text-[10px] text-[var(--color-text-tertiary)] mt-1">
               We'll align your training weeks to build up to race day.
             </p>
           </div>
@@ -440,22 +440,22 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           <button
             onClick={() => setIncludeGym(g => !g)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
-              includeGym ? 'border-amber-200 bg-amber-50' : 'border-gray-100 bg-gray-50'
+              includeGym ? 'border-amber-200 bg-amber-50' : 'border-[var(--color-border)] bg-transparent'
             }`}
           >
             <span className="text-xl">{includeGym ? '🏋️' : '🏃'}</span>
             <div className="flex-1 text-left">
-              <p className={`text-xs font-bold ${includeGym ? 'text-amber-800' : 'text-gray-600'}`}>
+              <p className={`text-xs font-bold ${includeGym ? 'text-amber-800' : 'text-[var(--color-text-secondary)]'}`}>
                 {includeGym ? 'Strength sessions included' : 'Running only'}
               </p>
-              <p className={`text-[10px] mt-0.5 ${includeGym ? 'text-amber-600' : 'text-gray-400'}`}>
+              <p className={`text-[10px] mt-0.5 ${includeGym ? 'text-amber-600' : 'text-[var(--color-text-tertiary)]'}`}>
                 {includeGym
                   ? 'Gym sessions on rest days — builds injury resilience'
                   : 'Tap to add gym sessions to your plan'}
               </p>
             </div>
             <div className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${includeGym ? 'bg-amber-500' : 'bg-gray-200'}`}>
-              <div className={`w-4 h-4 bg-white rounded-full mt-1 transition-all ${includeGym ? 'ml-5' : 'ml-1'}`} />
+              <div className={`w-4 h-4  rounded-full mt-1 transition-all ${includeGym ? 'ml-5' : 'ml-1'}`} />
             </div>
           </button>
 

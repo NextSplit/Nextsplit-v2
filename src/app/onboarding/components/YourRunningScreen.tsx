@@ -60,14 +60,14 @@ function RaceTimeInput({ label, value, onChange }: {
 
   return (
     <div className="space-y-1">
-      <label className="text-xs font-semibold text-gray-500">{label}</label>
+      <label className="text-xs font-semibold text-[var(--color-text-tertiary)]">{label}</label>
       <input
         value={raw}
         onChange={e => setRaw(e.target.value)}
         onBlur={handleBlur}
         placeholder="e.g. 25:30"
         className={`w-full px-3 py-2 rounded-xl border text-sm outline-none focus:ring-2 focus:ring-[var(--ns-ember)]/20 transition-colors ${
-          error ? 'border-red-300' : 'border-gray-200 focus:border-[var(--ns-ember)]'
+          error ? 'border-red-300' : 'border-[var(--color-border)] focus:border-[var(--ns-ember)]'
         }`}
       />
       {error && <p className="text-xs text-red-500">{error}</p>}
@@ -118,7 +118,7 @@ export function YourRunningScreen() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: "var(--color-bg)" }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6 space-y-4">
@@ -144,7 +144,7 @@ export function YourRunningScreen() {
             <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--ns-ember)' }}>
               One important question first
             </p>
-            <p className="text-sm font-semibold text-gray-900 mb-3 leading-snug">
+            <p className="text-sm font-semibold text-[var(--color-text-primary)] mb-3 leading-snug">
               What happened the last time you didn't complete a training plan?
             </p>
             <div className="space-y-2">
@@ -184,8 +184,8 @@ export function YourRunningScreen() {
                   ? { background: 'var(--ns-cyan-light)', borderColor: 'var(--ns-ember)' }
                   : { background: 'white', borderColor: '#e5e7eb' }}
               >
-                <p className={`text-sm font-bold ${experience === o.id ? 'text-white' : 'text-gray-700'}`}>{o.label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{o.desc}</p>
+                <p className={`text-sm font-bold ${experience === o.id ? 'text-white' : 'text-[var(--color-text-secondary)]'}`}>{o.label}</p>
+                <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{o.desc}</p>
               </button>
             ))}
           </div>
@@ -204,7 +204,7 @@ export function YourRunningScreen() {
             />
             <span className="text-lg font-black text-[var(--ns-ember)] w-16 text-right">{weeklyKm}km</span>
           </div>
-          <div className="flex justify-between text-xs text-gray-400">
+          <div className="flex justify-between text-xs text-[var(--color-text-tertiary)]">
             <span>0km</span><span>60km</span><span>120km</span>
           </div>
           {weeklyKm === 0 && (
@@ -216,7 +216,7 @@ export function YourRunningScreen() {
         <div className="rounded-2xl p-4 space-y-4" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
           <div>
             <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>Recent race times</label>
-            <p className="text-xs text-gray-400 mt-1">Optional but powerful — we use this to set your pace zones precisely. Fill in what you know.</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mt-1">Optional but powerful — we use this to set your pace zones precisely. Fill in what you know.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <SmartTimeInput label="5K" value={raceTimes['5k'] ?? null} onChange={v => setRaceTimes(p => ({ ...p, '5k': v ?? undefined }))} />
@@ -262,7 +262,7 @@ export function YourRunningScreen() {
                 key={o.id}
                 onClick={() => toggleSurface(o.id)}
                 className={`py-2.5 px-3 rounded-xl text-sm font-semibold border transition-all text-left ${
-                  surfaces.includes(o.id) ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)] text-white' : 'bg-white border-gray-200 text-gray-700'
+                  surfaces.includes(o.id) ? 'bg-[var(--ns-ember-light)] border-[var(--ns-ember)] text-white' : ' border-[var(--color-border)] text-[var(--color-text-secondary)]'
                 }`}
               >
                 {o.label}

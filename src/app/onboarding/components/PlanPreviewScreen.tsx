@@ -128,14 +128,14 @@ export function PlanPreviewScreen() {
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--color-bg)" }}>
         <div className="text-center">
           <div className="text-4xl mb-3 animate-pulse">📋</div>
-          <p className="text-sm text-gray-400">Loading your plan…</p>
+          <p className="text-sm text-[var(--color-text-tertiary)]">Loading your plan…</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: "var(--color-bg)" }}>
       {/* Header */}
       <div className="bg-gradient-to-b from-[#0f172a] to-[#0d3d38] px-6 pt-12 pb-8 text-center">
         <div className="text-4xl mb-3">🎉</div>
@@ -251,17 +251,17 @@ export function PlanPreviewScreen() {
           </div>
 
           {/* Preview — blurred for free users */}
-          <div className="relative bg-white">
+          <div className="relative ">
             <div className="px-4 py-4 space-y-2" style={{ filter: 'blur(3px)', userSelect: 'none' }}>
-              <div className="flex items-start gap-2 text-xs text-gray-600">
+              <div className="flex items-start gap-2 text-xs text-[var(--color-text-secondary)]">
                 <span>↩️</span>
                 <span>Missed session detected — plan rebuilt around what actually happened</span>
               </div>
-              <div className="flex items-start gap-2 text-xs text-gray-600">
+              <div className="flex items-start gap-2 text-xs text-[var(--color-text-secondary)]">
                 <span>⚠️</span>
                 <span>ACWR at 1.4 — Thursday intervals moved to protect recovery</span>
               </div>
-              <div className="flex items-start gap-2 text-xs text-gray-600">
+              <div className="flex items-start gap-2 text-xs text-[var(--color-text-secondary)]">
                 <span>📅</span>
                 <span>4 weeks to race — taper begins next Monday</span>
               </div>
@@ -270,10 +270,10 @@ export function PlanPreviewScreen() {
             {/* Unlock overlay */}
             <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center"
               style={{ background: 'rgba(255,255,255,0.85)' }}>
-              <p className="text-sm font-bold text-gray-900 mb-1">
+              <p className="text-sm font-bold text-[var(--color-text-primary)] mb-1">
                 Your plan adapts around real life
               </p>
-              <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-3 leading-relaxed">
                 Miss a session, get ill, change your race date — the plan rebuilds itself. This is what keeps runners training.
               </p>
               <a href="/profile?upgrade=1"
@@ -281,7 +281,7 @@ export function PlanPreviewScreen() {
                 style={{ background: 'var(--ns-ember)' }}>
                 Unlock with Pro — £4.99/mo →
               </a>
-              <p className="text-[10px] text-gray-400 mt-2">Cancel any time. Free plan continues working without this.</p>
+              <p className="text-[10px] text-[var(--color-text-tertiary)] mt-2">Cancel any time. Free plan continues working without this.</p>
             </div>
           </div>
         </div>
@@ -290,7 +290,7 @@ export function PlanPreviewScreen() {
         <div className="text-center">
           <button
             onClick={() => setStep(10)}
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors underline"
+            className="text-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] transition-colors underline"
           >
             Something not right? Go back and adjust
           </button>
@@ -305,7 +305,7 @@ export function PlanPreviewScreen() {
             { emoji: '🌅', text: 'Your runner class reveals after 4 weeks of training data' },
             { emoji: '🏆', text: 'Hit milestones to unlock character cosmetics and badges' },
           ].map(item => (
-            <div key={item.text} className="flex items-start gap-3 text-xs text-gray-600">
+            <div key={item.text} className="flex items-start gap-3 text-xs text-[var(--color-text-secondary)]">
               <span>{item.emoji}</span>
               <span>{item.text}</span>
             </div>
@@ -315,7 +315,7 @@ export function PlanPreviewScreen() {
       </div>
 
       {/* Enter app CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4">
+      <div className="fixed bottom-0 left-0 right-0  border-t border-[var(--color-border)] px-4 py-4">
         <button
           onClick={handleEnter}
           disabled={entering}

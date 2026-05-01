@@ -45,7 +45,7 @@ export function SportSelectScreen() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-bg)" }} style={{ background: "var(--color-bg)" }}>
       <OnboardingProgressBar step={step} character={data.characterConfig} showFinishLine />
 
       <div className="flex-1 overflow-y-auto pb-32 px-4 pt-6">
@@ -86,7 +86,7 @@ export function SportSelectScreen() {
                         </span>
                       )}
                       {!sport.active && (
-                        <span className="text-[9px] font-bold text-gray-500 bg-gray-200 px-1.5 py-0.5 rounded-full">
+                        <span className="text-[9px] font-bold text-[var(--color-text-tertiary)] bg-gray-200 px-1.5 py-0.5 rounded-full">
                           Coming soon
                         </span>
                       )}
@@ -118,7 +118,7 @@ export function SportSelectScreen() {
                       className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all flex-shrink-0 ${
                         isNotified
                           ? 'bg-[var(--ns-ember-light)] border-orange-300 text-[var(--ns-ember)]'
-                          : 'bg-white border-gray-200 text-gray-500 hover:border-[var(--ns-cyan-light)]'
+                          : ' border-[var(--color-border)] text-[var(--color-text-tertiary)] hover:border-[var(--ns-cyan-light)]'
                       }`}
                     >
                       {isNotified ? '✓ Notify me' : 'Notify me'}
@@ -137,7 +137,7 @@ export function SportSelectScreen() {
 
       {/* Nav */}
       <div className="fixed bottom-0 left-0 right-0 px-4 py-4 flex gap-3 border-t" style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
-        <button onClick={back} className="px-5 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">
+        <button onClick={back} className="px-5 py-3 rounded-2xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-text-secondary)]">
           ←
         </button>
         <button

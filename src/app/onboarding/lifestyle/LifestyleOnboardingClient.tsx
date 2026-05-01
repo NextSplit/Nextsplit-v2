@@ -56,7 +56,7 @@ export default function LifestyleOnboardingClient() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col px-5 pt-14 pb-10"
+    <div className="min-h-screen flex flex-col px-5 pt-14 pb-10" style={{ background: "var(--color-bg)" }}
       style={{ background: 'linear-gradient(160deg, #0f172a 0%, #18181b 60%, #0f172a 100%)' }}>
 
       {step !== 'saving' && (
@@ -131,7 +131,7 @@ export default function LifestyleOnboardingClient() {
                 </p>
               </div>
               <div className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${includeGym ? 'bg-amber-500' : 'bg-zinc-700'}`}>
-                <div className={`w-4 h-4 bg-white rounded-full mt-1 transition-all ${includeGym ? 'ml-5' : 'ml-1'}`} />
+                <div className={`w-4 h-4  rounded-full mt-1 transition-all ${includeGym ? 'ml-5' : 'ml-1'}`} />
               </div>
             </button>
           </div>
