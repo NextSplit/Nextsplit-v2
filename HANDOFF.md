@@ -271,6 +271,8 @@ npx playwright show-report
 
 | Commit | Description |
 |--------|-------------|
+| `3d5218c` | Option E redesign — ultra-dark navy, Splity animated shoe, 4-tab label-less nav, Home rebuild |
+| `[latest]` | 20-feature build — share card, weekly summary, pre-run brief, milestone cards, elite previews, founding countdown, smart notifications, week summary, squad leaderboard |
 | `1822dfa` | Daily quests, streak emotional widget, nudge wired, plan activation fix, onboarding polish (101 files) |
 | `4965291` | Bold & bright visual system, week tap session sheet, ai_usage fix, AI plan generation fix |
 | `5c87fc1` | Session celebration — confetti, XP float, level up, Splity, sound, haptics |

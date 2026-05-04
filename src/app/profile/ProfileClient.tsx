@@ -1,4 +1,5 @@
 'use client'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -14,6 +15,8 @@ import { useWellness } from '@/hooks/useWellness'
 import { useMealPlan } from '@/hooks/useMealPlan'
 import { signout } from '@/app/auth/actions'
 import DarkModeToggle from '@/components/DarkModeToggle'
+import FoundingCountdown from '@/components/FoundingCountdown'
+import ElitePreview from '@/components/ElitePreview'
 import { useToast } from '@/components/Toast'
 import {
   RPG_CHARS, RPG_BADGES, computeRPGStats, getLevelForXP, getXPProgress,
@@ -640,8 +643,12 @@ export default function ProfileClient({
 
         {/* Upgrade card — shown to free users */}
         {!isPro && (
-          <button
-            onClick={() => setShowUpgrade(true)}
+          <div>
+            <FoundingCountdown />
+          </div>
+        )}
+        {false && (
+          <button onClick={() => setShowUpgrade(true)}
             className="w-full bg-gradient-to-r from-teal-500 to-teal-400 rounded-2xl p-4 text-left"
           >
             <div className="flex items-center justify-between">

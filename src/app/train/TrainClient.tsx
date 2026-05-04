@@ -18,6 +18,8 @@ import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
 import FuelPlanCard from '@/components/FuelPlanCard'
 import SessionCelebration from '@/components/SessionCelebration'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
+import PreRunBrief from '@/components/PreRunBrief'
+import MilestoneCard, { MILESTONES } from '@/components/MilestoneCard'
 import PlanPathSVG from '@/components/plan/PlanPathSVG'
 
 // ── Session colour system ──────────────────────────────────────────────────────
@@ -171,6 +173,8 @@ export default function TrainClient() {
   const [celebration, setCelebration] = useState<{ session: PlanSession; log: TrainingLog; xpEarned: number } | null>(null)
   const [tappedWeek, setTappedWeek] = useState<PlanWeek | null>(null)
   const [showCompletion, setShowCompletion] = useState(false)
+  const [briefSession, setBriefSession]   = useState<typeof modalSession>(null)
+  const [milestone, setMilestone]         = useState<keyof typeof MILESTONES | null>(null)
   const [planTab, setPlanTab] = useState<'plan' | 'fuel'>('plan')
   const [planView, setPlanView] = useState<'path' | 'list'>('path')
 
@@ -232,6 +236,14 @@ export default function TrainClient() {
         if (log.done && session) {
           setShareSession({ session, log })
           setCelebration({ session, log, xpEarned: xp })
+          // Detect milestones
+          const totalDone = allLogs.filter((l: TrainingLog) => l.done).length + 1
+          const totalKm = allLogs.filter((l: TrainingLog) => l.done).reduce((s: number, l: TrainingLog) => s + (l.km ?? 0), 0) + (params.km ?? 0)
+          if (totalDone === 1) setMilestone('first_session')
+          else if (totalKm >= 100 && totalKm - (params.km ?? 0) < 100) setMilestone('km_100')
+          else if (streak === 7) setMilestone('streak_7')
+          else if (streak === 30) setMilestone('streak_30')
+
           // Check if final week is now complete
           const isFinalWeek = plan.current_week === plan.total_weeks
           if (isFinalWeek && plan.total_weeks > 0) {
@@ -581,6 +593,23 @@ export default function TrainClient() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Milestone card */}
+      {milestone && (
+        <MilestoneCard
+          milestone={MILESTONES[milestone]}
+          onDismiss={() => setMilestone(null)}
+        />
+      )}
+
+      {/* Pre-run brief */}
+      {briefSession && (
+        <PreRunBrief
+          session={briefSession.session}
+          onReady={() => { setBriefSession(null); setModalSession(briefSession) }}
+          onClose={() => setBriefSession(null)}
+        />
       )}
 
       {/* Plan completion ceremony */}

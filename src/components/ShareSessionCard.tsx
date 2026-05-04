@@ -1,278 +1,175 @@
 'use client'
-import * as Sentry from '@/lib/sentry'
 
 import { useRef, useState } from 'react'
 import type { PlanSession, TrainingLog } from '@/types/database'
-import { getSessionType, decodeHtml } from '@/lib/sessionUtils'
 import { getSessionXP } from '@/lib/rpg'
+import Splity from '@/components/Splity'
 
 interface Props {
-  session: PlanSession
-  log: TrainingLog
-  weekN: number
-  onClose: () => void
+  session:      PlanSession
+  log:          TrainingLog
+  weekN:        number
+  onClose:      () => void
   runnerColour?: string
+  planName?:    string
+  displayName?: string
 }
 
-function fmtPaceDisplay(paceStr: string | null): string {
+function getSessionMeta(code: string | undefined | null) {
+  const c = (code ?? '').toLowerCase()
+  if (c.includes('tempo'))                           return { label: 'Tempo',     colour: '#ffb800', emoji: '⚡' }
+  if (c.includes('interval') || c.includes('speed')) return { label: 'Intervals', colour: '#ff7438', emoji: '🔥' }
+  if (c.includes('long'))                            return { label: 'Long Run',  colour: '#4d8aff', emoji: '🏃' }
+  if (c.includes('recovery'))                        return { label: 'Recovery',  colour: '#00e676', emoji: '💚' }
+  if (c.includes('gym') || c.includes('strength'))   return { label: 'Strength',  colour: '#a855f7', emoji: '💪' }
+  if (c.includes('race'))                            return { label: 'Race',      colour: '#ff2d9e', emoji: '🏁' }
+  return { label: 'Easy Run', colour: '#00e676', emoji: '✅' }
+}
+
+function fmtPace(paceStr: string | null | undefined): string {
   if (!paceStr) return ''
-  return `${paceStr}/km`
+  return paceStr.includes('/km') ? paceStr : `${paceStr}/km`
 }
 
-function fmtDuration(secs: number | null): string {
+function fmtDuration(secs: number | null | undefined): string {
   if (!secs) return ''
-  const h = Math.floor(secs / 3600)
-  const m = Math.floor((secs % 3600) / 60)
+  const m = Math.floor(secs / 60)
   const s = secs % 60
-  if (h > 0) return `${h}h ${m}m`
-  if (m > 0) return `${m}m ${String(s).padStart(2, '0')}s`
-  return `${s}s`
+  const h = Math.floor(m / 60)
+  if (h > 0) return `${h}h ${m % 60}m`
+  return `${m}m${s > 0 ? ` ${s}s` : ''}`
 }
 
-export default function ShareSessionCard({ session, log, weekN, onClose, runnerColour = '#06b6d4' }: Props) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [sharing, setSharing] = useState(false)
-  const cfg = getSessionType(session.c)
-  const name = decodeHtml(session.n)
-  const xp = getSessionXP(session.c)
-
-  const stats: string[] = []
-  if (log.km && log.km > 0) stats.push(`${log.km}km`)
-  if (log.pace) stats.push(fmtPaceDisplay(log.pace))
-  if (log.duration_secs) stats.push(fmtDuration(log.duration_secs))
+export default function ShareSessionCard({
+  session, log, weekN, onClose, runnerColour = '#00d4ff', planName, displayName,
+}: Props) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [copying, setCopying] = useState(false)
+  const meta    = getSessionMeta(session.c)
+  const xp      = getSessionXP(session.c ?? 'easy')
 
   async function handleShare() {
-    setSharing(true)
-    try {
-      const canvas = canvasRef.current
-      if (!canvas) return
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
+    // Web Share API — native share sheet on Android
+    const text = [
+      `${meta.emoji} Just completed a ${meta.label}!`,
+      log.km ? `📍 ${log.km}km` : '',
+      log.pace ? `⚡ ${fmtPace(log.pace)}` : '',
+      log.effort ? `💪 RPE ${log.effort}/10` : '',
+      planName ? `📋 ${planName}` : '',
+      `\n🏃 NextSplit — nextsplit.app`,
+    ].filter(Boolean).join('\n')
 
-      // 1080×1080 square
-      canvas.width = 1080
-      canvas.height = 1080
-
-      // ── Background — clean white ──────────────────────────────────────
-      ctx.fillStyle = '#f8f7f5'
-      ctx.fillRect(0, 0, 1080, 1080)
-
-      // Ember gradient bar at top
-      const barGrad = ctx.createLinearGradient(0, 0, 1080, 0)
-      barGrad.addColorStop(0, '#06b6d4')
-      barGrad.addColorStop(0.5, runnerColour)
-      barGrad.addColorStop(1, '#c49a3c')
-      ctx.fillStyle = barGrad
-      ctx.fillRect(0, 0, 1080, 12)
-
-      // ── Top bar ─────────────────────────────────────────────────────────
-      ctx.fillStyle = '#06b6d4'
-      ctx.font = 'bold 32px system-ui, -apple-system, sans-serif'
-      ctx.fillText('NextSplit', 60, 80)
-      ctx.fillStyle = '#9e9c97'
-      ctx.font = '28px system-ui'
-      ctx.fillText('Training Log', 230, 80)
-
-      // Week badge top-right
-      ctx.fillStyle = '#f3f2f0'
-      ctx.beginPath()
-      ctx.roundRect(870, 38, 160, 46, 23)
-      ctx.fill()
-      ctx.fillStyle = '#6b6b67'
-      ctx.font = 'bold 26px system-ui'
-      ctx.fillText(`Week ${weekN}`, 900, 68)
-
-      // ── Session type pill ────────────────────────────────────────────────
-      ctx.fillStyle = '#fef3ee'
-      ctx.beginPath()
-      ctx.roundRect(60, 130, 300, 56, 28)
-      ctx.fill()
-      ctx.fillStyle = '#ff4d6d'
-      ctx.font = 'bold 26px system-ui'
-      ctx.fillText(`${cfg.emoji}  ${cfg.label.toUpperCase()}`, 85, 167)
-
-      // ── Session name ─────────────────────────────────────────────────────
-      ctx.fillStyle = '#1a1a18'
-      ctx.font = 'bold 80px system-ui, -apple-system, sans-serif'
-      const words = name.split(' ')
-      let line = ''
-      let y = 310
-      for (const word of words) {
-        const test = line + word + ' '
-        if (ctx.measureText(test).width > 960 && line) {
-          ctx.fillText(line.trim(), 60, y)
-          line = word + ' '
-          y += 96
-        } else { line = test }
-      }
-      ctx.fillText(line.trim(), 60, y)
-      y += 80
-
-      // ── Stats row ────────────────────────────────────────────────────────
-      if (stats.length > 0) {
-        const statStr = stats.join('   ·   ')
-        ctx.fillStyle = '#6b6b67'
-        ctx.font = '52px system-ui'
-        ctx.fillText(statStr, 60, y + 10)
-        y += 80
-      }
-
-      // ── Effort bar ───────────────────────────────────────────────────────
-      if (log.effort) {
-        y += 20
-        ctx.fillStyle = 'rgba(255,255,255,0.15)'
-        ctx.font = 'bold 26px system-ui'
-        ctx.fillText('EFFORT', 60, y)
-        ctx.fillStyle = 'rgba(255,255,255,0.6)'
-        ctx.font = 'bold 26px system-ui'
-        ctx.fillText(`${log.effort}/10`, 210, y)
-
-        // Dots
-        for (let i = 1; i <= 10; i++) {
-          ctx.fillStyle = i <= log.effort
-            ? (log.effort >= 8 ? '#EF4444' : log.effort >= 6 ? '#F59E0B' : '#10B981')
-            : 'rgba(255,255,255,0.15)'
-          ctx.beginPath()
-          ctx.arc(60 + (i - 1) * 68, y + 40, 22, 0, Math.PI * 2)
-          ctx.fill()
-        }
-        y += 100
-      }
-
-      // ── XP badge ─────────────────────────────────────────────────────────
-      y += 20
-      const xpW = 200
-      ctx.fillStyle = '#fdf7ec'
-      ctx.beginPath()
-      ctx.roundRect(60, y, xpW, 64, 32)
-      ctx.fill()
-      ctx.strokeStyle = '#c49a3c'
-      ctx.lineWidth = 2
-      ctx.stroke()
-      ctx.fillStyle = '#c49a3c'
-      ctx.font = 'bold 38px system-ui'
-      ctx.fillText(`+${xp} XP`, 84, y + 44)
-
-      // Strava badge if imported
-      if (log.strava_id) {
-        ctx.fillStyle = 'rgba(252,100,25,0.3)'
-        ctx.beginPath()
-        ctx.roundRect(280, y, 220, 64, 32)
-        ctx.fill()
-        ctx.fillStyle = '#FC6419'
-        ctx.font = 'bold 34px system-ui'
-        ctx.fillText('⚡ Strava', 300, y + 44)
-      }
-
-      // ── Bottom bar ───────────────────────────────────────────────────────
-      ctx.fillStyle = 'rgba(255,255,255,0.05)'
-      ctx.fillRect(0, 990, 1080, 90)
-      ctx.fillStyle = 'rgba(255,255,255,0.3)'
-      ctx.font = '28px system-ui'
-      ctx.fillText('nextsplit.app  ·  Track. Log. Level up.', 60, 1044)
-
-      // ── Export + share ───────────────────────────────────────────────────
-      const blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(b => b ? resolve(b) : reject(new Error('Export failed')), 'image/png')
-      })
-      const file = new File([blob], 'nextsplit-session.png', { type: 'image/png' })
-
-      if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          title: `${name} — NextSplit`,
-          text: `Just logged: ${name}${log.km ? ` · ${log.km}km` : ''}${log.pace ? ` · ${fmtPaceDisplay(log.pace)}` : ''} 🏃`,
-          files: [file],
-        })
-      } else {
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url; a.download = 'nextsplit-session.png'; a.click()
-        URL.revokeObjectURL(url)
-      }
-    } catch (e) {
-      if ((e as Error).name !== 'AbortError') Sentry.captureException(e, { context: 'Share session' })
-    } finally {
-      setSharing(false)
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, title: 'NextSplit session', url: 'https://nextsplit.app' })
+        onClose()
+      } catch { /* cancelled */ }
+    } else {
+      // Fallback — copy to clipboard
+      await navigator.clipboard?.writeText(text)
+      setCopying(true)
+      setTimeout(() => { setCopying(false); onClose() }, 1500)
     }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-black/50 justify-end" style={{ backdropFilter: "blur(4px)" }} onClick={onClose}>
-      <div className="w-full max-w-lg mx-auto bg-white p-5 pb-8" style={{ borderRadius: "24px 24px 0 0" }} onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-4">
-          <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-border-2)' }} />
-          <button aria-label="Close" onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
-            style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>×</button>
+    <div className="fixed inset-0 z-[110] flex flex-col items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)' }}>
+
+      {/* Card — designed to be screenshot-shared */}
+      <div ref={cardRef}
+        className="w-full max-w-sm rounded-3xl overflow-hidden"
+        style={{
+          background: `linear-gradient(145deg, #080b14, #0d1120)`,
+          border: `3px solid ${meta.colour}`,
+          boxShadow: `0 0 0 1px ${meta.colour}20, 0 20px 60px ${meta.colour}30`,
+        }}>
+
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-base font-black" style={{ color: '#00d4ff' }}>NextSplit</span>
+          </div>
+          <span className="text-xs font-black px-2.5 py-1 rounded-full"
+            style={{ background: `${meta.colour}20`, color: meta.colour, border: `1.5px solid ${meta.colour}40` }}>
+            {meta.emoji} {meta.label}
+          </span>
         </div>
 
-        {/* Preview card — clean light design */}
-        <div className="rounded-2xl overflow-hidden mb-4 relative"
-          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-          {/* Ember accent bar */}
-          <div className="h-1.5" style={{ background: 'linear-gradient(90deg, var(--ns-cyan) 0%, var(--ns-ember) 60%, var(--ns-track) 100%)' }} />
-
-          <div className="p-5">
-            {/* Top bar */}
-            <div className="flex items-center justify-between mb-4">
-              <span className="font-display text-sm" style={{ color: 'var(--ns-ember)', letterSpacing: '-0.02em' }}>NextSplit</span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-tertiary)' }}>
-                Week {weekN}
-              </span>
+        {/* Main stat — massive */}
+        <div className="px-6 pb-2">
+          {log.km && log.km > 0 ? (
+            <div>
+              <span style={{
+                fontSize: 72, fontWeight: 900, color: 'white',
+                letterSpacing: '-0.05em', lineHeight: 1,
+              }}>{log.km}</span>
+              <span className="text-3xl font-black ml-2" style={{ color: 'var(--color-text-secondary)' }}>km</span>
             </div>
+          ) : (
+            <p style={{ fontSize: 36, fontWeight: 900, color: 'white', letterSpacing: '-0.03em' }}>
+              {session.n ?? 'Session done'}
+            </p>
+          )}
+        </div>
 
-            {/* Type pill */}
-            <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 mb-3 self-start"
-              style={{ background: 'var(--ns-ember-light)' }}>
-              <span className="text-sm">{cfg.emoji}</span>
-              <span className="text-[10px] font-black uppercase tracking-wide" style={{ color: 'var(--ns-ember)' }}>{cfg.label}</span>
+        {/* Stats row */}
+        <div className="px-6 pb-5 flex gap-3">
+          {log.pace && (
+            <div className="flex-1 rounded-2xl p-3 text-center"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1.5px solid rgba(255,255,255,0.08)' }}>
+              <p className="text-lg font-black" style={{ color: meta.colour }}>{fmtPace(log.pace)}</p>
+              <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>avg pace</p>
             </div>
-
-            {/* Name */}
-            <p className="font-display text-2xl leading-tight mb-2" style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>{name}</p>
-
-            {/* Stats */}
-            {stats.length > 0 && (
-              <p className="text-sm mb-4 font-data" style={{ color: 'var(--color-text-secondary)' }}>{stats.join('  ·  ')}</p>
-            )}
-
-            {/* Effort dots */}
-            {log.effort && (
-              <div className="flex items-center gap-1 mb-4">
-                {Array.from({ length: 10 }, (_, i) => (
-                  <div key={i} className="w-2.5 h-2.5 rounded-full"
-                    style={{ background: i < log.effort! ? 'var(--ns-ember)' : 'var(--color-surface-3)' }} />
-                ))}
-                <span className="text-[10px] ml-1" style={{ color: 'var(--color-text-tertiary)' }}>RPE {log.effort}</span>
-              </div>
-            )}
-
-            {/* XP + bottom */}
-            <div className="flex items-center justify-between pt-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
-              <span className="text-xs font-black px-2.5 py-0.5 rounded-full"
-                style={{ background: 'var(--ns-track-light)', color: 'var(--ns-track)' }}>
-                +{xp} XP
-              </span>
-              {log.strava_id && (
-                <span className="text-[10px] font-bold" style={{ color: '#fc4c02' }}>⚡ Strava</span>
-              )}
-              <span className="text-[9px]" style={{ color: 'var(--color-text-tertiary)' }}>nextsplit.app</span>
+          )}
+          {log.effort && (
+            <div className="flex-1 rounded-2xl p-3 text-center"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1.5px solid rgba(255,255,255,0.08)' }}>
+              <p className="text-lg font-black" style={{ color: '#ffb800' }}>{log.effort}/10</p>
+              <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>effort</p>
             </div>
+          )}
+          {log.duration_secs && (
+            <div className="flex-1 rounded-2xl p-3 text-center"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1.5px solid rgba(255,255,255,0.08)' }}>
+              <p className="text-lg font-black" style={{ color: '#4d8aff' }}>{fmtDuration(log.duration_secs)}</p>
+              <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>time</p>
+            </div>
+          )}
+          <div className="flex-1 rounded-2xl p-3 text-center"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1.5px solid rgba(255,255,255,0.08)' }}>
+            <p className="text-lg font-black" style={{ color: '#ffb800' }}>+{xp}</p>
+            <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>XP</p>
           </div>
         </div>
 
-        <canvas ref={canvasRef} className="hidden" />
+        {/* Footer with Splity */}
+        <div className="px-6 pb-6 flex items-center gap-3 border-t"
+          style={{ borderColor: 'rgba(255,255,255,0.06)', paddingTop: 16 }}>
+          <Splity size={40} mood="celebrating" animate={false} />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-black" style={{ color: 'var(--color-text-primary)' }}>
+              {displayName ?? 'Runner'}
+            </p>
+            {planName && (
+              <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>📋 {planName}</p>
+            )}
+          </div>
+          <p className="text-[10px] font-bold" style={{ color: 'rgba(255,255,255,0.3)' }}>nextsplit.app</p>
+        </div>
+      </div>
 
-        <button onClick={handleShare} disabled={sharing}
-          className="w-full py-3.5 text-white font-bold text-sm rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2" style={{ background: 'var(--ns-ember)' }}>
-          {sharing ? 'Preparing…' : (
-            <>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-              </svg>
-              Share session
-            </>
-          )}
+      {/* Actions */}
+      <div className="w-full max-w-sm mt-4 flex gap-3">
+        <button onClick={onClose}
+          className="flex-1 py-3.5 rounded-2xl text-sm font-black"
+          style={{ background: 'rgba(255,255,255,0.08)', color: 'white', border: '2px solid rgba(255,255,255,0.12)' }}>
+          Close
+        </button>
+        <button onClick={handleShare}
+          className="flex-1 py-3.5 rounded-2xl text-sm font-black"
+          style={{ background: meta.colour, color: '#0a0e1a', boxShadow: `0 4px 20px ${meta.colour}50` }}>
+          {copying ? '✓ Copied!' : '📤 Share'}
         </button>
       </div>
     </div>
