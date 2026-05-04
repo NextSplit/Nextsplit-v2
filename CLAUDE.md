@@ -20,7 +20,7 @@ npx tsc --noEmit 2>&1 | grep "error TS" | grep -v "Cannot find module\|jsx-runti
 ## Step 3 — Push changes
 ```bash
 git add -A && git commit -m "type: description"
-git remote set-url origin https://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@github.com/NextSplit/Nextsplit-v2.git
+git remote set-url origin https://ghp_YOUR_PAT_TOKEN_HERE@github.com/NextSplit/Nextsplit-v2.git
 git push origin main
 git remote set-url origin https://github.com/NextSplit/Nextsplit-v2.git
 ```
