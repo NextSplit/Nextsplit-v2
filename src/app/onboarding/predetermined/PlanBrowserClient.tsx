@@ -322,7 +322,8 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
       })
       if (!res.ok) {
         const body = await res.json()
-        throw new Error(body.error ?? 'Failed to activate plan')
+        const detail = body.details ? ` (${body.details.join(', ')})` : ''
+        throw new Error((body.error ?? 'Failed to activate plan') + detail)
       }
       const result = await res.json()
       if (result.raceTooSoon) {
@@ -442,27 +443,27 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           <button
             onClick={() => setIncludeGym(g => !g)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
-              includeGym ? 'border-amber-200 bg-amber-50' : 'border-[var(--color-border)] bg-transparent'
+              includeGym ? '' : ''
             }`}
           >
             <span className="text-xl">{includeGym ? '🏋️' : '🏃'}</span>
             <div className="flex-1 text-left">
-              <p className={`text-xs font-bold ${includeGym ? 'text-amber-800' : 'text-[var(--color-text-secondary)]'}`}>
+              <p className="text-xs font-bold" style={{ color: includeGym ? '#f0a500' : 'var(--color-text-secondary)' }}>
                 {includeGym ? 'Strength sessions included' : 'Running only'}
               </p>
-              <p className={`text-[10px] mt-0.5 ${includeGym ? 'text-amber-600' : 'text-[var(--color-text-tertiary)]'}`}>
+              <p className="text-[10px] mt-0.5" style={{ color: includeGym ? '#d97706' : 'var(--color-text-tertiary)' }}>
                 {includeGym
                   ? 'Gym sessions on rest days — builds injury resilience'
                   : 'Tap to add gym sessions to your plan'}
               </p>
             </div>
-            <div className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${includeGym ? 'bg-amber-500' : 'bg-gray-200'}`}>
+            <div className={`w-10 h-6 rounded-full transition-colors flex-shrink-0`}>
               <div className={`w-4 h-4  rounded-full mt-1 transition-all ${includeGym ? 'ml-5' : 'ml-1'}`} />
             </div>
           </button>
 
           {error && (
-            <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-xl border border-red-100">{error}</p>
+<p className="text-xs px-3 py-2 rounded-xl" style={{ color: '#ff4d6d', background: 'rgba(255,77,109,0.1)', border: '1px solid rgba(255,77,109,0.3)' }}>{error}</p>
           )}
 
           <button onClick={handleActivate} disabled={activating || !planName.trim()}

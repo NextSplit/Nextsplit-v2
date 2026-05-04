@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     const today = new Date().toISOString().split('T')[0]
     await db(supabase).from('ai_usage').upsert(
-      { user_id: user.id, date: today, feature: 'generate_plan', count: 1 },
+      { user_id: user.id, date: today, feature: 'generate_plan', call_count: 1 },
       { onConflict: 'user_id,date,feature', ignoreDuplicates: false }
     ).catch(() => {}) // Non-blocking
     const message = await anthropic.messages.create({

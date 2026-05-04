@@ -24,7 +24,10 @@ export async function POST(req: NextRequest) {
   }
 
   const parsed = ActivateSchema.safeParse(await req.json())
-  if (!parsed.success) return zodError(parsed.error)
+  if (!parsed.success) {
+    console.error('Activate plan Zod error:', parsed.error.issues)
+    return zodError(parsed.error)
+  }
   const { template_id, slug, name, race_date, plan_type, include_gym } = parsed.data
 
   if (!template_id && !slug) {

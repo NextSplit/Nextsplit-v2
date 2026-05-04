@@ -7,74 +7,41 @@
    Everything else is neutral — white, off-white, near-black, grey.
    ──────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* ── Brand accent colours ── */
-  --ns-ember:         #ff4d6d;   /* Athlete/CTA — coral, distinct from Strava */
-  --ns-ember-light:   #fff0f3;   /* Coral tint — hover states, highlights */
-  --ns-ember-mid:     #e0334f;   /* Coral dark — pressed state */
-
-  --ns-forest:        #2b5c3f;   /* Brand — logo, active nav, Split Leader */
-  --ns-forest-light:  #edf4f0;   /* Forest tint */
-  --ns-forest-mid:    #3d7a57;
-
-  --ns-track:         #c49a3c;   /* Gold — achievements, XP, Splity */
-  --ns-track-light:   #fdf7ec;   /* Gold tint */
-
-  /* Squad / Split Leader */
-  --ns-lime:          #84cc16;   /* Squad, Split Leader, social */
-  --ns-lime-light:    #f3fae5;   /* Lime tint */
-  --ns-lime-mid:      #65a30d;   /* Lime dark — pressed */
-
-  /* Plan / Analytics / Data */
-  --ns-cobalt:        #2563eb;   /* Plan tab, ACWR, data */
-  --ns-cobalt-light:  #eff6ff;   /* Cobalt tint */
-  --ns-cobalt-mid:    #1d4ed8;   /* Cobalt dark — pressed */
-
-  /* Brand anchor */
-  --ns-cyan:          #06b6d4;   /* Brand — wordmark, landing, onboarding, brand moments */
-  --ns-cyan-light:    #ecfeff;   /* Cyan tint */
-  --ns-cyan-mid:      #0891b2;   /* Cyan dark — pressed */
-
-  /* Coach platform */
-  --ns-violet:        #8b5cf6;   /* Coach dashboard, messaging, verified badge */
-  --ns-violet-light:  #f5f3ff;   /* Violet tint */
-  --ns-violet-mid:    #7c3aed;   /* Violet dark — pressed */
-
-  /* Special moments */
-  --ns-magenta:       #ec4899;   /* Class reveal, level-up, founding badge */
-  --ns-magenta-light: #fdf2f8;   /* Magenta tint */
-
-  /* ── Page & surface system — Light ── */
-  --color-bg:           #0c0c0c;   /* Dark — single mode */
-  --color-surface:      #161616;   /* Card surface */
-  --color-surface-2:    #1f1f1f;   /* Elevated input */
-  --color-surface-3:    #2a2a2a;   /* Highest surface */
+  /* ── Base surfaces — deep navy, not flat black ── */
+  --color-bg:           #0a0e1a;   /* Deep navy — page background */
+  --color-surface:      #111827;   /* Card surface */
+  --color-surface-2:    #1a2235;   /* Elevated input / pill */
+  --color-surface-3:    #243048;   /* Highest surface */
 
   /* ── Borders ── */
-  --color-border:       #e8e6e3;   /* Default border — barely visible */
-  --color-border-2:     #d4d1cc;   /* Stronger border */
+  --color-border:       rgba(99,130,255,0.12);
+  --color-border-2:     rgba(99,130,255,0.22);
 
   /* ── Text ── */
-  --color-text-primary:   #f5f5f5;   /* Light — single dark mode */
-  --color-text-secondary: #6b6b67;   /* Mid grey — body, descriptions */
-  --color-text-tertiary:  #9e9c97;   /* Light grey — labels, captions */
-  --color-text-disabled:  #c4c2bd;   /* Disabled */
-  --color-text-inverse:   #ffffff;   /* Text on dark/coloured backgrounds */
+  --color-text-primary:   #f8faff;
+  --color-text-secondary: rgba(248,250,255,0.72);
+  --color-text-tertiary:  rgba(248,250,255,0.38);
 
-  /* ── Legacy aliases (keep for backward compat during rebuild) ── */
-  --color-brand:        var(--ns-cyan);
-  --color-brand-light:  var(--ns-cyan-light);
-  --color-brand-text:   var(--ns-cyan-mid);
-  --ns-paper:           var(--color-bg);
-  --ns-ink:             var(--color-text-primary);
-  --ns-night:           #2c3e50;
-  --ns-night-light:     #eef1f4;
-  --ns-forest-light:    #edf4f0;
-
-  --background: var(--color-bg);
-  --foreground: var(--color-text-primary);
-
-  /* ── Font scale ── */
-  --font-scale: 1;
+  /* ── Brand colours — vivid and saturated ── */
+  --ns-ember:         #ff3d6e;
+  --ns-ember-light:   #ff3d6e20;
+  --ns-ember-mid:     #e02858;
+  --ns-forest:        #00e676;
+  --ns-forest-light:  #00e67620;
+  --ns-forest-mid:    #00c45a;
+  --ns-cyan:          #00d4ff;
+  --ns-cyan-mid:      #00b8e0;
+  --ns-cobalt:        #4d8aff;
+  --ns-cobalt-mid:    #3a6fe0;
+  --ns-amber:         #ffb800;
+  --ns-violet:        #a855f7;
+  --ns-lime:          #7fff4d;
+  --ns-magenta:       #ff2d9e;
+  --ns-track:         #ff3d6e;
+  --ns-paper:         var(--color-bg);
+  --ns-ink:           var(--color-text-primary);
+  --background:       var(--color-bg);
+  --foreground:       var(--color-text-primary);
 }
 
 /* ─── Text size scales ────────────────────────────────────────────────────── */
@@ -86,6 +53,7 @@
 body {
   background: var(--color-bg);
   color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
   font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   font-size: calc(16px * var(--font-scale));
   -webkit-font-smoothing: antialiased;
@@ -127,31 +95,15 @@ body {
 
 /* ─── Dark mode — applied when <html> has class="dark" ────────────────────── */
 .dark {
-  --color-bg:             #0c0c0c;   /* Near-black page background */
-  --color-surface:        #161616;   /* Card surface */
-  --color-surface-2:      #1f1f1f;   /* Elevated input / pill */
-  --color-surface-3:      #2a2a2a;   /* Highest surface */
-
-  --color-border:         rgba(255,255,255,0.08);   /* Subtle border */
-  --color-border-2:       rgba(255,255,255,0.14);   /* Stronger border */
-
-  --color-text-primary:   #f0efed;   /* Near-white headings */
-  --color-text-secondary: #a8a6a1;   /* Mid — body, descriptions */
-  --color-text-tertiary:  #6b6966;   /* Muted — labels, captions */
-  --color-text-disabled:  #3d3c3a;   /* Disabled */
-  --color-text-inverse:   #0c0c0c;   /* Text on light backgrounds */
-
-  --color-brand:          var(--ns-cyan);
-  --color-brand-light:    rgba(6,182,212,0.15);
-  --color-brand-text:     var(--ns-cyan);
-
-  /* Tint vars for session cards on dark */
-  --ns-ember-light:       rgba(255,77,109,0.12);
-  --ns-cyan-light:        rgba(6,182,212,0.12);
-  --ns-cobalt-light:      rgba(37,99,235,0.12);
-  --ns-lime-light:        rgba(132,204,22,0.10);
-  --ns-violet-light:      rgba(139,92,246,0.12);
-  --ns-magenta-light:     rgba(236,72,153,0.12);
+  --color-bg:             #0a0e1a;
+  --color-surface:        #111827;
+  --color-surface-2:      #1a2235;
+  --color-surface-3:      #243048;
+  --color-border:         rgba(99,130,255,0.12);
+  --color-border-2:       rgba(99,130,255,0.22);
+  --color-text-primary:   #f8faff;
+  --color-text-secondary: rgba(248,250,255,0.72);
+  --color-text-tertiary:  rgba(248,250,255,0.38);
 }
 
 /* Dark mode — override Tailwind bg-white etc */
