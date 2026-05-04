@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 8.0 | **May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 8.1 | **May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 8.1: deploy pipeline verification push (GitHub Actions → Vercel deploy hook) -->
 **Live URL:** https://nextsplit.app
 **GitHub:** https://github.com/NextSplit/Nextsplit-v2
 **Stack:** Next.js 15 App Router · TypeScript strict · Supabase · Tailwind · CSS vars · PWA · Anthropic SDK
