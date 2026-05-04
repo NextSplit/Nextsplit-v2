@@ -2,16 +2,21 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: './src/test/e2e',
-  fullyParallel: false,
+  fullyParallel: false, // Run sequentially for auth state
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
-  reporter: 'html',
+  reporter: [
+    ['list'],
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+  ],
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000',
+    baseURL: process.env.BASE_URL ?? 'https://nextsplit.app',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    viewport: { width: 390, height: 844 }, // iPhone 14 Pro viewport
+    video: 'retain-on-failure',
+    viewport: { width: 390, height: 844 }, // iPhone 14 Pro
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
   },
   projects: [
     {
@@ -23,10 +28,4 @@ export default defineConfig({
       use: { ...devices['iPhone 14 Pro'] },
     },
   ],
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
 })
