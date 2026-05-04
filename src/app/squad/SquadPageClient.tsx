@@ -1,114 +1,85 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useSquad } from '@/hooks/useSquad'
+import SquadOrbit from './SquadOrbit'
 import Link from 'next/link'
-import SquadDashboardClient from './SquadDashboardClient'
-import MedicalDisclaimer from '@/components/MedicalDisclaimer'
 
 interface Props { userId: string }
 
 export default function SquadPageClient({ userId }: Props) {
-  const [loading, setLoading]   = useState(true)
-  const [squad, setSquad]       = useState<any>(null)
-  const [role, setRole]         = useState<'leader' | 'member' | null>(null)
-  const [error, setError]       = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch('/api/squad')
-      .then(r => r.json())
-      .then(data => {
-        if (data.error) { setError(data.error); return }
-        setSquad(data.squad)
-        setRole(data.role)
-      })
-      .catch(() => setError('Failed to load squad'))
-      .finally(() => setLoading(false))
-  }, [])
+  const { squad, role, loading } = useSquad()
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
-        <div className="flex gap-1.5">
-          {[0,1,2].map(i => (
-            <div key={i} className="w-2 h-2 rounded-full animate-bounce"
-              style={{ background: 'var(--ns-track)', animationDelay: `${i * 0.15}s` }} />
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--color-bg)' }}>
         <div className="text-center">
-          <p className="text-sm mb-3" style={{ color: 'var(--color-text-secondary)' }}>{error}</p>
-          <button onClick={() => window.location.reload()}
-            className="text-xs font-bold px-4 py-2 rounded-xl"
-            style={{ background: 'var(--ns-ember)', color: 'white' }}>
-            Try again
-          </button>
+          <div className="w-12 h-12 rounded-full border-2 border-t-transparent animate-spin mx-auto mb-3"
+            style={{ borderColor: '#84cc16', borderTopColor: 'transparent' }} />
+          <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Loading squad…</p>
         </div>
       </div>
     )
   }
 
-  if (squad && role) {
-    return <SquadDashboardClient squad={squad} role={role} monthlyKm={0} userId={userId} />
+  if (!squad) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 pb-24"
+        style={{ background: 'var(--color-bg)' }}>
+        <div className="text-4xl mb-4">👥</div>
+        <h2 className="text-2xl font-black text-center mb-2" style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>
+          No squad yet
+        </h2>
+        <p className="text-sm text-center mb-8" style={{ color: 'var(--color-text-tertiary)' }}>
+          Training is better together. Start or join a squad.
+        </p>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <Link href="/squad/create"
+            className="py-4 rounded-2xl font-black text-center"
+            style={{ background: '#84cc16', color: '#0d1a05' }}>
+            👑 Start a squad
+          </Link>
+          <Link href="/squad/join"
+            className="py-4 rounded-2xl font-black text-center"
+            style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }}>
+            🔗 Join with a code
+          </Link>
+        </div>
+      </div>
+    )
   }
 
-  // No squad — show explainer
+  const inviteCode = squad.squad_invites?.[0]?.code
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const members = (squad.squad_members ?? []) as any[]
+
   return (
-    <main className="min-h-screen pb-28" style={{ background: 'var(--color-bg)' }}>
-      <div className="px-4 pt-12 pb-2 flex items-center gap-3">
-        <Link href="/home" className="text-sm font-medium" style={{ color: 'var(--color-text-tertiary)' }}>
-          ← Today
-        </Link>
-      </div>
-      <div className="px-4 pt-2" style={{ background: 'linear-gradient(180deg, #c49a3c18 0%, var(--color-bg) 100%)' }}>
-        <div className="max-w-lg mx-auto pb-6">
-          <div className="text-5xl mb-3">👑</div>
-          <h1 className="font-display text-2xl italic mb-1" style={{ color: 'var(--color-text-primary)' }}>
-            Split Leader
+    <div className="min-h-screen pb-24" style={{ background: 'var(--color-bg)' }}>
+      {/* Header */}
+      <div className="sticky top-0 z-40 border-b"
+        style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+        <div className="max-w-lg mx-auto px-4 pt-12 pb-3 flex items-center justify-between">
+          <h1 className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>
+            My Squad
           </h1>
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            Lead a squad of up to 5 friends. Keep each other running. Earn free months when they join Premium.
-          </p>
+          {role === 'leader' && (
+            <Link href="/squad/settings" className="text-xs font-bold px-3 py-1.5 rounded-lg"
+              style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+              ⚙ Settings
+            </Link>
+          )}
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 space-y-4">
-        <div className="rounded-2xl p-5 space-y-4"
-          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-          {[
-            { icon: '👟', title: 'Nudge your squad', desc: "Send motivating messages when someone hasn't run" },
-            { icon: '📊', title: 'Track together', desc: 'See who ran today, weekly totals, collective goals' },
-            { icon: '🏆', title: 'Celebrate milestones', desc: 'Squad Trophy Room, monthly seasons, achievements' },
-            { icon: '🎁', title: 'Earn free months', desc: 'Get 1 free month for every friend who joins Premium' },
-          ].map(f => (
-            <div key={f.title} className="flex items-start gap-3">
-              <span className="text-xl flex-shrink-0">{f.icon}</span>
-              <div>
-                <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{f.title}</p>
-                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{f.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <Link href="/squad/create"
-          className="block w-full py-4 rounded-2xl font-black text-lg text-white text-center active:scale-95 transition-all"
-          style={{ background: 'linear-gradient(135deg, var(--ns-track) 0%, #a8832a 100%)' }}>
-          👑 Create your squad
-        </Link>
-
-        <p className="text-xs text-center" style={{ color: 'var(--color-text-tertiary)' }}>
-          Have an invite link? Open it to join a squad as a member.
-        </p>
-        <div className="mt-2">
-          <MedicalDisclaimer variant="compact" />
-        </div>
+      <div className="max-w-lg mx-auto pt-4">
+        <SquadOrbit
+          squad={squad}
+          members={members}
+          myUserId={userId}
+          role={role ?? 'member'}
+          inviteCode={inviteCode}
+        />
       </div>
-    </main>
+    </div>
   )
 }

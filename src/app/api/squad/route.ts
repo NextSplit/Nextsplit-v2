@@ -24,6 +24,67 @@ const UpdateSquadSchema = z.object({
   goal_month:  z.string().regex(/^\d{4}-\d{2}$/).optional().nullable(),
 })
 
+
+// Fetch weekly km and streak for a list of user IDs
+async function fetchMemberStats(s: any, memberIds: string[]) {
+  if (!memberIds.length) return {}
+  
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  
+  const { data: logs } = await s
+    .from('training_logs')
+    .select('user_id, km, done, created_at')
+    .in('user_id', memberIds)
+    .eq('done', true)
+    .gte('created_at', sevenDaysAgo.toISOString())
+  
+  // Get active plans for each member
+  const { data: plans } = await s
+    .from('user_plans')
+    .select('user_id, name, goal, race_date, current_week, total_weeks')
+    .in('user_id', memberIds)
+    .eq('status', 'active')
+  
+  // Get runner colours
+  const { data: profiles } = await s
+    .from('profiles')
+    .select('id, runner_colour')
+    .in('id', memberIds)
+
+  const stats: Record<string, { weekly_km: number; streak: number; plan_name: string | null; race_date: string | null; current_week: number; total_weeks: number; runner_colour: string }> = {}
+  
+  const planMap = Object.fromEntries((plans ?? []).map((p: any) => [p.user_id, p]))
+  const colourMap = Object.fromEntries((profiles ?? []).map((p: any) => [p.id, p.runner_colour]))
+  
+  for (const uid of memberIds) {
+    const userLogs = (logs ?? []).filter((l: any) => l.user_id === uid)
+    const weeklyKm = userLogs.reduce((s: number, l: any) => s + (l.km ?? 0), 0)
+    
+    // Simple streak: consecutive days with done logs
+    const days = new Set(userLogs.map((l: any) => l.created_at.slice(0, 10)))
+    let streak = 0
+    const d = new Date()
+    for (let i = 0; i < 7; i++) {
+      if (days.has(d.toISOString().slice(0, 10))) streak++
+      else if (streak > 0) break
+      d.setDate(d.getDate() - 1)
+    }
+    
+    const plan = planMap[uid]
+    stats[uid] = {
+      weekly_km:    Math.round(weeklyKm * 10) / 10,
+      streak,
+      plan_name:    plan?.name ?? null,
+      race_date:    plan?.race_date ?? null,
+      current_week: plan?.current_week ?? 0,
+      total_weeks:  plan?.total_weeks ?? 0,
+      runner_colour: colourMap[uid] ?? '#06b6d4',
+    }
+  }
+  return stats
+}
+
 /**
  * GET  /api/squad       — get current user's squad (as leader or member)
  * POST /api/squad       — create a new squad
@@ -59,7 +120,12 @@ export async function GET() {
         ? await s.from('profiles').select('id, display_name, handle, runner_class, is_split_leader').in('id', memberIds)
         : { data: [] }
       const profileMap = Object.fromEntries((profiles ?? []).map((p: { id: string }) => [p.id, p]))
-      ledSquad.squad_members = activeMembers.map((m: { user_id: string }) => ({ ...m, profiles: profileMap[m.user_id] ?? null }))
+      const leaderStats = await fetchMemberStats(s, memberIds)
+      ledSquad.squad_members = activeMembers.map((m: { user_id: string }) => ({
+        ...m,
+        profiles: profileMap[m.user_id] ?? null,
+        stats: leaderStats[m.user_id] ?? null,
+      }))
       return NextResponse.json({ squad: ledSquad, role: 'leader' })
     }
 
@@ -86,7 +152,12 @@ export async function GET() {
           ? await s.from('profiles').select('id, display_name, handle, runner_class').in('id', memberIds)
           : { data: [] }
         const profileMap = Object.fromEntries((profiles ?? []).map((p: { id: string }) => [p.id, p]))
-        squad.squad_members = activeMembers.map((m: { user_id: string }) => ({ ...m, profiles: profileMap[m.user_id] ?? null }))
+        const memberStats = await fetchMemberStats(s, memberIds)
+        squad.squad_members = activeMembers.map((m: { user_id: string }) => ({
+          ...m,
+          profiles: profileMap[m.user_id] ?? null,
+          stats: memberStats[m.user_id] ?? null,
+        }))
         return NextResponse.json({ squad, role: 'member' })
       }
     }
