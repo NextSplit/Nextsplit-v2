@@ -16,6 +16,7 @@ import WeekRow from '@/components/plan/WeekRow'
 import { TodayModals } from '../today/TodayModals'
 import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
 import FuelPlanCard from '@/components/FuelPlanCard'
+import SessionCelebration from '@/components/SessionCelebration'
 import PlanPathSVG from '@/components/plan/PlanPathSVG'
 
 // ── Session colour system ──────────────────────────────────────────────────────
@@ -166,6 +167,7 @@ export default function TrainClient() {
   const [undoXP, setUndoXP] = useState(0)
   const [undoSecsLeft, setUndoSecsLeft] = useState(0)
   const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
+  const [celebration, setCelebration] = useState<{ session: PlanSession; log: TrainingLog; xpEarned: number } | null>(null)
   const [planTab, setPlanTab] = useState<'plan' | 'fuel'>('plan')
   const [planView, setPlanView] = useState<'path' | 'list'>('path')
 
@@ -183,6 +185,9 @@ export default function TrainClient() {
     return Object.values(logs).filter((l: TrainingLog) => !!l.done && new Date(l.created_at) >= mon)
       .reduce((s: number, l: TrainingLog) => s + (l.km ?? 0), 0)
   })()
+
+  // Total XP
+  const totalXP = allLogs.filter((l: TrainingLog) => l.done).length * 15
 
   // Streak
   const streak = computeStreak(allLogs.map((l: TrainingLog) => ({ logged_at: l.created_at, done: l.done }))).current
@@ -221,7 +226,11 @@ export default function TrainClient() {
         setUndoSecsLeft(8)
         const timer = setTimeout(() => setUndoInfo(null), 8000)
         setUndoInfo({ logId: log.id, timer })
-        if (log.done && session) setShareSession({ session, log })
+        if (log.done && session) {
+          setShareSession({ session, log })
+          // Show celebration instead of just undo toast
+          setCelebration({ session, log, xpEarned: xp })
+        }
       }
     } catch { toastError('Failed to log session') }
   }
@@ -468,6 +477,21 @@ export default function TrainClient() {
             </div>
           )}
         </div>
+      )}
+
+      {/* Session celebration */}
+      {celebration && (
+        <SessionCelebration
+          session={celebration.session}
+          log={celebration.log}
+          xpEarned={celebration.xpEarned}
+          totalXP={totalXP}
+          onDismiss={() => setCelebration(null)}
+          onShare={() => {
+            setCelebration(null)
+            if (shareSession) setShareSession(shareSession)
+          }}
+        />
       )}
 
       {/* Modals */}
