@@ -10,6 +10,7 @@ import { useProfile } from '@/hooks/useProfile'
 import { useSubscription } from '@/hooks/useSubscription'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import DailyQuests from '@/components/DailyQuests'
+import { useNotifications } from '@/hooks/useNotifications'
 import { getLevelForXP, getXPProgress, getSessionXP } from '@/lib/rpg'
 import { computeStreak } from '@/lib/streak'
 import { getSessionType, fmtKm } from '@/lib/sessionUtils'
@@ -67,22 +68,49 @@ function getCol(code: string | null | undefined) {
 // ── XP Bar ──────────────────────────────────────────────────────────────────
 
 function XPBar({ xp, streak }: { xp: number; streak: number }) {
-  const level = getLevelForXP(xp)
-  const pct   = Math.round(getXPProgress(xp) * 100)
+  const level  = getLevelForXP(xp)
+  const pct    = getXPProgress(xp)
+  const hour   = new Date().getHours()
+  const streakAtRisk = streak > 0 && hour >= 19
+
   return (
-    <div className="flex items-center gap-3 px-4 py-2">
-      {streak > 0 && (
-        <div className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black flex-shrink-0"
-          style={{ background: 'rgba(255,77,109,0.15)', color: '#ff4d6d', border: '1px solid rgba(255,77,109,0.25)' }}>
-          🔥 {streak}
+    <div className="flex items-center gap-2.5 px-4 py-2">
+      {/* Streak pill — glows when active, pulses red in evening */}
+      <button className="flex items-center gap-1 rounded-full px-2.5 py-1 flex-shrink-0 transition-all"
+        style={{
+          background: streak > 0
+            ? streakAtRisk ? 'rgba(255,61,110,0.2)' : 'rgba(255,184,0,0.15)'
+            : 'var(--color-surface-2)',
+          border: streak > 0
+            ? `1px solid ${streakAtRisk ? 'rgba(255,61,110,0.5)' : 'rgba(255,184,0,0.4)'}`
+            : '1px solid var(--color-border)',
+          boxShadow: streak > 0 && !streakAtRisk ? '0 0 8px rgba(255,184,0,0.3)' : 'none',
+          animation: streakAtRisk ? 'pulse 1.5s ease-in-out infinite' : 'none',
+        }}>
+        <span className="text-sm leading-none">{streak > 0 ? '🔥' : '💤'}</span>
+        <span className="text-[11px] font-black leading-none"
+          style={{ color: streak > 0 ? (streakAtRisk ? '#ff3d6e' : '#ffb800') : 'var(--color-text-tertiary)' }}>
+          {streak > 0 ? streak : '0'}
+        </span>
+      </button>
+
+      {/* XP progress bar */}
+      <div className="flex-1 relative">
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-2)' }}>
+          <div className="h-full rounded-full transition-all duration-700"
+            style={{
+              width: `${pct * 100}%`,
+              background: 'linear-gradient(90deg,#ffb800,#ff8c00)',
+              boxShadow: pct > 0 ? '0 0 6px rgba(255,184,0,0.5)' : 'none',
+            }} />
         </div>
-      )}
-      <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-2)' }}>
-        <div className="h-full rounded-full transition-all duration-700"
-          style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#f0a500,#eab308)' }} />
       </div>
-      <div className="text-xs font-black flex-shrink-0" style={{ color: '#f0a500' }}>
-        Lv {level.level}
+
+      {/* Level badge */}
+      <div className="flex items-center gap-1 flex-shrink-0 rounded-full px-2.5 py-1"
+        style={{ background: 'rgba(255,184,0,0.12)', border: '1px solid rgba(255,184,0,0.3)' }}>
+        <span className="text-[10px] font-black" style={{ color: '#ffb800' }}>Lv</span>
+        <span className="text-sm font-black leading-none" style={{ color: '#ffb800' }}>{level.level}</span>
       </div>
     </div>
   )
@@ -248,20 +276,34 @@ function HeroNewUser() {
 function HeroStreakAtRisk({ streak }: { streak: number }) {
   return (
     <Link href="/train" className="block rounded-2xl overflow-hidden active:scale-[0.99] transition-all"
-      style={{ background: 'rgba(240,165,0,0.10)', border: '1.5px solid rgba(240,165,0,0.4)', boxShadow: '0 4px 24px rgba(240,165,0,0.15)' }}>
-      <div className="p-4">
-        <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: '#f0a500' }}>
-          ⚠️ Streak at risk
-        </p>
-        <p className="text-2xl font-black text-white mb-1" style={{ letterSpacing: '-0.02em' }}>
-          {streak} days. Don&apos;t stop now.
-        </p>
-        <p className="text-xs mb-3" style={{ color: 'rgba(255,255,255,0.5)' }}>
-          Log today&apos;s session before midnight to keep your streak alive.
-        </p>
-        <div className="rounded-xl px-4 py-2.5 text-center font-black text-white text-sm"
-          style={{ background: '#f0a500' }}>
-          Log session → +25 XP
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,184,0,0.12), rgba(255,61,110,0.08))',
+        border: '1.5px solid rgba(255,184,0,0.45)',
+        boxShadow: '0 4px 24px rgba(255,184,0,0.2)',
+      }}>
+      <div className="p-4 flex items-start gap-4">
+        {/* Splity worried face */}
+        <div className="flex-shrink-0 flex flex-col items-center gap-1">
+          <div className="w-14 h-14 rounded-full flex items-center justify-center relative"
+            style={{ background: 'rgba(255,184,0,0.15)', border: '2px solid rgba(255,184,0,0.4)' }}>
+            <span className="text-2xl" style={{ animation: 'pulse 1s ease-in-out infinite' }}>😰</span>
+          </div>
+          <p className="text-[9px] font-black" style={{ color: 'rgba(255,184,0,0.6)' }}>Splity</p>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: '#ffb800' }}>
+            🔥 Streak at risk
+          </p>
+          <p className="text-xl font-black text-white mb-1" style={{ letterSpacing: '-0.02em' }}>
+            {streak} days — don&apos;t stop now!
+          </p>
+          <p className="text-xs mb-3" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            Log before midnight or your streak resets to zero.
+          </p>
+          <div className="rounded-xl px-4 py-2.5 text-center font-black text-sm"
+            style={{ background: '#ffb800', color: '#0a0e1a' }}>
+            Log today → save the streak 🔥
+          </div>
         </div>
       </div>
     </Link>
@@ -369,6 +411,7 @@ export default function HomeClient() {
   const { squad, role }         = useSquad()
   const { coach, hasCoach }     = useMyCoach()
   const { isPro }               = useSubscription()
+  const { notifications, markRead } = useNotifications()
 
   const streak    = useMemo(() =>
     computeStreak(allLogs.map((l: TrainingLog) => ({ logged_at: l.created_at, done: l.done }))).current,
@@ -456,6 +499,30 @@ export default function HomeClient() {
 
         {/* ── Stats strip (if has plan) ── */}
         {plan && <StatsStrip weeklyKm={weeklyKm} streak={streak} />}
+
+        {/* ── Notification strip ── */}
+        {notifications.length > 0 && (
+          <div className="space-y-2">
+            {notifications.map(n => (
+              <div key={n.id} className="flex items-start gap-3 rounded-2xl px-4 py-3"
+                style={{
+                  background: n.type === 'squad_nudge' ? 'rgba(127,255,77,0.08)' : 'rgba(77,138,255,0.08)',
+                  border: `1px solid ${n.type === 'squad_nudge' ? 'rgba(127,255,77,0.25)' : 'rgba(77,138,255,0.2)'}`,
+                }}>
+                <span className="text-xl flex-shrink-0">
+                  {n.type === 'squad_nudge' ? '👋' : '🔔'}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-black" style={{ color: 'var(--color-text-primary)' }}>{n.title}</p>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>{n.body}</p>
+                </div>
+                <button onClick={() => markRead(n.id)}
+                  className="flex-shrink-0 text-sm" style={{ color: 'var(--color-text-tertiary)' }}
+                  aria-label="Dismiss">×</button>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* ── Daily quests ── */}
         {plan && (

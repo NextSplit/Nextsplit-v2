@@ -15,6 +15,15 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
     ],
   },
+  async redirects() {
+    return [
+      { source: '/squad/', destination: '/squad', permanent: true },
+      { source: '/explore/', destination: '/explore', permanent: true },
+      { source: '/you/', destination: '/you', permanent: true },
+      { source: '/home/', destination: '/home', permanent: true },
+      { source: '/train/', destination: '/train', permanent: true },
+    ]
+  },
   experimental: {
     optimizePackageImports: ['@phosphor-icons/react'],
   },

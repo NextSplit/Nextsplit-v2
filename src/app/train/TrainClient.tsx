@@ -157,7 +157,7 @@ export default function TrainClient() {
   const { success: toastSuccess, error: toastError } = useToast()
 
   // Modal state
-  const [modalSession, setModalSession]   = useState<{ session: PlanSession; dayI: number; sessI: number; prefillDurationSecs?: number } | null>(null)
+  const [modalSession, setModalSession]   = useState<{ session: PlanSession; dayI: number; sessI: number; weekN?: number; prefillDurationSecs?: number } | null>(null)
   const [focusSession, setFocusSession]   = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
   const [shareSession, setShareSession]   = useState<{ session: PlanSession; log: TrainingLog } | null>(null)
   const [showAdHocModal, setShowAdHocModal] = useState(false)
@@ -229,8 +229,21 @@ export default function TrainClient() {
         setUndoInfo({ logId: log.id, timer })
         if (log.done && session) {
           setShareSession({ session, log })
-          // Show celebration instead of just undo toast
           setCelebration({ session, log, xpEarned: xp })
+          // Fire community progress + squad feed (non-blocking)
+          fetch('/api/community/progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              km: params.km ?? 0,
+              done: true,
+              session_type: session.c ?? 'easy',
+              session_name: session.n ?? 'Session',
+              duration_secs: params.duration_secs,
+              pace: params.pace,
+              effort: params.effort,
+            }),
+          }).catch(() => {}) // non-blocking, silent fail
         }
       }
     } catch { toastError('Failed to log session') }
@@ -530,7 +543,7 @@ export default function TrainClient() {
                     <div key={`${di}-${si}`} className="flex items-center gap-3">
                       <p className="text-xs font-black w-8 uppercase" style={{ color: 'var(--color-text-tertiary)' }}>{si === 0 ? day.d : ''}</p>
                       <button
-                        onClick={() => { setTappedWeek(null); setModalSession({ session: sess, dayI: di, sessI: si }) }}
+                        onClick={() => { setTappedWeek(null); setModalSession({ session: sess, dayI: di, sessI: si, weekN: tappedWeek?.n }) }}
                         className="flex-1 rounded-xl px-3 py-2.5 text-left"
                         style={{ background: done ? 'rgba(0,230,118,0.08)' : `${col}10`, border: `1px solid ${done ? '#00e676' : col}30` }}>
                         <div className="flex items-center gap-2">
@@ -592,7 +605,10 @@ export default function TrainClient() {
           setShowAdHocModal={setShowAdHocModal}
           setCeremonyDismissed={setCeremonyDismissed}
           handleUndo={handleUndo}
-          handleLogSession={handleLogSession}
+          handleLogSession={(params) => handleLogSession({
+              ...params,
+              week_n: modalSession?.weekN ?? weekN,
+            })}
           toastSuccess={toastSuccess}
           runnerColour={(profile as { runner_colour?: string })?.runner_colour ?? '#06b6d4'}
         />
