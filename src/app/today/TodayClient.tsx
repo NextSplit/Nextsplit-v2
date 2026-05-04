@@ -579,27 +579,7 @@ export default function TodayClient() {
                   {/* Strava sync button — running sessions only, not yet logged */}
                   {isRun && !log?.done && isToday && (
                     <div className="flex justify-end mt-1.5 pr-1">
-                      <StravaSyncButton
-                        session={session}
-                        weekN={weekN}
-                        dayIndex={planDayIndex}
-                        sessionIndex={sessI}
-                        planId={plan.id}
-                        onImported={async (effort, km, pace, duration_secs, hr) => {
-                          await handleLogSession({
-                            week_n: weekN,
-                            day_i: planDayIndex,
-                            session_i: sessI,
-                            done: true,
-                            effort,
-                            km,
-                            duration_secs,
-                            hr: hr ?? undefined,
-                            pace: pace ?? undefined,
-                            notes: `Imported from Strava`,
-                          })
-                        }}
-                      />
+                      <StravaSyncButton onImported={() => { /* refresh */ }} />
                     </div>
                   )}
                 </div>

@@ -16,6 +16,7 @@ import { useMealPlan } from '@/hooks/useMealPlan'
 import { signout } from '@/app/auth/actions'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import FoundingCountdown from '@/components/FoundingCountdown'
+import TrainingZonesChart from '@/components/TrainingZonesChart'
 import ElitePreview from '@/components/ElitePreview'
 import { useToast } from '@/components/Toast'
 import {

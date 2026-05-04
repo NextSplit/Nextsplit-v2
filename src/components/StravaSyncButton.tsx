@@ -1,339 +1,232 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import type { PlanSession } from '@/types/database'
+import { useState, useCallback } from 'react'
+import { useActivePlan } from '@/hooks/useActivePlan'
+import type { PlanWeek, PlanSession } from '@/types/database'
 
 interface StravaActivity {
-  id: number
-  name: string
-  type: string
-  distance_km: number
+  id:               number
+  name:             string
+  type:             string
+  distance_km:      number
   moving_time_secs: number
-  elapsed_time_secs: number
-  avg_pace_secs: number | null
-  avg_hr: number | null
-  date: string
-  is_today: boolean
-  splits: { km: number; pace_secs: number | null; hr: number | null }[]
+  avg_pace_secs:    number | null
+  avg_hr:           number | null
+  date:             string
+  is_today:         boolean
+  strava_id?:       number
 }
-
-function fmtTime(secs: number): string {
-  const h = Math.floor(secs / 3600)
-  const m = Math.floor((secs % 3600) / 60)
-  const s = secs % 60
-  if (h > 0) return `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`
-  return `${m}:${s.toString().padStart(2,'0')}`
-}
-
-function fmtPace(secs: number): string {
-  const m = Math.floor(secs / 60)
-  const s = secs % 60
-  return `${m}:${s.toString().padStart(2,'0')}/km`
-}
-
-function matchScore(activity: StravaActivity, session: PlanSession): number {
-  if (!session.km || session.km === 0) return 0
-  const ratio = activity.distance_km / session.km
-  // Within 15% = good match
-  if (ratio >= 0.85 && ratio <= 1.15) return 90
-  if (ratio >= 0.75 && ratio <= 1.25) return 60
-  return 20
-}
-
-function inferEffort(activity: StravaActivity, session: PlanSession): number {
-  // Use HR if available
-  if (activity.avg_hr) {
-    if (activity.avg_hr < 135) return 4
-    if (activity.avg_hr < 150) return 6
-    if (activity.avg_hr < 165) return 7
-    if (activity.avg_hr < 175) return 8
-    return 9
-  }
-  // Use pace vs planned
-  if (activity.avg_pace_secs && session.km) {
-    const type = session.c
-    if (type === 'run-easy' && activity.avg_pace_secs < 330) return 7
-    if (type === 'run-int' && activity.avg_pace_secs < 270) return 8
-    return 6
-  }
-  return 7
-}
-
-// ─── Import Modal ─────────────────────────────────────────────────────────────
-
-interface ImportModalProps {
-  activity: StravaActivity
-  session: PlanSession | null
-  onConfirm: (effort: number, km: number, pace: string | null, duration_secs: number, hr: number | null) => Promise<void>
-  onCancel: () => void
-}
-
-function ImportModal({ activity, session, onConfirm, onCancel }: ImportModalProps) {
-  const suggestedEffort = session ? inferEffort(activity, session) : 7
-  const [effort, setEffort] = useState(suggestedEffort)
-  const [saving, setSaving] = useState(false)
-
-  const pace = activity.avg_pace_secs ? fmtPace(activity.avg_pace_secs) : null
-  const score = session ? matchScore(activity, session) : 0
-
-  async function handleConfirm() {
-    setSaving(true)
-    try {
-      await onConfirm(effort, activity.distance_km, pace, activity.moving_time_secs, activity.avg_hr)
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-end">
-      <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl p-6 shadow-2xl">
-        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
-
-        {/* Strava badge */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4">
-              <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
-            </svg>
-          </div>
-          <span className="text-sm font-bold text-gray-900">Import from Strava</span>
-          {score >= 90 && (
-            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full ml-auto">
-              ✓ Good match
-            </span>
-          )}
-        </div>
-
-        {/* Activity summary */}
-        <div className="bg-orange-50 rounded-2xl p-4 mb-4">
-          <div className="text-sm font-bold text-gray-900 mb-2">{activity.name}</div>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="text-center">
-              <div className="text-lg font-black text-orange-600">{activity.distance_km}</div>
-              <div className="text-[10px] text-[var(--color-text-tertiary)]">km</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-black text-gray-900">{fmtTime(activity.moving_time_secs)}</div>
-              <div className="text-[10px] text-[var(--color-text-tertiary)]">time</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-black text-gray-900">{pace ?? '—'}</div>
-              <div className="text-[10px] text-[var(--color-text-tertiary)]">avg pace</div>
-            </div>
-          </div>
-          {activity.avg_hr && (
-            <div className="text-center mt-2">
-              <span className="text-xs text-[var(--color-text-tertiary)]">❤️ {Math.round(activity.avg_hr)} bpm avg</span>
-            </div>
-          )}
-        </div>
-
-        {/* Splits */}
-        {activity.splits.length > 0 && (
-          <div className="mb-4">
-            <div className="text-xs font-semibold text-[var(--color-text-tertiary)] mb-2">Km splits</div>
-            <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
-              {activity.splits.slice(0, 12).map((split, i) => (
-                <div key={i} className="flex-shrink-0 text-center bg-gray-50 rounded-lg px-2 py-1.5 min-w-[44px]">
-                  <div className="text-[9px] text-[var(--color-text-tertiary)]">{i + 1}km</div>
-                  <div className="text-[11px] font-bold text-gray-900">
-                    {split.pace_secs ? fmtPace(split.pace_secs).replace('/km','') : '—'}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Effort adjust */}
-        <div className="mb-5">
-          <div className="flex justify-between items-center mb-2">
-            <label className="text-sm font-semibold text-gray-700">Effort</label>
-            <span className="text-xl font-bold text-[var(--ns-ember)]">{effort}<span className="text-sm text-[var(--color-text-tertiary)]">/10</span></span>
-          </div>
-          <input
-            type="range" min={1} max={10} value={effort}
-            onChange={e => setEffort(Number(e.target.value))}
-            className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[var(--ns-cyan)]"
-          />
-          <p className="text-[10px] text-[var(--color-text-tertiary)] mt-1">
-            {activity.avg_hr ? `Estimated from HR (${Math.round(activity.avg_hr)}bpm)` : 'Adjust if needed'}
-          </p>
-        </div>
-
-        <div className="flex gap-3">
-          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-secondary)]">
-            Cancel
-          </button>
-          <button
-            onClick={handleConfirm}
-            disabled={saving}
-            className="flex-1 py-3 rounded-xl bg-orange-500 text-white text-sm font-semibold disabled:opacity-50"
-          >
-            {saving ? 'Saving…' : 'Import ✓'}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ─── Activity picker (if multiple recent) ─────────────────────────────────────
-
-interface ActivityPickerProps {
-  activities: StravaActivity[]
-  session: PlanSession | null
-  onSelect: (a: StravaActivity) => void
-  onCancel: () => void
-}
-
-function ActivityPicker({ activities, session, onSelect, onCancel }: ActivityPickerProps) {
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-end">
-      <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl p-6">
-        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
-        <h2 className="text-base font-bold text-gray-900 mb-4">Recent Strava activities</h2>
-        <div className="space-y-2 max-h-80 overflow-y-auto">
-          {activities.map(a => {
-            const score = session ? matchScore(a, session) : 0
-            return (
-              <button
-                key={a.id}
-                onClick={() => onSelect(a)}
-                className="w-full flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 text-left"
-              >
-                <div>
-                  <div className="text-sm font-semibold text-gray-900">{a.name}</div>
-                  <div className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                    {a.distance_km}km · {fmtTime(a.moving_time_secs)} · {a.date}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  {a.is_today && (
-                    <span className="text-[10px] font-bold text-[var(--ns-ember)] bg-[var(--ns-ember-light)] px-2 py-0.5 rounded-full">Today</span>
-                  )}
-                  {score >= 90 && (
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Match</span>
-                  )}
-                  <span className="text-gray-300">›</span>
-                </div>
-              </button>
-            )
-          })}
-        </div>
-        <button onClick={onCancel} className="w-full mt-4 py-3 text-sm text-[var(--color-text-tertiary)] font-medium">
-          Cancel
-        </button>
-      </div>
-    </div>
-  )
-}
-
-// ─── Main Strava Sync Button ──────────────────────────────────────────────────
 
 interface Props {
-  session: PlanSession | null
-  weekN: number
-  dayIndex: number
-  sessionIndex: number
-  planId: string
-  onImported: (effort: number, km: number, pace: string | null, duration_secs: number, hr: number | null) => Promise<void>
+  onImported?: () => void
 }
 
-export default function StravaSyncButton({ session, onImported }: Props) {
-  const [state, setState] = useState<'idle' | 'loading' | 'picking' | 'confirming' | 'error'>('idle')
-  const [activities, setActivities] = useState<StravaActivity[]>([])
-  const [selected, setSelected] = useState<StravaActivity | null>(null)
-  const [errorMsg, setErrorMsg] = useState('')
-  const [connected, setConnected] = useState(false)
+function fmtPace(secs: number | null): string {
+  if (!secs) return ''
+  const m = Math.floor(secs / 60)
+  const s = secs % 60
+  return `${m}:${String(s).padStart(2, '0')}/km`
+}
 
-  useEffect(() => {
+// Try to match a Strava activity to today's plan session
+function matchToPlan(
+  activity: StravaActivity,
+  plan: { id: string; current_week: number; weeks_data: unknown } | null
+): { week_n: number; day_i: number; session_i: number; plan_id: string } | null {
+  if (!plan?.weeks_data || activity.type !== 'Run') return null
+  const weeks = plan.weeks_data as PlanWeek[]
+  const cw = weeks.find(w => w.n === plan.current_week)
+  if (!cw) return null
+
+  // Find the day matching the activity date
+  const actDate = activity.date
+  for (let di = 0; di < cw.days.length; di++) {
+    const day = cw.days[di]
+    if (!day.dt || !day.dt.startsWith(actDate.slice(0, 10))) continue
+    const sessions = (day.sessions ?? []) as PlanSession[]
+    for (let si = 0; si < sessions.length; si++) {
+      const sess = sessions[si]
+      if (!sess.c || sess.c === 'rest') continue
+      // Match by km proximity (within 20%)
+      const diff = Math.abs((sess.km ?? 0) - activity.distance_km)
+      if (diff < (sess.km ?? 5) * 0.3) {
+        return { week_n: plan.current_week, day_i: di, session_i: si, plan_id: plan.id }
+      }
+    }
+  }
+  return null
+}
+
+export default function StravaSyncButton({ onImported }: Props) {
+  const [loading, setLoading]       = useState(false)
+  const [activities, setActivities] = useState<StravaActivity[] | null>(null)
+  const [importing, setImporting]   = useState<number | null>(null)
+  const [imported, setImported]     = useState<Set<number>>(new Set())
+  const [error, setError]           = useState<string | null>(null)
+  const { plan }                    = useActivePlan()
+
+  const fetchActivities = useCallback(async () => {
+    setLoading(true)
+    setError(null)
     try {
-      setConnected(localStorage.getItem('nextsplit_strava_connected') === 'true')
-    } catch {}
-  }, [])
-
-  // Don't render at all if not connected
-  if (!connected) return null
-
-  async function handleSync() {
-    setState('loading')
-    setErrorMsg('')
-    try {
-      const res = await fetch('/api/strava/sync')
+      const res  = await fetch('/api/strava/sync')
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Sync failed')
-      if (!data.activities?.length) {
-        setErrorMsg('No recent activities found')
-        setState('error')
+      if (!res.ok) {
+        if (res.status === 404) setError('Connect Strava first in Account settings')
+        else setError(data.error ?? 'Failed to fetch')
         return
       }
+      setActivities(data.activities ?? [])
+    } catch {
+      setError('Failed to connect to Strava')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
-      // Auto-select today's activity if there is one, otherwise show picker
-      const todayActivity = data.activities.find((a: StravaActivity) => a.is_today)
-      if (todayActivity) {
-        setSelected(todayActivity)
-        setState('confirming')
-      } else {
-        setActivities(data.activities)
-        setState('picking')
-      }
+  async function importActivity(activity: StravaActivity) {
+    setImporting(activity.id)
+    try {
+      const match = matchToPlan(activity, plan as Parameters<typeof matchToPlan>[1])
+      const res = await fetch('/api/strava/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          strava_id:     activity.id,
+          km:            activity.distance_km,
+          duration_secs: activity.moving_time_secs,
+          avg_pace_secs: activity.avg_pace_secs,
+          avg_hr:        activity.avg_hr,
+          name:          activity.name,
+          activity_date: activity.date,
+          ...match,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok && res.status !== 409) throw new Error(data.error)
+      setImported(prev => new Set([...prev, activity.id]))
+      onImported?.()
     } catch (e) {
-      setErrorMsg(e instanceof Error ? e.message : 'Sync failed')
-      setState('error')
+      setError(e instanceof Error ? e.message : 'Import failed')
+    } finally {
+      setImporting(null)
     }
   }
 
-  function handleSelect(a: StravaActivity) {
-    setSelected(a)
-    setState('confirming')
+  // Not yet loaded — show sync button
+  if (!activities) {
+    return (
+      <div>
+        {error && (
+          <p className="text-xs mb-2 px-3 py-1.5 rounded-xl"
+            style={{ color: '#ff3d6e', background: 'rgba(255,61,110,0.1)', border: '1px solid rgba(255,61,110,0.3)' }}>
+            {error}
+          </p>
+        )}
+        <button
+          onClick={fetchActivities}
+          disabled={loading}
+          className="w-full py-3.5 rounded-2xl font-black text-sm flex items-center justify-center gap-2"
+          style={{ background: '#fc4c02', color: 'white', boxShadow: '0 4px 16px rgba(252,76,2,0.4)' }}>
+          {loading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+              Fetching…
+            </>
+          ) : (
+            <>
+              <svg width={18} height={18} viewBox="0 0 24 24" fill="white">
+                <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+              </svg>
+              Sync from Strava
+            </>
+          )}
+        </button>
+      </div>
+    )
   }
 
-  async function handleConfirm(effort: number, km: number, pace: string | null, duration_secs: number, hr: number | null) {
-    await onImported(effort, km, pace, duration_secs, hr)
-    setState('idle')
-    setSelected(null)
-  }
-
+  // Activities loaded
   return (
-    <>
-      <button
-        onClick={handleSync}
-        disabled={state === 'loading'}
-        className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-full text-xs font-semibold text-orange-600 disabled:opacity-50"
-      >
-        <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-          <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
-        </svg>
-        {state === 'loading' ? 'Syncing…' : 'Strava'}
-      </button>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--color-text-tertiary)' }}>
+          Recent Strava activities
+        </p>
+        <button onClick={() => setActivities(null)}
+          className="text-xs font-bold" style={{ color: 'var(--color-text-tertiary)' }}>
+          ← Back
+        </button>
+      </div>
 
-      {state === 'error' && (
-        <div className="fixed bottom-28 left-4 right-4 max-w-lg mx-auto z-50">
-          <div className="bg-red-900 text-white rounded-2xl px-4 py-3 text-sm text-center">
-            {errorMsg}
+      {activities.length === 0 && (
+        <p className="text-xs text-center py-4" style={{ color: 'var(--color-text-tertiary)' }}>
+          No recent activities found
+        </p>
+      )}
+
+      {activities.map(act => {
+        const isImported = imported.has(act.id)
+        const isImporting = importing === act.id
+        const match = matchToPlan(act, plan as Parameters<typeof matchToPlan>[1])
+
+        return (
+          <div key={act.id} className="rounded-2xl overflow-hidden"
+            style={{ background: 'var(--color-surface)', border: '2px solid var(--color-border-2)' }}>
+            <div className="px-4 py-3 flex items-center gap-3">
+              {/* Activity icon */}
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: act.is_today ? 'rgba(255,61,110,0.15)' : 'rgba(252,76,2,0.12)',
+                         border: `2px solid ${act.is_today ? 'rgba(255,61,110,0.4)' : 'rgba(252,76,2,0.3)'}` }}>
+                <span className="text-lg">{act.type === 'Run' ? '🏃' : '🚴'}</span>
+              </div>
+
+              {/* Activity info */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-black truncate" style={{ color: 'var(--color-text-primary)' }}>
+                  {act.name}
+                  {act.is_today && (
+                    <span className="ml-2 text-[9px] font-black px-1.5 py-0.5 rounded-full"
+                      style={{ background: 'rgba(255,61,110,0.2)', color: '#ff3d6e' }}>TODAY</span>
+                  )}
+                </p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs font-bold" style={{ color: '#4d8aff' }}>
+                    {act.distance_km}km
+                  </span>
+                  {act.avg_pace_secs && (
+                    <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
+                      · {fmtPace(act.avg_pace_secs)}
+                    </span>
+                  )}
+                  {act.avg_hr && (
+                    <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
+                      · ❤️ {act.avg_hr}bpm
+                    </span>
+                  )}
+                </div>
+                {match && !isImported && (
+                  <p className="text-[10px] mt-0.5" style={{ color: '#00e676' }}>
+                    ✓ Matches today&apos;s plan session
+                  </p>
+                )}
+              </div>
+
+              {/* Import button */}
+              <button
+                onClick={() => importActivity(act)}
+                disabled={isImported || isImporting}
+                className="flex-shrink-0 px-3 py-2 rounded-xl font-black text-xs"
+                style={isImported
+                  ? { background: 'rgba(0,230,118,0.12)', color: '#00e676', border: '2px solid rgba(0,230,118,0.3)' }
+                  : { background: '#fc4c02', color: 'white', boxShadow: '0 2px 8px rgba(252,76,2,0.3)',
+                      opacity: isImporting ? 0.7 : 1 }}>
+                {isImported ? '✓ Done' : isImporting ? '…' : 'Import'}
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-
-      {state === 'picking' && (
-        <ActivityPicker
-          activities={activities}
-          session={session}
-          onSelect={handleSelect}
-          onCancel={() => setState('idle')}
-        />
-      )}
-
-      {state === 'confirming' && selected && (
-        <ImportModal
-          activity={selected}
-          session={session}
-          onConfirm={handleConfirm}
-          onCancel={() => setState('idle')}
-        />
-      )}
-    </>
+        )
+      })}
+    </div>
   )
 }

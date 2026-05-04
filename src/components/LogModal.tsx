@@ -1,4 +1,5 @@
 'use client'
+import InjuryFlag from '@/components/InjuryFlag'
 
 import { useState, useEffect } from 'react'
 import { getSessionType, getLogModalMode, parseDet } from '@/lib/sessionUtils'
