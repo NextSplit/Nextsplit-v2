@@ -158,7 +158,7 @@ function LogModal({
 
           {/* Expanded details — same as standard but collapsed by default */}
           {showExtra && (
-<div className="px-6 pt-4 space-y-4 border-t border-gray-50" style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))" }}>
+<div className="px-6 pt-4 space-y-4 border-t" style={{ borderColor: "var(--color-border)", paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
               <KmPicker km={km} setKm={setKm} planned={session.km} />
               <DurationPicker mins={durationMins} setMins={setDurationMins} />
               <PaceInput paceInput={paceInput} setPaceInput={setPaceInput} autoPace={autoPace} onBlur={handlePaceBlur} showKm={session.km > 0} />
@@ -275,7 +275,7 @@ function LogModal({
             )}
           </div>
 
-  <div className="px-6 pt-3 border-t border-gray-50" style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))" }}>
+  <div className="px-6 pt-3 border-t" style={{ borderColor: "var(--color-border)", paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
             <DiscardWarning show={showDiscardWarning} onKeep={() => setShowDiscardWarning(false)} onDiscard={onClose} />
             <div className="flex gap-3">
               <button onClick={handleBackdropClick}
@@ -370,7 +370,7 @@ function LogModal({
           )}
         </div>
 
-<div className="px-6 pt-3 border-t border-gray-50" style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))" }}>
+<div className="px-6 pt-3 border-t" style={{ borderColor: "var(--color-border)", paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
           <DiscardWarning show={showDiscardWarning} onKeep={() => setShowDiscardWarning(false)} onDiscard={onClose} />
           <div className="flex gap-3">
             <button onClick={handleBackdropClick}
