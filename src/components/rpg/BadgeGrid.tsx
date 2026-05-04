@@ -41,7 +41,7 @@ function BadgeGrid({ unlockedIds, stats }: { unlockedIds: Set<string>; stats: RP
       <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-hide">
         {cats.map(c => (
           <button key={c} onClick={() => setFilter(c)}
-            className={`flex-shrink-0 px-3 py-1 rounded-full text-[10px] font-bold capitalize transition-all ${filter === c ? 'bg-[var(--ns-ember)] text-white' : 'bg-gray-100 text-gray-500'}`}>
+            className={`flex-shrink-0 px-3 py-1 rounded-full text-[10px] font-bold capitalize transition-all ${filter === c ? 'bg-[var(--ns-ember)] text-white' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'}`}>
             {c === 'all' ? `All (${unlockedIds.size}/${RPG_BADGES.length})` : c}
           </button>
         ))}
@@ -58,10 +58,10 @@ function BadgeGrid({ unlockedIds, stats }: { unlockedIds: Set<string>; stats: RP
               className={`rounded-xl border-2 p-2 text-center transition-all relative ${
                 unlocked ? `${rarity.border} bg-white ${rarity.glow}` :
                 proximity > 0.5 ? 'border-amber-200 bg-amber-50/50' :
-                'border-gray-100 bg-gray-50 opacity-40 grayscale'
+                'border-[var(--color-border)] bg-gray-50 opacity-40 grayscale'
               }`}>
               <div className={`text-xl mb-0.5 ${!unlocked && proximity === 0 ? 'grayscale' : ''}`}>{b.emoji}</div>
-              <div className={`text-[8px] font-bold leading-tight ${unlocked ? 'text-gray-800' : proximity > 0.5 ? 'text-amber-800' : 'text-gray-400'}`}>
+              <div className={`text-[8px] font-bold leading-tight ${unlocked ? 'text-gray-800' : proximity > 0.5 ? 'text-amber-800' : 'text-[var(--color-text-tertiary)]'}`}>
                 {b.name}
               </div>
               {unlocked && (
@@ -70,7 +70,7 @@ function BadgeGrid({ unlockedIds, stats }: { unlockedIds: Set<string>; stats: RP
                 </div>
               )}
               {showProgress && proximity > 0.2 && (
-                <div className="mt-1 h-0.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="mt-1 h-0.5 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
                   <div className="h-full bg-amber-400 rounded-full"
                     style={{ width: `${Math.round(proximity * 100)}%` }} />
                 </div>

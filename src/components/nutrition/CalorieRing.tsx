@@ -20,11 +20,11 @@ function CalorieRing({ actual, target }: { actual: number; target: number }) {
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-sm font-black text-gray-900">{target > 0 ? Math.round(actual) : '—'}</span>
-          <span className="text-[8px] text-gray-400">kcal</span>
+          <span className="text-[8px] text-[var(--color-text-tertiary)]">kcal</span>
         </div>
       </div>
       {target > 0 && (
-        <span className="text-[9px] text-gray-400 mt-0.5">of {target}</span>
+        <span className="text-[9px] text-[var(--color-text-tertiary)] mt-0.5">of {target}</span>
       )}
     </div>
   )

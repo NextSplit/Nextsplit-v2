@@ -21,9 +21,9 @@ function BadgeToast({ badge, onDismiss }: { badge: RPGBadge; onDismiss: () => vo
       <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border ${rarity.border} bg-white max-w-xs`}>
         <div className="text-3xl">{badge.emoji}</div>
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-wide text-gray-400">Badge unlocked!</div>
+          <div className="text-[10px] font-bold uppercase tracking-wide text-[var(--color-text-tertiary)]">Badge unlocked!</div>
           <div className="text-sm font-black text-gray-900">{badge.name}</div>
-          <div className="text-[10px] text-gray-500">{badge.desc}</div>
+          <div className="text-[10px] text-[var(--color-text-tertiary)]">{badge.desc}</div>
         </div>
         <div className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full ${rarity.colour}`}>
           {rarity.label}

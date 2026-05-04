@@ -28,12 +28,12 @@ function TrainingZones({ logs }: { logs: Record<string, TrainingLog> }) {
   ]
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
       <div className="flex items-baseline justify-between mb-1">
         <div className="text-sm font-bold text-gray-900">Training Zones</div>
-        <div className="text-[10px] text-gray-400">estimated from your paces</div>
+        <div className="text-[10px] text-[var(--color-text-tertiary)]">estimated from your paces</div>
       </div>
-      <p className="text-xs text-gray-400 mb-4">Based on {thresholdPaces.length} logged runs · adjust to your HR zones if possible</p>
+      <p className="text-xs text-[var(--color-text-tertiary)] mb-4">Based on {thresholdPaces.length} logged runs · adjust to your HR zones if possible</p>
       <div className="space-y-2">
         {zones.map(z => (
           <div key={z.zone} className="flex items-center gap-3">
@@ -42,13 +42,13 @@ function TrainingZones({ logs }: { logs: Record<string, TrainingLog> }) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-xs font-semibold text-gray-800">{z.name}</div>
-              <div className="text-[10px] text-gray-400">{z.effort} max HR</div>
+              <div className="text-[10px] text-[var(--color-text-tertiary)]">{z.effort} max HR</div>
             </div>
             <div className="text-right flex-shrink-0">
               <div className="text-xs font-mono text-gray-700">
                 {secsToMMSS(z.paceMin)}–{secsToMMSS(z.paceMax)}
               </div>
-              <div className="text-[10px] text-gray-400">/km</div>
+              <div className="text-[10px] text-[var(--color-text-tertiary)]">/km</div>
             </div>
           </div>
         ))}

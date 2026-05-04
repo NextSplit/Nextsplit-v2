@@ -247,12 +247,12 @@ export default function PlanReviewClient() {
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Admin</span>
+            <span className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Admin</span>
             <span className="text-gray-300">·</span>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Phase A3</span>
+            <span className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Phase A3</span>
           </div>
           <h1 className="text-2xl font-black text-gray-900">AI Plan Quality Review</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-[var(--color-text-tertiary)] mt-1">
             Generate and inspect AI plans before alpha users see them.
             Run at least 10 before inviting any user. Plans reviewed: <strong>{reviewCount}</strong>
           </p>
@@ -262,8 +262,8 @@ export default function PlanReviewClient() {
 
           {/* Left — profile selector */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white rounded-2xl border border-gray-100 p-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Test profile</p>
+            <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
+              <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">Test profile</p>
 
               <div className="space-y-2 mb-4">
                 {PRESET_PROFILES.map((p, i) => (
@@ -272,7 +272,7 @@ export default function PlanReviewClient() {
                     className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${
                       !useCustom && selectedPreset === i
                         ? 'border-[var(--ns-ember)] bg-[var(--ns-cyan-light)] text-[var(--ns-ember)]'
-                        : 'border-gray-100 text-gray-600 hover:border-gray-200'
+                        : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-2)]'
                     }`}
                   >
                     {p.label}
@@ -283,7 +283,7 @@ export default function PlanReviewClient() {
               <button
                 onClick={() => setUseCustom(true)}
                 className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${
-                  useCustom ? 'border-[var(--ns-ember)] bg-[var(--ns-cyan-light)] text-[var(--ns-ember)]' : 'border-gray-100 text-gray-500'
+                  useCustom ? 'border-[var(--ns-ember)] bg-[var(--ns-cyan-light)] text-[var(--ns-ember)]' : 'border-[var(--color-border)] text-[var(--color-text-tertiary)]'
                 }`}
               >
                 Custom profile →
@@ -300,12 +300,12 @@ export default function PlanReviewClient() {
                     { label: 'Target time', key: 'targetTime', type: 'text' },
                   ].map(f => (
                     <div key={f.key}>
-                      <label className="text-[10px] text-gray-400 font-semibold">{f.label}</label>
+                      <label className="text-[10px] text-[var(--color-text-tertiary)] font-semibold">{f.label}</label>
                       <input
                         type={f.type}
                         value={customProfile[f.key as keyof PlanProfile]?.toString() ?? ''}
                         onChange={e => setCustomProfile(p => ({ ...p, [f.key]: f.type === 'number' ? Number(e.target.value) : e.target.value }))}
-                        className="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:border-[var(--ns-ember)]"
+                        className="w-full text-xs border border-[var(--color-border-2)] rounded-lg px-2 py-1.5 outline-none focus:border-[var(--ns-ember)]"
                       />
                     </div>
                   ))}
@@ -334,8 +334,8 @@ export default function PlanReviewClient() {
 
             {/* Quality checks */}
             {checks.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-4">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Quality checks</p>
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
+                <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">Quality checks</p>
                 <div className="space-y-2">
                   {checks.map((c, i) => (
                     <div key={i} className={`flex items-start gap-2 px-3 py-2 rounded-xl border text-xs ${checkColour(c.status)}`}>
@@ -349,7 +349,7 @@ export default function PlanReviewClient() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between text-xs text-gray-400">
+                <div className="mt-3 pt-3 border-t border-[var(--color-border)] flex items-center justify-between text-xs text-[var(--color-text-tertiary)]">
                   <span>Plan: <strong className="text-gray-700">{plan?.name}</strong></span>
                   <span>{plan?.totalWeeks} weeks · peak {plan?.peakWeeklyKm}km/wk</span>
                 </div>
@@ -358,21 +358,21 @@ export default function PlanReviewClient() {
 
             {/* Week-by-week plan */}
             {plan?.weeks && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-4">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
+                <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">
                   Week breakdown ({plan.weeks.length} weeks)
                 </p>
                 <div className="space-y-2">
                   {plan.weeks.map((week: PlanWeek, wi: number) => (
-                    <div key={wi} className="border border-gray-100 rounded-xl overflow-hidden">
+                    <div key={wi} className="border border-[var(--color-border)] rounded-xl overflow-hidden">
                       <button
                         onClick={() => setExpandedWeek(expandedWeek === wi ? null : wi)}
                         className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="text-xs font-black text-gray-500 w-8">W{week.n}</span>
+                          <span className="text-xs font-black text-[var(--color-text-tertiary)] w-8">W{week.n}</span>
                           <span className="text-xs font-bold text-gray-800">{week.title}</span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 font-semibold capitalize">
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)] font-semibold capitalize">
                             {week.phase}
                           </span>
                         </div>
@@ -380,19 +380,19 @@ export default function PlanReviewClient() {
                           <span className="text-xs font-bold" style={{ color: 'var(--ns-cyan)' }}>
                             {week.targetKm}km
                           </span>
-                          <span className="text-gray-400 text-sm">{expandedWeek === wi ? '−' : '+'}</span>
+                          <span className="text-[var(--color-text-tertiary)] text-sm">{expandedWeek === wi ? '−' : '+'}</span>
                         </div>
                       </button>
 
                       {expandedWeek === wi && (
-                        <div className="border-t border-gray-50 px-4 py-3 space-y-2">
+                        <div className="border-t border-[var(--color-border)] px-4 py-3 space-y-2">
                           {(week.days ?? []).map((day: PlanWeek, di: number) => (
                             <div key={di} className="flex gap-3">
-                              <span className="text-[10px] font-bold text-gray-400 w-8 flex-shrink-0 pt-1">{day.day}</span>
+                              <span className="text-[10px] font-bold text-[var(--color-text-tertiary)] w-8 flex-shrink-0 pt-1">{day.day}</span>
                               <div className="flex-1 space-y-1">
                                 {(day.sessions ?? []).map((s: PlanWeek, si: number) => (
                                   <div key={si} className={`text-xs px-2 py-1.5 rounded-lg ${
-                                    s.type === 'rest' || s.type === 'recovery' ? 'bg-gray-50 text-gray-400' :
+                                    s.type === 'rest' || s.type === 'recovery' ? 'bg-gray-50 text-[var(--color-text-tertiary)]' :
                                     s.type === 'long_run' ? 'bg-amber-50 text-amber-800' :
                                     s.type === 'interval' ? 'bg-red-50 text-red-800' :
                                     s.type === 'tempo' ? 'bg-orange-50 text-orange-800' :
@@ -416,17 +416,17 @@ export default function PlanReviewClient() {
             )}
 
             {!plan && !generating && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-12 text-center">
                 <p className="text-4xl mb-3">🧠</p>
                 <p className="text-sm font-bold text-gray-700 mb-1">Select a profile and generate</p>
-                <p className="text-xs text-gray-400">Review 10+ plans before inviting alpha users</p>
+                <p className="text-xs text-[var(--color-text-tertiary)]">Review 10+ plans before inviting alpha users</p>
               </div>
             )}
 
             {generating && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-                <div className="w-8 h-8 rounded-full border-2 border-gray-100 border-t-[var(--ns-cyan)] animate-spin mx-auto mb-3" />
-                <p className="text-sm text-gray-500">Generating plan…</p>
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-12 text-center">
+                <div className="w-8 h-8 rounded-full border-2 border-[var(--color-border)] border-t-[var(--ns-cyan)] animate-spin mx-auto mb-3" />
+                <p className="text-sm text-[var(--color-text-tertiary)]">Generating plan…</p>
               </div>
             )}
           </div>

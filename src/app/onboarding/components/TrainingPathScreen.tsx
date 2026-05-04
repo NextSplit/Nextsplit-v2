@@ -162,13 +162,13 @@ export function TrainingPathScreen() {
                       {/* Info toggle */}
                       <button
                         onClick={e => { e.stopPropagation(); setExpanded(isExpanded ? null : path.id) }}
-                        className="text-gray-300 hover:text-[var(--color-text-tertiary)] transition-colors text-sm font-bold w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
+                        className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-tertiary)] transition-colors text-sm font-bold w-6 h-6 rounded-full var(--color-surface-2) flex items-center justify-center"
                       >
                         {isExpanded ? '−' : 'i'}
                       </button>
                       {/* Select indicator */}
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        isSelected ? 'border-[var(--ns-ember)]' : 'border-gray-300'
+                        isSelected ? 'border-[var(--ns-ember)]' : 'border-[var(--color-border-2)]'
                       }`}
                         style={isSelected ? { background: 'var(--ns-ember)' } : {}}>
                         {isSelected && <span className="text-white text-xs font-bold">✓</span>}

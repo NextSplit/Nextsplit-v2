@@ -18,9 +18,9 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
 
   if (paceData.length < 2) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-5">
+      <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
         <div className="text-sm font-bold text-gray-900 mb-1">Pace Trend</div>
-        <p className="text-xs text-gray-400">Log runs with a pace to see your trend. Lower is faster.</p>
+        <p className="text-xs text-[var(--color-text-tertiary)]">Log runs with a pace to see your trend. Lower is faster.</p>
       </div>
     )
   }
@@ -43,7 +43,7 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
   const improving = latest.pace < first.pace
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
       <div className="flex items-baseline justify-between mb-3">
         <div className="text-sm font-bold text-gray-900">Pace Trend</div>
         <div className={`text-xs font-semibold ${improving ? 'text-[var(--ns-ember)]' : 'text-orange-500'}`}>
@@ -67,14 +67,14 @@ function PaceTrend({ logs }: { logs: Record<string, TrainingLog> }) {
         })}
       </svg>
 
-      <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+      <div className="flex justify-between text-[10px] text-[var(--color-text-tertiary)] mt-1">
         <span>Slow ({secsPerKmToDisplay(maxPace, units)})</span>
         <span>Fast ({secsPerKmToDisplay(minPace, units)})</span>
       </div>
 
-      <div className="mt-2 text-xs text-gray-500">
+      <div className="mt-2 text-xs text-[var(--color-text-tertiary)]">
         Latest: <span className="font-semibold text-gray-900">{secsPerKmToDisplay(latest.pace, units)}</span>
-        <span className="text-gray-400"> · {fmtDistance(latest.km, units)}</span>
+        <span className="text-[var(--color-text-tertiary)]"> · {fmtDistance(latest.km, units)}</span>
       </div>
     </div>
   )

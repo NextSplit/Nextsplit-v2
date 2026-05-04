@@ -117,26 +117,26 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl flex flex-col max-h-[88dvh] max-w-lg mx-auto">
         {/* Header */}
-        <div className="px-4 pt-4 pb-3 border-b border-gray-100 flex items-center gap-3 flex-shrink-0">
+        <div className="px-4 pt-4 pb-3 border-b border-[var(--color-border)] flex items-center gap-3 flex-shrink-0">
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'var(--ns-violet-light)' }}>🏃</div>
           <div className="flex-1">
             <p className="text-sm font-bold text-gray-900">{coachName}</p>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-[var(--color-text-tertiary)]">
               {isCoach ? 'Athlete' : 'Your coach'}
               {unreadVoice > 0 && <span className="ml-2 text-[10px] font-bold text-red-500">{unreadVoice} new voice message{unreadVoice > 1 ? 's' : ''}</span>}
             </p>
           </div>
-          <button aria-label="Close" onClick={onClose} className="text-gray-400 text-xl leading-none">×</button>
+          <button aria-label="Close" onClick={onClose} className="text-[var(--color-text-tertiary)] text-xl leading-none">×</button>
         </div>
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 min-h-0">
-          {loading && <div className="flex justify-center py-8"><div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-[var(--ns-violet)] animate-spin" /></div>}
+          {loading && <div className="flex justify-center py-8"><div className="w-5 h-5 rounded-full border-2 border-[var(--color-border-2)] border-t-[var(--ns-violet)] animate-spin" /></div>}
           {!loading && items.length === 0 && (
             <div className="text-center py-8">
               <p className="text-2xl mb-2">👋</p>
-              <p className="text-gray-400 text-sm">No messages yet.</p>
-              {isCoach && <p className="text-gray-400 text-xs mt-1">Tap the mic to leave a voice note</p>}
+              <p className="text-[var(--color-text-tertiary)] text-sm">No messages yet.</p>
+              {isCoach && <p className="text-[var(--color-text-tertiary)] text-xs mt-1">Tap the mic to leave a voice note</p>}
             </div>
           )}
           {items.map((item, i) => {
@@ -148,10 +148,10 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
                 {showDate && <div className="text-center text-[10px] text-gray-300 my-2">{fmtDate(item.created_at)}</div>}
                 {item.kind === 'text' ? (
                   <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm ${isMine ? 'text-white rounded-br-sm' : 'bg-gray-100 text-gray-800 rounded-bl-sm'}`}
+                    <div className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm ${isMine ? 'text-white rounded-br-sm' : 'bg-[var(--color-surface-2)] text-gray-800 rounded-bl-sm'}`}
                       style={isMine ? { background: 'var(--ns-ember)' } : {}}>
                       <p className="leading-relaxed">{item.body}</p>
-                      <p className={`text-[10px] mt-1 ${isMine ? 'text-white/60 text-right' : 'text-gray-400'}`}>
+                      <p className={`text-[10px] mt-1 ${isMine ? 'text-white/60 text-right' : 'text-[var(--color-text-tertiary)]'}`}>
                         {fmt(item.created_at)}{isMine && item.read_at && ' · Read'}
                       </p>
                     </div>
@@ -176,10 +176,10 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
         )}
 
         {/* Input */}
-        <div className="px-4 py-3 border-t border-gray-100 flex gap-2 items-end flex-shrink-0">
+        <div className="px-4 py-3 border-t border-[var(--color-border)] flex gap-2 items-end flex-shrink-0">
           {isCoach && !showVoice && (
             <button onClick={() => setShowVoice(true)}
-              className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 flex-shrink-0 active:scale-90 transition-all"
+              className="w-10 h-10 rounded-full border border-[var(--color-border-2)] flex items-center justify-center text-[var(--color-text-tertiary)] flex-shrink-0 active:scale-90 transition-all"
               title="Send voice message">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
@@ -189,7 +189,7 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
           <textarea value={body} onChange={e => setBody(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
             placeholder="Message…" rows={1}
-            className="flex-1 px-3 py-2.5 rounded-2xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] resize-none max-h-32 transition-colors" />
+            className="flex-1 px-3 py-2.5 rounded-2xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)] resize-none max-h-32 transition-colors" />
           <button onClick={send} disabled={!body.trim() || sending}
             className="w-10 h-10 text-white rounded-full flex items-center justify-center disabled:opacity-40 active:scale-90 transition-all shrink-0"
             style={{ background: 'var(--ns-ember)' }}>

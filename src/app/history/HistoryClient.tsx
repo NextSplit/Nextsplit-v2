@@ -25,7 +25,7 @@ function ReadOnlyDayRow({ day, dayIndex, weekN, logs }: {
   if (realSessions.length === 0) return null
 
   return (
-    <div className="px-4 py-2.5 border-b border-gray-50 last:border-0 flex items-center gap-3">
+    <div className="px-4 py-2.5 border-b border-[var(--color-border)] last:border-0 flex items-center gap-3">
       <div className="w-9 flex-shrink-0 text-center">
         <div className="text-xs font-bold text-gray-300">{day.d}</div>
       </div>
@@ -36,7 +36,7 @@ function ReadOnlyDayRow({ day, dayIndex, weekN, logs }: {
           const name = decodeHtml(s.n)
           return (
             <div key={i} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
-              isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'
+              isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'
             }`}>
               <span className={`w-1 h-1 rounded-full ${isDone ? 'bg-emerald-400' : 'bg-gray-300'}`} />
               {name.length > 20 ? name.slice(0, 20) + '…' : name}
@@ -75,22 +75,22 @@ function ReadOnlyWeekRow({ week, logs }: { week: PlanWeek; logs: Record<string, 
   )
 
   return (
-    <div className="rounded-xl border border-gray-100 overflow-hidden bg-white">
+    <div className="rounded-xl border border-[var(--color-border)] overflow-hidden bg-white">
       <button onClick={() => setOpen(o => !o)} className="w-full flex items-center gap-3 p-3 text-left">
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold ${
-          done === total && total > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'
+          done === total && total > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'
         }`}>
           {done === total && total > 0 ? '✓' : week.n}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-semibold text-gray-600 truncate">{decodeHtml(week.title)}</div>
-          <div className="text-[10px] text-gray-400">
+          <div className="text-xs font-semibold text-[var(--color-text-secondary)] truncate">{decodeHtml(week.title)}</div>
+          <div className="text-[10px] text-[var(--color-text-tertiary)]">
             {done}/{total} sessions · {pct}%
             {adHocThisWeek.length > 0 && ` · +${adHocThisWeek.length} extra`}
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-12 h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div className="w-12 h-1 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
             <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${pct}%` }} />
           </div>
           <svg className={`w-3 h-3 text-gray-300 transition-transform ${open ? 'rotate-180' : ''}`}
@@ -100,20 +100,20 @@ function ReadOnlyWeekRow({ week, logs }: { week: PlanWeek; logs: Record<string, 
         </div>
       </button>
       {open && (
-        <div className="border-t border-gray-50">
+        <div className="border-t border-[var(--color-border)]">
           {week.days.map((day, di) => (
             <ReadOnlyDayRow key={di} day={day} dayIndex={di} weekN={week.n} logs={logs} />
           ))}
           {adHocThisWeek.length > 0 && (
-            <div className="px-4 py-2.5 border-t border-dashed border-gray-100">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Extra sessions</p>
+            <div className="px-4 py-2.5 border-t border-dashed border-[var(--color-border)]">
+              <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wide mb-1.5">Extra sessions</p>
               <div className="space-y-1">
                 {adHocThisWeek.map((l, i) => (
-                  <div key={i} className="flex items-center gap-2 text-[10px] text-gray-500">
+                  <div key={i} className="flex items-center gap-2 text-[10px] text-[var(--color-text-tertiary)]">
                     <span className="w-4 h-4 rounded-full bg-[var(--ns-cyan-light)] text-[var(--ns-ember)] flex items-center justify-center font-bold flex-shrink-0">+</span>
                     <span className="flex-1 truncate">{l.notes ?? 'Ad-hoc session'}</span>
                     {l.duration_secs && (
-                      <span className="text-gray-400 flex-shrink-0">{Math.round(l.duration_secs / 60)}min</span>
+                      <span className="text-[var(--color-text-tertiary)] flex-shrink-0">{Math.round(l.duration_secs / 60)}min</span>
                     )}
                   </div>
                 ))}
@@ -161,45 +161,45 @@ function PlanDetail({ summary, onBack }: { summary: ArchivedPlanSummary; onBack:
       <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button onClick={onBack} aria-label="Back to history"
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500">
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <div>
             <h1 className="text-base font-bold text-gray-900 truncate">{decodeHtml(plan.name)}</h1>
-            <p className="text-[10px] text-gray-400">Archived {fmtDate(plan.archived_at)}</p>
+            <p className="text-[10px] text-[var(--color-text-tertiary)]">Archived {fmtDate(plan.archived_at)}</p>
           </div>
         </div>
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
         {/* Stats summary */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4">
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
           <div className="grid grid-cols-3 gap-3 text-center">
             <div>
               <div className="text-xl font-bold text-gray-900">{totalKm}</div>
-              <div className="text-[10px] text-gray-400">km logged</div>
+              <div className="text-[10px] text-[var(--color-text-tertiary)]">km logged</div>
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900">{loggedSessions}</div>
-              <div className="text-[10px] text-gray-400">sessions done</div>
+              <div className="text-[10px] text-[var(--color-text-tertiary)]">sessions done</div>
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900">{weeksCompleted}</div>
-              <div className="text-[10px] text-gray-400">weeks completed</div>
+              <div className="text-[10px] text-[var(--color-text-tertiary)]">weeks completed</div>
             </div>
           </div>
-          <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="mt-3 h-1.5 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
             <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${completionPct}%` }} />
           </div>
-          <div className="text-[10px] text-gray-400 text-center mt-1">{completionPct}% of plan completed</div>
+          <div className="text-[10px] text-[var(--color-text-tertiary)] text-center mt-1">{completionPct}% of plan completed</div>
         </div>
 
         {/* Read-only plan */}
         {logsLoading ? (
           <div className="space-y-2">
-            {[1,2,3].map(i => <div key={i} className="h-12 bg-white rounded-xl border border-gray-100 animate-pulse" />)}
+            {[1,2,3].map(i => <div key={i} className="h-12 bg-white rounded-xl border border-[var(--color-border)] animate-pulse" />)}
           </div>
         ) : (
           <div className="space-y-2">
@@ -220,39 +220,39 @@ function PlanCard({ summary, onView }: { summary: ArchivedPlanSummary; onView: (
   const pct = totalSessions > 0 ? Math.round((loggedSessions / totalSessions) * 100) : 0
 
   return (
-    <button onClick={onView} className="w-full bg-white rounded-2xl border border-gray-100 p-4 text-left hover:border-gray-200 transition-colors">
+    <button onClick={onView} className="w-full bg-white rounded-2xl border border-[var(--color-border)] p-4 text-left hover:border-[var(--color-border-2)] transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="text-sm font-bold text-gray-900 truncate">{decodeHtml(plan.name)}</div>
-          <div className="text-[10px] text-gray-400 mt-0.5">
+          <div className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">
             Archived {fmtDate(plan.archived_at)}
           </div>
         </div>
         <div className={`flex-shrink-0 text-[10px] font-bold px-2 py-1 rounded-full ${
           pct >= 80 ? 'bg-emerald-100 text-emerald-700' :
           pct >= 50 ? 'bg-amber-100 text-amber-700' :
-          'bg-gray-100 text-gray-500'
+          'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'
         }`}>
           {pct}% done
         </div>
       </div>
 
-      <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="mt-3 h-1.5 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
         <div className="h-full bg-emerald-400 rounded-full transition-all" style={{ width: `${pct}%` }} />
       </div>
 
       <div className="grid grid-cols-3 gap-2 mt-3 text-center">
         <div>
           <div className="text-sm font-bold text-gray-700">{totalKm}</div>
-          <div className="text-[9px] text-gray-400">km</div>
+          <div className="text-[9px] text-[var(--color-text-tertiary)]">km</div>
         </div>
         <div>
           <div className="text-sm font-bold text-gray-700">{loggedSessions}</div>
-          <div className="text-[9px] text-gray-400">sessions</div>
+          <div className="text-[9px] text-[var(--color-text-tertiary)]">sessions</div>
         </div>
         <div>
           <div className="text-sm font-bold text-gray-700">{weeksCompleted}/{plan.total_weeks}</div>
-          <div className="text-[9px] text-gray-400">weeks</div>
+          <div className="text-[9px] text-[var(--color-text-tertiary)]">weeks</div>
         </div>
       </div>
 
@@ -279,7 +279,7 @@ export default function HistoryClient() {
       <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button onClick={() => router.back()} aria-label="Go back"
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500">
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
@@ -290,12 +290,12 @@ export default function HistoryClient() {
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
         {loading ? (
-          [1,2].map(i => <div key={i} className="h-36 bg-white rounded-2xl border border-gray-100 animate-pulse" />)
+          [1,2].map(i => <div key={i} className="h-36 bg-white rounded-2xl border border-[var(--color-border)] animate-pulse" />)
         ) : plans.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-5xl mb-3">📚</div>
             <p className="text-sm font-semibold text-gray-900">No plan history yet</p>
-            <p className="text-xs text-gray-400 mt-1">Completed or archived plans will appear here</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mt-1">Completed or archived plans will appear here</p>
           </div>
         ) : (
           plans.map(s => (

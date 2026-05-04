@@ -98,13 +98,13 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
           <div className="text-center">
             <div className="text-5xl mb-3">📋</div>
             <h1 className="text-xl font-black text-gray-900">Intake submitted</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-[var(--color-text-tertiary)] mt-1">
               {coachName} will review your request and start building.
             </p>
           </div>
 
           {/* Stage progress */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5 space-y-4">
             {STAGE_LABELS.map((s, i) => {
               const isDone    = i < currentIdx
               const isCurrent = i === currentIdx
@@ -112,16 +112,16 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
                 <div key={s.id} className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
                     isDone    ? 'bg-emerald-100 text-emerald-700' :
-                    isCurrent ? 'text-white' : 'bg-gray-100 text-gray-400'
+                    isCurrent ? 'text-white' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'
                   }`} style={isCurrent ? { background: 'var(--ns-ember)' } : {}}>
                     {isDone ? '✓' : s.emoji}
                   </div>
                   <div>
                     <p className={`text-sm font-bold ${
-                      isDone ? 'text-emerald-700' : isCurrent ? 'text-gray-900' : 'text-gray-400'
+                      isDone ? 'text-emerald-700' : isCurrent ? 'text-gray-900' : 'text-[var(--color-text-tertiary)]'
                     }`}>{s.label}</p>
                     {isCurrent && (
-                      <p className="text-xs text-gray-500">In progress…</p>
+                      <p className="text-xs text-[var(--color-text-tertiary)]">In progress…</p>
                     )}
                   </div>
                   {isCurrent && (
@@ -132,7 +132,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
             })}
           </div>
 
-          <p className="text-center text-xs text-gray-400">
+          <p className="text-center text-xs text-[var(--color-text-tertiary)]">
             You'll get a message when your plan is ready. Usually within 24–48 hours.
           </p>
 
@@ -154,14 +154,14 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
         <div>
           <Link href="/home" className="text-sm font-semibold" style={{ color: 'var(--ns-violet)' }}>← Back</Link>
           <h1 className="text-2xl font-black text-gray-900 mt-3">Request a bespoke plan</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-[var(--color-text-tertiary)] mt-1">
             {coachName} will use this to build a plan tailored to you. Be specific — the more detail, the better the plan.
           </p>
         </div>
 
         {/* Goal */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Primary goal *</p>
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">Primary goal *</p>
           <div className="flex flex-wrap gap-2">
             {GOALS.map(g => (
               <button key={g}
@@ -169,7 +169,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
                 className={`text-xs px-3 py-2 rounded-xl border-2 font-semibold transition-all ${
                   data.goal === g
                     ? 'text-white border-transparent'
-                    : 'border-gray-200 text-gray-600'
+                    : 'border-[var(--color-border-2)] text-[var(--color-text-secondary)]'
                 }`}
                 style={data.goal === g ? { background: 'var(--ns-ember)', borderColor: 'var(--ns-violet)' } : {}}
               >
@@ -180,26 +180,26 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
         </div>
 
         {/* Level */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Experience level *</p>
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">Experience level *</p>
           <div className="space-y-2">
             {LEVELS.map(l => (
               <button key={l.id}
                 onClick={() => update('level', l.id)}
                 className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all ${
-                  data.level === l.id ? 'border-[var(--ns-ember)] bg-[var(--ns-violet-light)]' : 'border-gray-200'
+                  data.level === l.id ? 'border-[var(--ns-ember)] bg-[var(--ns-violet-light)]' : 'border-[var(--color-border-2)]'
                 }`}
               >
                 <p className="text-sm font-bold text-gray-900">{l.label}</p>
-                <p className="text-xs text-gray-500">{l.desc}</p>
+                <p className="text-xs text-[var(--color-text-tertiary)]">{l.desc}</p>
               </button>
             ))}
           </div>
         </div>
 
         {/* Numbers */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Training details *</p>
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4 space-y-3">
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Training details *</p>
           {[
             { label: 'Current weekly km',  field: 'weeklyKm',     placeholder: 'e.g. 30',       type: 'number' },
             { label: 'Training days/week', field: 'trainingDays', placeholder: 'e.g. 4',        type: 'number' },
@@ -207,33 +207,33 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
             { label: 'Race date',          field: 'raceDate',     placeholder: '',               type: 'date'   },
           ].map(f => (
             <div key={f.field}>
-              <label className="text-xs text-gray-500 font-semibold block mb-1">{f.label}</label>
+              <label className="text-xs text-[var(--color-text-tertiary)] font-semibold block mb-1">{f.label}</label>
               <input
                 type={f.type}
                 value={data[f.field as keyof IntakeData]}
                 onChange={e => update(f.field as keyof IntakeData, e.target.value)}
                 placeholder={f.placeholder}
-                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-ember)]"
+                className="w-full text-sm border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-ember)]"
               />
             </div>
           ))}
         </div>
 
         {/* Context */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Background</p>
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4 space-y-3">
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Background</p>
           {[
             { label: 'Previous training / what worked / what didn\'t', field: 'previousPlan', rows: 2 },
             { label: 'Injuries, niggles or health notes', field: 'injuryNotes', rows: 2 },
             { label: 'Anything else the coach should know', field: 'context', rows: 3 },
           ].map(f => (
             <div key={f.field}>
-              <label className="text-xs text-gray-500 font-semibold block mb-1">{f.label}</label>
+              <label className="text-xs text-[var(--color-text-tertiary)] font-semibold block mb-1">{f.label}</label>
               <textarea
                 value={data[f.field as keyof IntakeData]}
                 onChange={e => update(f.field as keyof IntakeData, e.target.value)}
                 rows={f.rows}
-                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-ember)] resize-none"
+                className="w-full text-sm border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-ember)] resize-none"
               />
             </div>
           ))}
@@ -254,7 +254,7 @@ export default function PlanRequestClient({ coachId, coachName }: { coachId: str
           {submitting ? 'Sending to coach…' : 'Send intake to coach →'}
         </button>
 
-        <p className="text-center text-xs text-gray-400">
+        <p className="text-center text-xs text-[var(--color-text-tertiary)]">
           Your coach will respond within 24–48 hours.
         </p>
       </div>

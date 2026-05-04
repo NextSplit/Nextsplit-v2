@@ -26,18 +26,18 @@ function CharSelectModal({
       <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl max-h-[92vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}>
         <div className="p-6">
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+          <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
           <h2 className="text-lg font-black text-gray-900 mb-1">Choose your runner</h2>
-          <p className="text-xs text-gray-400 mb-4">Your character evolves as you level up</p>
+          <p className="text-xs text-[var(--color-text-tertiary)] mb-4">Your character evolves as you level up</p>
 
           {/* Level evolution preview */}
           <div className="bg-gray-50 rounded-2xl p-3 mb-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Level preview</span>
+              <span className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wide">Level preview</span>
               <div className="flex gap-1">
                 {PREVIEW_LEVELS.map(l => (
                   <button key={l} onClick={() => setPreviewLevel(l)}
-                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${previewLevel === l ? 'bg-[var(--ns-ember)] text-white' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${previewLevel === l ? 'bg-[var(--ns-ember)] text-white' : 'bg-white text-[var(--color-text-tertiary)] border border-[var(--color-border-2)]'}`}>
                     L{l}
                   </button>
                 ))}
@@ -46,7 +46,7 @@ function CharSelectModal({
             <div className="flex justify-center">
               <div dangerouslySetInnerHTML={{ __html: renderCharSVG(selected, previewLevel, 80, 100) }} />
             </div>
-            <div className="text-center text-[10px] text-gray-400 mt-1">
+            <div className="text-center text-[10px] text-[var(--color-text-tertiary)] mt-1">
               {previewLevel >= 9 ? '🎽 Race bib' : previewLevel >= 6 ? '🕶️ Sunglasses' : previewLevel >= 3 ? '⌚ GPS watch' : 'Base kit'}
               {previewLevel >= 7 ? ' · Full stride' : previewLevel >= 4 ? ' · Light stride' : ''}
             </div>
@@ -59,11 +59,11 @@ function CharSelectModal({
               return (
                 <button key={ch.id}
                   onClick={() => setSelected(ch.id)}
-                  className={`rounded-2xl border-2 p-3 text-center transition-all ${isSel ? 'border-[var(--ns-ember)] bg-[var(--ns-ember-light)] shadow-md' : 'border-gray-100 bg-white'}`}
+                  className={`rounded-2xl border-2 p-3 text-center transition-all ${isSel ? 'border-[var(--ns-ember)] bg-[var(--ns-ember-light)] shadow-md' : 'border-[var(--color-border)] bg-white'}`}
                 >
                   <div dangerouslySetInnerHTML={{ __html: renderCharSVG(ch.id, previewLevel, 60, 76) }} />
                   <div className={`text-xs font-bold mt-1 ${isSel ? 'text-[var(--ns-ember)]' : 'text-gray-700'}`}>{ch.label}</div>
-                  <div className="text-[9px] text-gray-400 mt-0.5">{ch.specialty}</div>
+                  <div className="text-[9px] text-[var(--color-text-tertiary)] mt-0.5">{ch.specialty}</div>
                 </button>
               )
             })}
@@ -71,7 +71,7 @@ function CharSelectModal({
 
           <div className="flex gap-3">
             <button onClick={onClose}
-              className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">
+              className="flex-1 py-3 rounded-xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-secondary)]">
               Cancel
             </button>
             <button onClick={() => { onSelect(selected); onClose() }}

@@ -11,9 +11,9 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
 
   if (data.length < 2) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-5">
+      <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
         <div className="font-data text-sm font-bold text-gray-900 mb-1">Training Load (ACWR)</div>
-        <p className="text-xs text-gray-400">Log at least 2 weeks of sessions to see your acute:chronic workload ratio.</p>
+        <p className="text-xs text-[var(--color-text-tertiary)]">Log at least 2 weeks of sessions to see your acute:chronic workload ratio.</p>
         <div className="mt-3 p-3 bg-green-50 rounded-xl">
           <p className="text-xs text-green-700 font-medium">Target zone: 0.8 – 1.3</p>
           <p className="text-xs text-green-600 mt-0.5">Below 0.8 = undertraining · Above 1.5 = injury risk</p>
@@ -25,10 +25,10 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
   const maxAcwr = Math.max(...data.map(d => d.acwr), 1.5)
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
       <div className="flex items-baseline justify-between mb-4">
         <div className="text-sm font-bold text-gray-900">Training Load</div>
-        <div className="text-xs text-gray-400">ACWR</div>
+        <div className="text-xs text-[var(--color-text-tertiary)]">ACWR</div>
       </div>
 
       <div className="relative h-28">
@@ -50,7 +50,7 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
                   className={`w-full rounded-t-md ${colour}`}
                   style={{ height: `${Math.max(h, 2)}%` }}
                 />
-                <div className="text-[8px] text-gray-400">W{d.week}</div>
+                <div className="text-[8px] text-[var(--color-text-tertiary)]">W{d.week}</div>
               </div>
             )
           })}
@@ -68,14 +68,14 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
           className="absolute left-0 right-0 border-t border-dashed border-gray-300"
           style={{ bottom: `${(1.0 / maxAcwr) * 100}%` }}
         >
-          <span className="absolute right-0 -top-4 text-[9px] text-gray-400">1.0</span>
+          <span className="absolute right-0 -top-4 text-[9px] text-[var(--color-text-tertiary)]">1.0</span>
         </div>
       </div>
 
       {data.length > 0 && (
         <div className="mt-3 flex items-center justify-between">
           <div>
-            <span className="text-xs text-gray-500">Current ACWR: </span>
+            <span className="text-xs text-[var(--color-text-tertiary)]">Current ACWR: </span>
             <span className={`text-sm font-bold font-data ${
               data[data.length - 1].acwr > 1.3 ? 'text-red-500' :
               data[data.length - 1].acwr < 0.8 ? 'text-yellow-500' : 'text-[var(--ns-ember)]'
@@ -83,7 +83,7 @@ function ACWRChart({ logs, weeks }: { logs: Record<string, TrainingLog>; weeks: 
               {data[data.length - 1].acwr.toFixed(2)}
             </span>
           </div>
-          <div className="text-[10px] text-gray-400">
+          <div className="text-[10px] text-[var(--color-text-tertiary)]">
             {data[data.length - 1].acwr > 1.3 ? '⚠️ High load' :
              data[data.length - 1].acwr < 0.8 ? '📉 Low load' : '✅ Good zone'}
           </div>

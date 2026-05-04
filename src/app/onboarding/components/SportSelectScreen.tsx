@@ -86,7 +86,7 @@ export function SportSelectScreen() {
                         </span>
                       )}
                       {!sport.active && (
-                        <span className="text-[9px] font-bold text-[var(--color-text-tertiary)] bg-gray-200 px-1.5 py-0.5 rounded-full">
+                        <span className="text-[9px] font-bold text-[var(--color-text-tertiary)] var(--color-surface-3) px-1.5 py-0.5 rounded-full">
                           Coming soon
                         </span>
                       )}

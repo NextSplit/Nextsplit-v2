@@ -85,17 +85,17 @@ export default function NPSPrompt({ firstSessionAt }: Props) {
             <div className="text-center py-4">
               <div className="text-3xl mb-2">🙏</div>
               <p className="text-sm font-bold text-gray-900">Thanks — that helps a lot.</p>
-              <p className="text-xs text-gray-500 mt-1">Feedback goes straight to the team.</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mt-1">Feedback goes straight to the team.</p>
             </div>
           ) : (
             <>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+              <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-2">
                 Quick question
               </p>
               <h2 className="text-sm font-bold text-gray-900 mb-1">
                 How likely are you to recommend NextSplit to a running friend?
               </h2>
-              <p className="text-xs text-gray-400 mb-4">
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-4">
                 It helps us improve. Takes 10 seconds.
               </p>
 
@@ -108,7 +108,7 @@ export default function NPSPrompt({ firstSessionAt }: Props) {
                     className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
                       score === i
                         ? 'text-white border-transparent'
-                        : 'text-gray-600 border-gray-200 hover:border-gray-300'
+                        : 'text-[var(--color-text-secondary)] border-[var(--color-border-2)] hover:border-gray-300'
                     }`}
                     style={score === i ? {
                       background: i >= 9 ? 'var(--ns-ember)' : i >= 7 ? '#f59e0b' : '#ef4444',
@@ -119,7 +119,7 @@ export default function NPSPrompt({ firstSessionAt }: Props) {
                   </button>
                 ))}
               </div>
-              <div className="flex justify-between text-[9px] text-gray-400 mb-4">
+              <div className="flex justify-between text-[9px] text-[var(--color-text-tertiary)] mb-4">
                 <span>Not likely</span>
                 <span>Very likely</span>
               </div>
@@ -135,14 +135,14 @@ export default function NPSPrompt({ firstSessionAt }: Props) {
                     "What's not working for you?"
                   }
                   rows={2}
-                  className="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-ember)] resize-none mb-3"
+                  className="w-full text-xs border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 outline-none focus:border-[var(--ns-ember)] resize-none mb-3"
                 />
               )}
 
               <div className="flex gap-3">
                 <button
                   onClick={handleDismiss}
-                  className="px-4 py-3 rounded-2xl border border-gray-200 text-xs font-semibold text-gray-500"
+                  className="px-4 py-3 rounded-2xl border border-[var(--color-border-2)] text-xs font-semibold text-[var(--color-text-tertiary)]"
                 >
                   Skip
                 </button>

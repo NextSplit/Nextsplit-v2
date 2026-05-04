@@ -59,7 +59,7 @@ function RecipeFormModal({
       <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl max-h-[92vh] flex flex-col"
         onClick={e => e.stopPropagation()}>
         <div className="overflow-y-auto flex-1 p-6">
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+          <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
           <h2 className="text-lg font-bold text-gray-900 mb-5">
             {existing ? 'Edit recipe' : 'New recipe'}
           </h2>
@@ -67,30 +67,30 @@ function RecipeFormModal({
           {/* Name + servings */}
           <div className="space-y-4 mb-5">
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-1">Recipe name</label>
+              <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1">Recipe name</label>
               <input value={name} onChange={e => setName(e.target.value)}
                 placeholder="e.g. Overnight oats"
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]" />
+                className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-1">
-                Total servings <span className="text-gray-400 font-normal">(recipe makes this many portions)</span>
+              <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1">
+                Total servings <span className="text-[var(--color-text-tertiary)] font-normal">(recipe makes this many portions)</span>
               </label>
               <div className="flex items-center gap-3">
                 <button onClick={() => setServings(s => Math.max(1, s - 1))}
-                  className="w-9 h-9 rounded-full bg-gray-100 text-gray-700 font-bold flex items-center justify-center">−</button>
+                  className="w-9 h-9 rounded-full bg-[var(--color-surface-2)] text-gray-700 font-bold flex items-center justify-center">−</button>
                 <span className="text-2xl font-bold text-gray-900 w-8 text-center">{servings}</span>
                 <button onClick={() => setServings(s => s + 1)}
-                  className="w-9 h-9 rounded-full bg-gray-100 text-gray-700 font-bold flex items-center justify-center">+</button>
-                <span className="text-xs text-gray-400">portions</span>
+                  className="w-9 h-9 rounded-full bg-[var(--color-surface-2)] text-gray-700 font-bold flex items-center justify-center">+</button>
+                <span className="text-xs text-[var(--color-text-tertiary)]">portions</span>
               </div>
             </div>
           </div>
 
           {/* Macros — total for whole recipe */}
           <div className="mb-5">
-            <label className="text-xs font-semibold text-gray-600 block mb-2">
-              Macros <span className="text-gray-400 font-normal">(totals for entire recipe — app divides by servings)</span>
+            <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-2">
+              Macros <span className="text-[var(--color-text-tertiary)] font-normal">(totals for entire recipe — app divides by servings)</span>
             </label>
             <div className="grid grid-cols-2 gap-2">
               {[
@@ -100,7 +100,7 @@ function RecipeFormModal({
                 { label: 'fat (g)', val: fat, set: setFat, colour: 'bg-red-50 border-red-200' },
               ].map(({ label, val, set, colour }) => (
                 <div key={label}>
-                  <label className="text-[10px] text-gray-500 block mb-1">{label}</label>
+                  <label className="text-[10px] text-[var(--color-text-tertiary)] block mb-1">{label}</label>
                   <input type="number" value={val} onChange={e => set(e.target.value)}
                     placeholder="0"
                     className={`w-full border ${colour} rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]`} />
@@ -108,7 +108,7 @@ function RecipeFormModal({
               ))}
             </div>
             {servings > 0 && (kcal || protein || carbs || fat) && (
-              <p className="text-[10px] text-gray-400 mt-2">
+              <p className="text-[10px] text-[var(--color-text-tertiary)] mt-2">
                 Per portion: {kcal ? Math.round(Number(kcal)/servings) + ' kcal' : ''}
                 {protein ? ' · ' + Math.round(Number(protein)/servings*10)/10 + 'g protein' : ''}
                 {carbs ? ' · ' + Math.round(Number(carbs)/servings*10)/10 + 'g carbs' : ''}
@@ -120,7 +120,7 @@ function RecipeFormModal({
           {/* Ingredients */}
           <div className="mb-5">
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-semibold text-gray-600">Ingredients</label>
+              <label className="text-xs font-semibold text-[var(--color-text-secondary)]">Ingredients</label>
               <button onClick={addIngredient}
                 className="text-[11px] font-semibold text-[var(--ns-ember)]">+ Add</button>
             </div>
@@ -129,12 +129,12 @@ function RecipeFormModal({
                 <div key={i} className="flex items-center gap-2">
                   <input value={ing.name} onChange={e => updateIngredient(i, 'name', e.target.value)}
                     placeholder="Ingredient"
-                    className="flex-1 border border-gray-200 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
+                    className="flex-1 border border-[var(--color-border-2)] rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
                   <input type="number" value={ing.quantity || ''} onChange={e => updateIngredient(i, 'quantity', Number(e.target.value))}
                     placeholder="Qty"
-                    className="w-14 border border-gray-200 rounded-xl px-2 py-2 text-xs text-center focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
+                    className="w-14 border border-[var(--color-border-2)] rounded-xl px-2 py-2 text-xs text-center focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
                   <select value={ing.unit} onChange={e => updateIngredient(i, 'unit', e.target.value)}
-                    className="border border-gray-200 rounded-xl px-1.5 py-2 text-xs focus:outline-none">
+                    className="border border-[var(--color-border-2)] rounded-xl px-1.5 py-2 text-xs focus:outline-none">
                     {['g','ml','cup','tbsp','tsp','piece','slice'].map(u => (
                       <option key={u} value={u}>{u}</option>
                     ))}
@@ -150,17 +150,17 @@ function RecipeFormModal({
 
           {/* Notes */}
           <div className="mb-4">
-            <label className="text-xs font-semibold text-gray-600 block mb-1">Notes (optional)</label>
+            <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1">Notes (optional)</label>
             <textarea value={notes} onChange={e => setNotes(e.target.value)}
               placeholder="Preparation notes, tips..."
               rows={2}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
+              className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-[var(--ns-ember)]" />
           </div>
         </div>
 
-        <div className="px-6 pb-6 pt-3 border-t border-gray-50 flex gap-3">
+        <div className="px-6 pb-6 pt-3 border-t border-[var(--color-border)] flex gap-3">
           <button onClick={onClose}
-            className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">
+            className="flex-1 py-3 rounded-xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-secondary)]">
             Cancel
           </button>
           <button onClick={handleSave} disabled={saving || !name.trim()}

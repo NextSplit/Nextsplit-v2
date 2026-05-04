@@ -41,10 +41,10 @@ function emptyWeek(n: number): Week {
 function SessionPill({ session, onRemove }: { session: Session; onRemove: () => void }) {
   const type = SESSION_TYPES.find(t => t.code === session.c) ?? SESSION_TYPES[0]
   return (
-    <div className="flex items-center gap-1.5 bg-gray-100 rounded-lg px-2 py-1 text-xs">
+    <div className="flex items-center gap-1.5 bg-[var(--color-surface-2)] rounded-lg px-2 py-1 text-xs">
       <span>{type.emoji}</span>
       <span className="font-medium text-gray-700 truncate max-w-[80px]">{session.n}</span>
-      {session.km && <span className="text-gray-400">{session.km}k</span>}
+      {session.km && <span className="text-[var(--color-text-tertiary)]">{session.km}k</span>}
       <button aria-label="Close" onClick={onRemove} className="text-gray-300 hover:text-red-400 ml-1">×</button>
     </div>
   )
@@ -189,15 +189,15 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
   return (
     <div className="min-h-screen bg-[#f8f8f6] pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] px-4 pt-12 pb-4 sticky top-0 z-40">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-base font-black text-gray-900">Plan Builder</h1>
-            <p className="text-xs text-gray-400">{coachName}</p>
+            <p className="text-xs text-[var(--color-text-tertiary)]">{coachName}</p>
           </div>
           <div className="flex gap-2">
             <button onClick={() => save(false)} disabled={!name || saving}
-              className="px-3 py-2 border border-gray-200 text-xs font-bold text-gray-600 rounded-xl disabled:opacity-40">
+              className="px-3 py-2 border border-[var(--color-border-2)] text-xs font-bold text-[var(--color-text-secondary)] rounded-xl disabled:opacity-40">
               Save draft
             </button>
             <button onClick={() => save(true)} disabled={!name || saving}
@@ -211,33 +211,33 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
 
         {/* Plan meta */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Plan details</p>
+        <div className="bg-white rounded-2xl border border-[var(--color-border-2)] p-4 space-y-3">
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Plan details</p>
 
           <input value={name} onChange={e => setName(e.target.value)}
             placeholder="Plan name e.g. Sub-4 Marathon 16 Weeks"
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]" />
+            className="w-full px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)]" />
 
           <div className="grid grid-cols-2 gap-3">
             <select value={distance} onChange={e => setDistance(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] bg-white">
+              className="px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)] bg-white">
               {['5K', '10K', 'Half Marathon', 'Marathon', '50K', '100K', 'Ultra'].map(d => <option key={d}>{d}</option>)}
             </select>
             <select value={level} onChange={e => setLevel(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] bg-white">
+              className="px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)] bg-white">
               {['Beginner', 'Intermediate', 'Advanced', 'Elite'].map(l => <option key={l}>{l}</option>)}
             </select>
           </div>
 
           <textarea value={description} onChange={e => setDesc(e.target.value)} rows={2}
             placeholder="Describe the plan — who it's for, what makes it different…"
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] resize-none" />
+            className="w-full px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)] resize-none" />
 
           <div className="flex items-center gap-3">
             <input value={price} onChange={e => setPrice(e.target.value)} type="number" min="0"
               placeholder="Price £ (0 = free)"
-              className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]" />
-            <label className="flex items-center gap-2 text-sm text-gray-600">
+              className="flex-1 px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)]" />
+            <label className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
               <input type="checkbox" checked={isPublic} onChange={e => setIsPublic(e.target.checked)} className="rounded" />
               Public
             </label>
@@ -245,9 +245,9 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
         </div>
 
         {/* Week selector */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
+        <div className="bg-white rounded-2xl border border-[var(--color-border-2)] p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{weeks.length} weeks</p>
+            <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">{weeks.length} weeks</p>
             <button onClick={addWeek} className="text-xs text-[var(--ns-ember)] font-bold">+ Add week</button>
           </div>
 
@@ -255,7 +255,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
             {weeks.map((w, i) => (
               <button key={i} onClick={() => { setActiveWeek(i); setActiveDay(0) }}
                 className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
-                  activeWeek === i ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]' : 'bg-white text-gray-600 border-gray-200'
+                  activeWeek === i ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]' : 'bg-white text-[var(--color-text-secondary)] border-[var(--color-border-2)]'
                 }`}>
                 W{w.n}
               </button>
@@ -264,17 +264,17 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
 
           {/* Week config */}
           {currentWeek && (
-            <div className="space-y-2 pt-2 border-t border-gray-100">
+            <div className="space-y-2 pt-2 border-t border-[var(--color-border)]">
               <div className="flex gap-2">
                 <input
                   value={currentWeek.title}
                   onChange={e => setWeeks(prev => prev.map((w, i) => i === activeWeek ? { ...w, title: e.target.value } : w))}
-                  className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]"
+                  className="flex-1 px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)]"
                   placeholder="Week title" />
                 <select
                   value={currentWeek.phase}
                   onChange={e => setWeeks(prev => prev.map((w, i) => i === activeWeek ? { ...w, phase: e.target.value } : w))}
-                  className="px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none bg-white">
+                  className="px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none bg-white">
                   {['base', 'build', 'peak', 'taper', 'race'].map(p => <option key={p}>{p}</option>)}
                 </select>
               </div>
@@ -283,9 +283,9 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
                   value={currentWeek.targetKm}
                   onChange={e => setWeeks(prev => prev.map((w, i) => i === activeWeek ? { ...w, targetKm: parseFloat(e.target.value) || 0 } : w))}
                   type="number" min="0"
-                  className="w-20 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]"
+                  className="w-20 px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)]"
                   placeholder="km" />
-                <span className="text-xs text-gray-400">target km this week</span>
+                <span className="text-xs text-[var(--color-text-tertiary)]">target km this week</span>
                 <button onClick={aiSuggestWeek} disabled={aiSuggesting}
                   className="ml-auto text-xs bg-[var(--ns-violet-light)] border border-[var(--ns-violet-light)] text-[var(--ns-ember)] px-3 py-1.5 rounded-lg font-bold disabled:opacity-50">
                   {aiSuggesting ? '✨ Generating…' : '✨ AI suggest week'}
@@ -303,7 +303,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
 
         {/* Day selector + sessions */}
         {currentWeek && (
-          <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-4">
+          <div className="bg-white rounded-2xl border border-[var(--color-border-2)] p-4 space-y-4">
             {/* Day tabs */}
             <div className="flex gap-1">
               {DAYS.map((d, i) => {
@@ -311,7 +311,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
                 return (
                   <button key={d} onClick={() => setActiveDay(i)}
                     className={`flex-1 py-2 rounded-xl text-xs font-bold relative transition-all ${
-                      activeDay === i ? 'bg-slate-800 text-white' : 'text-gray-500 hover:bg-[#f8f8f6]'
+                      activeDay === i ? 'bg-slate-800 text-white' : 'text-[var(--color-text-tertiary)] hover:bg-[#f8f8f6]'
                     }`}>
                     {d.slice(0, 2)}
                     {hasSessions && (
@@ -324,7 +324,7 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
 
             {/* Current day sessions */}
             <div className="space-y-2">
-              <p className="text-xs font-bold text-gray-400">{DAYS[activeDay]}</p>
+              <p className="text-xs font-bold text-[var(--color-text-tertiary)]">{DAYS[activeDay]}</p>
               {currentDay?.sessions.length === 0 && (
                 <p className="text-xs text-gray-300 italic">No sessions — add one below or use AI suggest</p>
               )}
@@ -336,13 +336,13 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
             </div>
 
             {/* Add session */}
-            <div className="border-t border-gray-100 pt-3 space-y-2">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Add session</p>
+            <div className="border-t border-[var(--color-border)] pt-3 space-y-2">
+              <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Add session</p>
               <div className="flex flex-wrap gap-1.5">
                 {SESSION_TYPES.map(t => (
                   <button key={t.code} onClick={() => setAddingCode(t.code)}
                     className={`px-2 py-1 rounded-lg text-xs font-semibold border transition-all ${
-                      addingCode === t.code ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-gray-600 border-gray-200'
+                      addingCode === t.code ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-[var(--color-text-secondary)] border-[var(--color-border-2)]'
                     }`}>
                     {t.emoji} {t.label}
                   </button>
@@ -350,14 +350,14 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
               </div>
               <input value={addingName} onChange={e => setAddingName(e.target.value)}
                 placeholder="Session name e.g. 10K Easy Run"
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]" />
+                className="w-full px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)]" />
               <textarea value={addingDet} onChange={e => setAddingDet(e.target.value)} rows={2}
                 placeholder="Coaching instruction e.g. Keep HR below 140bpm, conversational pace…"
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] resize-none" />
+                className="w-full px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)] resize-none" />
               <div className="flex gap-2">
                 <input value={addingKm} onChange={e => setAddingKm(e.target.value)} type="number" min="0"
                   placeholder="km (optional)"
-                  className="w-24 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)]" />
+                  className="w-24 px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)]" />
                 <button onClick={addSession} disabled={!addingName}
                   className="flex-1 bg-[var(--ns-ember)] text-white py-2 rounded-xl text-sm font-bold disabled:opacity-40 active:scale-95">
                   Add to {DAYS[activeDay]} →

@@ -66,7 +66,7 @@ function ToggleRow({ label, sublabel, value, onChange }: {
     <SettingRow label={label} sublabel={sublabel}>
       <button
         onClick={() => onChange(!value)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? 'bg-[var(--ns-ember)]' : 'bg-gray-200'}`}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? 'bg-[var(--ns-ember)]' : 'bg-[var(--color-surface-3)]'}`}
         role="switch"
         aria-checked={value}
         aria-label={label}
@@ -264,7 +264,7 @@ function CoachAccessSection() {
           <button
             onClick={() => toggle(item.field)}
             disabled={saving}
-            className={`w-11 h-6 rounded-full transition-all relative ${rel[item.field] ? 'bg-[var(--ns-ember)]' : 'bg-gray-200'}`}
+            className={`w-11 h-6 rounded-full transition-all relative ${rel[item.field] ? 'bg-[var(--ns-ember)]' : 'bg-[var(--color-surface-3)]'}`}
           >
             <div className={`absolute top-0.5 w-5 h-5 bg-[var(--color-surface)] rounded-full shadow transition-all ${rel[item.field] ? 'left-5' : 'left-0.5'}`} />
           </button>

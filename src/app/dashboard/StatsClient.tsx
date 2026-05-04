@@ -31,7 +31,7 @@ const PRIORITY_CFG = {
   A: { label: 'A Race', colour: 'bg-red-50 text-red-700 border-red-200' },
   B: { label: 'B Race', colour: 'bg-orange-50 text-orange-700 border-orange-200' },
   C: { label: 'C Race', colour: 'bg-blue-50 text-blue-700 border-blue-200' },
-  training: { label: 'Training', colour: 'bg-gray-50 text-gray-600 border-gray-200' },
+  training: { label: 'Training', colour: 'bg-gray-50 text-[var(--color-text-secondary)] border-[var(--color-border-2)]' },
 }
 
 function fmtRaceDate(dateStr: string) {
@@ -71,61 +71,61 @@ function AddRaceModal({ onClose, onAdd }: {
   return (
     <div className="fixed inset-0 z-50 flex items-end" onClick={onClose}>
       <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
         <h2 className="text-base font-bold text-gray-900 mb-5">Add Race</h2>
         <div className="mb-4">
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Race name *</label>
+          <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">Race name *</label>
           <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. London Marathon 2027"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
+            className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
         </div>
         <div className="mb-4">
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Race date *</label>
+          <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">Race date *</label>
           <input type="date" value={date} onChange={e => setDate(e.target.value)}
             min={new Date().toISOString().split('T')[0]}
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
+            className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
         </div>
         <div className="mb-4">
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Distance</label>
+          <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">Distance</label>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {COMMON_DISTANCES.map(d => (
               <button key={d.label} onClick={() => { setDistKm(d.km); setDistLabel(d.label) }}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-colors ${distLabel === d.label ? 'bg-[var(--ns-ember)] text-white border-transparent' : 'bg-white text-gray-600 border-gray-200'}`}>
+                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-colors ${distLabel === d.label ? 'bg-[var(--ns-ember)] text-white border-transparent' : 'bg-white text-[var(--color-text-secondary)] border-[var(--color-border-2)]'}`}>
                 {d.label}
               </button>
             ))}
           </div>
           <input type="number" value={distKm} onChange={e => { setDistKm(e.target.value === '' ? '' : Number(e.target.value)); setDistLabel('') }}
             placeholder="Custom km"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
+            className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
         </div>
         <div className="mb-4">
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Priority</label>
+          <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">Priority</label>
           <div className="flex gap-2">
             {(['A','B','C','training'] as const).map(p => (
               <button key={p} onClick={() => setPriority(p)}
-                className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-colors ${priority === p ? PRIORITY_CFG[p].colour : 'bg-white text-gray-500 border-gray-200'}`}>
+                className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-colors ${priority === p ? PRIORITY_CFG[p].colour : 'bg-white text-[var(--color-text-tertiary)] border-[var(--color-border-2)]'}`}>
                 {p === 'training' ? 'Train' : p}
               </button>
             ))}
           </div>
         </div>
         <div className="mb-4">
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Goal time (optional)</label>
+          <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">Goal time (optional)</label>
           <div className="flex items-center gap-2">
             {[['H', goalH, setGoalH], ['MM', goalM, setGoalM], ['SS', goalS, setGoalS]].map(([ph, val, set]) => (
               <input key={ph as string} value={val as string} onChange={e => (set as (v:string)=>void)(e.target.value)} placeholder={ph as string}
-                className="w-14 border border-gray-200 rounded-xl px-2 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
+                className="w-14 border border-[var(--color-border-2)] rounded-xl px-2 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
             ))}
           </div>
         </div>
         <div className="mb-5">
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Location (optional)</label>
+          <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">Location (optional)</label>
           <input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. London, UK"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
+            className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
         </div>
         {err && <p className="text-xs text-red-500 mb-3">{err}</p>}
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">Cancel</button>
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-secondary)]">Cancel</button>
           <button onClick={handleSave} disabled={saving} className="flex-1 py-3 rounded-xl bg-[var(--ns-ember)] text-white text-sm font-semibold disabled:opacity-50">{saving ? 'Saving…' : 'Add Race'}</button>
         </div>
       </div>
@@ -146,24 +146,24 @@ function LogResultModal({ race, onClose, onLog }: { race: Race; onClose: () => v
   return (
     <div className="fixed inset-0 z-50 flex items-end" onClick={onClose}>
       <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
         <h2 className="text-base font-bold text-gray-900 mb-1">Log result</h2>
-        <p className="text-xs text-gray-400 mb-5">{race.name}</p>
+        <p className="text-xs text-[var(--color-text-tertiary)] mb-5">{race.name}</p>
         <div className="flex items-center gap-2 mb-4">
           {[['H', h, setH], ['MM', m, setM], ['SS', s, setS]].map(([ph, val, set]) => (
             <input key={ph as string} value={val as string} onChange={e => (set as (v:string)=>void)(e.target.value)} placeholder={ph as string}
-              className="w-16 border border-gray-200 rounded-xl px-2 py-3 text-lg text-center font-bold focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
+              className="w-16 border border-[var(--color-border-2)] rounded-xl px-2 py-3 text-lg text-center font-bold focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]" />
           ))}
         </div>
-        {pace && <div className="bg-gray-50 rounded-xl px-4 py-3 flex items-center justify-between mb-3"><span className="text-xs text-gray-500">Avg pace</span><span className="text-sm font-bold text-gray-900">{pace}</span></div>}
+        {pace && <div className="bg-gray-50 rounded-xl px-4 py-3 flex items-center justify-between mb-3"><span className="text-xs text-[var(--color-text-tertiary)]">Avg pace</span><span className="text-sm font-bold text-gray-900">{pace}</span></div>}
         {vsGoal !== null && (
           <div className={`rounded-xl px-4 py-3 flex items-center justify-between mb-5 ${vsGoal <= 0 ? 'bg-emerald-50' : 'bg-red-50'}`}>
-            <span className="text-xs text-gray-500">vs goal</span>
+            <span className="text-xs text-[var(--color-text-tertiary)]">vs goal</span>
             <span className={`text-sm font-bold ${vsGoal <= 0 ? 'text-emerald-600' : 'text-red-500'}`}>{vsGoal <= 0 ? `${secsToHMS(Math.abs(vsGoal))} under` : `${secsToHMS(vsGoal)} over`}</span>
           </div>
         )}
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">Cancel</button>
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-secondary)]">Cancel</button>
           <button onClick={handleSave} disabled={saving || !totalSecs} className="flex-1 py-3 rounded-xl bg-[var(--ns-ember)] text-white text-sm font-semibold disabled:opacity-50">{saving ? 'Saving…' : 'Save result'}</button>
         </div>
       </div>
@@ -178,33 +178,33 @@ function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: ()
   const days = daysUntil(race.race_date)
 
   return (
-    <div className={`bg-white rounded-2xl border overflow-hidden transition-all ${expanded ? 'border-gray-200 shadow-sm' : 'border-gray-100'}`}>
+    <div className={`bg-white rounded-2xl border overflow-hidden transition-all ${expanded ? 'border-[var(--color-border-2)] shadow-sm' : 'border-[var(--color-border)]'}`}>
       <button className="w-full text-left p-4" onClick={() => setExpanded(e => !e)}>
         <div className="flex items-start gap-3">
           <div className={`px-2 py-1 rounded-lg border text-[10px] font-bold flex-shrink-0 mt-0.5 ${cfg.colour}`}>{race.priority === 'training' ? 'TRN' : race.priority}</div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-bold text-gray-900 leading-tight mb-0.5">{race.name}</div>
-            <div className="text-xs text-gray-400">{fmtRaceDate(race.race_date)}{race.location && ` · ${race.location}`}</div>
-            {race.distance_label && <div className="text-[11px] text-gray-500 mt-0.5">{race.distance_label}</div>}
+            <div className="text-xs text-[var(--color-text-tertiary)]">{fmtRaceDate(race.race_date)}{race.location && ` · ${race.location}`}</div>
+            {race.distance_label && <div className="text-[11px] text-[var(--color-text-tertiary)] mt-0.5">{race.distance_label}</div>}
           </div>
           <div className="text-right flex-shrink-0">
             {race.actual_time_secs ? (
-              <div><div className="text-sm font-bold text-emerald-600">{secsToHMS(race.actual_time_secs)}</div><div className="text-[10px] text-gray-400">result</div></div>
-            ) : days < 0 ? <div className="text-xs text-gray-400 font-medium">Past</div>
+              <div><div className="text-sm font-bold text-emerald-600">{secsToHMS(race.actual_time_secs)}</div><div className="text-[10px] text-[var(--color-text-tertiary)]">result</div></div>
+            ) : days < 0 ? <div className="text-xs text-[var(--color-text-tertiary)] font-medium">Past</div>
               : days === 0 ? <div className="text-sm font-bold text-red-500">Today!</div>
-              : <div><div className="text-xl font-black text-[var(--ns-ember)]">{days}</div><div className="text-[10px] text-gray-400">days</div></div>}
+              : <div><div className="text-xl font-black text-[var(--ns-ember)]">{days}</div><div className="text-[10px] text-[var(--color-text-tertiary)]">days</div></div>}
           </div>
         </div>
       </button>
       {expanded && (
-        <div className="px-4 pb-4 border-t border-gray-50 pt-3">
+        <div className="px-4 pb-4 border-t border-[var(--color-border)] pt-3">
           {(race.goal_time_secs || race.actual_time_secs) && (
             <div className="grid grid-cols-2 gap-2 mb-3">
               {race.goal_time_secs && (
                 <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <div className="text-[10px] text-gray-400 mb-0.5">Goal</div>
+                  <div className="text-[10px] text-[var(--color-text-tertiary)] mb-0.5">Goal</div>
                   <div className="text-sm font-bold text-gray-900">{secsToHMS(race.goal_time_secs)}</div>
-                  {race.distance_km && <div className="text-[10px] text-gray-400 mt-0.5">{paceMinsPerKm(race.goal_time_secs, race.distance_km)}</div>}
+                  {race.distance_km && <div className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">{paceMinsPerKm(race.goal_time_secs, race.distance_km)}</div>}
                 </div>
               )}
               {race.actual_time_secs && (
@@ -216,7 +216,7 @@ function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: ()
               )}
             </div>
           )}
-          {race.notes && <p className="text-xs text-gray-500 mb-3 leading-relaxed">{race.notes}</p>}
+          {race.notes && <p className="text-xs text-[var(--color-text-tertiary)] mb-3 leading-relaxed">{race.notes}</p>}
           <div className="flex gap-2">
             {!race.actual_time_secs && (
               <button onClick={onLogResult}
@@ -227,7 +227,7 @@ function RaceCard({ race, onLogResult, onDelete }: { race: Race; onLogResult: ()
             {confirmDelete ? (
               <div className="flex gap-2 flex-1">
                 <button onClick={() => setConfirmDelete(false)}
-                  className="flex-1 py-2 rounded-xl border border-gray-200 text-gray-500 text-xs font-semibold">
+                  className="flex-1 py-2 rounded-xl border border-[var(--color-border-2)] text-[var(--color-text-tertiary)] text-xs font-semibold">
                   Cancel
                 </button>
                 <button onClick={() => { setConfirmDelete(false); onDelete() }}
@@ -262,7 +262,7 @@ function RacesSection() {
         <div className="flex gap-1">
           {(['upcoming','past'] as const).map(v => (
             <button key={v} onClick={() => setView(v)}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${view === v ? 'bg-[var(--ns-ember)] text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>
+              className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${view === v ? 'bg-[var(--ns-ember)] text-white' : 'bg-white border border-[var(--color-border-2)] text-[var(--color-text-tertiary)]'}`}>
               {v === 'upcoming' ? `Upcoming${upcoming.length ? ` (${upcoming.length})` : ''}` : `Past${past.length ? ` (${past.length})` : ''}`}
             </button>
           ))}
@@ -271,13 +271,13 @@ function RacesSection() {
           className="w-8 h-8 rounded-full bg-[var(--ns-ember)] text-white flex items-center justify-center text-xl font-light leading-none">+</button>
       </div>
 
-      {loading && [1,2].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />)}
+      {loading && [1,2].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-[var(--color-border)] animate-pulse" />)}
 
       {!loading && shown.length === 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-8 text-center">
           <div className="text-4xl mb-3">🏁</div>
           <p className="text-sm font-semibold text-gray-700">{view === 'upcoming' ? 'No upcoming races' : 'No past races'}</p>
-          {view === 'upcoming' && <p className="text-xs text-gray-400 mt-1 mb-4">Add your next race to track the countdown.</p>}
+          {view === 'upcoming' && <p className="text-xs text-[var(--color-text-tertiary)] mt-1 mb-4">Add your next race to track the countdown.</p>}
           {view === 'upcoming' && <button onClick={() => setShowAdd(true)} className="inline-block bg-[var(--ns-ember)] text-white px-5 py-2.5 rounded-xl text-sm font-semibold">Add a race</button>}
         </div>
       )}
@@ -323,7 +323,7 @@ export default function StatsClient() {
       <div className="min-h-screen pb-24 pt-16">
         <div className="max-w-lg mx-auto px-4 space-y-3">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-32 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+            <div key={i} className="h-32 bg-white rounded-2xl border border-[var(--color-border)] animate-pulse" />
           ))}
         </div>
       </div>
@@ -333,19 +333,19 @@ export default function StatsClient() {
   return (
     <div className="min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3 sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] px-4 pt-12 pb-3 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-lg font-bold text-gray-900">Coach</h1>
             <div className="flex items-center gap-2">
-              {plan && <span className="text-xs text-gray-400">{plan.name}</span>}
+              {plan && <span className="text-xs text-[var(--color-text-tertiary)]">{plan.name}</span>}
               <DarkModeToggle />
             </div>
           </div>
           <div className="flex gap-1">
             {([['stats','📊 Stats'],['races','🏁 Races'],['pace','⏱ Pace']] as const).map(([id, label]) => (
               <button key={id} onClick={() => setActiveTab(id)}
-                className={`flex-1 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${activeTab === id ? 'bg-[var(--ns-ember)] text-white' : 'bg-gray-100 text-gray-500'}`}>
+                className={`flex-1 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${activeTab === id ? 'bg-[var(--ns-ember)] text-white' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'}`}>
                 {label}
               </button>
             ))}
@@ -359,10 +359,10 @@ export default function StatsClient() {
         {activeTab === 'stats' && (
           <>
             {!plan ? (
-              <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-8 text-center">
                 <div className="text-5xl mb-4">🧠</div>
                 <h2 className="text-base font-bold text-gray-900 mb-2">Your coach is ready</h2>
-                <p className="text-sm text-gray-400 mb-5 leading-relaxed">Start a training plan and your AI coach will analyse your sessions, spot patterns, and give you weekly insights.</p>
+                <p className="text-sm text-[var(--color-text-tertiary)] mb-5 leading-relaxed">Start a training plan and your AI coach will analyse your sessions, spot patterns, and give you weekly insights.</p>
                 <a href="/onboarding" className="inline-block bg-[var(--ns-ember)] text-white px-6 py-3 rounded-xl text-sm font-semibold">Choose a plan →</a>
               </div>
             ) : (
@@ -423,17 +423,17 @@ export default function StatsClient() {
                     : null
 
                   return (
-                    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
                       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
                         <div>
                           <p className="text-sm font-bold text-gray-900">Race predictions</p>
-                          <p className="text-[10px] text-gray-400 mt-0.5">Based on your logged runs · Riegel formula</p>
+                          <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">Based on your logged runs · Riegel formula</p>
                         </div>
                         {plan.race_date && daysUntil(plan.race_date) > 0 && (
-                          <span className="text-[10px] text-gray-400">{daysUntil(plan.race_date)}d to go</span>
+                          <span className="text-[10px] text-[var(--color-text-tertiary)]">{daysUntil(plan.race_date)}d to go</span>
                         )}
                       </div>
-                      <div className="divide-y divide-gray-50">
+                      <div className="divide-y divide-[var(--color-border)]">
                         {predictions.map(({ label, km, prediction }) => {
                           if (!prediction) return null
                           const isTarget = planKm !== null && Math.abs(km - planKm) < 1
@@ -442,12 +442,12 @@ export default function StatsClient() {
                           return (
                             <div key={label} className={`px-4 py-3 flex items-center justify-between ${isTarget ? 'bg-[var(--ns-cyan-light)]/50' : ''}`}>
                               <div className="flex items-center gap-2.5">
-                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold ${isTarget ? 'bg-[var(--ns-ember)] text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold ${isTarget ? 'bg-[var(--ns-ember)] text-white' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'}`}>
                                   {label}
                                 </div>
                                 <div>
                                   <div className="text-sm font-black text-gray-900">{prediction.predictedTimeStr}</div>
-                                  <div className="text-[10px] text-gray-400">{prediction.predictedPaceStr} · {prediction.basisLabel}</div>
+                                  <div className="text-[10px] text-[var(--color-text-tertiary)]">{prediction.predictedPaceStr} · {prediction.basisLabel}</div>
                                 </div>
                               </div>
                               <div className="text-right">
@@ -460,7 +460,7 @@ export default function StatsClient() {
                           )
                         })}
                       </div>
-                      <div className="px-4 py-2 border-t border-gray-50">
+                      <div className="px-4 py-2 border-t border-[var(--color-border)]">
                         <p className="text-[9px] text-gray-300">Log more runs with pace data to improve accuracy</p>
                       </div>
                     </div>

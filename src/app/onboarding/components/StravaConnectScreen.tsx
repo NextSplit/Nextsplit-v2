@@ -217,7 +217,7 @@ export function StravaConnectScreen() {
               ].map(item => (
                 <div key={item.label} className="flex justify-between items-center py-1 border-b border-slate-50 last:border-0">
                   <span className="text-sm text-[var(--color-text-tertiary)]">{item.label}</span>
-                  <span className="text-sm font-bold text-gray-800 capitalize">{item.value}</span>
+                  <span className="text-sm font-bold text-[var(--color-text-primary)] capitalize">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -319,7 +319,7 @@ export function StravaConnectScreen() {
         </button>
         <button
           onClick={handleSkip}
-          className="w-full bg-gray-100 text-[var(--color-text-secondary)] font-semibold py-3 rounded-xl text-sm hover:bg-gray-200 transition-colors active:scale-95"
+          className="w-full var(--color-surface-2) text-[var(--color-text-secondary)] font-semibold py-3 rounded-xl text-sm hover:var(--color-surface-3) transition-colors active:scale-95"
         >
           Skip for now →
         </button>

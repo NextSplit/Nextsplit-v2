@@ -34,22 +34,22 @@ function WeightTrend() {
     weights.reduce((acc, _, i) => acc + Math.pow(i - xMean, 2), 0)
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
           <div className="text-sm font-bold text-gray-900">Body weight</div>
-          <div className="text-xs text-gray-400 mt-0.5">
+          <div className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
             {latest}kg · {weightLogs.length} entries
           </div>
         </div>
         <div className="text-right">
           <div className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-            Math.abs(delta) < 0.3 ? 'bg-gray-100 text-gray-500' :
+            Math.abs(delta) < 0.3 ? 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]' :
             delta < 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
           }`}>
             {delta > 0 ? `↑ +${delta}kg` : delta < 0 ? `↓ ${delta}kg` : '→ Stable'}
           </div>
-          <div className="text-[9px] text-gray-400 mt-0.5">vs {weightLogs.length} days ago</div>
+          <div className="text-[9px] text-[var(--color-text-tertiary)] mt-0.5">vs {weightLogs.length} days ago</div>
         </div>
       </div>
 
@@ -86,7 +86,7 @@ function WeightTrend() {
       </div>
 
       {/* Min/max labels */}
-      <div className="flex justify-between text-[9px] text-gray-400 mt-1">
+      <div className="flex justify-between text-[9px] text-[var(--color-text-tertiary)] mt-1">
         <span>{labels[0]}</span>
         <span>{min}–{max}kg range</span>
         <span>{labels[labels.length - 1]}</span>

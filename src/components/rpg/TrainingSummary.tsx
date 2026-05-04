@@ -18,22 +18,22 @@ function TrainingSummary({ logs }: { logs: Record<string, TrainingLog> }) {
   const runs = done.filter(l => l.done).length
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
       <p className="text-sm font-bold text-gray-900 mb-3">Training summary</p>
       <div className="grid grid-cols-3 gap-3 text-center">
         <div>
           <div className="text-2xl font-black text-gray-900">{Math.round(km)}</div>
-          <div className="text-[10px] text-gray-400">km logged</div>
+          <div className="text-[10px] text-[var(--color-text-tertiary)]">km logged</div>
         </div>
         <div>
           <div className="text-2xl font-black text-gray-900">{runs}</div>
-          <div className="text-[10px] text-gray-400">sessions done</div>
+          <div className="text-[10px] text-[var(--color-text-tertiary)]">sessions done</div>
         </div>
         <div>
           <div className="text-2xl font-black text-gray-900">
             {done.length > 0 ? Math.round(done.reduce((a, l) => a + (l.effort ?? 7), 0) / done.length * 10) / 10 : '—'}
           </div>
-          <div className="text-[10px] text-gray-400">avg RPE</div>
+          <div className="text-[10px] text-[var(--color-text-tertiary)]">avg RPE</div>
         </div>
       </div>
     </div>

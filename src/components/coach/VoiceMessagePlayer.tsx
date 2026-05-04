@@ -91,7 +91,7 @@ export default function VoiceMessagePlayer({ message, myId, onListened }: Props)
 
   return (
     <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl ${
-      isFromMe ? 'bg-[var(--ns-ember)] ml-8' : 'bg-gray-100 mr-8'
+      isFromMe ? 'bg-[var(--ns-ember)] ml-8' : 'bg-[var(--color-surface-2)] mr-8'
     }`}>
       {/* Play button */}
       <button
@@ -131,7 +131,7 @@ export default function VoiceMessagePlayer({ message, myId, onListened }: Props)
 
         {/* Time + unread dot */}
         <div className="flex items-center justify-between">
-          <span className={`text-[10px] font-mono ${isFromMe ? 'text-white/70' : 'text-gray-400'}`}>
+          <span className={`text-[10px] font-mono ${isFromMe ? 'text-white/70' : 'text-[var(--color-text-tertiary)]'}`}>
             {playing ? formatTime(currentTime) : formatTime(duration)}
           </span>
           <div className="flex items-center gap-1.5">
@@ -139,7 +139,7 @@ export default function VoiceMessagePlayer({ message, myId, onListened }: Props)
               <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
             )}
             {listened && !isFromMe && (
-              <span className={`text-[10px] ${isFromMe ? 'text-white/50' : 'text-gray-400'}`}>
+              <span className={`text-[10px] ${isFromMe ? 'text-white/50' : 'text-[var(--color-text-tertiary)]'}`}>
                 ✓ Heard
               </span>
             )}

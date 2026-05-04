@@ -78,7 +78,7 @@ export default function TodayBelowFold({
   if (!isToday) return null
 
   const vsArrow  = weeklyReport?.vsLastWeek === 'up' ? '↑' : weeklyReport?.vsLastWeek === 'down' ? '↓' : '→'
-  const vsColour = weeklyReport?.vsLastWeek === 'up' ? 'text-emerald-600' : weeklyReport?.vsLastWeek === 'down' ? 'text-red-500' : 'text-gray-500'
+  const vsColour = weeklyReport?.vsLastWeek === 'up' ? 'text-emerald-600' : weeklyReport?.vsLastWeek === 'down' ? 'text-red-500' : 'text-[var(--color-text-tertiary)]'
 
   return (
     <>

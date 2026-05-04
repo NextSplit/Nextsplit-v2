@@ -40,12 +40,12 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
     const s = localStorage.getItem('nextsplit_tdee_sex')
     return (
       <button onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3 text-left">
+        className="w-full flex items-center justify-between bg-white rounded-2xl border border-[var(--color-border)] px-4 py-3 text-left">
         <div className="flex items-center gap-2">
           <span className="text-base">⚖️</span>
           <div>
             <p className="text-xs font-semibold text-gray-700">TDEE profile</p>
-            <p className="text-[10px] text-gray-400">{s === 'female' ? 'Female' : 'Male'} · {h}cm · {a}yo</p>
+            <p className="text-[10px] text-[var(--color-text-tertiary)]">{s === 'female' ? 'Female' : 'Male'} · {h}cm · {a}yo</p>
           </div>
         </div>
         <span className="text-[10px] text-[var(--ns-ember)] font-semibold">Edit ✎</span>
@@ -60,7 +60,7 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
           <span className="text-base">⚖️</span>
           <div>
             <p className="text-sm font-bold text-gray-900">Calorie profile</p>
-            <p className="text-[10px] text-gray-400">For accurate TDEE calculation</p>
+            <p className="text-[10px] text-[var(--color-text-tertiary)]">For accurate TDEE calculation</p>
           </div>
         </div>
         {saved && <button aria-label="Close" onClick={() => setOpen(false)} className="text-gray-300 text-lg">×</button>}
@@ -68,31 +68,31 @@ function TDEESetupCard({ onSave }: { onSave: (h: number, a: number, s: 'male' | 
 
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div>
-          <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wide block mb-1">Height (cm)</label>
+          <label className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wide block mb-1">Height (cm)</label>
           <input
             type="number" inputMode="numeric" value={height}
             onChange={e => setHeight(e.target.value)}
             placeholder="175"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
         </div>
         <div>
-          <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wide block mb-1">Age</label>
+          <label className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wide block mb-1">Age</label>
           <input
             type="number" inputMode="numeric" value={age}
             onChange={e => setAge(e.target.value)}
             placeholder="30"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
         </div>
       </div>
 
       <div className="mb-4">
-        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wide block mb-1">Sex</label>
+        <label className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wide block mb-1">Sex</label>
         <div className="flex gap-2">
           {(['male', 'female'] as const).map(s => (
             <button key={s} onClick={() => setSex(s)}
-              className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${sex === s ? 'bg-[var(--ns-ember)] text-white' : 'bg-gray-100 text-gray-500'}`}>
+              className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${sex === s ? 'bg-[var(--ns-ember)] text-white' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'}`}>
               {s === 'male' ? '♂ Male' : '♀ Female'}
             </button>
           ))}

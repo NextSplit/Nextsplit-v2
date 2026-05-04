@@ -73,7 +73,7 @@ function statusColour(s: ScenarioResult['status']) {
          s === 'warn'    ? 'text-amber-700 bg-amber-50 border-amber-200' :
          s === 'fail'    ? 'text-red-700 bg-red-50 border-red-200' :
          s === 'running' ? 'text-blue-700 bg-blue-50 border-blue-200' :
-                           'text-gray-500 bg-gray-50 border-gray-200'
+                           'text-[var(--color-text-tertiary)] bg-gray-50 border-[var(--color-border-2)]'
 }
 
 function statusIcon(s: ScenarioResult['status']) {
@@ -188,17 +188,17 @@ export default function AdaptTestClient({ plans }: { plans: Plan[] }) {
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Admin · Phase A5</span>
+            <span className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Admin · Phase A5</span>
           </div>
           <h1 className="text-2xl font-black text-gray-900">Adaptation E2E Test</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-[var(--color-text-tertiary)] mt-1">
             Run all 5 scenarios against a real plan before alpha users trigger adaptation.
           </p>
         </div>
 
         {/* Plan selector */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Test plan</p>
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4 mb-4">
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-2">Test plan</p>
           {plans.length === 0 ? (
             <p className="text-sm text-amber-600">No active plans found. Activate a plan first to test adaptation.</p>
           ) : (
@@ -209,7 +209,7 @@ export default function AdaptTestClient({ plans }: { plans: Plan[] }) {
                   className={`text-xs px-3 py-2 rounded-xl border-2 font-semibold transition-all ${
                     selectedPlan === p.id
                       ? 'border-[var(--ns-ember)] bg-[var(--ns-cyan-light)] text-[var(--ns-ember)]'
-                      : 'border-gray-200 text-gray-600'
+                      : 'border-[var(--color-border-2)] text-[var(--color-text-secondary)]'
                   }`}
                 >
                   {p.name} · W{p.current_week}/{p.total_weeks}
@@ -228,9 +228,9 @@ export default function AdaptTestClient({ plans }: { plans: Plan[] }) {
               { label: 'Warnings', count: results.filter(r => r.status === 'warn').length, colour: 'text-amber-700' },
               { label: 'Failing', count: failCount, colour: 'text-red-700' },
             ].map(s => (
-              <div key={s.label} className="bg-white rounded-2xl border border-gray-100 p-4 text-center">
+              <div key={s.label} className="bg-white rounded-2xl border border-[var(--color-border)] p-4 text-center">
                 <p className={`text-2xl font-black ${s.colour}`}>{s.count}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{s.label}</p>
+                <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
@@ -273,8 +273,8 @@ export default function AdaptTestClient({ plans }: { plans: Plan[] }) {
           {running ? 'Running all scenarios…' : `Run all ${SCENARIOS.length} scenarios`}
         </button>
 
-        <div className="mt-4 bg-white rounded-2xl border border-gray-100 p-4">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Quick links</p>
+        <div className="mt-4 bg-white rounded-2xl border border-[var(--color-border)] p-4">
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-2">Quick links</p>
           <div className="flex gap-3">
             <a href="/admin/plan-review" className="text-xs font-bold hover:underline" style={{ color: 'var(--ns-cyan)' }}>
               ← Plan quality review

@@ -155,7 +155,7 @@ export default function WeeklyShareCard({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
       <div className="w-full max-w-lg bg-white rounded-t-3xl p-5 pb-8 animate-slide-up" onClick={e => e.stopPropagation()}>
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-4" />
 
         {/* Preview */}
         <div className="rounded-2xl overflow-hidden mb-4 p-5 aspect-square relative"

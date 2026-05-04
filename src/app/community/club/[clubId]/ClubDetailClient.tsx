@@ -80,16 +80,16 @@ export default function ClubDetailClient({ club, membership, members, feed, user
   return (
     <div className="min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] px-4 pt-12 pb-4 sticky top-0 z-40">
         <div className="max-w-lg mx-auto space-y-3">
           <div className="flex items-center gap-3">
-            <a href="/community" className="text-gray-400 text-xl">←</a>
+            <a href="/community" className="text-[var(--color-text-tertiary)] text-xl">←</a>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-xl">{club.emoji}</span>
                 <h1 className="text-base font-black text-gray-900 truncate">{club.name}</h1>
               </div>
-              <p className="text-xs text-gray-400">{club.member_count} members · {Math.round(club.weekly_km)}km this week</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">{club.member_count} members · {Math.round(club.weekly_km)}km this week</p>
             </div>
             {(isOwner || membership) && (
               <button onClick={() => setShowCode(!showCode)}
@@ -112,10 +112,10 @@ export default function ClubDetailClient({ club, membership, members, feed, user
             </div>
           )}
 
-          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+          <div className="flex gap-1 bg-[var(--color-surface-2)] rounded-xl p-1">
             {(['leaderboard', 'feed'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${tab === t ? 'bg-white text-gray-900 shadow' : 'text-gray-500'}`}>
+                className={`flex-1 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${tab === t ? 'bg-white text-gray-900 shadow' : 'text-[var(--color-text-tertiary)]'}`}>
                 {t === 'leaderboard' ? '🏆 Leaderboard' : '📡 Feed'}
               </button>
             ))}
@@ -135,20 +135,20 @@ export default function ClubDetailClient({ club, membership, members, feed, user
               const medal  = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
               return (
                 <div key={m.user_id}
-                  className={`flex items-center gap-3 rounded-2xl p-3 ${isMe ? 'bg-[var(--color-surface-2)] border-2 border-teal-300' : 'bg-white border border-gray-200'}`}>
+                  className={`flex items-center gap-3 rounded-2xl p-3 ${isMe ? 'bg-[var(--color-surface-2)] border-2 border-teal-300' : 'bg-white border border-[var(--color-border-2)]'}`}>
                   <div className="w-7 text-center shrink-0">
-                    {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-gray-400">#{i+1}</span>}
+                    {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-[var(--color-text-tertiary)]">#{i+1}</span>}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-bold truncate ${isMe ? 'text-teal-800' : 'text-gray-900'}`}>
                       {name} {isMe && '(you)'}
                       {m.role === 'owner' && <span className="ml-1 text-[10px] text-[var(--ns-cyan-mid)]">Owner</span>}
                     </p>
-                    <p className="text-[10px] text-gray-400">{LEAGUE_CONFIG[league]?.emoji} {m.season_xp} XP this season</p>
+                    <p className="text-[10px] text-[var(--color-text-tertiary)]">{LEAGUE_CONFIG[league]?.emoji} {m.season_xp} XP this season</p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className={`text-sm font-black ${isMe ? 'text-[var(--ns-ember)]' : 'text-gray-700'}`}>{Math.round(m.weekly_km)}km</p>
-                    <p className="text-[10px] text-gray-400">this week</p>
+                    <p className="text-[10px] text-[var(--color-text-tertiary)]">this week</p>
                   </div>
                 </div>
               )
@@ -160,31 +160,31 @@ export default function ClubDetailClient({ club, membership, members, feed, user
         {tab === 'feed' && (
           <>
             {feed.length === 0 && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-2">
+              <div className="bg-white rounded-2xl border border-[var(--color-border-2)] p-8 text-center space-y-2">
                 <div className="text-4xl">📡</div>
-                <p className="text-sm text-gray-500">No sessions shared yet. Be the first!</p>
+                <p className="text-sm text-[var(--color-text-tertiary)]">No sessions shared yet. Be the first!</p>
               </div>
             )}
             {feed.map(item => {
               const name = item.profiles?.display_name ?? item.profiles?.handle ?? 'Runner'
               return (
-                <div key={item.id} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
+                <div key={item.id} className="bg-white rounded-2xl border border-[var(--color-border-2)] p-4 space-y-2">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-[var(--color-surface-2)] flex items-center justify-center text-sm">🏃</div>
                     <div>
                       <p className="text-xs font-bold text-gray-800">{name}</p>
-                      <p className="text-[10px] text-gray-400">{fmtDate(item.logged_at)}</p>
+                      <p className="text-[10px] text-[var(--color-text-tertiary)]">{fmtDate(item.logged_at)}</p>
                     </div>
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-800">{item.session_name}</p>
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+                    <div className="flex items-center gap-3 text-xs text-[var(--color-text-tertiary)] mt-0.5">
                       {item.km && <span>{item.km}km</span>}
                       {item.duration_secs && <span>{fmtDuration(item.duration_secs)}</span>}
                       {item.pace && <span>{item.pace}/km</span>}
                     </div>
                   </div>
-                  {item.note && <p className="text-xs text-gray-500 italic">&quot;{item.note}&quot;</p>}
+                  {item.note && <p className="text-xs text-[var(--color-text-tertiary)] italic">&quot;{item.note}&quot;</p>}
                 </div>
               )
             })}

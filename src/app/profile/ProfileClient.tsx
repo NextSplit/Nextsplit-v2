@@ -517,11 +517,11 @@ export default function ProfileClient({
 
         {/* Public profile link */}
         {displayName && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
             <div className="flex items-center justify-between mb-2">
               <div>
                 <p className="text-sm font-semibold text-gray-900">Your public profile</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">nextsplit.app/u/{encodeURIComponent(displayName)}</p>
+                <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">nextsplit.app/u/{encodeURIComponent(displayName)}</p>
               </div>
               <a
                 href={`/u/${encodeURIComponent(displayName)}`}
@@ -540,7 +540,7 @@ export default function ProfileClient({
                   if (el) { el.textContent = '✓ Copied!'; setTimeout(() => { if (el) el.textContent = 'Copy link' }, 2000) }
                 })
               }}
-              className="w-full py-2 rounded-xl bg-gray-50 text-gray-600 text-xs font-semibold border border-gray-100"
+              className="w-full py-2 rounded-xl bg-gray-50 text-[var(--color-text-secondary)] text-xs font-semibold border border-[var(--color-border)]"
             >
               <span id="profile-copy-confirm">Copy link</span>
             </button>
@@ -706,9 +706,9 @@ export default function ProfileClient({
 
         {/* Settings link */}
         <a href="/settings"
-          className="flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3">
+          className="flex items-center justify-between bg-white rounded-2xl border border-[var(--color-border)] px-4 py-3">
           <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+            <span className="w-8 h-8 rounded-full bg-[var(--color-surface-2)] flex items-center justify-center text-[var(--color-text-tertiary)]">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -720,14 +720,14 @@ export default function ProfileClient({
         </a>
 
         {/* Data export */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4">
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-gray-900">Export data</p>
-              <p className="text-xs text-gray-400 mt-0.5">Download all logs as JSON</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Download all logs as JSON</p>
             </div>
             <button onClick={handleExport}
-              className="py-2 px-3 rounded-xl bg-gray-100 text-gray-700 text-xs font-semibold">
+              className="py-2 px-3 rounded-xl bg-[var(--color-surface-2)] text-gray-700 text-xs font-semibold">
               ↓ Export
             </button>
           </div>

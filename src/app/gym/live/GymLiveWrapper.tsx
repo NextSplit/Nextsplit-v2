@@ -20,7 +20,7 @@ export default function GymLiveWrapper({ weekN, dayIndex, sessionIndex }: Props)
       <div className="fixed inset-0 bg-[#f8f8f6] flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-[var(--ns-ember)] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-500">Loading session…</p>
+          <p className="text-sm text-[var(--color-text-tertiary)]">Loading session…</p>
         </div>
       </div>
     )
@@ -41,7 +41,7 @@ export default function GymLiveWrapper({ weekN, dayIndex, sessionIndex }: Props)
         <div className="text-center px-6">
           <div className="text-4xl mb-3">❓</div>
           <p className="text-sm font-semibold text-gray-900 mb-1">Session not found</p>
-          <p className="text-xs text-gray-400 mb-5">Week {weekN}, Day {dayIndex}, Session {sessionIndex}</p>
+          <p className="text-xs text-[var(--color-text-tertiary)] mb-5">Week {weekN}, Day {dayIndex}, Session {sessionIndex}</p>
           <button
             onClick={() => router.replace('/home')}
             className="text-sm font-semibold text-[var(--ns-ember)]"

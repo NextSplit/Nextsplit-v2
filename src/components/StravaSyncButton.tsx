@@ -88,7 +88,7 @@ function ImportModal({ activity, session, onConfirm, onCancel }: ImportModalProp
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-end">
       <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl p-6 shadow-2xl">
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
 
         {/* Strava badge */}
         <div className="flex items-center gap-2 mb-4">
@@ -111,20 +111,20 @@ function ImportModal({ activity, session, onConfirm, onCancel }: ImportModalProp
           <div className="grid grid-cols-3 gap-3">
             <div className="text-center">
               <div className="text-lg font-black text-orange-600">{activity.distance_km}</div>
-              <div className="text-[10px] text-gray-500">km</div>
+              <div className="text-[10px] text-[var(--color-text-tertiary)]">km</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-black text-gray-900">{fmtTime(activity.moving_time_secs)}</div>
-              <div className="text-[10px] text-gray-500">time</div>
+              <div className="text-[10px] text-[var(--color-text-tertiary)]">time</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-black text-gray-900">{pace ?? '—'}</div>
-              <div className="text-[10px] text-gray-500">avg pace</div>
+              <div className="text-[10px] text-[var(--color-text-tertiary)]">avg pace</div>
             </div>
           </div>
           {activity.avg_hr && (
             <div className="text-center mt-2">
-              <span className="text-xs text-gray-500">❤️ {Math.round(activity.avg_hr)} bpm avg</span>
+              <span className="text-xs text-[var(--color-text-tertiary)]">❤️ {Math.round(activity.avg_hr)} bpm avg</span>
             </div>
           )}
         </div>
@@ -132,11 +132,11 @@ function ImportModal({ activity, session, onConfirm, onCancel }: ImportModalProp
         {/* Splits */}
         {activity.splits.length > 0 && (
           <div className="mb-4">
-            <div className="text-xs font-semibold text-gray-500 mb-2">Km splits</div>
+            <div className="text-xs font-semibold text-[var(--color-text-tertiary)] mb-2">Km splits</div>
             <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
               {activity.splits.slice(0, 12).map((split, i) => (
                 <div key={i} className="flex-shrink-0 text-center bg-gray-50 rounded-lg px-2 py-1.5 min-w-[44px]">
-                  <div className="text-[9px] text-gray-400">{i + 1}km</div>
+                  <div className="text-[9px] text-[var(--color-text-tertiary)]">{i + 1}km</div>
                   <div className="text-[11px] font-bold text-gray-900">
                     {split.pace_secs ? fmtPace(split.pace_secs).replace('/km','') : '—'}
                   </div>
@@ -150,20 +150,20 @@ function ImportModal({ activity, session, onConfirm, onCancel }: ImportModalProp
         <div className="mb-5">
           <div className="flex justify-between items-center mb-2">
             <label className="text-sm font-semibold text-gray-700">Effort</label>
-            <span className="text-xl font-bold text-[var(--ns-ember)]">{effort}<span className="text-sm text-gray-400">/10</span></span>
+            <span className="text-xl font-bold text-[var(--ns-ember)]">{effort}<span className="text-sm text-[var(--color-text-tertiary)]">/10</span></span>
           </div>
           <input
             type="range" min={1} max={10} value={effort}
             onChange={e => setEffort(Number(e.target.value))}
             className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[var(--ns-cyan)]"
           />
-          <p className="text-[10px] text-gray-400 mt-1">
+          <p className="text-[10px] text-[var(--color-text-tertiary)] mt-1">
             {activity.avg_hr ? `Estimated from HR (${Math.round(activity.avg_hr)}bpm)` : 'Adjust if needed'}
           </p>
         </div>
 
         <div className="flex gap-3">
-          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">
+          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-secondary)]">
             Cancel
           </button>
           <button
@@ -192,7 +192,7 @@ function ActivityPicker({ activities, session, onSelect, onCancel }: ActivityPic
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-end">
       <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl p-6">
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
         <h2 className="text-base font-bold text-gray-900 mb-4">Recent Strava activities</h2>
         <div className="space-y-2 max-h-80 overflow-y-auto">
           {activities.map(a => {
@@ -205,7 +205,7 @@ function ActivityPicker({ activities, session, onSelect, onCancel }: ActivityPic
               >
                 <div>
                   <div className="text-sm font-semibold text-gray-900">{a.name}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">
+                  <div className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
                     {a.distance_km}km · {fmtTime(a.moving_time_secs)} · {a.date}
                   </div>
                 </div>
@@ -222,7 +222,7 @@ function ActivityPicker({ activities, session, onSelect, onCancel }: ActivityPic
             )
           })}
         </div>
-        <button onClick={onCancel} className="w-full mt-4 py-3 text-sm text-gray-400 font-medium">
+        <button onClick={onCancel} className="w-full mt-4 py-3 text-sm text-[var(--color-text-tertiary)] font-medium">
           Cancel
         </button>
       </div>

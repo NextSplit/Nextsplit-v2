@@ -60,12 +60,12 @@ export default function CoachAcceptClient({
 
         {/* Coach info */}
         {(coachBio || specialities.length > 0) && (
-          <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
-            {coachBio && <p className="text-sm text-gray-600">{coachBio}</p>}
+          <div className="bg-white rounded-2xl border border-[var(--color-border-2)] p-4 space-y-3">
+            {coachBio && <p className="text-sm text-[var(--color-text-secondary)]">{coachBio}</p>}
             {specialities.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {specialities.map(s => (
-                  <span key={s} className="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">
+                  <span key={s} className="text-xs bg-[var(--color-surface-2)] text-[var(--color-text-secondary)] px-2.5 py-1 rounded-full font-medium">
                     {s}
                   </span>
                 ))}
@@ -75,8 +75,8 @@ export default function CoachAcceptClient({
         )}
 
         {/* What they'll see */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">What your coach will see</p>
+        <div className="bg-white rounded-2xl border border-[var(--color-border-2)] p-4 space-y-3">
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">What your coach will see</p>
 
           {[
             { label: 'Training logs & sessions', desc: 'Every run and gym session you log', on: true, locked: true },
@@ -85,7 +85,7 @@ export default function CoachAcceptClient({
             <div key={item.label} className="flex items-center justify-between py-1">
               <div>
                 <p className="text-sm font-semibold text-gray-800">{item.label}</p>
-                <p className="text-xs text-gray-400">{item.desc}</p>
+                <p className="text-xs text-[var(--color-text-tertiary)]">{item.desc}</p>
               </div>
               <div className="w-8 h-5 bg-[var(--ns-ember)] rounded-full flex items-center justify-end pr-0.5">
                 <div className="w-4 h-4 bg-white rounded-full" />
@@ -101,11 +101,11 @@ export default function CoachAcceptClient({
             <div key={item.label} className="flex items-center justify-between py-1 border-t border-slate-50">
               <div>
                 <p className="text-sm font-semibold text-gray-800">{item.label}</p>
-                <p className="text-xs text-gray-400">{item.desc} · <span className="text-gray-500">Off by default</span></p>
+                <p className="text-xs text-[var(--color-text-tertiary)]">{item.desc} · <span className="text-[var(--color-text-tertiary)]">Off by default</span></p>
               </div>
               <button
                 onClick={() => item.set(!item.value)}
-                className={`w-8 h-5 rounded-full flex items-center transition-all ${item.value ? 'bg-[var(--ns-ember)] justify-end pr-0.5' : 'bg-gray-200 justify-start pl-0.5'}`}
+                className={`w-8 h-5 rounded-full flex items-center transition-all ${item.value ? 'bg-[var(--ns-ember)] justify-end pr-0.5' : 'bg-[var(--color-surface-3)] justify-start pl-0.5'}`}
               >
                 <div className="w-4 h-4 bg-white rounded-full shadow" />
               </button>
@@ -113,7 +113,7 @@ export default function CoachAcceptClient({
           ))}
         </div>
 
-        <p className="text-xs text-gray-400 text-center px-4">
+        <p className="text-xs text-[var(--color-text-tertiary)] text-center px-4">
           You can change these permissions anytime in Settings → Coach Access. You can disconnect from your coach at any time.
         </p>
 
@@ -129,7 +129,7 @@ export default function CoachAcceptClient({
 
         <button
           onClick={() => router.push('/home')}
-          className="w-full text-gray-400 text-sm py-2"
+          className="w-full text-[var(--color-text-tertiary)] text-sm py-2"
         >
           Decline
         </button>

@@ -37,12 +37,12 @@ function PWAProfileCard() {
 
   if (isInstalled || installed) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-4">
+      <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
         <div className="flex items-center gap-3">
           <span className="text-[22px]">📱</span>
           <div>
             <p className="text-sm font-semibold text-gray-900">App installed</p>
-            <p className="text-xs text-gray-400 mt-0.5">Running in standalone mode</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Running in standalone mode</p>
           </div>
           <span className="ml-auto text-[var(--ns-ember)] text-lg">✓</span>
         </div>
@@ -51,12 +51,12 @@ function PWAProfileCard() {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
       <div className="flex items-center gap-3">
         <span className="text-[22px]">📲</span>
         <div className="flex-1">
           <p className="text-sm font-semibold text-gray-900">Install app</p>
-          <p className="text-xs text-gray-400 mt-0.5">Add to your home screen</p>
+          <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Add to your home screen</p>
         </div>
         {isIOS ? (
           <button
@@ -76,7 +76,7 @@ function PWAProfileCard() {
         )}
       </div>
       {!isIOS && !_installPrompt && (
-        <p className="mt-2 text-xs text-gray-400 leading-relaxed">
+        <p className="mt-2 text-xs text-[var(--color-text-tertiary)] leading-relaxed">
           Use Chrome's menu (⋮) → &quot;Add to Home screen&quot; to install.
         </p>
       )}

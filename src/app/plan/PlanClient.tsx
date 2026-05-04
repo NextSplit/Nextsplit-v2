@@ -34,7 +34,7 @@ const NUT_CAT: Record<string, { bg: string; text: string; border: string; icon: 
   hydration: { bg: 'bg-blue-50',   text: 'text-blue-800',   border: 'border-blue-200',   icon: '💧' },
   food:      { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-200',  icon: '🍽️' },
   fuel:      { bg: 'bg-amber-50',  text: 'text-amber-800',  border: 'border-amber-200',  icon: '⚡' },
-  info:      { bg: 'bg-gray-50',   text: 'text-gray-600',   border: 'border-gray-200',   icon: 'ℹ️' },
+  info:      { bg: 'bg-gray-50',   text: 'text-[var(--color-text-secondary)]',   border: 'border-[var(--color-border-2)]',   icon: 'ℹ️' },
   macro:     { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200', icon: '📊' },
 }
 
@@ -142,7 +142,7 @@ export default function PlanClient() {
     return (
       <div className="min-h-screen pb-24 pt-16" style={{ background: 'var(--color-bg)' }}>
         <div className="max-w-lg mx-auto px-4 space-y-3">
-          {[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />)}
+          {[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-[var(--color-border)] animate-pulse" />)}
         </div>
       </div>
     )
@@ -225,10 +225,10 @@ export default function PlanClient() {
       <div className={`border-b px-4 py-2.5 ${planTab === 'fuel' ? 'hidden' : ''}`} style={{ background: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
         <div className="max-w-lg mx-auto flex items-center gap-2">
           {/* View toggle */}
-          <div className="flex bg-gray-100 rounded-xl p-0.5 flex-shrink-0">
+          <div className="flex bg-[var(--color-surface-2)] rounded-xl p-0.5 flex-shrink-0">
             {(['active', 'full'] as const).map(mode => (
               <button key={mode} onClick={() => setViewMode(mode)}
-                className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${viewMode === mode ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${viewMode === mode ? 'bg-white text-gray-900 shadow-sm' : 'text-[var(--color-text-tertiary)]'}`}>
                 {mode === 'active' ? `Active (${weeksRemaining})` : 'Full plan'}
               </button>
             ))}
@@ -238,7 +238,7 @@ export default function PlanClient() {
             <div className="flex gap-1 overflow-x-auto flex-1" style={{ scrollbarWidth: 'none' }}>
               {['all', ...availablePhases].map(ph => (
                 <button key={ph} onClick={() => setPhaseFilter(ph)}
-                  className={`flex-shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all ${phaseFilter === ph ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                  className={`flex-shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all ${phaseFilter === ph ? 'bg-gray-800 text-white' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'}`}>
                   {ph === 'all' ? 'All' : (PHASE_LABELS[ph]?.label ?? ph)}
                 </button>
               ))}
@@ -317,7 +317,7 @@ export default function PlanClient() {
           <>
             {/* Completed accordion */}
             {completedWeeks.filter(filterWeek).length > 0 && (
-              <div className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+              <div className="rounded-2xl border border-[var(--color-border)] bg-white overflow-hidden">
                 <button onClick={() => setCompletedExpanded(e => !e)} className="w-full flex items-center gap-3 px-4 py-3 text-left">
                   <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0">
                     <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -325,7 +325,7 @@ export default function PlanClient() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <div className="text-sm font-semibold text-gray-400">{completedWeeks.filter(filterWeek).length} weeks completed</div>
+                    <div className="text-sm font-semibold text-[var(--color-text-tertiary)]">{completedWeeks.filter(filterWeek).length} weeks completed</div>
                     <div className="text-[10px] text-gray-300">Tap to review past weeks</div>
                   </div>
                   <svg className={`w-4 h-4 text-gray-300 transition-transform ${completedExpanded ? 'rotate-180' : ''}`}
@@ -334,7 +334,7 @@ export default function PlanClient() {
                   </svg>
                 </button>
                 {completedExpanded && (
-                  <div className="border-t border-gray-50 px-3 pb-3 pt-2 space-y-2">
+                  <div className="border-t border-[var(--color-border)] px-3 pb-3 pt-2 space-y-2">
                     {completedWeeks.filter(filterWeek).map(week => (
                       <WeekRow key={week.n} week={week} status="completed" logs={logs} gymLogs={gymLogs} todayDayIndex={-1}
                         planId={plan?.id ?? ''} onLog={(s, di, si, wn) => setLogModal({ session: s, dayIndex: di, sessI: si, weekN: wn })} />

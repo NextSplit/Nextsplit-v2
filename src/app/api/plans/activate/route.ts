@@ -10,7 +10,7 @@ const ActivateSchema = z.object({
   template_id:  z.string().uuid().optional(),
   slug:         z.string().min(1).max(100).optional(),
   name:         z.string().min(1).max(200),
-  race_date:    z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  race_date:    z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
   plan_type:    z.string().optional(),
   include_gym:  z.boolean().default(true),
 })

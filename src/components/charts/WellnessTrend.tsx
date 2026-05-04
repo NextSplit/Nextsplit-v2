@@ -11,7 +11,7 @@ import { readinessScore } from '@/lib/wellness'
 function trendBadge(delta: number) {
   if (delta > 0) return <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">↑ +{delta}</span>
   if (delta < 0) return <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-500">↓ {delta}</span>
-  return <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">→ Stable</span>
+  return <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]">→ Stable</span>
 }
 
 function MiniSparkline({ values, max, colour }: { values: number[]; max: number; colour: string }) {
@@ -67,15 +67,15 @@ function WellnessTrend() {
   }).reverse()
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
       {/* Header */}
       <div className="px-5 pt-5 pb-3 flex items-center justify-between">
         <div>
           <div className="text-sm font-bold text-gray-900">Wellness</div>
-          <div className="text-xs text-gray-400 mt-0.5">Last {last14.length} days</div>
+          <div className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Last {last14.length} days</div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-lg font-black text-gray-900">{avg}<span className="text-xs text-gray-400 font-normal">{m.unit}</span></span>
+          <span className="text-lg font-black text-gray-900">{avg}<span className="text-xs text-[var(--color-text-tertiary)] font-normal">{m.unit}</span></span>
           {trendBadge(delta)}
         </div>
       </div>
@@ -87,7 +87,7 @@ function WellnessTrend() {
             key={key}
             onClick={() => setActiveMetric(key)}
             className={`flex-1 py-1 rounded-lg text-[10px] font-semibold transition-all ${
-              activeMetric === key ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500'
+              activeMetric === key ? 'bg-[var(--color-surface)] text-white' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'
             }`}
           >
             {metrics[key].label}
@@ -121,13 +121,13 @@ function WellnessTrend() {
       </div>
 
       {/* Weekly summary row */}
-      <div className="border-t border-gray-50 px-5 py-3 grid grid-cols-4 gap-2">
+      <div className="border-t border-[var(--color-border)] px-5 py-3 grid grid-cols-4 gap-2">
         {weeklyAvgs.map((avg, i) => (
           <div key={i} className="text-center">
             <div className={`text-sm font-bold ${avg === null ? 'text-gray-200' : avg >= 7 ? 'text-emerald-600' : avg >= 5 ? 'text-amber-500' : 'text-red-400'}`}>
               {avg ?? '—'}
             </div>
-            <div className="text-[9px] text-gray-400">{i === 3 ? 'This wk' : i === 2 ? 'Last wk' : `${(3 - i) * 7}d ago`}</div>
+            <div className="text-[9px] text-[var(--color-text-tertiary)]">{i === 3 ? 'This wk' : i === 2 ? 'Last wk' : `${(3 - i) * 7}d ago`}</div>
           </div>
         ))}
       </div>
@@ -136,7 +136,7 @@ function WellnessTrend() {
       {activeMetric === 'readiness' && last14.length > 0 && (() => {
         const latest = last14[last14.length - 1]
         return (
-          <div className="border-t border-gray-50 px-5 py-3 grid grid-cols-3 gap-3">
+          <div className="border-t border-[var(--color-border)] px-5 py-3 grid grid-cols-3 gap-3">
             {[
               { label: 'Sleep', val: latest.sleep ?? 3, max: 5, colour: 'bg-indigo-300' },
               { label: 'Freshness', val: 6 - (latest.soreness ?? 2), max: 5, colour: 'bg-amber-300' },
@@ -144,10 +144,10 @@ function WellnessTrend() {
             ].map(({ label, val, max, colour }) => (
               <div key={label}>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-[9px] text-gray-400">{label}</span>
-                  <span className="text-[9px] font-bold text-gray-600">{val}/{max}</span>
+                  <span className="text-[9px] text-[var(--color-text-tertiary)]">{label}</span>
+                  <span className="text-[9px] font-bold text-[var(--color-text-secondary)]">{val}/{max}</span>
                 </div>
-                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
                   <div className={`h-full ${colour} rounded-full`} style={{ width: `${(val / max) * 100}%` }} />
                 </div>
               </div>

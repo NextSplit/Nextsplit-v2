@@ -14,7 +14,7 @@ function RaceCountdown({ raceDate, planName }: { raceDate: string; planName: str
   const urgency = days <= 14 ? 'text-red-500' : days <= 42 ? 'text-orange-500' : 'text-[var(--ns-ember)]'
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
       <div className="bg-gradient-to-r from-[var(--ns-cyan)] to-[#0891B2] px-5 py-4">
         <div className="text-xs font-semibold text-orange-50 uppercase tracking-wide mb-1">Race Day</div>
         <div className="text-white font-bold text-base">{planName}</div>
@@ -23,7 +23,7 @@ function RaceCountdown({ raceDate, planName }: { raceDate: string; planName: str
       <div className="px-5 py-4 flex items-center justify-between">
         <div>
           <div className={`text-4xl font-black ${urgency}`}>{days}</div>
-          <div className="text-xs text-gray-400 mt-0.5">days to go</div>
+          <div className="text-xs text-[var(--color-text-tertiary)] mt-0.5">days to go</div>
         </div>
         <div className="text-right">
           {weeks > 0 && (
@@ -31,7 +31,7 @@ function RaceCountdown({ raceDate, planName }: { raceDate: string; planName: str
               {weeks}w {remaining}d
             </div>
           )}
-          <div className="text-xs text-gray-400 mt-0.5">
+          <div className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
             {days <= 0 ? '🏁 Race day!' : days === 1 ? 'Tomorrow!' : 'remaining'}
           </div>
         </div>

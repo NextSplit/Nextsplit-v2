@@ -24,7 +24,7 @@ interface AthleteStatus {
 }
 
 const STATUS = {
-  green: { dot: 'bg-emerald-400', ring: 'border-gray-200',  badge: 'bg-emerald-100 text-emerald-700', label: 'On track'  },
+  green: { dot: 'bg-emerald-400', ring: 'border-[var(--color-border-2)]',  badge: 'bg-emerald-100 text-emerald-700', label: 'On track'  },
   amber: { dot: 'bg-amber-400',   ring: 'border-amber-300',  badge: 'bg-amber-100 text-amber-700',    label: 'Check in'  },
   red:   { dot: 'bg-red-400',     ring: 'border-red-300',    badge: 'bg-red-100 text-red-700',        label: 'Needs you' },
 }
@@ -53,9 +53,9 @@ function InviteModal({ onClose }: { onClose: () => void }) {
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 space-y-4 max-w-lg mx-auto">
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto" />
         <h2 className="text-base font-black text-gray-900">Invite an athlete</h2>
-        <p className="text-sm text-gray-500">Each link is single-use and expires in 7 days. Generate a new one for each athlete.</p>
+        <p className="text-sm text-[var(--color-text-tertiary)]">Each link is single-use and expires in 7 days. Generate a new one for each athlete.</p>
         {!inviteUrl ? (
           <button onClick={generate} disabled={loading}
             className="w-full text-white py-4 rounded-2xl text-sm font-bold disabled:opacity-50 active:scale-95"
@@ -64,15 +64,15 @@ function InviteModal({ onClose }: { onClose: () => void }) {
           </button>
         ) : (
           <div className="space-y-3">
-            <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-600 font-mono break-all border border-gray-200">{inviteUrl}</div>
+            <div className="bg-gray-50 rounded-xl p-3 text-xs text-[var(--color-text-secondary)] font-mono break-all border border-[var(--color-border-2)]">{inviteUrl}</div>
             <button onClick={copy} className={`w-full py-4 rounded-2xl text-sm font-bold text-white transition-all`}
               style={{ background: copied ? '#10b981' : 'var(--ns-violet)' }}>
               {copied ? '✓ Copied to clipboard!' : 'Copy invite link'}
             </button>
-            <button onClick={generate} className="w-full py-2 text-xs text-gray-400">Generate another link</button>
+            <button onClick={generate} className="w-full py-2 text-xs text-[var(--color-text-tertiary)]">Generate another link</button>
           </div>
         )}
-        <button onClick={onClose} className="w-full text-gray-400 text-sm py-2">Close</button>
+        <button onClick={onClose} className="w-full text-[var(--color-text-tertiary)] text-sm py-2">Close</button>
       </div>
     </>
   )
@@ -109,10 +109,10 @@ function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athlet
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 space-y-4 max-w-lg mx-auto">
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto" />
         <div>
           <h2 className="text-base font-black text-gray-900">Message all athletes</h2>
-          <p className="text-xs text-gray-400 mt-0.5">Sends to all {athleteCount} active athlete{athleteCount !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Sends to all {athleteCount} active athlete{athleteCount !== 1 ? 's' : ''}</p>
         </div>
 
         {sent ? (
@@ -127,14 +127,14 @@ function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athlet
               onChange={e => setBody(e.target.value)}
               placeholder="Write your squad message…"
               rows={3}
-              className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none resize-none"
+              className="w-full text-sm border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 outline-none resize-none"
               style={{ outlineColor: 'var(--ns-violet)' }}
             />
             <div className="space-y-1.5">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Quick templates</p>
+              <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Quick templates</p>
               {TEMPLATES.map(t => (
                 <button key={t} onClick={() => setBody(t)}
-                  className="w-full text-left text-xs px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 text-gray-600 hover:border-gray-200">
+                  className="w-full text-left text-xs px-3 py-2 rounded-xl bg-gray-50 border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-2)]">
                   {t}
                 </button>
               ))}
@@ -146,7 +146,7 @@ function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athlet
             </button>
           </>
         )}
-        <button onClick={onClose} className="w-full text-gray-400 text-sm py-2">Close</button>
+        <button onClick={onClose} className="w-full text-[var(--color-text-tertiary)] text-sm py-2">Close</button>
       </div>
     </>
   )
@@ -170,7 +170,7 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
       <a href={`/coach/athlete/${athlete.athlete_id}`} className="flex items-center gap-3 px-4 py-3.5 active:bg-[#f8f8f6]">
         {/* Character avatar — class emoji replaces generic 🏃 */}
         <div className="relative shrink-0">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${cls ? '' : 'bg-gray-100'}`}
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${cls ? '' : 'bg-[var(--color-surface-2)]'}`}
             style={cls ? { background: cls.bg.replace('bg-', '') + '20', border: `2px solid ${cls.colour}40` } : {}}>
             {cls ? cls.emoji : '🏃'}
           </div>
@@ -187,14 +187,14 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
             {athlete.plan_name && (
-              <p className="text-xs text-gray-400 truncate">
+              <p className="text-xs text-[var(--color-text-tertiary)] truncate">
                 {athlete.plan_name} · W{athlete.current_week}/{athlete.total_weeks}
               </p>
             )}
             {cls && (
               <>
                 {athlete.plan_name && <span className="text-[10px] text-gray-300">·</span>}
-                <span className="text-[10px] text-gray-400 shrink-0">{cls.name}</span>
+                <span className="text-[10px] text-[var(--color-text-tertiary)] shrink-0">{cls.name}</span>
               </>
             )}
           </div>
@@ -204,12 +204,12 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
       </a>
 
       {/* Stats strip */}
-      <div className="grid grid-cols-3 divide-x divide-gray-100 border-t border-gray-100">
+      <div className="grid grid-cols-3 divide-x divide-gray-100 border-t border-[var(--color-border)]">
         <div className="px-3 py-2 text-center">
           <p className="text-xs font-black text-gray-800">
             {athlete.sessions_done_week}/{athlete.sessions_total_week || '?'}
           </p>
-          <p className="text-[9px] text-gray-400">sessions</p>
+          <p className="text-[9px] text-[var(--color-text-tertiary)]">sessions</p>
         </div>
         <div className={`px-3 py-2 text-center ${
           athlete.acwr === null ? '' :
@@ -217,19 +217,19 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
           athlete.acwr < 0.8 ? 'bg-amber-900/20' : 'bg-emerald-900/20'
         }`}>
           <p className={`text-xs font-black ${
-            athlete.acwr === null ? 'text-gray-400' :
+            athlete.acwr === null ? 'text-[var(--color-text-tertiary)]' :
             athlete.acwr > 1.3 ? 'text-red-700' :
             athlete.acwr < 0.8 ? 'text-amber-700' : 'text-emerald-700'
           }`}>
             {athlete.acwr?.toFixed(2) ?? '—'}
           </p>
-          <p className="text-[9px] text-gray-400">ACWR</p>
+          <p className="text-[9px] text-[var(--color-text-tertiary)]">ACWR</p>
         </div>
         <div className="px-3 py-2 text-center">
           <p className="text-xs font-black text-gray-800">
             {daysSince === null ? '—' : daysSince === 0 ? 'Today' : `${daysSince}d`}
           </p>
-          <p className="text-[9px] text-gray-400">last active</p>
+          <p className="text-[9px] text-[var(--color-text-tertiary)]">last active</p>
         </div>
       </div>
 
@@ -248,7 +248,7 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
       <div className="px-4 pb-3 flex gap-2">
         <button
           onClick={() => onMessage(athlete.athlete_id)}
-          className="flex-1 bg-gray-100 text-gray-700 text-xs font-semibold py-2 rounded-xl active:bg-gray-200"
+          className="flex-1 bg-[var(--color-surface-2)] text-gray-700 text-xs font-semibold py-2 rounded-xl active:bg-[var(--color-surface-3)]"
         >
           💬 Message
         </button>
@@ -296,19 +296,19 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
     <div className="min-h-screen pb-28" style={{ background: '#f8f8f6' }}>
 
       {/* Command centre header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] px-4 pt-12 pb-4 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-1">
             <div>
               <h1 className="text-lg font-black text-gray-900">Squad</h1>
-              <p className="text-xs text-gray-400">{today}</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">{today}</p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={fetchStatus} className="text-gray-400 text-lg px-1.5">↻</button>
+              <button onClick={fetchStatus} className="text-[var(--color-text-tertiary)] text-lg px-1.5">↻</button>
               {athletes.length > 0 && (
                 <button
                   onClick={() => setShowBroadcast(true)}
-                  className="text-gray-600 text-sm font-bold px-3 py-2 rounded-xl border border-gray-200 active:bg-gray-50"
+                  className="text-[var(--color-text-secondary)] text-sm font-bold px-3 py-2 rounded-xl border border-[var(--color-border-2)] active:bg-gray-50"
                 >
                   📢
                 </button>
@@ -336,7 +336,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
                   {onTrack.length} on track ✓
                 </span>
               )}
-              <span className="text-[11px] text-gray-400 ml-auto">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</span>
+              <span className="text-[11px] text-[var(--color-text-tertiary)] ml-auto">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</span>
             </div>
           )}
         </div>
@@ -348,17 +348,17 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
         {loading && (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-28 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+              <div key={i} className="h-28 bg-white rounded-2xl border border-[var(--color-border)] animate-pulse" />
             ))}
           </div>
         )}
 
         {/* Empty state */}
         {!loading && athletes.length === 0 && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-8 text-center">
             <div className="text-4xl mb-3">👥</div>
             <h3 className="text-sm font-bold text-gray-900 mb-1">No athletes yet</h3>
-            <p className="text-xs text-gray-400 mb-4">Invite runners to your squad to start coaching.</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mb-4">Invite runners to your squad to start coaching.</p>
             <button
               onClick={() => setShowInvite(true)}
               className="text-xs font-bold px-4 py-2 rounded-xl text-white"
@@ -372,7 +372,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
         {/* NEEDS ATTENTION — top priority, always first */}
         {!loading && needsAttention.length > 0 && (
           <section>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 mb-2">
+            <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider px-1 mb-2">
               Needs attention ({needsAttention.length})
             </p>
             <div className="space-y-3">
@@ -386,7 +386,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
         {/* ON TRACK — collapsed if any need attention, expanded if clean */}
         {!loading && onTrack.length > 0 && (
           <section>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 mb-2">
+            <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider px-1 mb-2">
               {needsAttention.length > 0 ? `On track (${onTrack.length})` : `All on track ✓`}
             </p>
 
@@ -412,10 +412,10 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
         {/* WEEKLY LOAD OVERVIEW */}
         {!loading && athletes.length > 0 && (
           <section>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 mb-2">
+            <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider px-1 mb-2">
               This week
             </p>
-            <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
+            <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4 space-y-3">
               {athletes.map(a => {
                 const done  = a.sessions_done_week
                 const total = a.sessions_total_week || 0
@@ -432,11 +432,11 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-xs font-semibold text-gray-800 truncate group-hover:underline">{name}</p>
-                        <p className="text-[10px] text-gray-400 flex-shrink-0 ml-2">
+                        <p className="text-[10px] text-[var(--color-text-tertiary)] flex-shrink-0 ml-2">
                           {done}/{total || '?'} sessions
                         </p>
                       </div>
-                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
                         <div className="h-full rounded-full transition-all"
                           style={{
                             width: `${Math.min(pct, 100)}%`,
@@ -461,31 +461,31 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
 
         {/* COACH TOOLS */}
         <section>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 mb-2">Tools</p>
+          <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider px-1 mb-2">Tools</p>
           <div className="grid grid-cols-2 gap-3">
             <Link href="/coach/plan-builder"
-              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
+              className="bg-white rounded-2xl border border-[var(--color-border)] p-3.5 space-y-1 active:bg-gray-50">
               <span className="text-xl">📋</span>
               <p className="text-sm font-bold text-gray-800">Plan Builder</p>
-              <p className="text-xs text-gray-400">Build plans for athletes</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">Build plans for athletes</p>
             </Link>
             <Link href="/coach/earnings"
-              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
+              className="bg-white rounded-2xl border border-[var(--color-border)] p-3.5 space-y-1 active:bg-gray-50">
               <span className="text-xl">💰</span>
               <p className="text-sm font-bold text-gray-800">Earnings</p>
-              <p className="text-xs text-gray-400">Revenue & commission</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">Revenue & commission</p>
             </Link>
             <Link href="/coach/settings"
-              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
+              className="bg-white rounded-2xl border border-[var(--color-border)] p-3.5 space-y-1 active:bg-gray-50">
               <span className="text-xl">⚙️</span>
               <p className="text-sm font-bold text-gray-800">Settings</p>
-              <p className="text-xs text-gray-400">Availability & capacity</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">Availability & capacity</p>
             </Link>
             <Link href="/marketplace"
-              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 active:bg-gray-50">
+              className="bg-white rounded-2xl border border-[var(--color-border)] p-3.5 space-y-1 active:bg-gray-50">
               <span className="text-xl">🏪</span>
               <p className="text-sm font-bold text-gray-800">Marketplace</p>
-              <p className="text-xs text-gray-400">Browse and publish plans</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">Browse and publish plans</p>
             </Link>
             <button
               onClick={async () => {
@@ -493,10 +493,10 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
                   await fetch('/api/coach/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tier: 'professional' }) })
                 } catch { /* ignore */ }
               }}
-              className="bg-white rounded-2xl border border-gray-100 p-3.5 space-y-1 text-left active:bg-gray-50">
+              className="bg-white rounded-2xl border border-[var(--color-border)] p-3.5 space-y-1 text-left active:bg-gray-50">
               <span className="text-xl">⚙️</span>
               <p className="text-sm font-bold text-gray-800">Coach Settings</p>
-              <p className="text-xs text-gray-400">Profile, credentials</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">Profile, credentials</p>
             </button>
           </div>
         </section>

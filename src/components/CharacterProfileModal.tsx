@@ -61,11 +61,11 @@ export default function CharacterProfileModal({ userId, displayName, handle, onC
       <div className="fixed inset-0 z-50 bg-black/60" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl max-w-lg mx-auto">
         <div className="px-5 pt-5 pb-8">
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+          <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
 
           {loading ? (
             <div className="flex justify-center py-10">
-              <div className="w-6 h-6 rounded-full border-2 border-gray-200 border-t-[var(--ns-cyan)] animate-spin" />
+              <div className="w-6 h-6 rounded-full border-2 border-[var(--color-border-2)] border-t-[var(--ns-cyan)] animate-spin" />
             </div>
           ) : (
             <>
@@ -90,12 +90,12 @@ export default function CharacterProfileModal({ userId, displayName, handle, onC
                   {displayName}
                 </h2>
                 {handle && (
-                  <p className="text-xs text-gray-400">@{handle}</p>
+                  <p className="text-xs text-[var(--color-text-tertiary)]">@{handle}</p>
                 )}
 
                 {/* Level */}
                 {athlete && (
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
                     Level {athlete.level} · {athlete.xp} XP
                   </p>
                 )}
@@ -111,7 +111,7 @@ export default function CharacterProfileModal({ userId, displayName, handle, onC
                   ].map(s => (
                     <div key={s.label} className="bg-gray-50 rounded-xl p-3 text-center">
                       <p className="text-sm font-bold text-gray-900">{s.value}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">{s.label}</p>
+                      <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">{s.label}</p>
                     </div>
                   ))}
                 </div>
@@ -128,7 +128,7 @@ export default function CharacterProfileModal({ userId, displayName, handle, onC
 
               <button
                 onClick={onClose}
-                className="w-full py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600"
+                className="w-full py-3 rounded-2xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-secondary)]"
               >
                 Close
               </button>

@@ -23,7 +23,7 @@ const NUT_CAT: Record<string, { bg: string; text: string; border: string; icon: 
   hydration: { bg: 'bg-blue-50',   text: 'text-blue-800',   border: 'border-blue-200',   icon: '💧' },
   food:      { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-200',  icon: '🍽️' },
   fuel:      { bg: 'bg-amber-50',  text: 'text-amber-800',  border: 'border-amber-200',  icon: '⚡' },
-  info:      { bg: 'bg-gray-50',   text: 'text-gray-600',   border: 'border-gray-200',   icon: 'ℹ️' },
+  info:      { bg: 'bg-gray-50',   text: 'text-[var(--color-text-secondary)]',   border: 'border-[var(--color-border-2)]',   icon: 'ℹ️' },
   macro:     { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200', icon: '📊' },
 }
 
@@ -59,19 +59,19 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
         onClick={e => e.stopPropagation()}
       >
         {/* Handle + header */}
-        <div className="px-5 pt-4 pb-3 border-b border-gray-100 flex-shrink-0">
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+        <div className="px-5 pt-4 pb-3 border-b border-[var(--color-border)] flex-shrink-0">
+          <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-4" />
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
                 <span className={`text-base font-bold ${isToday ? 'text-[var(--ns-ember)]' : 'text-gray-900'}`}>{day.d}</span>
                 {isToday && <span className="text-[10px] font-bold text-[var(--ns-ember)] bg-[var(--ns-ember-light)] px-2 py-0.5 rounded-full">Today</span>}
-                {isPast && <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Past</span>}
+                {isPast && <span className="text-[10px] text-[var(--color-text-tertiary)] bg-[var(--color-surface-2)] px-2 py-0.5 rounded-full">Past</span>}
               </div>
-              <p className="text-[11px] text-gray-400 mt-0.5">{weekTitle}</p>
+              <p className="text-[11px] text-[var(--color-text-tertiary)] mt-0.5">{weekTitle}</p>
             </div>
-            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">
-              <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-surface-2)]">
+              <svg className="w-4 h-4 text-[var(--color-text-tertiary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -86,11 +86,11 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
             <div className="flex gap-2">
               {(day.times || []).length > 0 && (
                 <div className="flex-1 bg-gray-50 rounded-xl p-3">
-                  <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2">🕐 Schedule</div>
+                  <div className="text-[9px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-2">🕐 Schedule</div>
                   {(day.times || []).map((t, i) => (
                     <div key={i} className="flex gap-2 mb-1 last:mb-0">
-                      <span className="text-[11px] font-bold text-gray-600 w-10 flex-shrink-0">{t.t}</span>
-                      <span className="text-[11px] text-gray-500">{t.l}</span>
+                      <span className="text-[11px] font-bold text-[var(--color-text-secondary)] w-10 flex-shrink-0">{t.t}</span>
+                      <span className="text-[11px] text-[var(--color-text-tertiary)]">{t.l}</span>
                     </div>
                   ))}
                 </div>
@@ -106,13 +106,13 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
 
           {/* Sessions */}
           <div>
-            <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+            <div className="text-[9px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-2">
               {isRest ? 'Rest Day' : 'Sessions'}
             </div>
             {isRest ? (
               <div className="bg-gray-50 rounded-xl p-4 text-center">
                 <div className="text-2xl mb-1">🛌</div>
-                <p className="text-sm text-gray-400">Recovery day</p>
+                <p className="text-sm text-[var(--color-text-tertiary)]">Recovery day</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -122,7 +122,7 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
                   const name = decodeHtml(session.n)
                   const detail = session.det ? decodeHtml(session.det) : null
                   return (
-                    <div key={sessI} className={`rounded-xl border p-3 ${isDone ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-100'}`}>
+                    <div key={sessI} className={`rounded-xl border p-3 ${isDone ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-[var(--color-border)]'}`}>
                       <div className="flex items-start gap-2.5">
                         <div className={`mt-0.5 w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[9px] font-bold ${isDone ? 'bg-emerald-500 text-white' : `${cfg.colour} ${cfg.textColour}`}`}>
                           {isDone ? '✓' : cfg.label.slice(0,3).toUpperCase()}
@@ -130,13 +130,13 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className={`text-sm font-semibold ${isDone ? 'text-emerald-700 line-through' : 'text-gray-900'}`}>{name}</span>
-                            {session.km > 0 && <span className="text-[10px] text-gray-400">{fmtKm(session.km)}</span>}
+                            {session.km > 0 && <span className="text-[10px] text-[var(--color-text-tertiary)]">{fmtKm(session.km)}</span>}
                           </div>
                           {detail && (() => {
                             const { technical, rationale } = parseDet(session.det!)
                             return (
                               <>
-                                <p className="text-[11px] text-gray-600 mt-0.5 leading-relaxed font-medium">{technical}</p>
+                                <p className="text-[11px] text-[var(--color-text-secondary)] mt-0.5 leading-relaxed font-medium">{technical}</p>
                                 {rationale && (
                                   <div className="flex items-start gap-1.5 mt-1.5 bg-[var(--ns-ember-light)] rounded-lg px-2 py-1.5">
                                     <span className="text-[10px] flex-shrink-0 mt-px">🧠</span>
@@ -170,7 +170,7 @@ function DayDrawer({ day, dayIndex, weekN, weekTitle, logs, gymLogs, isToday, is
           {/* Nutrition timeline */}
           {nutItems.length > 0 && (
             <div>
-              <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2">Nutrition Timeline</div>
+              <div className="text-[9px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-2">Nutrition Timeline</div>
               <div className="space-y-2">
                 {nutItems.map((n, i) => {
                   const cat = NUT_CAT[n.cat] ?? NUT_CAT.food

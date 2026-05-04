@@ -45,7 +45,7 @@ export default function RunnerClassCard({
             Runner Class
           </p>
           {isPending && (
-            <span className="text-[10px] text-gray-400 bg-white/60 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] text-[var(--color-text-tertiary)] bg-white/60 px-2 py-0.5 rounded-full">
               {`Building…`}
             </span>
           )}
@@ -85,13 +85,13 @@ export default function RunnerClassCard({
       {/* Progress bar for warming_up — shows how close to reveal */}
       {isPending && (
         <div className="px-4 pb-4">
-          <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-1 bg-[var(--color-surface-3)] rounded-full overflow-hidden">
             <div
               className="h-full bg-slate-400 rounded-full transition-all duration-700"
               style={{ width: '0%' }} // Could hook up to real progress later
             />
           </div>
-          <p className="text-[10px] text-gray-400 mt-1.5">
+          <p className="text-[10px] text-[var(--color-text-tertiary)] mt-1.5">
             Keep logging sessions — your class reveals after 4 weeks
           </p>
         </div>

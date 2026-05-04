@@ -9,6 +9,7 @@ import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
 import { useProfile } from '@/hooks/useProfile'
 import { useSubscription } from '@/hooks/useSubscription'
 import DarkModeToggle from '@/components/DarkModeToggle'
+import DailyQuests from '@/components/DailyQuests'
 import { getLevelForXP, getXPProgress, getSessionXP } from '@/lib/rpg'
 import { computeStreak } from '@/lib/streak'
 import { getSessionType, fmtKm } from '@/lib/sessionUtils'
@@ -269,7 +270,7 @@ function HeroStreakAtRisk({ streak }: { streak: number }) {
 
 // ── Persistent cards ─────────────────────────────────────────────────────────
 
-function StatsStrip({ weeklyKm }: { weeklyKm: number }) {
+function StatsStrip({ weeklyKm, streak }: { weeklyKm: number; streak: number }) {
   return (
     <Link href="/train" className="block">
       <div className="flex gap-2">
@@ -454,7 +455,17 @@ export default function HomeClient() {
         {heroState === 'streak'   && <HeroStreakAtRisk streak={streak} />}
 
         {/* ── Stats strip (if has plan) ── */}
-        {plan && <StatsStrip weeklyKm={weeklyKm} />}
+        {plan && <StatsStrip weeklyKm={weeklyKm} streak={streak} />}
+
+        {/* ── Daily quests ── */}
+        {plan && (
+          <DailyQuests
+            logs={allLogs}
+            weeklyKm={weeklyKm}
+            streak={streak}
+            hasPlan={!!plan}
+          />
+        )}
 
         {/* ── Contextual persistent cards ── */}
 

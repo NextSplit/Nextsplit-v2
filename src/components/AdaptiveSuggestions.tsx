@@ -182,13 +182,13 @@ export default function AdaptiveSuggestions({ weeks, logs, gymLogs = {}, current
   return (
     <div className="space-y-2">
       {loading && (
-        <div className="bg-white rounded-2xl border border-gray-100 px-4 py-4 flex items-center gap-3">
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] px-4 py-4 flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-[var(--ns-ember)] flex items-center justify-center flex-shrink-0 animate-pulse">
             <span className="text-sm">🤖</span>
           </div>
           <div>
             <div className="text-sm font-semibold text-gray-700">Analysing your training…</div>
-            <div className="text-[11px] text-gray-400">Reviewing the last 4 weeks</div>
+            <div className="text-[11px] text-[var(--color-text-tertiary)]">Reviewing the last 4 weeks</div>
           </div>
         </div>
       )}
@@ -213,7 +213,7 @@ export default function AdaptiveSuggestions({ weeks, logs, gymLogs = {}, current
                 </div>
                 <button
                   onClick={() => dismiss(suggestion.id)}
-                  className="flex-shrink-0 text-gray-400 hover:text-gray-600 p-1"
+                  className="flex-shrink-0 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] p-1"
                   aria-label="Dismiss suggestion"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

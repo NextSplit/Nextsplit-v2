@@ -14,7 +14,7 @@ export default function PrivacyPage() {
         <div className="mb-10">
           <Link href="/" className="text-[var(--ns-ember)] text-sm font-semibold hover:underline">← NextSplit</Link>
           <h1 className="text-3xl font-black text-gray-900 mt-4">Privacy Policy</h1>
-          <p className="text-gray-500 text-sm mt-2">Last updated: April 2026</p>
+          <p className="text-[var(--color-text-tertiary)] text-sm mt-2">Last updated: April 2026</p>
         </div>
 
         <div className="prose prose-slate max-w-none space-y-8 text-sm leading-relaxed text-gray-700">
@@ -149,9 +149,9 @@ export default function PrivacyPage() {
 
         </div>
 
-        <div className="mt-12 pt-6 border-t border-gray-100 flex gap-4 text-sm">
+        <div className="mt-12 pt-6 border-t border-[var(--color-border)] flex gap-4 text-sm">
           <Link href="/terms" className="text-[var(--ns-ember)] hover:underline">Terms of Service</Link>
-          <Link href="/" className="text-gray-400 hover:underline">Back to NextSplit</Link>
+          <Link href="/" className="text-[var(--color-text-tertiary)] hover:underline">Back to NextSplit</Link>
         </div>
       </div>
     </main>

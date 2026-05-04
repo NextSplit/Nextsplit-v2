@@ -44,12 +44,12 @@ function WeeklyXPChart({ logs, weeks }: {
   const activeDays = bars.filter(b => b.xp > 0).length
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-bold text-gray-900">⚡ This week's XP</span>
         <div className="text-right">
           <span className="text-sm font-black text-[var(--ns-ember)]">+{totalWeekXP}</span>
-          <span className="text-[10px] text-gray-400 ml-1">{activeDays}/7 days</span>
+          <span className="text-[10px] text-[var(--color-text-tertiary)] ml-1">{activeDays}/7 days</span>
         </div>
       </div>
       <div className="flex items-end gap-1.5 h-16">
@@ -61,12 +61,12 @@ function WeeklyXPChart({ logs, weeks }: {
                 <div
                   className={`w-full rounded-t-lg transition-all duration-500 ${
                     bar.isToday ? 'bg-[var(--ns-ember)]' :
-                    bar.xp > 0 ? 'bg-orange-200' : 'bg-gray-100'
+                    bar.xp > 0 ? 'bg-orange-200' : 'bg-[var(--color-surface-2)]'
                   }`}
                   style={{ height: bar.xp > 0 ? `${Math.max(heightPct, 15)}%` : '6px' }}
                 />
               </div>
-              <span className={`text-[9px] font-bold ${bar.isToday ? 'text-[var(--ns-ember)]' : 'text-gray-400'}`}>
+              <span className={`text-[9px] font-bold ${bar.isToday ? 'text-[var(--ns-ember)]' : 'text-[var(--color-text-tertiary)]'}`}>
                 {bar.dayLabel}
               </span>
             </div>

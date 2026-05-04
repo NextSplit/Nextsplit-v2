@@ -13,18 +13,18 @@ function WeeklyVolumeChart({ logs, weeks }: { logs: Record<string, TrainingLog>;
 
   if (recentWeeks.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-5">
+      <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
         <div className="text-sm font-bold text-gray-900 mb-1">Weekly Volume</div>
-        <div className="text-xs text-gray-400">No weeks to show yet</div>
+        <div className="text-xs text-[var(--color-text-tertiary)]">No weeks to show yet</div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
       <div className="flex items-baseline justify-between mb-4">
         <div className="text-sm font-bold text-gray-900">Weekly Volume</div>
-        <div className="text-xs text-gray-400">last 8 weeks</div>
+        <div className="text-xs text-[var(--color-text-tertiary)]">last 8 weeks</div>
       </div>
 
       <div className="flex items-end gap-1.5 h-28">
@@ -40,7 +40,7 @@ function WeeklyVolumeChart({ logs, weeks }: { logs: Record<string, TrainingLog>;
               <div className="w-full relative flex items-end" style={{ height: '88px' }}>
                 {/* Planned bar (ghost) */}
                 <div
-                  className="absolute bottom-0 w-full rounded-t-lg bg-gray-100"
+                  className="absolute bottom-0 w-full rounded-t-lg bg-[var(--color-surface-2)]"
                   style={{ height: `${plannedH}%` }}
                 />
                 {/* Actual bar */}
@@ -53,9 +53,9 @@ function WeeklyVolumeChart({ logs, weeks }: { logs: Record<string, TrainingLog>;
                   />
                 )}
               </div>
-              <div className="text-[9px] text-gray-400">W{week.n}</div>
+              <div className="text-[9px] text-[var(--color-text-tertiary)]">W{week.n}</div>
               {actual > 0 && (
-                <div className="text-[9px] font-semibold text-gray-600">{Math.round(actual)}</div>
+                <div className="text-[9px] font-semibold text-[var(--color-text-secondary)]">{Math.round(actual)}</div>
               )}
             </div>
           )
@@ -65,15 +65,15 @@ function WeeklyVolumeChart({ logs, weeks }: { logs: Record<string, TrainingLog>;
       <div className="flex items-center gap-3 mt-3">
         <div className="flex items-center gap-1">
           <div className="w-3 h-2 rounded-sm bg-[var(--ns-ember)]" />
-          <span className="text-[10px] text-gray-400">Logged</span>
+          <span className="text-[10px] text-[var(--color-text-tertiary)]">Logged</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-2 rounded-sm bg-gray-100" />
-          <span className="text-[10px] text-gray-400">Planned</span>
+          <div className="w-3 h-2 rounded-sm bg-[var(--color-surface-2)]" />
+          <span className="text-[10px] text-[var(--color-text-tertiary)]">Planned</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-2 rounded-sm bg-orange-300" />
-          <span className="text-[10px] text-gray-400">Deload</span>
+          <span className="text-[10px] text-[var(--color-text-tertiary)]">Deload</span>
         </div>
       </div>
     </div>

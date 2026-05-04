@@ -93,7 +93,7 @@ function LevelUpScreen({
           style={{ animationDelay: '0.5s' }}>
           Let's go →
         </button>
-        <div className="text-gray-500 text-[10px] mt-3">tap anywhere to dismiss</div>
+        <div className="text-[var(--color-text-tertiary)] text-[10px] mt-3">tap anywhere to dismiss</div>
       </div>
     </div>
   )

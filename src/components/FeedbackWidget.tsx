@@ -80,19 +80,19 @@ export function FeedbackWidget() {
         <div className="px-4 pt-4 pb-8 space-y-4 max-w-lg mx-auto">
 
           {/* Handle */}
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+          <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto" />
 
           {sent ? (
             <div className="text-center py-8 space-y-2">
               <div className="text-4xl">✅</div>
               <p className="text-base font-bold text-gray-800">Thanks for the feedback!</p>
-              <p className="text-sm text-gray-400">We read every message.</p>
+              <p className="text-sm text-[var(--color-text-tertiary)]">We read every message.</p>
             </div>
           ) : (
             <>
               <div>
                 <h2 className="text-base font-black text-gray-900">Send feedback</h2>
-                <p className="text-xs text-gray-400 mt-0.5">We read every message — good and bad.</p>
+                <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">We read every message — good and bad.</p>
               </div>
 
               {/* Type selector */}
@@ -104,7 +104,7 @@ export function FeedbackWidget() {
                     className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
                       type === t.id
                         ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]'
-                        : 'bg-white text-gray-600 border-gray-200'
+                        : 'bg-white text-[var(--color-text-secondary)] border-[var(--color-border-2)]'
                     }`}
                   >
                     {t.emoji} {t.label}
@@ -115,7 +115,7 @@ export function FeedbackWidget() {
               {/* Rating (general only) */}
               {type === 'general' && (
                 <div className="space-y-1.5">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">How are we doing?</p>
+                  <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">How are we doing?</p>
                   <div className="flex gap-2">
                     {[1, 2, 3, 4, 5].map(n => (
                       <button
@@ -124,7 +124,7 @@ export function FeedbackWidget() {
                         className={`flex-1 py-2 rounded-xl text-sm border transition-all ${
                           rating === n
                             ? 'bg-[var(--ns-ember)] text-white border-[var(--ns-ember)]'
-                            : 'bg-[#f8f8f6] text-gray-500 border-gray-200'
+                            : 'bg-[#f8f8f6] text-[var(--color-text-tertiary)] border-[var(--color-border-2)]'
                         }`}
                       >
                         {['😤','😕','😐','🙂','😍'][n - 1]}
@@ -140,7 +140,7 @@ export function FeedbackWidget() {
                 onChange={e => setText(e.target.value)}
                 placeholder={placeholder}
                 rows={4}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 resize-none"
+                className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 resize-none"
               />
 
               {/* Page context shown to user for transparency */}

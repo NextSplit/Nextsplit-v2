@@ -41,7 +41,7 @@ export default function CoachingCard() {
   const selectedMode = MODES.find(m => m.id === mode)!
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-5 py-4">
         <div className="flex items-center gap-2 mb-1">
@@ -64,7 +64,7 @@ export default function CoachingCard() {
               className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full text-[11px] font-semibold transition-colors ${
                 mode === m.id
                   ? 'bg-[var(--ns-ember)] text-white'
-                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-3)]'
               }`}
             >
               <span>{m.emoji}</span>
@@ -78,7 +78,7 @@ export default function CoachingCard() {
           <div className="text-center py-4">
             <div className="text-3xl mb-2">{selectedMode.emoji}</div>
             <p className="text-sm font-semibold text-gray-700 mb-0.5">{selectedMode.label}</p>
-            <p className="text-xs text-gray-400 mb-5">{selectedMode.desc}</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mb-5">{selectedMode.desc}</p>
             <button
               onClick={() => fetchNote(mode)}
               className="px-6 py-2.5 bg-[var(--ns-ember)] text-white rounded-xl text-sm font-semibold active:scale-95 transition-transform"
@@ -98,7 +98,7 @@ export default function CoachingCard() {
                   style={{ animationDelay: `${d}ms` }} />
               ))}
             </div>
-            <p className="text-xs text-gray-400">Analysing your training…</p>
+            <p className="text-xs text-[var(--color-text-tertiary)]">Analysing your training…</p>
           </div>
         )}
 
@@ -133,7 +133,7 @@ export default function CoachingCard() {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <span className="text-sm">{MODES.find(m => m.id === lastMode)?.emoji}</span>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+              <span className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wide">
                 {MODES.find(m => m.id === lastMode)?.label}
               </span>
             </div>

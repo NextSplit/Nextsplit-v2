@@ -76,15 +76,15 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
           </button>
         </div>
         <h2 className="text-base font-bold text-gray-900 mb-1">Add a session</h2>
-        <p className="text-xs text-gray-400 mb-4">Log extra work outside your plan — it won't affect your scheduled sessions.</p>
+        <p className="text-xs text-[var(--color-text-tertiary)] mb-4">Log extra work outside your plan — it won't affect your scheduled sessions.</p>
 
         <div className="grid grid-cols-3 gap-2 mb-4">
           {AD_HOC_TYPES.map(t => (
             <button key={t.c} onClick={() => setSelected(s => s === t.c ? null : t.c)}
-              className={`rounded-xl border p-3 text-left transition-all ${selected === t.c ? 'border-[var(--ns-ember)] bg-[var(--ns-ember-light)]' : 'border-gray-100 bg-white'}`}>
+              className={`rounded-xl border p-3 text-left transition-all ${selected === t.c ? 'border-[var(--ns-ember)] bg-[var(--ns-ember-light)]' : 'border-[var(--color-border)] bg-white'}`}>
               <div className="text-xl mb-1">{t.emoji}</div>
               <div className={`text-[11px] font-bold ${selected === t.c ? 'text-[var(--ns-ember)]' : 'text-gray-700'}`}>{t.label}</div>
-              <div className="text-[9px] text-gray-400 mt-0.5 leading-tight">{t.desc}</div>
+              <div className="text-[9px] text-[var(--color-text-tertiary)] mt-0.5 leading-tight">{t.desc}</div>
               {t.activityType && (
                 <div className="text-[8px] text-[var(--ns-cyan-mid)] font-semibold mt-1">+TDEE</div>
               )}
@@ -95,12 +95,12 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
         {selected && (
           <div className="space-y-3 mb-4">
             <div className="flex items-center gap-3">
-              <label className="text-xs font-semibold text-gray-500 w-20 flex-shrink-0">Duration</label>
+              <label className="text-xs font-semibold text-[var(--color-text-tertiary)] w-20 flex-shrink-0">Duration</label>
               <div className="flex items-center gap-1.5 flex-1">
                 <input type="number" inputMode="numeric" value={duration} onChange={e => setDuration(e.target.value)}
                   placeholder="e.g. 45"
-                  className="w-24 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20" />
-                <span className="text-xs text-gray-400">min</span>
+                  className="w-24 px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20" />
+                <span className="text-xs text-[var(--color-text-tertiary)]">min</span>
               </div>
             </div>
             {AD_HOC_TYPES.find(t => t.c === selected)?.activityType && duration && (
@@ -111,18 +111,18 @@ function AdHocSessionModal({ planId, weekN, dayIndex, onClose, onSaved }: {
               </div>
             )}
             <div className="flex items-start gap-3">
-              <label className="text-xs font-semibold text-gray-500 w-20 flex-shrink-0 pt-2">Notes</label>
+              <label className="text-xs font-semibold text-[var(--color-text-tertiary)] w-20 flex-shrink-0 pt-2">Notes</label>
               <textarea value={notes} onChange={e => setNotes(e.target.value)}
                 placeholder="Optional — what did you do?"
                 rows={2}
-                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 resize-none" />
+                className="flex-1 px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 resize-none" />
             </div>
           </div>
         )}
 
         <div className="flex gap-3">
           <button onClick={onClose}
-            className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-500">
+            className="flex-1 py-3 rounded-xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-tertiary)]">
             Cancel
           </button>
           <button onClick={handleSave} disabled={!selected || saving}

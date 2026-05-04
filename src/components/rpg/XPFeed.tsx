@@ -38,16 +38,16 @@ function XPFeed({ logs, weeks }: {
   if (recent.length === 0) return null
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-50">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
+      <div className="px-4 py-3 border-b border-[var(--color-border)]">
         <span className="text-sm font-bold text-gray-900">⚡ Recent XP</span>
       </div>
-      <div className="divide-y divide-gray-50">
+      <div className="divide-y divide-[var(--color-border)]">
         {recent.map((r, i) => (
           <div key={i} className="flex items-center justify-between px-4 py-2.5">
             <div>
               <p className="text-xs font-semibold text-gray-800">{r.name}</p>
-              <p className="text-[10px] text-gray-400">{r.date}{r.km ? ` · ${r.km}km` : ''}</p>
+              <p className="text-[10px] text-[var(--color-text-tertiary)]">{r.date}{r.km ? ` · ${r.km}km` : ''}</p>
             </div>
             <div className="text-sm font-black text-[var(--ns-ember)]">+{r.xp} XP</div>
           </div>

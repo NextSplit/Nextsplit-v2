@@ -181,7 +181,7 @@ export default function RaceResultShareCard({
           </button>
           <button
             onClick={onClose}
-            className="w-full py-3 text-sm text-gray-400 font-medium"
+            className="w-full py-3 text-sm text-[var(--color-text-tertiary)] font-medium"
           >
             Close
           </button>

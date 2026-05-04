@@ -136,22 +136,22 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
         <div className="flex-1">
           <div className="text-[10px] font-bold text-[var(--ns-ember)] uppercase tracking-wide">Race brief</div>
           <div className="text-sm font-bold text-gray-900 truncate">{race.name}</div>
-          <div className="text-[10px] text-gray-400">
+          <div className="text-[10px] text-[var(--color-text-tertiary)]">
             {daysUntil === 0 ? 'Today!' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil} days`}
             {race.goal_time_secs && ` · Target ${fmtTime(race.goal_time_secs)}`}
           </div>
         </div>
-        <svg className={`w-4 h-4 text-gray-400 transition-transform ${expanded ? 'rotate-180' : ''}`}
+        <svg className={`w-4 h-4 text-[var(--color-text-tertiary)] transition-transform ${expanded ? 'rotate-180' : ''}`}
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
       {expanded && (
-        <div className="border-t border-gray-100">
+        <div className="border-t border-[var(--color-border)]">
           {!brief && !loading && !error && (
             <div className="px-4 py-5 text-center">
-              <p className="text-sm text-gray-500 mb-3">Get your personalised race brief — pacing plan, fuelling strategy, and taper advice based on your training.</p>
+              <p className="text-sm text-[var(--color-text-tertiary)] mb-3">Get your personalised race brief — pacing plan, fuelling strategy, and taper advice based on your training.</p>
               <button
                 onClick={generateBrief}
                 className="px-5 py-2.5 bg-[var(--ns-ember)] text-white text-sm font-bold rounded-xl"
@@ -165,9 +165,9 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
           {loading && (
             <div className="px-4 py-6 text-center">
               <div className="text-2xl mb-2 animate-pulse">🤔</div>
-              <p className="text-sm text-gray-500">Analysing your training…</p>
+              <p className="text-sm text-[var(--color-text-tertiary)]">Analysing your training…</p>
               <div className="mt-3 space-y-2">
-                {[1,2,3,4].map(i => <div key={i} className="h-10 bg-gray-100 rounded-xl animate-pulse mx-2" />)}
+                {[1,2,3,4].map(i => <div key={i} className="h-10 bg-[var(--color-surface-2)] rounded-xl animate-pulse mx-2" />)}
               </div>
             </div>
           )}
@@ -192,7 +192,7 @@ export default function PreRaceBrief({ race, logs, planName }: Props) {
               ))}
               <button
                 onClick={generateBrief}
-                className="w-full text-center text-[10px] text-gray-400 py-1 hover:text-gray-600"
+                className="w-full text-center text-[10px] text-[var(--color-text-tertiary)] py-1 hover:text-[var(--color-text-secondary)]"
                 aria-label="Regenerate race brief"
               >
                 ↻ Regenerate

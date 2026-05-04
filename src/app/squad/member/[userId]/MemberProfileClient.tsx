@@ -1,7 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
+const NUDGE_OPTIONS = [
+  { key: 'missing',    emoji: '👋', label: "Where are you?" },
+  { key: 'motivation', emoji: '💪', label: "You got this!" },
+  { key: 'streak',     emoji: '🔥', label: "Keep that streak!" },
+  { key: 'week',       emoji: '📅', label: "Big week — let's go!" },
+  { key: 'ran',        emoji: '🏃', label: "Saw you ran — great work!" },
+  { key: 'checkin',    emoji: '🤙', label: "How's training going?" },
+]
 
 interface Props {
   profile: { id: string; display_name: string; handle: string | null; runner_class: string | null; runner_colour: string; bio: string | null; is_split_leader: boolean }
@@ -12,6 +22,63 @@ interface Props {
 
 function daysUntil(date: string) {
   return Math.ceil((new Date(date).getTime() - Date.now()) / 86400000)
+}
+
+
+// ── Nudge panel ───────────────────────────────────────────────────────────────
+
+function NudgePanel({ userId, colour }: { userId: string; colour: string }) {
+  const [open, setOpen]       = useState(false)
+  const [sending, setSending] = useState(false)
+  const [sent, setSent]       = useState<string | null>(null)
+  const [error, setError]     = useState<string | null>(null)
+
+  async function sendNudge(key: string) {
+    setSending(true); setError(null)
+    try {
+      const res = await fetch('/api/squad/nudge', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to_user: userId, message_key: key }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Failed')
+      setSent(data.message); setOpen(false)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to send')
+    } finally { setSending(false) }
+  }
+
+  if (sent) return (
+    <div className="w-full py-3.5 rounded-2xl text-center text-sm font-black"
+      style={{ background: 'rgba(0,230,118,0.1)', border: '1.5px solid rgba(0,230,118,0.3)', color: '#00e676' }}>
+      ✓ Nudge sent!
+    </div>
+  )
+
+  return (
+    <div>
+      <button onClick={() => setOpen(o => !o)}
+        className="w-full py-3.5 rounded-2xl font-black text-sm"
+        style={{ background: `${colour}15`, border: `1.5px solid ${colour}40`, color: colour }}>
+        👋 {open ? 'Cancel' : 'Send a nudge'}
+      </button>
+      {open && (
+        <div className="mt-2 rounded-2xl overflow-hidden"
+          style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}>
+          {error && <p className="px-4 pt-3 text-xs" style={{ color: '#ff3d6e' }}>{error}</p>}
+          {NUDGE_OPTIONS.map(opt => (
+            <button key={opt.key} onClick={() => sendNudge(opt.key)} disabled={sending}
+              className="w-full px-4 py-3 text-left text-sm flex items-center gap-3 border-b active:opacity-70"
+              style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }}>
+              <span className="text-base">{opt.emoji}</span>
+              <span className="font-medium">{opt.label}</span>
+              {sending && <span className="ml-auto text-xs" style={{ color: 'var(--color-text-tertiary)' }}>…</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function MemberProfileClient({ profile, plan, logs, viewerId }: Props) {
@@ -153,12 +220,9 @@ export default function MemberProfileClient({ profile, plan, logs, viewerId }: P
           </div>
         )}
 
-        {/* Nudge button (only for leaders and for non-self) */}
+        {/* Nudge button (only for non-self) */}
         {!isSelf && (
-          <button className="w-full py-3.5 rounded-2xl font-black text-sm"
-            style={{ background: `${colour}15`, border: `1.5px solid ${colour}35`, color: colour }}>
-            👋 Send a nudge
-          </button>
+          <NudgePanel userId={profile.id} colour={colour} />
         )}
       </div>
     </div>

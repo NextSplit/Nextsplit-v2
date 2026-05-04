@@ -66,7 +66,7 @@ function StravaSection({ isConnected, clientId }: { clientId: string | null; isC
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -77,18 +77,18 @@ function StravaSection({ isConnected, clientId }: { clientId: string | null; isC
           <div>
             <p className="text-sm font-bold text-gray-900">Strava</p>
             {isConnected && athleteName && (
-              <p className="text-[10px] text-gray-400">{athleteName}</p>
+              <p className="text-[10px] text-[var(--color-text-tertiary)]">{athleteName}</p>
             )}
           </div>
         </div>
-        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${isConnected ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${isConnected ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'}`}>
           {isConnected ? '✓ Connected' : 'Not connected'}
         </span>
       </div>
 
       {isConnected ? (
         <>
-          <p className="text-xs text-gray-400 mb-3 ml-8">
+          <p className="text-xs text-[var(--color-text-tertiary)] mb-3 ml-8">
             Tap Strava on any session in Today to import activities
             {lastSync && <span className="ml-1">· Last sync {lastSync}</span>}
           </p>
@@ -103,14 +103,14 @@ function StravaSection({ isConnected, clientId }: { clientId: string | null; isC
               {syncing ? 'Syncing…' : '↻ Check for activities'}
             </button>
             <button onClick={disconnectStrava} disabled={disconnecting}
-              className="py-2 px-3 rounded-xl border border-gray-200 text-gray-400 text-xs font-semibold disabled:opacity-50">
+              className="py-2 px-3 rounded-xl border border-[var(--color-border-2)] text-[var(--color-text-tertiary)] text-xs font-semibold disabled:opacity-50">
               {disconnecting ? '…' : 'Disconnect'}
             </button>
           </div>
         </>
       ) : STRAVA_CLIENT_ID ? (
         <>
-          <p className="text-xs text-gray-400 mb-3 ml-8">Connect to import activities with one tap from the Today tab</p>
+          <p className="text-xs text-[var(--color-text-tertiary)] mb-3 ml-8">Connect to import activities with one tap from the Today tab</p>
           <button onClick={connectStrava}
             className="w-full py-2.5 rounded-xl bg-orange-500 text-white text-xs font-bold active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
             <svg viewBox="0 0 24 24" fill="white" className="w-3.5 h-3.5">
@@ -120,7 +120,7 @@ function StravaSection({ isConnected, clientId }: { clientId: string | null; isC
           </button>
         </>
       ) : (
-        <p className="text-xs text-gray-400 text-center py-1 ml-8">Strava integration not configured</p>
+        <p className="text-xs text-[var(--color-text-tertiary)] text-center py-1 ml-8">Strava integration not configured</p>
       )}
     </div>
   )

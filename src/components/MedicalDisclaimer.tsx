@@ -18,7 +18,7 @@ interface Props {
 export default function MedicalDisclaimer({ variant = 'compact' }: Props) {
   if (variant === 'compact') {
     return (
-      <p className="text-[10px] text-gray-400 leading-relaxed text-center px-2">
+      <p className="text-[10px] text-[var(--color-text-tertiary)] leading-relaxed text-center px-2">
         NextSplit is not a medical device. Training load indicators are for
         guidance only — not medical advice.{' '}
         <a href="/privacy" className="underline">Privacy policy</a>

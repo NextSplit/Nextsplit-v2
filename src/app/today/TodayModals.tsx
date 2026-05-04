@@ -64,7 +64,7 @@ export function TodayModals({
       {/* Undo toast with countdown */}
       {undoInfo && (
         <div className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 animate-slide-up" role="status" aria-live="polite" aria-atomic="true">
-          <div className="bg-gray-900 text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-xl">
+          <div className="bg-[var(--color-surface)] text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-xl">
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className="text-sm">✓ <span className="font-medium">{undoLabel}</span></span>

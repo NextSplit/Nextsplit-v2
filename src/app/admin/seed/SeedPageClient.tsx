@@ -34,7 +34,7 @@ export default function SeedPageClient() {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
         <h1 className="text-xl font-bold text-gray-900 mb-2">Seed Plan Templates</h1>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-[var(--color-text-tertiary)] mb-6">
           Inserts all 36 training plans into Supabase. Safe to run multiple times (upsert).
         </p>
 
@@ -51,7 +51,7 @@ export default function SeedPageClient() {
         {status.length > 0 && (
           <div className="mt-6 space-y-2">
             {status.map((s, i) => (
-              <div key={i} className="text-sm font-mono bg-white rounded-lg px-3 py-2 border border-gray-100">
+              <div key={i} className="text-sm font-mono bg-white rounded-lg px-3 py-2 border border-[var(--color-border)]">
                 {s}
               </div>
             ))}
@@ -60,7 +60,7 @@ export default function SeedPageClient() {
 
         {done && (
           <div className="mt-6">
-            <a href="/onboarding/predetermined" className="block w-full py-4 bg-gray-900 text-white rounded-xl font-semibold text-sm text-center">
+            <a href="/onboarding/predetermined" className="block w-full py-4 bg-[var(--color-surface)] text-white rounded-xl font-semibold text-sm text-center">
               Go to Plan Browser →
             </a>
           </div>

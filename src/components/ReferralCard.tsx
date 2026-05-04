@@ -86,7 +86,7 @@ export default function ReferralCard({ trigger = 'profile' }: Props) {
   const headline = headlines[trigger] ?? headlines.profile
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 flex items-center gap-2"
         style={{ background: 'var(--ns-ember)', color: 'white' }}>
@@ -108,22 +108,22 @@ export default function ReferralCard({ trigger = 'profile' }: Props) {
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-gray-50 rounded-xl p-3 text-center">
             <p className="text-base font-black" style={{ color: 'var(--ns-ember)' }}>1 month</p>
-            <p className="text-[10px] text-gray-500 mt-0.5">free for you</p>
+            <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">free for you</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-3 text-center">
             <p className="text-base font-black" style={{ color: 'var(--ns-ember)' }}>1 month</p>
-            <p className="text-[10px] text-gray-500 mt-0.5">free for them</p>
+            <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">free for them</p>
           </div>
         </div>
 
-        <p className="text-[11px] text-gray-400 leading-relaxed text-center">
+        <p className="text-[11px] text-[var(--color-text-tertiary)] leading-relaxed text-center">
           When someone signs up with your link and upgrades to Pro,
           you both get a free month. No limit on referrals.
         </p>
 
         {/* Referral link display */}
         <div className="bg-gray-50 rounded-xl px-3 py-2.5 flex items-center gap-2">
-          <p className="text-xs text-gray-500 font-mono flex-1 truncate">{data.shareUrl}</p>
+          <p className="text-xs text-[var(--color-text-tertiary)] font-mono flex-1 truncate">{data.shareUrl}</p>
           <button
             onClick={copyCode}
             className="text-xs font-bold flex-shrink-0 transition-colors"
@@ -146,8 +146,8 @@ export default function ReferralCard({ trigger = 'profile' }: Props) {
         </button>
 
         {/* Your code */}
-        <p className="text-center text-[10px] text-gray-400">
-          Your code: <span className="font-black tracking-widest text-gray-600">{data.code}</span>
+        <p className="text-center text-[10px] text-[var(--color-text-tertiary)]">
+          Your code: <span className="font-black tracking-widest text-[var(--color-text-secondary)]">{data.code}</span>
         </p>
       </div>
     </div>

@@ -45,19 +45,19 @@ function ShoppingList({ entries }: { entries: MealPlanEntryWithRecipe[] }) {
 
   if (aggregated.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+      <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6 text-center">
         <div className="text-3xl mb-2">🛒</div>
-        <p className="text-sm text-gray-500">Assign meals to days to generate your shopping list.</p>
+        <p className="text-sm text-[var(--color-text-tertiary)]">Assign meals to days to generate your shopping list.</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
+      <div className="px-4 py-3 border-b border-[var(--color-border)] flex items-center justify-between">
         <div>
           <span className="text-sm font-bold text-gray-900">🛒 Shopping list</span>
-          <span className="text-[10px] text-gray-400 ml-2">{aggregated.length} items</span>
+          <span className="text-[10px] text-[var(--color-text-tertiary)] ml-2">{aggregated.length} items</span>
         </div>
         <button onClick={copyList}
           className="text-[11px] font-semibold text-[var(--ns-ember)]">
@@ -67,7 +67,7 @@ function ShoppingList({ entries }: { entries: MealPlanEntryWithRecipe[] }) {
       <div className="px-4 py-3 space-y-4">
         {categories.map(cat => (
           <div key={cat}>
-            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2">{cat}</div>
+            <div className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wide mb-2">{cat}</div>
             <div className="space-y-1.5">
               {aggregated.filter(i => i.category === cat).map((item, idx) => {
                 const key = `${item.name}::${item.unit}`
@@ -83,7 +83,7 @@ function ShoppingList({ entries }: { entries: MealPlanEntryWithRecipe[] }) {
                     <span className={`text-sm flex-1 ${done ? 'line-through text-gray-300' : 'text-gray-700'}`}>
                       {item.name}
                     </span>
-                    <span className={`text-xs ${done ? 'text-gray-300' : 'text-gray-400'}`}>
+                    <span className={`text-xs ${done ? 'text-gray-300' : 'text-[var(--color-text-tertiary)]'}`}>
                       {formatQty(item.quantity)} {item.unit}
                     </span>
                   </button>

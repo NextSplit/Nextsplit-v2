@@ -66,7 +66,7 @@ export default function InviteLandingClient({
             </span>
           )}
           {coachLocation && (
-            <p className="text-gray-400 text-sm">📍 {coachLocation}</p>
+            <p className="text-[var(--color-text-tertiary)] text-sm">📍 {coachLocation}</p>
           )}
         </div>
       </div>
@@ -93,7 +93,7 @@ export default function InviteLandingClient({
 
         {/* What is NextSplit */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">What you're joining</p>
+          <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">What you're joining</p>
           {[
             { emoji: '🧠', text: 'AI coaching that adapts to your actual training data' },
             { emoji: '📋', text: 'Personalised training plan built around your goals' },
@@ -136,7 +136,7 @@ export default function InviteLandingClient({
           </button>
         </div>
 
-        <p className="text-center text-xs text-gray-500 px-4">
+        <p className="text-center text-xs text-[var(--color-text-tertiary)] px-4">
           Free to join · No card required · 7-day Elite trial included
         </p>
       </div>

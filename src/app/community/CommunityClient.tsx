@@ -7,7 +7,7 @@ import CharacterProfileModal from '@/components/CharacterProfileModal'
 
 const LEAGUE_CONFIG = {
   bronze:   { label: 'Bronze',   emoji: '🥉', colour: 'text-amber-700 bg-amber-50 border-amber-200' },
-  silver:   { label: 'Silver',   emoji: '🥈', colour: 'text-gray-600 bg-[#f8f8f6] border-[var(--color-border)]' },
+  silver:   { label: 'Silver',   emoji: '🥈', colour: 'text-[var(--color-text-secondary)] bg-[#f8f8f6] border-[var(--color-border)]' },
   gold:     { label: 'Gold',     emoji: '🥇', colour: 'text-yellow-700 bg-yellow-50 border-yellow-200' },
   platinum: { label: 'Platinum', emoji: '💎', colour: 'text-blue-700 bg-blue-50 border-blue-200' },
   elite:    { label: 'Elite',    emoji: '👑', colour: 'text-purple-700 bg-purple-50 border-purple-200' },
@@ -43,7 +43,7 @@ function JoinClubModal({ onClose, onJoined }: { onClose: () => void; onJoined: (
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl px-4 pt-4 pb-8 space-y-4 max-w-lg mx-auto" style={{ background: "var(--color-surface)" }}>
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto" />
         <h2 className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>Join a club</h2>
         <p className="text-sm text-[var(--color-text-secondary)]">Enter the 6-character join code from your club admin.</p>
         <input value={code} onChange={e => setCode(e.target.value.toUpperCase())}
@@ -88,7 +88,7 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl px-4 pt-4 pb-8 max-h-[85dvh] overflow-y-auto space-y-4 max-w-lg mx-auto" style={{ background: "var(--color-surface)" }}>
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto" />
         <h2 className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>Create a club</h2>
 
         <div className="flex gap-2 flex-wrap">
@@ -297,12 +297,12 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-xs font-bold text-gray-900" style={{ color: 'var(--color-text-primary)' }}>{name}</p>
-                        <span className="text-[10px] text-gray-400 flex-shrink-0">{timeAgo}</span>
+                        <span className="text-[10px] text-[var(--color-text-tertiary)] flex-shrink-0">{timeAgo}</span>
                       </div>
-                      <p className="text-xs text-gray-600 mt-0.5">
+                      <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
                         {item.session_name}
                         {item.km ? <span className="font-data ml-1.5 text-[var(--color-text-secondary)]">{item.km}km</span> : null}
-                        {item.pace ? <span className="font-data ml-1.5 text-gray-400">{item.pace}/km</span> : null}
+                        {item.pace ? <span className="font-data ml-1.5 text-[var(--color-text-tertiary)]">{item.pace}/km</span> : null}
                       </p>
                       {item.milestone_type && (
                         <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
@@ -365,14 +365,14 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                       <p className="text-sm font-bold truncate" style={{ color: 'var(--color-text-primary)' }}>{club.name}</p>
                       {role === 'owner' && <span className="text-[10px] text-[var(--ns-ember)] font-bold">Owner</span>}
                     </div>
-                    <p className="text-xs text-gray-400">{club.member_count} members</p>
+                    <p className="text-xs text-[var(--color-text-tertiary)]">{club.member_count} members</p>
                   </div>
                   <span className="text-gray-300 text-lg shrink-0">›</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-center">
                   <div className="bg-[#f8f8f6] rounded-xl py-2">
                     <p className="text-sm font-black text-gray-800">{Math.round(club.weekly_km)}km</p>
-                    <p className="text-[10px] text-gray-400">club this week</p>
+                    <p className="text-[10px] text-[var(--color-text-tertiary)]">club this week</p>
                   </div>
                   <div className="bg-[var(--color-surface-2)] rounded-xl py-2">
                     <p className="text-sm font-black text-[var(--ns-ember)]">{Math.round(weekly_km ?? 0)}km</p>
@@ -402,11 +402,11 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{c.title}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{c.description}</p>
+                      <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{c.description}</p>
                     </div>
                     <div className="text-right shrink-0 ml-3">
                       <p className="text-xs font-bold text-[var(--ns-ember)]">+{c.reward_xp} XP</p>
-                      <p className="text-[10px] text-gray-400">{daysLeft}d left</p>
+                      <p className="text-[10px] text-[var(--color-text-tertiary)]">{daysLeft}d left</p>
                     </div>
                   </div>
 
@@ -423,7 +423,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                         <span>{c.my_entry.completed ? '✓ Complete!' : `${Math.round(c.my_entry.progress)} / ${c.target_value} ${c.target_unit}`}</span>
                         <span>{Math.round(progress)}%</span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-2 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
                         <div className={`h-full rounded-full transition-all ${c.my_entry.completed ? 'bg-emerald-500' : 'bg-[var(--ns-ember)]'}`}
                           style={{ width: `${progress}%` }} />
                       </div>
@@ -459,13 +459,13 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="text-sm font-bold text-gray-900">{r.name}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{r.distance_km}km · {daysLeft}d left</p>
+                      <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{r.distance_km}km · {daysLeft}d left</p>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-black text-gray-900">
                         {r.entry_fee_gbp > 0 ? `£${r.entry_fee_gbp}` : 'Free'}
                       </p>
-                      <p className="text-[10px] text-gray-400">{r.entry_count} entered</p>
+                      <p className="text-[10px] text-[var(--color-text-tertiary)]">{r.entry_count} entered</p>
                     </div>
                   </div>
 
@@ -495,7 +495,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                               ).join('\n')
                             )
                           }}
-                          className="w-full text-xs font-bold py-2 rounded-xl border border-[var(--color-border)] text-gray-600 hover:border-gray-300 transition-colors"
+                          className="w-full text-xs font-bold py-2 rounded-xl border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-gray-300 transition-colors"
                         >
                           View full leaderboard ({r.entry_count} finishers)
                         </button>
@@ -522,11 +522,11 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
         {tab === 'leaderboard' && (
           <div className="space-y-2">
             <div className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-3 flex items-center justify-between">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">
                 {season?.name ?? 'Season'} — Global XP
               </p>
               {daysLeft !== null && (
-                <span className="text-[10px] text-gray-400">{daysLeft} days left</span>
+                <span className="text-[10px] text-[var(--color-text-tertiary)]">{daysLeft} days left</span>
               )}
             </div>
 
@@ -551,10 +551,10 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                   style={isMe ? { background: 'var(--ns-cyan-light)' } : {}}
                 >
                   <div className="w-7 text-center shrink-0">
-                    {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-gray-400">#{i + 1}</span>}
+                    {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold text-[var(--color-text-tertiary)]">#{i + 1}</span>}
                   </div>
                   {/* Character class badge — replaces generic avatar per spec */}
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-base shrink-0 ${cls ? '' : 'bg-gray-100'}`}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-base shrink-0 ${cls ? '' : 'bg-[var(--color-surface-2)]'}`}
                     style={cls ? { background: cls.bg.replace('bg-', '') } : {}}>
                     {cls ? cls.emoji : '🏃'}
                   </div>
@@ -567,11 +567,11 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
                       )}
                     </p>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="text-[10px] text-gray-400">{lCfg.emoji} {lCfg.label}</span>
+                      <span className="text-[10px] text-[var(--color-text-tertiary)]">{lCfg.emoji} {lCfg.label}</span>
                       {cls && (
                         <>
                           <span className="text-[10px] text-gray-300">·</span>
-                          <span className="text-[10px] text-gray-400">{cls.name}</span>
+                          <span className="text-[10px] text-[var(--color-text-tertiary)]">{cls.name}</span>
                         </>
                       )}
                     </div>
@@ -586,7 +586,7 @@ export default function CommunityClient({ userId, profile }: { userId: string; p
 
             {leaderboard.length === 0 && !loading && (
               <div className="rounded-2xl border" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }} data-x=" p-8 text-center">
-                <p className="text-gray-400 text-sm">No runners yet this season. Be the first!</p>
+                <p className="text-[var(--color-text-tertiary)] text-sm">No runners yet this season. Be the first!</p>
               </div>
             )}
           </div>

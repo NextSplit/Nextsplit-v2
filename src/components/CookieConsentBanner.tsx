@@ -49,7 +49,7 @@ export default function CookieConsentBanner() {
               >
                 One quick thing before we start
               </h2>
-              <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+              <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5 leading-relaxed">
                 We use analytics to understand how runners use NextSplit and
                 improve training plans. No advertising. No third-party sharing.
               </p>
@@ -63,8 +63,8 @@ export default function CookieConsentBanner() {
               { emoji: '✓', text: 'When features are used (to prioritise fixes)' },
               { emoji: '✗', text: 'No advertising data. No selling to third parties.' },
             ].map(item => (
-              <p key={item.text} className="text-[11px] text-gray-500 flex items-start gap-2">
-                <span className={`font-bold flex-shrink-0 ${item.emoji === '✗' ? 'text-gray-400' : ''}`}
+              <p key={item.text} className="text-[11px] text-[var(--color-text-tertiary)] flex items-start gap-2">
+                <span className={`font-bold flex-shrink-0 ${item.emoji === '✗' ? 'text-[var(--color-text-tertiary)]' : ''}`}
                   style={item.emoji === '✓' ? { color: 'var(--ns-ember)' } : {}}>
                   {item.emoji}
                 </span>
@@ -77,7 +77,7 @@ export default function CookieConsentBanner() {
           <div className="flex gap-3">
             <button
               onClick={decline}
-              className="flex-1 py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-500 active:bg-gray-50 transition-all"
+              className="flex-1 py-3 rounded-2xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-tertiary)] active:bg-gray-50 transition-all"
             >
               Decline
             </button>
@@ -91,7 +91,7 @@ export default function CookieConsentBanner() {
           </div>
 
           {/* Privacy link */}
-          <p className="text-center text-[10px] text-gray-400 mt-3">
+          <p className="text-center text-[10px] text-[var(--color-text-tertiary)] mt-3">
             You can change this in{' '}
             <Link href="/settings" className="underline">Settings</Link>{' '}
             at any time.{' '}

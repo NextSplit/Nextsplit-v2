@@ -58,7 +58,7 @@ function PlanDetailModal({
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl max-h-[90dvh] overflow-y-auto max-w-lg mx-auto animate-slide-up">
         <div className="px-5 pt-5 pb-8">
           {/* Handle */}
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+          <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
 
           {/* Badges */}
           <div className="flex items-center gap-2 flex-wrap mb-3">
@@ -95,7 +95,7 @@ function PlanDetailModal({
           </div>
 
           {/* Subtitle */}
-          {plan.subtitle && <p className="text-sm text-gray-500 mb-3">{plan.subtitle}</p>}
+          {plan.subtitle && <p className="text-sm text-[var(--color-text-tertiary)] mb-3">{plan.subtitle}</p>}
 
           {/* Coach link */}
           {plan.coach && (
@@ -108,7 +108,7 @@ function PlanDetailModal({
                 <span className="text-xs font-semibold text-gray-700 group-hover:underline">
                   {plan.coach.display_name}
                 </span>
-                <span className="text-[10px] text-gray-400 ml-1">· Coach</span>
+                <span className="text-[10px] text-[var(--color-text-tertiary)] ml-1">· Coach</span>
               </div>
             </a>
           )}
@@ -122,14 +122,14 @@ function PlanDetailModal({
             ].map(s => (
               <div key={s.label} className="bg-gray-50 rounded-xl p-3 text-center">
                 <p className="text-sm font-bold text-gray-900">{s.value}</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">{s.label}</p>
+                <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
 
           {/* Social proof */}
           {(plan.total_starts > 0 || plan.avg_rating) && (
-            <div className="flex items-center gap-4 mb-4 text-xs text-gray-400">
+            <div className="flex items-center gap-4 mb-4 text-xs text-[var(--color-text-tertiary)]">
               {plan.total_starts > 0 && <span>👥 {plan.total_starts} runners started this</span>}
               {plan.avg_rating && (
                 <span>⭐ {plan.avg_rating.toFixed(1)} ({plan.review_count} reviews)</span>
@@ -161,7 +161,7 @@ function PlanDetailModal({
             <div className="space-y-3">
               {!isPro && (
                 <div className="bg-gray-50 rounded-2xl p-3 text-center">
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[var(--color-text-tertiary)]">
                     Paid plans require a NextSplit account.{' '}
                     <a href="/profile" className="font-bold" style={{ color: 'var(--ns-cyan)' }}>
                       Upgrade →
@@ -174,13 +174,13 @@ function PlanDetailModal({
                 style={{ background: 'var(--ns-ember)' }}>
                 {loading ? 'Processing…' : `Get for £${plan.price_gbp} →`}
               </button>
-              <p className="text-center text-[10px] text-gray-400">
+              <p className="text-center text-[10px] text-[var(--color-text-tertiary)]">
                 Secure payment · Instant access · No subscription needed
               </p>
             </div>
           )}
 
-          <button onClick={onClose} className="w-full py-3 text-sm text-gray-400 mt-2">
+          <button onClick={onClose} className="w-full py-3 text-sm text-[var(--color-text-tertiary)] mt-2">
             Cancel
           </button>
         </div>
@@ -197,7 +197,7 @@ function PlanCard({ plan, onClick }: { plan: MarketplacePlan; onClick: () => voi
   return (
     <button
       onClick={onClick}
-      className="w-full text-left bg-white rounded-2xl border border-gray-100 p-4 space-y-3 active:scale-[0.98] transition-all hover:border-gray-200 hover:shadow-sm"
+      className="w-full text-left bg-white rounded-2xl border border-[var(--color-border)] p-4 space-y-3 active:scale-[0.98] transition-all hover:border-[var(--color-border-2)] hover:shadow-sm"
     >
       {/* Badges + price */}
       <div className="flex items-start justify-between gap-2">
@@ -221,7 +221,7 @@ function PlanCard({ plan, onClick }: { plan: MarketplacePlan; onClick: () => voi
             )}
           </div>
           <h3 className="text-sm font-bold text-gray-900 leading-tight">{plan.name}</h3>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-[var(--color-text-tertiary)]">
             {plan.distance} · {plan.level} · {plan.weeks_min}
             {plan.weeks_min !== plan.weeks_max ? `–${plan.weeks_max}` : ''} wks
           </p>
@@ -236,7 +236,7 @@ function PlanCard({ plan, onClick }: { plan: MarketplacePlan; onClick: () => voi
 
       {/* Coach */}
       {plan.coach && (
-        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+        <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-tertiary)]">
           <div className="w-4 h-4 rounded-full flex items-center justify-center text-[10px]"
             style={{ background: 'var(--ns-cyan-light)' }}>🏃</div>
           {plan.coach.display_name}
@@ -245,12 +245,12 @@ function PlanCard({ plan, onClick }: { plan: MarketplacePlan; onClick: () => voi
 
       {/* Description snippet */}
       {plan.description && (
-        <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{plan.description}</p>
+        <p className="text-xs text-[var(--color-text-tertiary)] leading-relaxed line-clamp-2">{plan.description}</p>
       )}
 
       {/* Stats */}
       {(plan.total_starts > 0 || plan.avg_rating) && (
-        <div className="flex items-center gap-3 text-[11px] text-gray-400">
+        <div className="flex items-center gap-3 text-[11px] text-[var(--color-text-tertiary)]">
           {plan.total_starts > 0 && <span>👥 {plan.total_starts}</span>}
           {plan.avg_rating && <span>⭐ {plan.avg_rating.toFixed(1)}</span>}
           {plan.avg_completion_rate && (
@@ -296,7 +296,7 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
   return (
     <div className="min-h-screen pb-24" style={{ background: '#f8f8f6' }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] px-4 pt-12 pb-0 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-lg font-black text-gray-900">Plans</h1>
@@ -310,11 +310,11 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
           </div>
 
           {/* Tab switcher */}
-          <div className="flex border-b border-gray-100">
+          <div className="flex border-b border-[var(--color-border)]">
             {(['browse', 'purchased'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
                 className={`flex-1 py-2.5 text-xs font-bold capitalize border-b-2 transition-all ${
-                  tab === t ? 'border-b-[var(--ns-cyan)] text-[var(--ns-ember)]' : 'border-transparent text-gray-400'
+                  tab === t ? 'border-b-[var(--ns-cyan)] text-[var(--ns-ember)]' : 'border-transparent text-[var(--color-text-tertiary)]'
                 }`}
                 style={tab === t ? { borderBottomColor: 'var(--ns-cyan)', color: 'var(--ns-cyan)' } : {}}>
                 {t === 'browse' ? '🔍 Browse' : '✓ My Plans'}
@@ -326,11 +326,11 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
 
       {/* Filters — browse only */}
       {tab === 'browse' && (
-        <div className="bg-white border-b border-gray-100 px-4 py-3">
+        <div className="bg-white border-b border-[var(--color-border)] px-4 py-3">
           <div className="max-w-lg mx-auto space-y-2">
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search plans or coaches…"
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-[var(--ns-ember)] transition-colors" />
+              className="w-full px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-sm outline-none focus:border-[var(--ns-ember)] transition-colors" />
             <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
               {DISTANCES.map(d => (
                 <button key={d} onClick={() => setDistance(d)}
@@ -362,7 +362,7 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
         {filtered.length === 0 && (
           <div className="text-center py-16">
             <div className="text-4xl mb-3">{tab === 'purchased' ? '📋' : '🔍'}</div>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-[var(--color-text-tertiary)]">
               {tab === 'purchased'
                 ? "You haven't purchased any coach plans yet."
                 : 'No plans match your filters.'}
@@ -379,14 +379,14 @@ export default function MarketplaceClient({ initialPlans }: { initialPlans: Mark
 
         {tab === 'browse' && official.length > 0 && (
           <div className="space-y-3">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">✦ NextSplit Official</p>
+            <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">✦ NextSplit Official</p>
             {official.map(p => <PlanCard key={p.id} plan={p} onClick={() => setSelected(p)} />)}
           </div>
         )}
 
         {coached.length > 0 && (
           <div className="space-y-3">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+            <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">
               {tab === 'purchased' ? '✓ Purchased Plans' : '👟 Coach Plans'}
             </p>
             {coached.map(p => <PlanCard key={p.id} plan={p} onClick={() => setSelected(p)} />)}

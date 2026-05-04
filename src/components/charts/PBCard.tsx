@@ -13,7 +13,7 @@ function PBCard({ logs }: { logs: Record<string, TrainingLog> }) {
   const PB_SLOTS = ['5K', '10K', 'Half', 'Marathon']
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 px-4 py-4">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] px-4 py-4">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">🏆</span>
         <h3 className="text-sm font-bold text-gray-900">Personal Bests</h3>
@@ -22,13 +22,13 @@ function PBCard({ logs }: { logs: Record<string, TrainingLog> }) {
         {PB_SLOTS.map(dist => {
           const pb = pbs.find(p => p.distance === dist)
           return (
-            <div key={dist} className={`rounded-xl p-3 ${pb ? 'bg-[var(--ns-ember-light)] border border-orange-50' : 'bg-gray-50 border border-gray-100'}`}>
-              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-0.5">{dist}</div>
+            <div key={dist} className={`rounded-xl p-3 ${pb ? 'bg-[var(--ns-ember-light)] border border-orange-50' : 'bg-gray-50 border border-[var(--color-border)]'}`}>
+              <div className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wide mb-0.5">{dist}</div>
               {pb ? (
                 <>
                   <div className="text-lg font-black text-gray-900 leading-tight">{pb.timeStr}</div>
                   <div className="text-[10px] text-[var(--ns-ember)] font-medium">{fmtPaceForUnits(pb.pacePerKm, units)}</div>
-                  <div className="text-[9px] text-gray-400 mt-0.5">Week {pb.weekN}</div>
+                  <div className="text-[9px] text-[var(--color-text-tertiary)] mt-0.5">Week {pb.weekN}</div>
                 </>
               ) : (
                 <div className="text-sm font-bold text-gray-300 mt-1">—</div>
@@ -38,7 +38,7 @@ function PBCard({ logs }: { logs: Record<string, TrainingLog> }) {
         })}
       </div>
       {pbs.length === 0 && (
-        <p className="text-xs text-gray-400 text-center mt-2">Log runs with pace to set personal bests</p>
+        <p className="text-xs text-[var(--color-text-tertiary)] text-center mt-2">Log runs with pace to set personal bests</p>
       )}
     </div>
   )

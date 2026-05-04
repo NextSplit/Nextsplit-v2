@@ -62,14 +62,14 @@ function SupplementTracker() {
   if (!loaded) return null
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
+      <div className="px-4 py-3 border-b border-[var(--color-border)] flex items-center justify-between">
         <span className="text-sm font-bold text-gray-900">💊 Supplements</span>
-        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${doneCount === SUPPLEMENTS.length ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${doneCount === SUPPLEMENTS.length ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'}`}>
           {doneCount}/{SUPPLEMENTS.length} today
         </span>
       </div>
-      <div className="divide-y divide-gray-50">
+      <div className="divide-y divide-[var(--color-border)]">
         {SUPPLEMENTS.map(s => (
           <button key={s.id} onClick={() => toggle(s.id)}
             className="w-full flex items-center gap-3 px-4 py-3 text-left">
@@ -81,10 +81,10 @@ function SupplementTracker() {
               )}
             </div>
             <div className="flex-1">
-              <span className={`text-sm font-medium ${checked[s.id] ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+              <span className={`text-sm font-medium ${checked[s.id] ? 'line-through text-[var(--color-text-tertiary)]' : 'text-gray-800'}`}>
                 {s.label}
               </span>
-              <span className="text-[10px] text-gray-400 ml-2">{s.dose}</span>
+              <span className="text-[10px] text-[var(--color-text-tertiary)] ml-2">{s.dose}</span>
             </div>
           </button>
         ))}

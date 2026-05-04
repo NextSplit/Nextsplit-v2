@@ -65,7 +65,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl max-w-lg mx-auto">
         <div className="px-5 pt-5 pb-8">
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+          <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
 
           {/* Step 1 — Subtle prompt (from spec: "Looks like Tuesday's session didn't happen") */}
           {step === 'prompt' && (
@@ -74,7 +74,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
               <h2 className="text-base font-bold text-gray-900 mb-2">
                 Looks like {session.n} didn't happen
               </h2>
-              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+              <p className="text-sm text-[var(--color-text-tertiary)] mb-6 leading-relaxed">
                 Want to sort the plan? I can rebuild it around what actually happened.
               </p>
               <button onClick={() => setStep('reason')}
@@ -83,7 +83,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                 Yes, rebuild the plan →
               </button>
               <button onClick={onMarkMissed}
-                className="w-full py-3 text-sm text-gray-400">
+                className="w-full py-3 text-sm text-[var(--color-text-tertiary)]">
                 Just mark it as missed
               </button>
             </div>
@@ -93,7 +93,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
           {step === 'reason' && (
             <div>
               <h2 className="text-base font-bold text-gray-900 mb-1">What got in the way?</h2>
-              <p className="text-xs text-gray-400 mb-4">Life happens. No judgement — just helps me rebuild properly.</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-4">Life happens. No judgement — just helps me rebuild properly.</p>
               <div className="grid grid-cols-2 gap-2 mb-5">
                 {([
                   { id: 'life',    label: '📅 Life got busy' },
@@ -111,7 +111,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                   </button>
                 ))}
               </div>
-              <button onClick={onClose} className="w-full py-2 text-xs text-gray-400">Cancel</button>
+              <button onClick={onClose} className="w-full py-2 text-xs text-[var(--color-text-tertiary)]">Cancel</button>
             </div>
           )}
 
@@ -119,7 +119,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
           {step === 'feeling' && (
             <div>
               <h2 className="text-base font-bold text-gray-900 mb-1">How are you feeling now?</h2>
-              <p className="text-xs text-gray-400 mb-4">Helps me decide how hard to push the rebuild.</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-4">Helps me decide how hard to push the rebuild.</p>
               {error && <p className="text-xs text-red-500 mb-3 text-center">{error}</p>}
               <div className="space-y-2 mb-5">
                 {([
@@ -143,16 +143,16 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                 style={{ background: 'var(--ns-ember)' }}>
                 Rebuild my plan →
               </button>
-              <button onClick={onClose} className="w-full py-2 text-xs text-gray-400 mt-2">Cancel</button>
+              <button onClick={onClose} className="w-full py-2 text-xs text-[var(--color-text-tertiary)] mt-2">Cancel</button>
             </div>
           )}
 
           {/* Step 3.5 — Rebuilding (loading) */}
           {step === 'rebuilding' && (
             <div className="text-center py-6">
-              <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-[var(--ns-cyan)] animate-spin mx-auto mb-4" />
+              <div className="w-8 h-8 rounded-full border-2 border-[var(--color-border-2)] border-t-[var(--ns-cyan)] animate-spin mx-auto mb-4" />
               <p className="text-sm font-semibold text-gray-700">Rebuilding your plan…</p>
-              <p className="text-xs text-gray-400 mt-1">Looking at what moved and what's still on track</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] mt-1">Looking at what moved and what's still on track</p>
             </div>
           )}
 
@@ -161,7 +161,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
             <div>
               <div className="text-2xl mb-3 text-center">✓</div>
               <h2 className="text-base font-bold text-gray-900 mb-1 text-center">Plan rebuild ready</h2>
-              <p className="text-xs text-gray-400 text-center mb-4">Here's what I'd change — unlock to apply it.</p>
+              <p className="text-xs text-[var(--color-text-tertiary)] text-center mb-4">Here's what I'd change — unlock to apply it.</p>
 
               {/* Preview — blurred for free users */}
               <div className="bg-gray-50 rounded-2xl p-4 mb-4 relative overflow-hidden">
@@ -169,7 +169,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                 {adaptation.changes.length > 0 && (
                   <ul className="space-y-1">
                     {adaptation.changes.slice(0, 2).map((c, i) => (
-                      <li key={i} className="text-xs text-gray-500 flex items-start gap-1.5">
+                      <li key={i} className="text-xs text-[var(--color-text-tertiary)] flex items-start gap-1.5">
                         <span style={{ color: 'var(--ns-ember)' }}>→</span>{c}
                       </li>
                     ))}
@@ -177,7 +177,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                 )}
                 {/* Blur overlay — the paywall moment */}
                 <div className="absolute inset-0 backdrop-blur-sm bg-white/60 flex items-center justify-center rounded-2xl">
-                  <span className="text-xs font-bold text-gray-600">Unlock with Pro →</span>
+                  <span className="text-xs font-bold text-[var(--color-text-secondary)]">Unlock with Pro →</span>
                 </div>
               </div>
 
@@ -193,7 +193,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                 style={{ background: 'var(--ns-ember)' }}>
                 Unlock Pro — £4.99/month →
               </button>
-              <button onClick={onMarkMissed} className="w-full py-2 text-xs text-gray-400">
+              <button onClick={onMarkMissed} className="w-full py-2 text-xs text-[var(--color-text-tertiary)]">
                 Just mark as missed
               </button>
             </div>
@@ -220,7 +220,7 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                 )}
               </div>
 
-              <p className="text-xs text-gray-400 text-center mb-5">
+              <p className="text-xs text-[var(--color-text-tertiary)] text-center mb-5">
                 You're still on track. The plan has been adjusted.
               </p>
 

@@ -141,17 +141,17 @@ export default function NutritionClient() {
   return (
     <div className="min-h-screen pb-24" style={{ background: "var(--color-bg)" }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] px-4 pt-12 pb-0 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-lg font-bold text-gray-900">Fuel</h1>
             <DarkModeToggle />
           </div>
-          <div className="flex border-b border-gray-100">
+          <div className="flex border-b border-[var(--color-border)]">
             {(['today', 'week', 'recipes'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2.5 text-[12px] font-semibold border-b-2 transition-colors capitalize ${
-                  activeTab === tab ? 'border-[var(--ns-ember)] text-[var(--ns-ember)]' : 'border-transparent text-gray-400'
+                  activeTab === tab ? 'border-[var(--ns-ember)] text-[var(--ns-ember)]' : 'border-transparent text-[var(--color-text-tertiary)]'
                 }`}>
                 {tab === 'today' ? 'Today' : tab === 'week' ? 'This Week' : 'Recipes'}
               </button>
@@ -166,17 +166,17 @@ export default function NutritionClient() {
         {(planLoading || profileLoading) && (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-24 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+              <div key={i} className="h-24 bg-white rounded-2xl border border-[var(--color-border)] animate-pulse" />
             ))}
           </div>
         )}
 
         {/* No plan state — prompt to choose one */}
         {!planLoading && !plan && activeTab === 'today' && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-8 text-center">
             <div className="text-4xl mb-3">🍽️</div>
             <h2 className="text-base font-bold text-gray-900 mb-2">Fuel your training</h2>
-            <p className="text-sm text-gray-500 mb-5 leading-relaxed">
+            <p className="text-sm text-[var(--color-text-tertiary)] mb-5 leading-relaxed">
               Calorie targets, macro tracking, and AI nutrition tips are tailored to your training plan.
               Choose a plan first to unlock personalised fuel guidance.
             </p>
@@ -200,7 +200,7 @@ export default function NutritionClient() {
             />
 
             {/* Macro summary — ring + bars */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-4">
+            <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-bold text-gray-900">Today's macros</span>
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${DAY_TYPE_CONFIG[todayDayType].colour} ${DAY_TYPE_CONFIG[todayDayType].text}`}>
@@ -218,11 +218,11 @@ export default function NutritionClient() {
                     { label: 'Fat',     actual: Math.round(todayTotals.fat),     target: todayTargets.fat,     colour: 'bg-amber-400', unit: 'g' },
                   ].map(m => (
                     <div key={m.label}>
-                      <div className="flex justify-between text-[9px] text-gray-500 mb-0.5">
+                      <div className="flex justify-between text-[9px] text-[var(--color-text-tertiary)] mb-0.5">
                         <span className="font-semibold">{m.label}</span>
                         <span>{m.actual}/{m.target}{m.unit}</span>
                       </div>
-                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
                         <div className={`h-full ${m.colour} rounded-full transition-all`}
                           style={{ width: `${m.target > 0 ? Math.min((m.actual / m.target) * 100, 100) : 0}%` }} />
                       </div>
@@ -232,9 +232,9 @@ export default function NutritionClient() {
               </div>
 
               {!profile?.weight_kg ? (
-                <p className="text-[10px] text-gray-400">Add your weight in Settings to see calorie targets.</p>
+                <p className="text-[10px] text-[var(--color-text-tertiary)]">Add your weight in Settings to see calorie targets.</p>
               ) : (
-                <p className="text-[10px] text-gray-400">{DAY_TYPE_CONFIG[todayDayType].note}</p>
+                <p className="text-[10px] text-[var(--color-text-tertiary)]">{DAY_TYPE_CONFIG[todayDayType].note}</p>
               )}
             </div>
 
@@ -245,17 +245,17 @@ export default function NutritionClient() {
             <SupplementTracker />
 
             {/* Today's meal slots */}
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-50">
+            <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
+              <div className="px-4 py-3 border-b border-[var(--color-border)]">
                 <span className="text-sm font-bold text-gray-900">Today's meals</span>
               </div>
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-[var(--color-border)]">
                 {MEAL_SLOTS.map(slot => {
                   const slotEntries = todayEntries.filter(e => e.meal_slot === slot.id)
                   return (
                     <div key={slot.id} className="px-4 py-3">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">
+                        <span className="text-[11px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wide">
                           {slot.emoji} {slot.label}
                         </span>
                         <button onClick={() => setAssigningSlot({ date: todayDate, slot: slot.id as MealSlotId })}
@@ -271,7 +271,7 @@ export default function NutritionClient() {
                               <div key={e.id} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2">
                                 <div className="flex-1 min-w-0">
                                   <p className="text-xs font-semibold text-gray-800 truncate">{e.recipe.name}</p>
-                                  <p className="text-[10px] text-gray-400">
+                                  <p className="text-[10px] text-[var(--color-text-tertiary)]">
                                     {e.portions}x · {pp.kcal > 0 ? `${pp.kcal} kcal` : ''}{pp.protein > 0 ? ` · ${pp.protein}g P` : ''}
                                   </p>
                                 </div>
@@ -346,10 +346,10 @@ export default function NutritionClient() {
               + New recipe
             </button>
             {recipes.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-8 text-center">
                 <div className="text-4xl mb-3">📖</div>
                 <p className="text-sm font-bold text-gray-900 mb-2">Build your recipe book</p>
-                <p className="text-xs text-gray-500 leading-relaxed mb-5">
+                <p className="text-xs text-[var(--color-text-tertiary)] leading-relaxed mb-5">
                   Add your go-to meals and they'll appear when planning your weekly nutrition.
                   Start with your usual breakfast or pre-run snack.
                 </p>

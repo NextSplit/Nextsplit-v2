@@ -56,7 +56,7 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
       <div className="flex items-center justify-between px-5 pt-14 pb-4">
         <button
           onClick={onClose}
-          className="flex items-center gap-1 text-sm text-gray-500 font-medium"
+          className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)] font-medium"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -88,13 +88,13 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
         {/* km */}
         {session.km > 0 && (
           <div className="text-4xl font-black text-[var(--ns-ember)] mb-4">
-            {session.km}<span className="text-xl font-bold text-gray-400">km</span>
+            {session.km}<span className="text-xl font-bold text-[var(--color-text-tertiary)]">km</span>
           </div>
         )}
 
         {/* Detail */}
         {session.det && (
-          <p className="text-sm text-gray-600 leading-relaxed mb-6">
+          <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-6">
             {decodeHtml(session.det)}
           </p>
         )}
@@ -118,7 +118,7 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
             {elapsed > 0 && (
               <button
                 onClick={resetTimer}
-                className="px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-500"
+                className="px-4 py-2.5 rounded-xl text-sm font-bold bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]"
               >
                 Reset
               </button>
@@ -144,7 +144,7 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
             </div>
             <button
               onClick={onClose}
-              className="w-full py-3.5 bg-gray-900 text-white rounded-2xl text-sm font-bold"
+              className="w-full py-3.5 bg-[var(--color-surface)] text-white rounded-2xl text-sm font-bold"
             >
               Done — back to Today
             </button>
@@ -152,7 +152,7 @@ export default function FocusMode({ session, onClose, onLog, isLogged }: Props) 
         )}
         <button
           onClick={onClose}
-          className="w-full py-3 text-gray-400 text-sm font-medium"
+          className="w-full py-3 text-[var(--color-text-tertiary)] text-sm font-medium"
         >
           Close focus mode
         </button>

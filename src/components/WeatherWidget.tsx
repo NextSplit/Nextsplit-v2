@@ -88,19 +88,19 @@ export default function WeatherWidget() {
   if (loading || !weather) return null
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 px-4 py-3">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] px-4 py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-2xl">{weather.icon}</span>
           <div>
             <div className="flex items-baseline gap-1">
               <span className="text-lg font-bold text-gray-900">{weather.temp}°C</span>
-              <span className="text-xs text-gray-400">feels {weather.feels_like}°</span>
+              <span className="text-xs text-[var(--color-text-tertiary)]">feels {weather.feels_like}°</span>
             </div>
-            <div className="text-xs text-gray-500">{weather.condition}</div>
+            <div className="text-xs text-[var(--color-text-tertiary)]">{weather.condition}</div>
           </div>
         </div>
-        <div className="text-right text-[11px] text-gray-400 space-y-0.5">
+        <div className="text-right text-[11px] text-[var(--color-text-tertiary)] space-y-0.5">
           <div>💨 {weather.wind_kph} kph</div>
           <div>💧 {weather.humidity}%</div>
         </div>

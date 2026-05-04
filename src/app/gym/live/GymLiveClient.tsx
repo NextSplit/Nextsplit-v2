@@ -44,7 +44,7 @@ function RestTimer({ secs, onDone }: { secs: number; onDone: () => void }) {
           </span>
         </div>
       </div>
-      <p className="text-xs text-gray-500 font-medium">Rest · breathe</p>
+      <p className="text-xs text-[var(--color-text-tertiary)] font-medium">Rest · breathe</p>
       <button
         onClick={onDone}
         className="text-xs text-[var(--ns-ember)] font-semibold px-4 py-1.5 bg-[var(--ns-cyan-light)] rounded-full"
@@ -103,48 +103,48 @@ function SetInput({
       <div className="grid grid-cols-2 gap-3">
         {needsWeight && (
           <div>
-            <label className="text-xs font-semibold text-gray-500 block mb-1.5">Weight (kg)</label>
+            <label className="text-xs font-semibold text-[var(--color-text-tertiary)] block mb-1.5">Weight (kg)</label>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setWeight(w => String(Math.max(0, parseFloat(w || '0') - 2.5)))}
-                className="w-9 h-10 rounded-xl bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center"
+                className="w-9 h-10 rounded-xl bg-[var(--color-surface-2)] text-gray-700 font-bold text-lg flex items-center justify-center"
               >−</button>
               <input
                 type="number" inputMode="decimal"
                 value={weight}
                 onChange={e => setWeight(e.target.value)}
                 placeholder={suggWeight != null ? String(suggWeight) : '0'}
-                className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]"
+                className="flex-1 h-10 text-center text-base font-bold border border-[var(--color-border-2)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]"
               />
               <button
                 onClick={() => setWeight(w => String(parseFloat(w || '0') + 2.5))}
-                className="w-9 h-10 rounded-xl bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center"
+                className="w-9 h-10 rounded-xl bg-[var(--color-surface-2)] text-gray-700 font-bold text-lg flex items-center justify-center"
               >+</button>
             </div>
             {suggWeight != null && (
-              <p className="text-[10px] text-gray-400 text-center mt-1">Last session: {suggWeight}kg</p>
+              <p className="text-[10px] text-[var(--color-text-tertiary)] text-center mt-1">Last session: {suggWeight}kg</p>
             )}
           </div>
         )}
         <div className={needsWeight ? '' : 'col-span-2'}>
-          <label className="text-xs font-semibold text-gray-500 block mb-1.5">Reps</label>
+          <label className="text-xs font-semibold text-[var(--color-text-tertiary)] block mb-1.5">Reps</label>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setReps(r => String(Math.max(1, parseInt(r || '1') - 1)))}
-              className="w-9 h-10 rounded-xl bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center"
+              className="w-9 h-10 rounded-xl bg-[var(--color-surface-2)] text-gray-700 font-bold text-lg flex items-center justify-center"
             >−</button>
             <input
               type="number" inputMode="numeric"
               value={reps}
               onChange={e => setReps(e.target.value)}
-              className="flex-1 h-10 text-center text-base font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]"
+              className="flex-1 h-10 text-center text-base font-bold border border-[var(--color-border-2)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ns-cyan)]"
             />
             <button
               onClick={() => setReps(r => String(parseInt(r || '0') + 1))}
-              className="w-9 h-10 rounded-xl bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center"
+              className="w-9 h-10 rounded-xl bg-[var(--color-surface-2)] text-gray-700 font-bold text-lg flex items-center justify-center"
             >+</button>
           </div>
-          <p className="text-[10px] text-gray-400 text-center mt-1">Target: {exercise.reps}</p>
+          <p className="text-[10px] text-[var(--color-text-tertiary)] text-center mt-1">Target: {exercise.reps}</p>
         </div>
       </div>
 
@@ -155,7 +155,7 @@ function SetInput({
         Log set ✓
       </button>
 
-      <button onClick={onSkip} className="w-full text-center text-xs text-gray-400 py-1">
+      <button onClick={onSkip} className="w-full text-center text-xs text-[var(--color-text-tertiary)] py-1">
         Skip exercise →
       </button>
     </div>
@@ -175,21 +175,21 @@ function FinishModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-end">
       <div className="w-full max-w-lg mx-auto bg-white rounded-t-3xl p-6">
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+        <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
         <h2 className="text-lg font-bold text-gray-900 mb-1">Finish session?</h2>
-        <p className="text-sm text-gray-500 mb-5">
+        <p className="text-sm text-[var(--color-text-tertiary)] mb-5">
           {exercises.filter(e => e.sets.length > 0).length} exercises · {totalSets} sets logged
         </p>
         <div className="space-y-2 mb-6 max-h-48 overflow-y-auto">
           {exercises.filter(e => e.sets.length > 0).map((ex, i) => (
             <div key={i} className="flex justify-between text-sm py-1">
               <span className="text-gray-700 font-medium">{ex.name}</span>
-              <span className="text-gray-400">{ex.sets.length} sets</span>
+              <span className="text-[var(--color-text-tertiary)]">{ex.sets.length} sets</span>
             </div>
           ))}
         </div>
         <div className="flex gap-3">
-          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600">
+          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-secondary)]">
             Keep going
           </button>
           <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-[var(--ns-ember)] text-white text-sm font-semibold">
@@ -343,7 +343,7 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
     <div className="fixed inset-0 z-[100] bg-[#f8f8f6] flex flex-col items-center justify-center px-6 text-center">
       <div className="text-5xl mb-4">🏋️</div>
       <h2 className="text-lg font-bold text-gray-900 mb-2">No exercises found</h2>
-      <p className="text-sm text-gray-500 mb-6 max-w-xs">
+      <p className="text-sm text-[var(--color-text-tertiary)] mb-6 max-w-xs">
         Couldn't parse exercises from this session. You can still log it as complete.
       </p>
       <button
@@ -366,7 +366,7 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
       >
         Mark as done
       </button>
-      <button onClick={onDone} className="mt-3 text-sm text-gray-400">Go back</button>
+      <button onClick={onDone} className="mt-3 text-sm text-[var(--color-text-tertiary)]">Go back</button>
     </div>
   )
 
@@ -376,10 +376,10 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
     <div className="fixed inset-0 z-[100] bg-[#f8f8f6] flex flex-col overflow-hidden">
 
       {/* Top bar */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-3 flex-shrink-0">
+      <div className="bg-white border-b border-[var(--color-border)] px-4 pt-12 pb-3 flex-shrink-0">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-3">
-            <button onClick={() => setShowFinish(true)} className="text-xs text-gray-400 font-medium">
+            <button onClick={() => setShowFinish(true)} className="text-xs text-[var(--color-text-tertiary)] font-medium">
               ← Back
             </button>
             <span className="text-xs font-semibold text-gray-900">{session.n}</span>
@@ -402,13 +402,13 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
                   className={`flex-1 h-1.5 rounded-full transition-all ${
                     i === exIdx ? 'bg-[var(--ns-ember)]' :
                     exDone ? 'bg-emerald-300' :
-                    i < exIdx ? 'bg-gray-300' : 'bg-gray-100'
+                    i < exIdx ? 'bg-gray-300' : 'bg-[var(--color-surface-2)]'
                   }`}
                 />
               )
             })}
           </div>
-          <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+          <div className="flex justify-between text-[10px] text-[var(--color-text-tertiary)] mt-1">
             <span>Exercise {exIdx + 1} of {exercises.length}</span>
             <span>+{xp} XP on finish</span>
           </div>
@@ -420,7 +420,7 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
         <div className="max-w-lg mx-auto px-4 pt-5 space-y-4">
 
           {/* Exercise name card */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
             <div className="flex items-start justify-between mb-1">
               <div className="flex-1">
                 <div className="text-xs font-semibold text-[var(--ns-ember)] uppercase tracking-wide mb-1">
@@ -430,24 +430,24 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
               </div>
               <div className="text-right flex-shrink-0 ml-4">
                 <div className="text-2xl font-black text-[var(--ns-ember)]">{doneSetCount}</div>
-                <div className="text-xs text-gray-400">/{targetSetCount} sets</div>
+                <div className="text-xs text-[var(--color-text-tertiary)]">/{targetSetCount} sets</div>
               </div>
             </div>
-            <div className="text-sm text-gray-500">Target: {targetSetCount}×{currentEx.reps}</div>
+            <div className="text-sm text-[var(--color-text-tertiary)]">Target: {targetSetCount}×{currentEx.reps}</div>
 
             {/* Adjust sets */}
             <div className="flex items-center gap-2 mt-3">
-              <span className="text-xs text-gray-400">Sets:</span>
+              <span className="text-xs text-[var(--color-text-tertiary)]">Sets:</span>
               <button
                 onClick={() => setTargetSets(prev => { const n=[...prev]; n[exIdx]=Math.max(1,n[exIdx]-1); return n })}
-                className="w-7 h-7 rounded-full bg-gray-100 text-gray-600 font-bold text-sm flex items-center justify-center"
+                className="w-7 h-7 rounded-full bg-[var(--color-surface-2)] text-[var(--color-text-secondary)] font-bold text-sm flex items-center justify-center"
               >−</button>
               <span className="text-sm font-bold text-gray-900 w-6 text-center">{targetSetCount}</span>
               <button
                 onClick={() => setTargetSets(prev => { const n=[...prev]; n[exIdx]=n[exIdx]+1; return n })}
-                className="w-7 h-7 rounded-full bg-gray-100 text-gray-600 font-bold text-sm flex items-center justify-center"
+                className="w-7 h-7 rounded-full bg-[var(--color-surface-2)] text-[var(--color-text-secondary)] font-bold text-sm flex items-center justify-center"
               >+</button>
-              <span className="text-xs text-gray-400 ml-1">adjust target</span>
+              <span className="text-xs text-[var(--color-text-tertiary)] ml-1">adjust target</span>
             </div>
           </div>
 
@@ -466,12 +466,12 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
 
           {/* Rest timer or set input */}
           {resting ? (
-            <div className="bg-white rounded-2xl border border-gray-100 p-5">
+            <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
               <RestTimer secs={restSecs} onDone={handleRestDone} />
               {/* Edit last set during rest */}
               <button
                 onClick={editLastSet}
-                className="w-full text-center text-xs text-gray-400 mt-2"
+                className="w-full text-center text-xs text-[var(--color-text-tertiary)] mt-2"
               >
                 Edit last set
               </button>
@@ -497,8 +497,8 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
               )}
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-gray-100 p-5">
-              <div className="text-xs font-semibold text-gray-500 mb-3">
+            <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
+              <div className="text-xs font-semibold text-[var(--color-text-tertiary)] mb-3">
                 Set {doneSetCount + 1} of {targetSetCount}
               </div>
               <SetInput
@@ -527,18 +527,18 @@ export default function GymLiveClient({ weekN, dayIndex, sessionIndex, session, 
       </div>
 
       {/* Bottom nav between exercises */}
-      <div className="bg-white border-t border-gray-100 px-4 py-3 flex-shrink-0">
+      <div className="bg-white border-t border-[var(--color-border)] px-4 py-3 flex-shrink-0">
         <div className="max-w-lg mx-auto flex gap-3">
           <button
             onClick={prevExercise}
             disabled={exIdx === 0}
-            className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-500 disabled:opacity-30"
+            className="flex-1 py-3 rounded-xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-tertiary)] disabled:opacity-30"
           >
             ← Prev
           </button>
           <button
             onClick={nextExercise}
-            className="flex-1 py-3 rounded-xl bg-gray-900 text-white text-sm font-semibold"
+            className="flex-1 py-3 rounded-xl bg-[var(--color-surface)] text-white text-sm font-semibold"
           >
             {exIdx < exercises.length - 1 ? 'Next →' : 'Finish 🎉'}
           </button>

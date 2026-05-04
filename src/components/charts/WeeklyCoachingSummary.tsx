@@ -44,19 +44,19 @@ export default function WeeklyCoachingSummary() {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
       {/* Header */}
-      <div className="px-4 pt-4 pb-3 border-b border-gray-50 flex items-center justify-between">
+      <div className="px-4 pt-4 pb-3 border-b border-[var(--color-border)] flex items-center justify-between">
         <div>
           <p className="text-sm font-bold text-gray-900">🧠 Weekly coaching summary</p>
-          <p className="text-[10px] text-gray-400 mt-0.5">AI analysis of your last 4 weeks</p>
+          <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">AI analysis of your last 4 weeks</p>
         </div>
         <button
           onClick={generate}
           disabled={loading}
           className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all active:scale-95 ${
             loading
-              ? 'bg-gray-100 text-gray-400'
+              ? 'bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]'
               : generated
               ? 'bg-[var(--ns-ember-light)] text-[var(--ns-ember)] border border-[var(--ns-violet-light)]'
               : 'bg-[var(--ns-ember)] text-white'
@@ -70,7 +70,7 @@ export default function WeeklyCoachingSummary() {
       {!generated && !loading && (
         <div className="px-4 py-6 text-center space-y-3">
           <div className="text-3xl">📋</div>
-          <p className="text-xs text-gray-400 leading-relaxed max-w-xs mx-auto">
+          <p className="text-xs text-[var(--color-text-tertiary)] leading-relaxed max-w-xs mx-auto">
             Get a coach-quality debrief of your last 4 weeks — what the data means, what to focus on, and any flags to watch.
           </p>
           <button onClick={generate}
@@ -84,8 +84,8 @@ export default function WeeklyCoachingSummary() {
         <div className="px-4 py-6 space-y-3">
           {[80, 60, 90, 70].map((w, i) => (
             <div key={i} className="space-y-1.5">
-              <div className="h-3 bg-gray-100 rounded animate-pulse" style={{ width: `${w}%` }} />
-              <div className="h-2.5 bg-gray-100 rounded animate-pulse" style={{ width: `${w - 15}%` }} />
+              <div className="h-3 bg-[var(--color-surface-2)] rounded animate-pulse" style={{ width: `${w}%` }} />
+              <div className="h-2.5 bg-[var(--color-surface-2)] rounded animate-pulse" style={{ width: `${w - 15}%` }} />
             </div>
           ))}
         </div>
@@ -103,7 +103,7 @@ export default function WeeklyCoachingSummary() {
           {renderSummary(summary).map((section, i) => (
             <div key={i} className="space-y-1">
               {section.heading && (
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                <p className="text-[11px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">
                   {section.heading}
                 </p>
               )}

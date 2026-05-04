@@ -22,7 +22,7 @@ const NUT_CAT: Record<string, { bg: string; text: string; border: string; icon: 
   hydration: { bg: 'bg-blue-50',   text: 'text-blue-800',   border: 'border-blue-200',   icon: '💧' },
   food:      { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-200',  icon: '🍽️' },
   fuel:      { bg: 'bg-amber-50',  text: 'text-amber-800',  border: 'border-amber-200',  icon: '⚡' },
-  info:      { bg: 'bg-gray-50',   text: 'text-gray-600',   border: 'border-gray-200',   icon: 'ℹ️' },
+  info:      { bg: 'bg-gray-50',   text: 'text-[var(--color-text-secondary)]',   border: 'border-[var(--color-border-2)]',   icon: 'ℹ️' },
   macro:     { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200', icon: '📊' },
 }
 
@@ -45,10 +45,10 @@ function DayRow({ day, dayIndex, weekN, logs, gymLogs, isToday, isPast, onOpen }
   return (
     <button
       onClick={onOpen}
-      className={`w-full px-4 py-2.5 border-b border-gray-50 last:border-0 text-left flex items-center gap-3 active:bg-gray-50 transition-colors ${isToday ? 'bg-[var(--ns-ember-light)]/50' : ''}`}
+      className={`w-full px-4 py-2.5 border-b border-[var(--color-border)] last:border-0 text-left flex items-center gap-3 active:bg-gray-50 transition-colors ${isToday ? 'bg-[var(--ns-ember-light)]/50' : ''}`}
     >
       <div className="w-9 flex-shrink-0 text-center">
-        <div className={`text-xs font-bold ${isToday ? 'text-[var(--ns-ember)]' : isPast ? 'text-gray-300' : 'text-gray-400'}`}>{day.d}</div>
+        <div className={`text-xs font-bold ${isToday ? 'text-[var(--ns-ember)]' : isPast ? 'text-gray-300' : 'text-[var(--color-text-tertiary)]'}`}>{day.d}</div>
         {isToday && <div className="w-1.5 h-1.5 bg-[var(--ns-ember)] rounded-full mx-auto mt-0.5" />}
       </div>
 

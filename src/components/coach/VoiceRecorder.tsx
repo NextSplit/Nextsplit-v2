@@ -143,15 +143,15 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
   const progressPct = (secsRecorded / MAX_SECS) * 100
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
       {/* Header */}
-      <div className="px-4 pt-4 pb-3 border-b border-gray-50 flex items-center justify-between">
+      <div className="px-4 pt-4 pb-3 border-b border-[var(--color-border)] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-base">🎙️</span>
           <span className="text-sm font-bold text-gray-900">Voice message</span>
-          <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">max 60s</span>
+          <span className="text-[10px] text-[var(--color-text-tertiary)] bg-[var(--color-surface-2)] px-2 py-0.5 rounded-full">max 60s</span>
         </div>
-        <button aria-label="Close" onClick={onCancel} className="text-gray-400 text-lg leading-none">×</button>
+        <button aria-label="Close" onClick={onCancel} className="text-[var(--color-text-tertiary)] text-lg leading-none">×</button>
       </div>
 
       <div className="px-4 py-5">
@@ -174,7 +174,7 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
 
         {/* Progress bar */}
         {(state === 'recording' || state === 'recorded') && (
-          <div className="h-1 bg-gray-100 rounded-full overflow-hidden mb-4">
+          <div className="h-1 bg-[var(--color-surface-2)] rounded-full overflow-hidden mb-4">
             <div
               className="h-full rounded-full transition-all duration-1000"
               style={{
@@ -187,14 +187,14 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
 
         {/* Timer */}
         {state === 'recording' && (
-          <p className="text-center text-sm font-mono text-gray-500 mb-4">
+          <p className="text-center text-sm font-mono text-[var(--color-text-tertiary)] mb-4">
             <span className={secsLeft <= 10 ? 'text-red-500 font-bold' : ''}>
               {secsLeft}s remaining
             </span>
           </p>
         )}
         {state === 'recorded' && (
-          <p className="text-center text-xs text-gray-400 mb-4">
+          <p className="text-center text-xs text-[var(--color-text-tertiary)] mb-4">
             {secsRecorded}s recorded
           </p>
         )}
@@ -249,7 +249,7 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
             <>
               <button
                 onClick={discard}
-                className="flex-1 py-3.5 rounded-2xl text-sm font-semibold text-gray-600 border border-gray-200 active:scale-95 transition-all"
+                className="flex-1 py-3.5 rounded-2xl text-sm font-semibold text-[var(--color-text-secondary)] border border-[var(--color-border-2)] active:scale-95 transition-all"
               >
                 Re-record
               </button>
@@ -273,7 +273,7 @@ export default function VoiceRecorder({ athleteId, onSent, onCancel }: Props) {
           {state === 'error' && (
             <button
               onClick={() => setState('idle')}
-              className="flex-1 py-3.5 rounded-2xl text-sm font-bold border border-gray-200 text-gray-600 active:scale-95"
+              className="flex-1 py-3.5 rounded-2xl text-sm font-bold border border-[var(--color-border-2)] text-[var(--color-text-secondary)] active:scale-95"
             >
               Try again
             </button>

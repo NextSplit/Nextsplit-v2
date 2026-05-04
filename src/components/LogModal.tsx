@@ -114,7 +114,7 @@ function LogModal({
           <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: 'var(--color-border-2)' }} />
           <div className="text-4xl mb-3">😴</div>
           <h2 className="text-base font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>Rest day</h2>
-          <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+          <p className="text-sm text-[var(--color-text-tertiary)] mb-6 leading-relaxed">
             Your body is adapting today. Rest is training.
           </p>
           <button onClick={() => handleSave(true)}
@@ -122,7 +122,7 @@ function LogModal({
             style={{ background: 'var(--ns-ember)' }}>
             {saving ? 'Logging…' : 'Log rest day ✓'}
           </button>
-          <button onClick={onClose} className="w-full py-3 text-sm text-gray-400">Cancel</button>
+          <button onClick={onClose} className="w-full py-3 text-sm text-[var(--color-text-tertiary)]">Cancel</button>
         </div>
       </div>
     )
@@ -140,7 +140,7 @@ function LogModal({
               <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
             </div>
             <h2 className="text-lg font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>{session.n}</h2>
-            {technical && <p className="text-sm text-gray-500 mb-4 leading-relaxed">{technical}</p>}
+            {technical && <p className="text-sm text-[var(--color-text-tertiary)] mb-4 leading-relaxed">{technical}</p>}
 
             {/* One-tap done */}
             <button onClick={() => handleSave(true)}
@@ -151,7 +151,7 @@ function LogModal({
 
             {/* Optional: add details */}
             <button onClick={() => setShowExtra(true)}
-              className="w-full py-2.5 text-xs font-semibold text-gray-400 underline">
+              className="w-full py-2.5 text-xs font-semibold text-[var(--color-text-tertiary)] underline">
               Add distance, pace, or notes
             </button>
           </div>
@@ -195,7 +195,7 @@ function LogModal({
                 <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
               </div>
               <h2 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>{session.n}</h2>
-              {technical && <p className="text-sm text-gray-500 mt-1 leading-relaxed">{technical}</p>}
+              {technical && <p className="text-sm text-[var(--color-text-tertiary)] mt-1 leading-relaxed">{technical}</p>}
               {rationale && (
                 <div className="flex items-start gap-2 bg-[var(--ns-ember-light)] border border-[var(--ns-ember)]20 rounded-xl px-3 py-2.5 mt-2">
                   <span className="text-sm mt-0.5">🧠</span>
@@ -216,7 +216,7 @@ function LogModal({
             {targetReps && (
               <div>
                 <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>
-                  Reps completed <span className="text-gray-400 font-normal">of {targetReps}</span>
+                  Reps completed <span className="text-[var(--color-text-tertiary)] font-normal">of {targetReps}</span>
                 </label>
                 <div className="flex gap-2 flex-wrap">
                   {Array.from({ length: targetReps }, (_, i) => i + 1).map(n => (
@@ -264,7 +264,7 @@ function LogModal({
 
             {/* Extra: duration + pace */}
             <button onClick={() => setShowExtra(e => !e)}
-              className="text-xs font-semibold text-gray-400 underline">
+              className="text-xs font-semibold text-[var(--color-text-tertiary)] underline">
               {showExtra ? 'Hide' : 'Add duration + pace'}
             </button>
             {showExtra && (
@@ -313,7 +313,7 @@ function LogModal({
               <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
             </div>
             <h2 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>{session.n}</h2>
-            {technical && <p className="text-sm text-gray-500 mt-1 leading-relaxed">{technical}</p>}
+            {technical && <p className="text-sm text-[var(--color-text-tertiary)] mt-1 leading-relaxed">{technical}</p>}
             {rationale && (
               <div className="flex items-start gap-2 bg-[var(--ns-ember-light)] rounded-xl px-3 py-2.5 mt-2">
                 <span className="text-sm mt-0.5">🧠</span>
@@ -329,7 +329,7 @@ function LogModal({
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>How did it feel?</label>
-              <span className="text-sm font-bold text-gray-500">{
+              <span className="text-sm font-bold text-[var(--color-text-tertiary)]">{
                 feelRating === 1 ? '😩 Rough' :
                 feelRating === 2 ? '😕 Hard' :
                 feelRating === 3 ? '😐 OK' :
@@ -354,7 +354,7 @@ function LogModal({
 
           {/* Progressive disclosure — duration + pace */}
           <button onClick={() => setShowExtra(e => !e)}
-            className="text-xs font-semibold text-gray-400 underline">
+            className="text-xs font-semibold text-[var(--color-text-tertiary)] underline">
             {showExtra ? 'Less detail' : 'Add duration + pace'}
             {(durationMins > 0 || paceInput) && !showExtra && (
               <span className="ml-1 font-normal">
@@ -397,13 +397,13 @@ function EffortSlider({ effort, setEffort }: { effort: number; setEffort: (n: nu
       <div className="flex justify-between items-center mb-2">
         <label className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Effort (RPE)</label>
         <span className="text-2xl font-bold" style={{ color: 'var(--ns-ember)' }}>
-          {effort}<span className="text-sm text-gray-400">/10</span>
+          {effort}<span className="text-sm text-[var(--color-text-tertiary)]">/10</span>
         </span>
       </div>
       <input type="range" min={1} max={10} value={effort}
         onChange={e => setEffort(Number(e.target.value))}
         className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[var(--ns-cyan)]" />
-      <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+      <div className="flex justify-between text-[10px] text-[var(--color-text-tertiary)] mt-1">
         <span>Easy</span><span>Moderate</span><span>Max</span>
       </div>
     </div>
@@ -490,14 +490,14 @@ function PaceInput({ paceInput, setPaceInput, autoPace, onBlur, showKm }: {
   return (
     <div>
       <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>
-        Pace <span className="text-[10px] text-gray-400 font-normal">format: m:ss</span>
+        Pace <span className="text-[10px] text-[var(--color-text-tertiary)] font-normal">format: m:ss</span>
       </label>
       <div className="relative">
         <input type="text" inputMode="decimal" value={paceInput}
           onChange={e => setPaceInput(e.target.value)} onBlur={onBlur}
           placeholder={autoPace ? `Auto: ${autoPace}` : '5:30'}
-          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)] pr-14" />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">/km</span>
+          className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)] pr-14" />
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[var(--color-text-tertiary)]">/km</span>
       </div>
       {autoPace && !paceInput && (
         <p className="text-[10px] mt-1" style={{ color: 'var(--ns-ember)' }}>Auto: {autoPace}/km</p>
@@ -512,7 +512,7 @@ function NotesInput({ notes, setNotes, placeholder }: { notes: string; setNotes:
       <label className="text-sm font-bold block mb-2" style={{ color: 'var(--color-text-primary)' }}>Notes</label>
       <textarea value={notes} onChange={e => setNotes(e.target.value)}
         placeholder={placeholder ?? 'How did it feel? Any issues?'} rows={2}
-        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]" />
+        className="w-full border border-[var(--color-border-2)] rounded-xl px-3 py-2.5 text-sm text-gray-900 placeholder:text-[var(--color-text-tertiary)] resize-none focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]" />
     </div>
   )
 }

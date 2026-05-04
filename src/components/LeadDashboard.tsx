@@ -75,7 +75,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
   if (loading) {
     return (
       <div className="flex justify-center py-16">
-        <div className="w-6 h-6 rounded-full border-2 border-gray-100 border-t-[var(--ns-lime)] animate-spin" />
+        <div className="w-6 h-6 rounded-full border-2 border-[var(--color-border)] border-t-[var(--ns-lime)] animate-spin" />
       </div>
     )
   }
@@ -119,10 +119,10 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
 
       {/* Empty state — spec: "clean dashboard is a good dashboard" */}
       {athletes.length === 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-8 text-center">
           <div className="text-3xl mb-3">👥</div>
           <h3 className="text-sm font-bold text-gray-900 mb-1">No athletes yet</h3>
-          <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+          <p className="text-xs text-[var(--color-text-tertiary)] mb-4 leading-relaxed">
             Invite runners to your squad. They'll need a free NextSplit account.
           </p>
           {!atCap && (
@@ -154,7 +154,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
       {/* Needs attention — spec: "only show what needs attention" */}
       {needAttention.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1">
+          <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider px-1">
             Needs attention ({needAttention.length})
           </p>
           {needAttention.map(a => (
@@ -165,8 +165,8 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
 
       {/* On track — collapsed summary */}
       {onTrack.length > 0 && needAttention.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 px-4 py-3 flex items-center justify-between">
-          <p className="text-xs text-gray-500">
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] px-4 py-3 flex items-center justify-between">
+          <p className="text-xs text-[var(--color-text-tertiary)]">
             <span className="font-bold text-emerald-600">{onTrack.length} on track</span>
             {' — no action needed'}
           </p>
@@ -186,8 +186,8 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
 
       {/* Weekly completion strip */}
       {athletes.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-4">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
+          <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">
             This week
           </p>
           <div className="space-y-2">
@@ -207,9 +207,9 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-xs font-semibold text-gray-800 truncate group-hover:underline">{name}</p>
-                      <p className="text-[10px] text-gray-400 flex-shrink-0 ml-2">{done}/{total}</p>
+                      <p className="text-[10px] text-[var(--color-text-tertiary)] flex-shrink-0 ml-2">{done}/{total}</p>
                     </div>
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all"
                         style={{
                           width: `${pct}%`,
@@ -228,7 +228,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
       {athletes.length > 0 && !atCap && (
         <button
           onClick={generateInvite}
-          className="w-full py-3 rounded-2xl border-2 border-dashed border-gray-200 text-xs font-bold text-gray-400 active:border-[var(--ns-ember)] active:text-[var(--ns-ember)] transition-all"
+          className="w-full py-3 rounded-2xl border-2 border-dashed border-[var(--color-border-2)] text-xs font-bold text-[var(--color-text-tertiary)] active:border-[var(--ns-ember)] active:text-[var(--ns-ember)] transition-all"
         >
           + Invite another runner ({athleteCount}/{isSplitLeader ? MAX_SPLIT_LEADER_ATHLETES : '∞'})
         </button>
@@ -239,13 +239,13 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
         <>
           <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setShowInvite(false)} />
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl max-w-lg mx-auto px-5 pt-5 pb-8">
-            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+            <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto mb-5" />
             <h3 className="text-base font-bold text-gray-900 mb-2">Share this link</h3>
-            <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+            <p className="text-xs text-[var(--color-text-tertiary)] mb-4 leading-relaxed">
               Each link is single-use and expires in 7 days. Generate a new one for each athlete.
             </p>
             <div className="bg-gray-50 rounded-xl px-4 py-3 flex items-center gap-3 mb-4">
-              <p className="text-xs text-gray-600 font-mono flex-1 truncate">{inviteUrl}</p>
+              <p className="text-xs text-[var(--color-text-secondary)] font-mono flex-1 truncate">{inviteUrl}</p>
               <button onClick={copyInvite}
                 className="text-xs font-bold flex-shrink-0"
                 style={{ color: 'var(--ns-ember)' }}>
@@ -253,7 +253,7 @@ export default function LeadDashboard({ onExitLeadMode, athleteCount, isSplitLea
               </button>
             </div>
             <button onClick={() => setShowInvite(false)}
-              className="w-full py-3 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600">
+              className="w-full py-3 rounded-2xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-secondary)]">
               Done
             </button>
           </div>
@@ -288,18 +288,18 @@ function AthleteCard({ athlete }: { athlete: AthleteStatus }) {
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-gray-900 truncate">{name}</p>
           {athlete.flags.length > 0 && (
-            <p className="text-xs text-gray-400 truncate mt-0.5">{athlete.flags[0]}</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] truncate mt-0.5">{athlete.flags[0]}</p>
           )}
         </div>
         <div className="text-right shrink-0">
           <p className="text-xs font-bold text-gray-700">
             {athlete.sessions_done_week}/{athlete.sessions_total_week || '?'}
           </p>
-          <p className="text-[9px] text-gray-400">sessions</p>
+          <p className="text-[9px] text-[var(--color-text-tertiary)]">sessions</p>
         </div>
       </div>
       {/* ACWR + last active */}
-      <div className="grid grid-cols-2 divide-x divide-gray-50 border-t border-gray-50">
+      <div className="grid grid-cols-2 divide-x divide-[var(--color-border)] border-t border-[var(--color-border)]">
         <div className="px-4 py-2 text-center">
           <p className="text-xs font-bold" style={{
             color: athlete.acwr === null ? '#9ca3af'
@@ -308,13 +308,13 @@ function AthleteCard({ athlete }: { athlete: AthleteStatus }) {
           }}>
             {athlete.acwr?.toFixed(2) ?? '—'}
           </p>
-          <p className="text-[9px] text-gray-400">ACWR</p>
+          <p className="text-[9px] text-[var(--color-text-tertiary)]">ACWR</p>
         </div>
         <div className="px-4 py-2 text-center">
           <p className="text-xs font-bold text-gray-700">
             {daysSince === null ? '—' : daysSince === 0 ? 'Today' : `${daysSince}d ago`}
           </p>
-          <p className="text-[9px] text-gray-400">last active</p>
+          <p className="text-[9px] text-[var(--color-text-tertiary)]">last active</p>
         </div>
       </div>
     </a>

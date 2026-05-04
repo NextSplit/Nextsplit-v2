@@ -33,7 +33,7 @@ const REACTIONS = [
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
 function Sparkline({ values, colour }: { values: number[]; colour: string }) {
-  if (values.length < 2) return <span className="text-xs text-gray-400">—</span>
+  if (values.length < 2) return <span className="text-xs text-[var(--color-text-tertiary)]">—</span>
   const min = Math.min(...values)
   const max = Math.max(...values)
   const range = max - min || 1
@@ -60,7 +60,7 @@ function WeeklyACWRBar({ week, acwr }: { week: number; acwr: number }) {
         <div className="w-5 rounded-t-sm transition-all"
           style={{ height, background: colour, opacity: 0.85 }} />
       </div>
-      <span className="text-[8px] text-gray-400">W{week}</span>
+      <span className="text-[8px] text-[var(--color-text-tertiary)]">W{week}</span>
     </div>
   )
 }
@@ -173,10 +173,10 @@ export default function AthleteDetailClient({
     <div className="min-h-screen pb-24" style={{ background: '#f8f8f6' }}>
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] px-4 pt-12 pb-0 sticky top-0 z-40">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center gap-3 pb-3">
-            <Link href="/coach/squad" className="text-gray-400 text-xl">←</Link>
+            <Link href="/coach/squad" className="text-[var(--color-text-tertiary)] text-xl">←</Link>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="text-base font-black text-gray-900 truncate">{name}</h1>
@@ -187,7 +187,7 @@ export default function AthleteDetailClient({
                 )}
               </div>
               {activePlan && (
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-[var(--color-text-tertiary)]">
                   Week {activePlan.current_week}/{activePlan.total_weeks} · {activePlan.name}
                   {activePlan.race_date && ` · Race ${new Date(activePlan.race_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`}
                 </p>
@@ -196,19 +196,19 @@ export default function AthleteDetailClient({
             <button
               onClick={fetchDigest}
               disabled={digestLoading}
-              className="text-xs font-bold px-3 py-2 rounded-xl border border-gray-200 text-gray-600 disabled:opacity-50 flex-shrink-0"
+              className="text-xs font-bold px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-[var(--color-text-secondary)] disabled:opacity-50 flex-shrink-0"
             >
               {digestLoading ? '…' : '🧠 AI digest'}
             </button>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+          <div className="flex gap-1 bg-[var(--color-surface-2)] rounded-xl p-1">
             {(['overview', 'sessions', 'comms'] as const).map(t => (
               <button key={t}
                 onClick={() => setTab(t)}
                 className={`flex-1 py-2 rounded-lg text-xs font-bold capitalize transition-all ${
-                  tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
+                  tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-[var(--color-text-tertiary)]'
                 }`}
               >
                 {t === 'comms' ? '💬 Comms' : t === 'sessions' ? '📊 Sessions' : '👤 Overview'}
@@ -222,10 +222,10 @@ export default function AthleteDetailClient({
 
         {/* AI Digest */}
         {showDigest && digest && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">🧠 AI coaching digest</p>
-              <button onClick={() => setShowDigest(false)} className="text-gray-400 text-sm">✕</button>
+              <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">🧠 AI coaching digest</p>
+              <button onClick={() => setShowDigest(false)} className="text-[var(--color-text-tertiary)] text-sm">✕</button>
             </div>
             <p className="text-sm text-gray-700 leading-relaxed">{digest}</p>
           </div>
@@ -258,19 +258,19 @@ export default function AthleteDetailClient({
                   sub: 'total km',
                 },
               ].map(m => (
-                <div key={m.label} className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">{m.label}</p>
+                <div key={m.label} className="bg-white rounded-2xl border border-[var(--color-border)] p-3 text-center">
+                  <p className="text-[10px] text-[var(--color-text-tertiary)] uppercase tracking-wider mb-1">{m.label}</p>
                   <p className="text-lg font-black" style={{ color: m.colour }}>{m.value}</p>
-                  <p className="text-[10px] text-gray-400">{m.sub}</p>
+                  <p className="text-[10px] text-[var(--color-text-tertiary)]">{m.sub}</p>
                 </div>
               ))}
             </div>
 
             {/* 12-week ACWR chart */}
             {acwrByWeek.length > 1 && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-4">
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Training load — 12 weeks</p>
+                  <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Training load — 12 weeks</p>
                   <div className="flex items-center gap-3 text-[9px]">
                     <span className="text-red-500">● &gt;1.3 high</span>
                     <span className="text-amber-500">● &lt;0.8 low</span>
@@ -282,7 +282,7 @@ export default function AthleteDetailClient({
                     <WeeklyACWRBar key={w.week} week={w.week} acwr={w.acwr} />
                   ))}
                 </div>
-                <div className="mt-3 flex items-center gap-4 text-[10px] text-gray-400">
+                <div className="mt-3 flex items-center gap-4 text-[10px] text-[var(--color-text-tertiary)]">
                   {acwrByWeek.slice(-12).map(w => (
                     <span key={w.week}>{w.km.toFixed(0)}km</span>
                   ))}
@@ -292,8 +292,8 @@ export default function AthleteDetailClient({
 
             {/* Wellness sparklines */}
             {wellness.length > 3 && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-4">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Wellness trend (30 days)</p>
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
+                <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">Wellness trend (30 days)</p>
                 <div className="grid grid-cols-3 gap-4">
                   {[
                     { label: 'Sleep', values: sleepVals,    colour: '#6366f1', avg: sleepVals.length ? (sleepVals.reduce((a,b) => a+b, 0) / sleepVals.length).toFixed(1) : '—' },
@@ -301,7 +301,7 @@ export default function AthleteDetailClient({
                     { label: 'Mood', values: moodVals,      colour: '#10b981', avg: moodVals.length ? (moodVals.reduce((a,b) => a+b, 0) / moodVals.length).toFixed(1) : '—' },
                   ].map(w => (
                     <div key={w.label} className="text-center">
-                      <p className="text-[10px] text-gray-400 mb-1">{w.label}</p>
+                      <p className="text-[10px] text-[var(--color-text-tertiary)] mb-1">{w.label}</p>
                       <Sparkline values={w.values} colour={w.colour} />
                       <p className="text-xs font-bold text-gray-700 mt-1">{w.avg}/5</p>
                     </div>
@@ -312,8 +312,8 @@ export default function AthleteDetailClient({
 
             {/* This week sessions with quick reactions */}
             {thisWeekLogs.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-4">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">This week</p>
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
+                <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">This week</p>
                 <div className="space-y-3">
                   {thisWeekLogs.map((log, i) => {
                     const key     = `${log.week_n}_${log.day_i}_${log.session_i}`
@@ -330,11 +330,11 @@ export default function AthleteDetailClient({
                             <div className="flex items-center justify-between">
                               <p className="text-xs font-bold text-gray-800">{date}</p>
                               <div className="flex gap-1">
-                                {log.km && <span className="text-[10px] text-gray-500">{log.km}km</span>}
-                                {log.effort && <span className="text-[10px] text-gray-400">· {log.effort}/10</span>}
+                                {log.km && <span className="text-[10px] text-[var(--color-text-tertiary)]">{log.km}km</span>}
+                                {log.effort && <span className="text-[10px] text-[var(--color-text-tertiary)]">· {log.effort}/10</span>}
                               </div>
                             </div>
-                            {log.notes && <p className="text-[11px] text-gray-500 mt-0.5">{log.notes}</p>}
+                            {log.notes && <p className="text-[11px] text-[var(--color-text-tertiary)] mt-0.5">{log.notes}</p>}
                           </div>
                         </div>
                         {/* Quick reactions */}
@@ -345,7 +345,7 @@ export default function AthleteDetailClient({
                               className={`text-base px-2 py-1 rounded-xl border transition-all ${
                                 reacted === r.id
                                   ? 'border-[var(--ns-ember)] bg-[var(--ns-violet-light)] scale-110'
-                                  : 'border-gray-100 hover:border-gray-200 bg-white'
+                                  : 'border-[var(--color-border)] hover:border-[var(--color-border-2)] bg-white'
                               }`}
                               title={r.label}
                             >
@@ -366,28 +366,28 @@ export default function AthleteDetailClient({
         {tab === 'sessions' && (
           <div className="space-y-3">
             {!relationship.share_logs ? (
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
-                <p className="text-sm text-gray-500">Athlete hasn't shared training logs</p>
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6 text-center">
+                <p className="text-sm text-[var(--color-text-tertiary)]">Athlete hasn't shared training logs</p>
               </div>
             ) : doneLogs.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
-                <p className="text-sm text-gray-500">No sessions logged in last 12 weeks</p>
+              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6 text-center">
+                <p className="text-sm text-[var(--color-text-tertiary)]">No sessions logged in last 12 weeks</p>
               </div>
             ) : (
               doneLogs.slice(0, 30).map((log, i) => {
                 const key  = `${log.week_n}_${log.day_i}_${log.session_i}`
                 const date = new Date(log.logged_at).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
                 return (
-                  <div key={i} className="bg-white rounded-2xl border border-gray-100 px-4 py-3">
+                  <div key={i} className="bg-white rounded-2xl border border-[var(--color-border)] px-4 py-3">
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-xs font-bold text-gray-800">{date}</p>
-                      <div className="flex gap-2 text-[10px] text-gray-500">
+                      <div className="flex gap-2 text-[10px] text-[var(--color-text-tertiary)]">
                         {log.km && <span>{log.km}km</span>}
                         {log.pace && <span>{log.pace}/km</span>}
                         {log.effort && <span>effort {log.effort}/10</span>}
                       </div>
                     </div>
-                    {log.notes && <p className="text-xs text-gray-500 mb-2">{log.notes}</p>}
+                    {log.notes && <p className="text-xs text-[var(--color-text-tertiary)] mb-2">{log.notes}</p>}
                     <div className="flex gap-1.5">
                       {REACTIONS.map(r => (
                         <button key={r.id}
@@ -395,7 +395,7 @@ export default function AthleteDetailClient({
                           className={`text-sm px-1.5 py-1 rounded-lg border transition-all ${
                             reactions[key] === r.id
                               ? 'border-[var(--ns-ember)] bg-[var(--ns-violet-light)]'
-                              : 'border-gray-100 bg-white'
+                              : 'border-[var(--color-border)] bg-white'
                           }`}
                           title={r.label}
                         >

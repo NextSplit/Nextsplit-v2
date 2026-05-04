@@ -37,11 +37,11 @@ export default function SplitsDisplay({ splits }: {
             const barColour = pctFromFastest < 0.33 ? 'bg-emerald-400' : pctFromFastest < 0.66 ? 'bg-amber-400' : 'bg-red-400'
             return (
               <div key={s.lapNum} className="flex items-center gap-2">
-                <span className="text-[9px] text-gray-400 w-6 shrink-0">km {s.lapNum}</span>
-                <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <span className="text-[9px] text-[var(--color-text-tertiary)] w-6 shrink-0">km {s.lapNum}</span>
+                <div className="flex-1 h-1.5 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
                   <div className={`h-full ${barColour} rounded-full`} style={{ width: `${Math.max(20, (1 - pctFromFastest) * 100)}%` }} />
                 </div>
-                <span className="text-[9px] font-mono text-gray-600 w-12 text-right shrink-0">
+                <span className="text-[9px] font-mono text-[var(--color-text-secondary)] w-12 text-right shrink-0">
                   {s.paceSecs > 0 ? secsToMMSS(s.paceSecs) + '/km' : '—'}
                 </span>
               </div>

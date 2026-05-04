@@ -353,7 +353,7 @@ export default function TodayClient() {
               try { localStorage.setItem('nextsplit_lead_mode', 'true') } catch { /* ignore */ }
               window.location.reload()
             }}
-            className="w-full flex items-center gap-3 bg-white rounded-2xl border border-gray-100 px-4 py-3 text-left active:scale-[0.98] transition-all"
+            className="w-full flex items-center gap-3 bg-white rounded-2xl border border-[var(--color-border)] px-4 py-3 text-left active:scale-[0.98] transition-all"
           >
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-base flex-shrink-0"
               style={{ background: 'var(--ns-cyan-light)' }}>
@@ -363,7 +363,7 @@ export default function TodayClient() {
               <p className="text-xs font-bold text-gray-800">
                 Switch to {isSplitLeader ? 'Split Leader' : 'Coach'} view
               </p>
-              <p className="text-[10px] text-gray-400 mt-0.5">
+              <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">
                 See your squad — {athleteCount} athlete{athleteCount !== 1 ? 's' : ''}
               </p>
             </div>
@@ -385,10 +385,10 @@ export default function TodayClient() {
 
         {/* Manual/empty plan — no sessions yet */}
         {!loading && plan && currentWeek && currentWeek.days.every(d => d.sessions.length === 0) && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center space-y-3">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6 text-center space-y-3">
             <div className="text-4xl">✏️</div>
             <h2 className="text-sm font-bold text-gray-900">No sessions scheduled yet</h2>
-            <p className="text-xs text-gray-400 leading-relaxed">
+            <p className="text-xs text-[var(--color-text-tertiary)] leading-relaxed">
               {plan.plan_type === 'manual'
                 ? "Head to the Plan tab to add sessions to your week."
                 : "Your plan is building — check the Plan tab for your full schedule."}
@@ -474,7 +474,7 @@ export default function TodayClient() {
         {loading && (
           <div className="space-y-3">
             {[1, 2].map(i => (
-              <div key={i} className="h-24 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+              <div key={i} className="h-24 bg-white rounded-2xl border border-[var(--color-border)] animate-pulse" />
             ))}
           </div>
         )}
@@ -504,7 +504,7 @@ export default function TodayClient() {
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-base">🏋️</span>
                       <p className="text-sm font-bold text-gray-900">Gym day</p>
-                      <span className="text-[10px] text-gray-400 ml-auto">No run today</span>
+                      <span className="text-[10px] text-[var(--color-text-tertiary)] ml-auto">No run today</span>
                     </div>
                     <div className="space-y-2">
                       {gymSessions.map((s: PlanSession, i: number) => (
@@ -536,9 +536,9 @@ export default function TodayClient() {
             {/* Session timing row */}
             {planDay && planDay.times && planDay.times.length > 0 && (
               <div className="flex items-center gap-2 px-1">
-                <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Scheduled</span>
+                <span className="text-[10px] text-[var(--color-text-tertiary)] font-medium uppercase tracking-wide">Scheduled</span>
                 {planDay.times.map((t, i) => (
-                  <span key={i} className="text-[11px] bg-white border border-gray-100 rounded-full px-2.5 py-0.5 text-gray-600 font-medium">
+                  <span key={i} className="text-[11px] bg-white border border-[var(--color-border)] rounded-full px-2.5 py-0.5 text-[var(--color-text-secondary)] font-medium">
                     {t.t} {t.l}
                   </span>
                 ))}
@@ -547,7 +547,7 @@ export default function TodayClient() {
 
             {/* ── HERO: Session cards ─────────────────────────────────── */}
             {todaySessions.length > 1 && isToday && (
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1">
+              <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider px-1">
                 {todaySessions.length} sessions today
               </p>
             )}

@@ -112,14 +112,14 @@ function DefaultUpgradePrompt({ feature }: { feature: FeatureKey }) {
     <div className="bg-gradient-to-br from-orange-50 to-emerald-50 rounded-2xl border border-orange-50 p-5 text-center">
       <div className="text-3xl mb-2">{meta.emoji}</div>
       <div className="text-sm font-bold text-gray-900 mb-1">{meta.title}</div>
-      <p className="text-xs text-gray-500 mb-4 leading-relaxed">{meta.description}</p>
+      <p className="text-xs text-[var(--color-text-tertiary)] mb-4 leading-relaxed">{meta.description}</p>
       <a
         href="/settings?tab=subscription"
         className="inline-flex items-center gap-1.5 bg-[var(--ns-ember)] text-white px-5 py-2.5 rounded-xl text-sm font-bold"
       >
         <span>✦</span> Upgrade to Pro
       </a>
-      <p className="text-[10px] text-gray-400 mt-2">£4.99/month · Cancel anytime</p>
+      <p className="text-[10px] text-[var(--color-text-tertiary)] mt-2">£4.99/month · Cancel anytime</p>
     </div>
   )
 }

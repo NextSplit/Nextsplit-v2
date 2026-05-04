@@ -241,7 +241,7 @@ function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose
       <div className="fixed inset-0 z-50 bg-black/40" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 max-w-lg mx-auto">
         <div className="rounded-t-3xl px-5 pt-4 pb-8 max-h-[75vh] overflow-y-auto" style={{ background: "var(--color-surface)" }}>
-          <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+          <div className="w-10 h-1 var(--color-surface-3) rounded-full mx-auto mb-4" />
           <div className="flex items-start justify-between mb-4">
             <div>
               <h3 className="text-sm font-black text-[var(--color-text-primary)]">{plan.name}</h3>
@@ -259,7 +259,7 @@ function Week1Preview({ plan, onClose, onSelect }: { plan: PlanTemplate; onClose
                 if (sessions.length === 0) return (
                   <div key={i} className="flex gap-3 items-center">
                     <span className="text-[10px] font-bold text-[var(--color-text-tertiary)] w-8">{d.d}</span>
-                    <span className="text-xs text-gray-300">Rest</span>
+                    <span className="text-xs text-[var(--color-text-tertiary)]">Rest</span>
                   </div>
                 )
                 return (
@@ -315,10 +315,17 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
     setActivating(true)
     setError(null)
     try {
+      // Guard: ensure name is set
+      const safeName = planName.trim() || plan.name
       const res = await fetch('/api/plans/activate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ template_id: plan.id, name: planName, race_date: raceDateInput || null, include_gym: includeGym }),
+        body: JSON.stringify({
+          template_id: plan.id,
+          name: safeName,
+          race_date: raceDateInput || undefined,
+          include_gym: includeGym,
+        }),
       })
       if (!res.ok) {
         const body = await res.json()
@@ -367,7 +374,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-0 divide-x divide-gray-50 border-b border-gray-50">
+          <div className="grid grid-cols-3 gap-0 divide-x divide-[var(--color-border)] border-b border-[var(--color-border)]">
             {[
               { label: 'Runs per week', value: String(plan.runs_per_week) },
               ...(plan.peak_km_week ? [{ label: 'Peak km week', value: `${plan.peak_km_week}km` }] : []),
@@ -382,7 +389,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
 
           {/* Description */}
           {plan.description && (
-            <div className="px-5 py-4 border-b border-gray-50">
+            <div className="px-5 py-4 border-b border-[var(--color-border)]">
               <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">{plan.description}</p>
             </div>
           )}
@@ -430,7 +437,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
 
           <div>
             <label className="text-xs font-semibold text-[var(--color-text-tertiary)] block mb-1.5">
-              Race date <span className="text-gray-300 font-normal">(optional)</span>
+              Race date <span className="text-[var(--color-text-tertiary)] font-normal">(optional)</span>
             </label>
             <input type="date" value={raceDateInput} onChange={e => setRaceDateInput(e.target.value)}
               className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-border)] text-sm outline-none focus:border-[var(--ns-ember)] focus:ring-2 focus:ring-[var(--ns-ember)]/20 transition-colors" />

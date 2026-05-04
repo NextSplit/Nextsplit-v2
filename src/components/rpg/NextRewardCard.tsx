@@ -97,8 +97,8 @@ function NextRewardCard({ stats, unlockedIds }: { stats: RPGStats; unlockedIds: 
             <div className="text-2xl">{nearestBadge.badge.emoji}</div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-bold text-gray-800">{nearestBadge.badge.name}</p>
-              <p className="text-[10px] text-gray-500">{nearestBadge.badge.desc}</p>
-              <div className="mt-1 h-1 bg-gray-100 rounded-full overflow-hidden">
+              <p className="text-[10px] text-[var(--color-text-tertiary)]">{nearestBadge.badge.desc}</p>
+              <div className="mt-1 h-1 bg-[var(--color-surface-2)] rounded-full overflow-hidden">
                 <div className={`h-full rounded-full ${nearestBadge.badge.rarity === 'legendary' ? 'bg-amber-400' : nearestBadge.badge.rarity === 'epic' ? 'bg-purple-400' : nearestBadge.badge.rarity === 'rare' ? 'bg-blue-400' : 'bg-gray-400'}`}
                   style={{ width: `${Math.round(nearestBadge.proximity * 100)}%` }} />
               </div>

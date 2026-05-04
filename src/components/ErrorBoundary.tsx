@@ -42,7 +42,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
           <div className="text-center">
             <div className="text-4xl mb-3">⚠️</div>
             <p className="text-sm font-semibold text-gray-900 mb-1">Something went wrong</p>
-            <p className="text-xs text-gray-400 mb-4">
+            <p className="text-xs text-[var(--color-text-tertiary)] mb-4">
               {this.state.error?.message ?? 'An unexpected error occurred'}
             </p>
             <div className="flex gap-3 justify-center">
@@ -54,7 +54,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               </button>
               <button
                 onClick={() => { window.location.href = '/home' }}
-                className="px-4 py-2 border border-gray-300 text-gray-600 text-sm font-semibold rounded-xl"
+                className="px-4 py-2 border border-gray-300 text-[var(--color-text-secondary)] text-sm font-semibold rounded-xl"
               >
                 Go home
               </button>

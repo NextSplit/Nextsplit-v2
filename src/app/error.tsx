@@ -18,7 +18,7 @@ export default function Error({
     <main className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
       <div className="text-6xl mb-4">⚠️</div>
       <h1 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h1>
-      <p className="text-sm text-gray-400 mb-8 max-w-xs">
+      <p className="text-sm text-[var(--color-text-tertiary)] mb-8 max-w-xs">
         An unexpected error occurred. Your data is safe.
       </p>
       <div className="flex gap-3">
@@ -30,7 +30,7 @@ export default function Error({
         </button>
         <a
           href="/home"
-          className="border border-gray-200 text-gray-600 px-5 py-3 rounded-xl text-sm font-semibold bg-white"
+          className="border border-[var(--color-border-2)] text-[var(--color-text-secondary)] px-5 py-3 rounded-xl text-sm font-semibold bg-white"
         >
           Go home
         </a>

@@ -39,7 +39,7 @@ function SliderRow({ label, emoji, value, onChange, lowLabel, highLabel }: {
       <input type="range" min={1} max={5} step={1} value={value}
         onChange={e => onChange(Number(e.target.value))}
         className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[var(--ns-cyan)]" />
-      <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
+      <div className="flex justify-between text-[9px] text-[var(--color-text-tertiary)] mt-0.5">
         <span>{lowLabel}</span><span>{highLabel}</span>
       </div>
     </div>
@@ -116,7 +116,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
     const status = readinessLabel(existScore)
     return (
       <button onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3">
+        className="w-full flex items-center justify-between bg-white rounded-2xl border border-[var(--color-border)] px-4 py-3">
         <div className="flex items-center gap-2.5">
           <span className="text-xl">{status.emoji}</span>
           <div className="text-left">
@@ -126,7 +126,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
         </div>
         <div className="text-right">
           <div className="text-2xl font-black text-[var(--ns-ember)]">{existScore}</div>
-          <div className="text-[10px] text-gray-400">/10 · edit</div>
+          <div className="text-[10px] text-[var(--color-text-tertiary)]">/10 · edit</div>
         </div>
       </button>
     )
@@ -141,12 +141,12 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
     } catch {}
 
     return (
-      <div className="w-full flex items-center gap-3 bg-white rounded-2xl border border-dashed border-gray-200 px-4 py-3">
+      <div className="w-full flex items-center gap-3 bg-white rounded-2xl border border-dashed border-[var(--color-border-2)] px-4 py-3">
         <button onClick={() => setOpen(true)} className="flex items-center gap-3 flex-1 text-left">
           <span className="text-xl">🌅</span>
           <div>
             <div className="text-xs font-semibold text-gray-700">Morning check-in</div>
-            <div className="text-xs text-gray-400">Tap to log readiness</div>
+            <div className="text-xs text-[var(--color-text-tertiary)]">Tap to log readiness</div>
           </div>
           <div className="ml-auto">
             <span className="text-[11px] font-semibold text-[var(--ns-ember)] bg-[var(--ns-ember-light)] px-2.5 py-1 rounded-full">Log</span>
@@ -165,10 +165,10 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5">
+    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="text-sm font-bold text-gray-900">How are you feeling?</div>
-        <button aria-label="Close" onClick={() => setOpen(false)} className="text-gray-400 text-lg leading-none">×</button>
+        <button aria-label="Close" onClick={() => setOpen(false)} className="text-[var(--color-text-tertiary)] text-lg leading-none">×</button>
       </div>
       <div className="space-y-5 mb-5">
         <SliderRow label="Sleep quality" emoji="😴" value={sleep} onChange={setSleep} lowLabel="Terrible" highLabel="Great" />
@@ -178,7 +178,7 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-base">⚖️</span>
-            <span className="text-sm font-medium text-gray-700">Weight <span className="text-[10px] text-gray-400 font-normal">optional</span></span>
+            <span className="text-sm font-medium text-gray-700">Weight <span className="text-[10px] text-[var(--color-text-tertiary)] font-normal">optional</span></span>
           </div>
           <div className="flex items-center gap-1.5">
             <input
@@ -187,14 +187,14 @@ export default function WellnessCheckIn({ onReadiness }: Props) {
               value={weightKg}
               onChange={e => setWeightKg(e.target.value)}
               placeholder="kg"
-              className="w-16 text-right border border-gray-200 rounded-lg px-2 py-1 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]"
+              className="w-16 text-right border border-[var(--color-border-2)] rounded-lg px-2 py-1 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--ns-ember)]"
             />
-            <span className="text-xs text-gray-400">kg</span>
+            <span className="text-xs text-[var(--color-text-tertiary)]">kg</span>
           </div>
         </div>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-xs text-gray-500">Readiness score</div>
+        <div className="text-xs text-[var(--color-text-tertiary)]">Readiness score</div>
         <div className={`text-lg font-black ${readinessLabel(score).colour}`}>
           {score}/10 · {readinessLabel(score).label}
         </div>

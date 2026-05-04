@@ -71,7 +71,7 @@ export function CoachCard() {
   return (
     <>
       <div className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${
-        hasUnread ? 'border-[var(--ns-ember)]' : 'border-gray-100'
+        hasUnread ? 'border-[var(--ns-ember)]' : 'border-[var(--color-border)]'
       }`}>
         {/* Header */}
         <button
@@ -86,7 +86,7 @@ export function CoachCard() {
               <p className="text-sm font-bold text-gray-900">{coach.display_name}</p>
               {coach.verified && <span className="text-[10px] text-[var(--ns-ember)]">✅</span>}
             </div>
-            <p className="text-xs text-gray-400">Your coach</p>
+            <p className="text-xs text-[var(--color-text-tertiary)]">Your coach</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {hasUnread && (
@@ -111,7 +111,7 @@ export function CoachCard() {
           <div className={`mx-4 mb-3 px-3 py-2.5 rounded-xl border text-xs ${
             latestAnnotation.reaction
               ? REACTION_CONFIG[latestAnnotation.reaction].colour
-              : 'bg-[#f8f8f6] border-gray-200 text-gray-700'
+              : 'bg-[#f8f8f6] border-[var(--color-border-2)] text-gray-700'
           }`}>
             <div className="flex items-start gap-2">
               {latestAnnotation.reaction && (
@@ -119,7 +119,7 @@ export function CoachCard() {
               )}
               <p className="flex-1 leading-relaxed">{latestAnnotation.note}</p>
             </div>
-            <p className="text-gray-400 mt-1 text-[10px]">
+            <p className="text-[var(--color-text-tertiary)] mt-1 text-[10px]">
               {new Date(latestAnnotation.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
             </p>
           </div>
@@ -127,7 +127,7 @@ export function CoachCard() {
 
         {/* Expanded actions */}
         {expanded && (
-          <div className="px-4 pb-4 space-y-2 border-t border-gray-50 pt-3">
+          <div className="px-4 pb-4 space-y-2 border-t border-[var(--color-border)] pt-3">
             <button
               onClick={() => setShowMessages(true)}
               className="w-full flex items-center justify-between bg-[#f8f8f6] rounded-xl px-3 py-2.5"
@@ -152,9 +152,9 @@ export function CoachCard() {
 
             {annotations.length > 1 && (
               <div className="space-y-1.5">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Recent notes</p>
+                <p className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider">Recent notes</p>
                 {annotations.slice(1).map(a => (
-                  <div key={a.id} className="text-xs text-gray-600 bg-[#f8f8f6] rounded-xl px-3 py-2">
+                  <div key={a.id} className="text-xs text-[var(--color-text-secondary)] bg-[#f8f8f6] rounded-xl px-3 py-2">
                     {a.reaction && <span className="mr-1">{REACTION_CONFIG[a.reaction]?.emoji}</span>}
                     {a.note}
                   </div>
@@ -164,7 +164,7 @@ export function CoachCard() {
 
             <a
               href="/settings#coach-access"
-              className="block text-center text-xs text-gray-400 hover:text-gray-600 py-1"
+              className="block text-center text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] py-1"
             >
               Manage coach access →
             </a>

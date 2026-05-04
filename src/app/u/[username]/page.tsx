@@ -101,11 +101,11 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   return (
     <div className="min-h-screen bg-[#f8f8f6]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4">
+      <div className="bg-white border-b border-[var(--color-border)] px-4 pt-12 pb-4">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <a href="/" className="text-[var(--ns-ember)] font-black text-lg tracking-tight">NextSplit</a>
           <a href="/auth/login"
-            className="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">
+            className="text-xs font-semibold text-[var(--color-text-tertiary)] bg-[var(--color-surface-2)] px-3 py-1.5 rounded-full">
             Get the app →
           </a>
         </div>
@@ -127,11 +127,11 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                 <div className="text-white font-black text-xl leading-tight">{displayName}</div>
                 <div className="text-[var(--ns-cyan-light)] text-xs font-semibold mt-0.5">{level.name}</div>
                 {plan && (
-                  <div className="text-gray-400 text-[10px] mt-0.5">{plan.name} · W{plan.current_week}/{plan.total_weeks}</div>
+                  <div className="text-[var(--color-text-tertiary)] text-[10px] mt-0.5">{plan.name} · W{plan.current_week}/{plan.total_weeks}</div>
                 )}
                 <div className="mt-3">
                   <div className="flex justify-between text-[9px] mb-1">
-                    <span className="text-gray-400">{rpgStats.xp.toLocaleString()} XP</span>
+                    <span className="text-[var(--color-text-tertiary)]">{rpgStats.xp.toLocaleString()} XP</span>
                   </div>
                   <div className="h-2.5 bg-gray-700 rounded-full overflow-hidden">
                     <div className="h-full rounded-full transition-all"
@@ -151,7 +151,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               ].map(s => (
                 <div key={s.label} className="bg-white/10 rounded-xl p-2 text-center">
                   <div className={`text-sm font-black ${s.colour}`}>{s.value}</div>
-                  <div className="text-[8px] text-gray-400 mt-0.5 leading-tight">{s.label}</div>
+                  <div className="text-[8px] text-[var(--color-text-tertiary)] mt-0.5 leading-tight">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -160,7 +160,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
 
         {/* Badges */}
         {unlockedBadges.length > 0 && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
             <p className="text-sm font-bold text-gray-900 mb-3">🏆 Badges ({unlockedBadges.length})</p>
             <div className="grid grid-cols-4 gap-2">
               {unlockedBadges.map(b => {
@@ -169,7 +169,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                   <div key={b.id} title={`${b.name} — ${b.desc}`}
                     className={`rounded-xl border p-2 text-center ${r.border} ${b.rarity === 'legendary' ? r.glow : ''}`}>
                     <div className="text-2xl">{b.emoji}</div>
-                    <div className="text-[8px] font-bold text-gray-500 mt-0.5 leading-tight truncate">{b.name}</div>
+                    <div className="text-[8px] font-bold text-[var(--color-text-tertiary)] mt-0.5 leading-tight truncate">{b.name}</div>
                   </div>
                 )
               })}
@@ -179,7 +179,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
 
         {/* Personal Bests */}
         {pbs.length > 0 && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
             <p className="text-sm font-bold text-gray-900 mb-3">Personal Bests</p>
             <div className="grid grid-cols-2 gap-2">
               {pbs.map(pb => (
@@ -188,7 +188,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                     {Object.entries(RACE_LABELS).find(([km]) => Math.abs(Number(km) - pb.distanceKm) < 0.1)?.[1] ?? `${pb.distanceKm}km`}
                   </div>
                   <div className="text-lg font-black text-gray-900">{pb.timeStr}</div>
-                  <div className="text-[9px] text-gray-400">{pb.pacePerKm}/km</div>
+                  <div className="text-[9px] text-[var(--color-text-tertiary)]">{pb.pacePerKm}/km</div>
                 </div>
               ))}
             </div>
