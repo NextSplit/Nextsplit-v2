@@ -16,7 +16,7 @@ import WeekRow from '@/components/plan/WeekRow'
 import { TodayModals } from '../today/TodayModals'
 import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
 import FuelPlanCard from '@/components/FuelPlanCard'
-import PlanPath from '@/components/plan/PlanPath'
+import PlanPathSVG from '@/components/plan/PlanPathSVG'
 
 // ── Session colour system ──────────────────────────────────────────────────────
 const SESSION_COLOURS: Record<string, { gradient: string; tint: string; border: string; dot: string; label: string }> = {
@@ -382,7 +382,17 @@ export default function TrainClient() {
           {/* ══ Stats strip ══ */}
           <StatsStrip weeklyKm={weeklyKm} acwr={acwr} streak={streak} />
 
-          {/* ══ FULL PLAN section ══ */}
+          {/* ══ FULL PLAN section — path or list ══ */}
+          {planView === 'path' ? (
+            <PlanPathSVG
+              weeks={weeks}
+              currentWeekN={weekN}
+              logs={logs}
+              onWeekTap={(week) => setModalSession(null)}
+              planName={plan.name}
+              raceDate={plan.race_date ?? null}
+            />
+          ) : (
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--ns-cobalt)' }}>
               Full plan
@@ -440,6 +450,7 @@ export default function TrainClient() {
               })}
             </div>
           </div>
+          )}
         </div>
       )}
 
