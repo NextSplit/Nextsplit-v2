@@ -21,10 +21,12 @@ npx tsc --noEmit 2>&1 | grep "error TS" | grep -v "Cannot find module\|jsx-runti
 Then push any changes using:
 ```bash
 git add -A && git commit -m "type: description"
-git remote set-url origin https://ghp_YOUR_PAT_TOKEN_HERE@github.com/NextSplit/Nextsplit-v2.git
-git push origin main
-git remote set-url origin https://github.com/NextSplit/Nextsplit-v2.git
+git push https://ghp_YOUR_PAT@github.com/NextSplit/Nextsplit-v2.git main
 ```
+
+**Deploy triggers automatically** via GitHub Actions → Vercel deploy hook on every push to main.
+**Deploy hook:** `https://api.vercel.com/v1/integrations/deploy/prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri/YT5tNVE9Kl`
+**To trigger manually (from browser):** visit the deploy hook URL above.
 
 ---
 
@@ -273,6 +275,12 @@ npx playwright show-report
 |--------|-------------|
 | `3d5218c` | Option E redesign — ultra-dark navy, Splity animated shoe, 4-tab label-less nav, Home rebuild |
 | `[latest]` | 20-feature build — share card, weekly summary, pre-run brief, milestone cards, elite previews, founding countdown, smart notifications, week summary, squad leaderboard |
+| `1f2e448` | CI: GitHub Action triggers Vercel deploy hook on every push |
+| `926e6f9` | Fix: CSS @import order, useMyCoach confirmed fixed |
+| `d400703` | Fix: useMyCoach import path (was blocking all builds) |
+| `a02083b` | Feat: Strava auto-import, injury flag, training diary, training zones chart |
+| `b466b6f` | Feat: 20-feature build — share card, weekly summary, pre-run brief, milestones, ElitePreview |
+| `3d5218c` | Feat: Option E redesign — ultra-dark navy, Splity animated shoe, 4-tab nav, Home rebuild |
 | `1822dfa` | Daily quests, streak emotional widget, nudge wired, plan activation fix, onboarding polish (101 files) |
 | `4965291` | Bold & bright visual system, week tap session sheet, ai_usage fix, AI plan generation fix |
 | `5c87fc1` | Session celebration — confetti, XP float, level up, Splity, sound, haptics |
