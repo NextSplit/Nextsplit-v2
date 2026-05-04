@@ -44,7 +44,7 @@ function SecondarySection({ hasRunSessions, onReadiness }: { hasRunSessions: boo
         style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}
       >
         <div className="flex items-center gap-2">
-          <Splity size={20} mood="encouraging" />
+          <Splity size={20} mood="running" />
           <span className="text-xs font-bold" style={{ color: 'var(--color-text-secondary)' }}>
             Splity · Check-in & weather
           </span>

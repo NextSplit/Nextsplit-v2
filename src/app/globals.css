@@ -7,110 +7,52 @@
    Everything else is neutral — white, off-white, near-black, grey.
    ──────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* ── Base surfaces — deep navy, not flat black ── */
-  --color-bg:           #0a0e1a;   /* Deep navy — page background */
-  --color-surface:      #111827;   /* Card surface */
-  --color-surface-2:    #1a2235;   /* Elevated input / pill */
-  --color-surface-3:    #243048;   /* Highest surface */
+  /* ══ Option E — Ultra-dark navy + thick borders + massive type ══
+     Inspired by Duolingo's confidence: chunky borders, vivid pops,
+     huge numbers. Dark execution for a sports/athletic audience.
+     ══════════════════════════════════════════════════════════════ */
 
-  /* ── Borders ── */
-  --color-border:       rgba(99,130,255,0.12);
-  --color-border-2:     rgba(99,130,255,0.22);
+  /* Base */
+  --color-bg:           #080b14;   /* Ultra-dark navy — deeper than before */
+  --color-surface:      #0d1120;   /* Card surface */
+  --color-surface-2:    #131829;   /* Elevated */
+  --color-surface-3:    #1a2035;   /* Highest */
 
-  /* ── Text ── */
-  --color-text-primary:   #f8faff;
-  --color-text-secondary: rgba(248,250,255,0.72);
-  --color-text-tertiary:  rgba(248,250,255,0.38);
+  /* Borders — thicker, more visible */
+  --color-border:       rgba(99,130,255,0.15);
+  --color-border-2:     rgba(99,130,255,0.28);
 
-  /* ── Brand colours — vivid and saturated ── */
-  --ns-ember:         #ff3d6e;
-  --ns-ember-light:   #ff3d6e20;
-  --ns-ember-mid:     #e02858;
-  --ns-forest:        #00e676;
-  --ns-forest-light:  #00e67620;
-  --ns-forest-mid:    #00c45a;
-  --ns-cyan:          #00d4ff;
-  --ns-cyan-mid:      #00b8e0;
-  --ns-cobalt:        #4d8aff;
-  --ns-cobalt-mid:    #3a6fe0;
-  --ns-amber:         #ffb800;
-  --ns-violet:        #a855f7;
-  --ns-lime:          #7fff4d;
-  --ns-magenta:       #ff2d9e;
-  --ns-track:         #ff3d6e;
-  --ns-paper:         var(--color-bg);
-  --ns-ink:           var(--color-text-primary);
-  --background:       var(--color-bg);
-  --foreground:       var(--color-text-primary);
+  /* Text */
+  --color-text-primary:   #f0f4ff;
+  --color-text-secondary: rgba(240,244,255,0.68);
+  --color-text-tertiary:  rgba(240,244,255,0.35);
+
+  /* ── Brand palette — vivid, saturated, confident ── */
+  --ns-cyan:      #00d4ff;   /* Home tab, brand anchor */
+  --ns-ember:     #ff3d6e;   /* Train tab, CTA, athlete primary */
+  --ns-cobalt:    #4d8aff;   /* Plan data, analytics */
+  --ns-lime:      #7fff4d;   /* Squad, social */
+  --ns-amber:     #ffb800;   /* XP, streak, gold */
+  --ns-violet:    #a855f7;   /* Coach, premium */
+  --ns-forest:    #00e676;   /* Success, easy run, done */
+  --ns-magenta:   #ff2d9e;   /* Level up, race, special */
+  --ns-orange:    #ff7438;   /* Tempo, intervals */
+
+  /* Legacy aliases */
+  --ns-ember-light: rgba(255,61,110,0.12);
+  --ns-ember-mid:   #e02858;
+  --ns-forest-light: rgba(0,230,118,0.12);
+  --ns-forest-mid:  #00c45a;
+  --ns-cyan-mid:    #00b8e0;
+  --ns-cobalt-mid:  #3a6fe0;
+  --ns-track:       #ff3d6e;
+  --ns-paper:       var(--color-bg);
+  --ns-ink:         var(--color-text-primary);
+  --background:     var(--color-bg);
+  --foreground:     var(--color-text-primary);
 }
 
-/* ─── Text size scales ────────────────────────────────────────────────────── */
-.text-size-default { --font-scale: 1; }
-.text-size-large   { --font-scale: 1.1; }
-.text-size-xl      { --font-scale: 1.2; }
 
-/* ─── Base styles ─────────────────────────────────────────────────────────── */
-body {
-  background: var(--color-bg);
-  color: var(--color-text-primary);
-  -webkit-font-smoothing: antialiased;
-  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
-  font-size: calc(16px * var(--font-scale));
-  -webkit-font-smoothing: antialiased;
-  overscroll-behavior: none;
-}
-
-/* ─── Global colour overrides — map legacy dark classes to light equivalents ─
-   These ensure old components using Tailwind grey classes render correctly
-   on the new light base without touching every component immediately.
-   ──────────────────────────────────────────────────────────────────────────── */
-
-/* Backgrounds */
-.bg-white, [class*="bg-white"] {
-  background-color: var(--color-surface) !important;
-}
-.bg-gray-50, [class*="bg-gray-50"],
-[class*="bg-\[#f8f8f6\]"], [class*="bg-\[#f8f8f5\]"] {
-  background-color: var(--color-bg) !important;
-}
-.bg-gray-100, [class*="bg-gray-100"] {
-  background-color: var(--color-surface-2) !important;
-}
-.bg-gray-200, [class*="bg-gray-200"] {
-  background-color: var(--color-surface-3) !important;
-}
-
-/* Text colours — map dark-mode greys back to light equivalents */
-.text-gray-900, [class*="text-gray-900"],
-.text-gray-800, [class*="text-gray-800"] { color: var(--color-text-primary) !important; }
-.text-gray-700, [class*="text-gray-700"],
-.text-gray-600, [class*="text-gray-600"] { color: var(--color-text-secondary) !important; }
-.text-gray-500, [class*="text-gray-500"],
-.text-gray-400, [class*="text-gray-400"] { color: var(--color-text-tertiary) !important; }
-
-/* Borders */
-.border-gray-100, [class*="border-gray-100"] { border-color: var(--color-border) !important; }
-.border-gray-200, [class*="border-gray-200"] { border-color: var(--color-border-2) !important; }
-
-
-/* ─── Dark mode — applied when <html> has class="dark" ────────────────────── */
-.dark {
-  --color-bg:             #0a0e1a;
-  --color-surface:        #111827;
-  --color-surface-2:      #1a2235;
-  --color-surface-3:      #243048;
-  --color-border:         rgba(99,130,255,0.12);
-  --color-border-2:       rgba(99,130,255,0.22);
-  --color-text-primary:   #f8faff;
-  --color-text-secondary: rgba(248,250,255,0.72);
-  --color-text-tertiary:  rgba(248,250,255,0.38);
-}
-
-/* Dark mode — override Tailwind bg-white etc */
-.dark .bg-white,
-.dark [class*="bg-white"] {
-  background-color: var(--color-surface) !important;
-}
 .dark .bg-gray-50,
 .dark [class*="bg-gray-50"] {
   background-color: var(--color-bg) !important;
@@ -441,3 +383,70 @@ button.no-tap-scale:active { transform: none; }
   0%, 100% { opacity: 0.4; }
   50%       { opacity: 1; }
 }
+
+/* ══ Option E — Bold component utilities ══════════════════════════════════════
+   Duolingo-style chunky cards, thick borders, massive stats.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Bold card — thick border, no subtle opacity */
+.ns-card {
+  background: var(--color-surface);
+  border: 2.5px solid var(--color-border-2);
+  border-radius: 20px;
+}
+
+/* Stat number — massive, tight tracking */
+.ns-stat {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+/* Accent card — coloured border glow */
+.ns-card-accent {
+  border-radius: 20px;
+  border-width: 2.5px;
+  border-style: solid;
+}
+
+/* Section label — Duolingo uppercase caps */
+.ns-label {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Bold pill badge */
+.ns-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  border-width: 2px;
+  border-style: solid;
+}
+
+/* CTA button — full bleed, no subtlety */
+.ns-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-align: center;
+  transition: transform 0.1s, opacity 0.1s;
+}
+.ns-btn:active { transform: scale(0.97); }
+
+/* Bottom nav safe area */
+.ns-nav-height { height: calc(64px + env(safe-area-inset-bottom, 0px)); }
+
+/* Scrollbar hide */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }

@@ -1,29 +1,28 @@
 'use client'
 
-import Link from 'next/link'
 import { useMemo } from 'react'
-import { useSquad } from '@/hooks/useSquad'
-import { useMyCoach } from '@/hooks/useCoach'
+import Link from 'next/link'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
 import { useProfile } from '@/hooks/useProfile'
+import { useSquad } from '@/hooks/useSquad'
+import { useMyCoach } from '@/hooks/useMyCoach'
 import { useSubscription } from '@/hooks/useSubscription'
-import DarkModeToggle from '@/components/DarkModeToggle'
-import DailyQuests from '@/components/DailyQuests'
 import { useNotifications } from '@/hooks/useNotifications'
-import { getLevelForXP, getXPProgress, getSessionXP } from '@/lib/rpg'
 import { computeStreak } from '@/lib/streak'
-import { getSessionType, fmtKm } from '@/lib/sessionUtils'
-import type { Squad } from '@/hooks/useSquad'
-import type { CoachProfile, TrainingLog, PlanSession, PlanWeek } from '@/types/database'
+import { getLevelForXP, getXPProgress } from '@/lib/rpg'
+import type { PlanSession, PlanWeek, TrainingLog } from '@/types/database'
+import Splity from '@/components/Splity'
+import DailyQuests from '@/components/DailyQuests'
 
-// ── Helpers ─────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
-function getTodayDayIndex() {
-  const d = new Date().getDay(); return d === 0 ? 6 : d - 1
+function todayDayIndex() {
+  const d = new Date().getDay()
+  return d === 0 ? 6 : d - 1
 }
 
-function getWeeklyKm(logs: TrainingLog[]) {
+function getWeeklyKm(logs: TrainingLog[]): number {
   const mon = new Date()
   mon.setDate(mon.getDate() - (mon.getDay() === 0 ? 6 : mon.getDay() - 1))
   mon.setHours(0, 0, 0, 0)
@@ -34,300 +33,226 @@ function getWeeklyKm(logs: TrainingLog[]) {
 
 function getTodaySessions(plan: { current_week: number; weeks_data: unknown } | null): PlanSession[] {
   if (!plan?.weeks_data) return []
-  const weeks = plan.weeks_data as PlanWeek[]
+  const weeks = plan.weeks_data as unknown as PlanWeek[]
   if (!Array.isArray(weeks)) return []
   const cw = weeks.find(w => w.n === plan.current_week)
   if (!cw) return []
-  const dayIdx = getTodayDayIndex()
-  return (cw.days?.[dayIdx]?.sessions ?? []).filter((s: PlanSession) => s.c && s.c !== 'rest')
+  const dayI = todayDayIndex()
+  return (cw.days?.[dayI]?.sessions ?? []).filter((s: PlanSession) => s.c && s.c !== 'rest')
 }
 
-const SESSION_COLOURS: Record<string, { dot: string; label: string; bg: string; border: string }> = {
-  easy:     { dot: '#22c55e', label: 'Easy',      bg: 'rgba(34,197,94,0.18)',   border: 'rgba(34,197,94,0.4)'  },
-  tempo:    { dot: '#eab308', label: 'Tempo',     bg: 'rgba(234,179,8,0.18)',   border: 'rgba(234,179,8,0.4)'  },
-  interval: { dot: '#f97316', label: 'Intervals', bg: 'rgba(249,115,22,0.18)',  border: 'rgba(249,115,22,0.4)' },
-  long:     { dot: '#3b82f6', label: 'Long Run',  bg: 'rgba(59,130,246,0.18)',  border: 'rgba(59,130,246,0.4)' },
-  recovery: { dot: '#4ade80', label: 'Recovery',  bg: 'rgba(74,222,128,0.18)',  border: 'rgba(74,222,128,0.4)' },
-  gym:      { dot: '#8b5cf6', label: 'Strength',  bg: 'rgba(139,92,246,0.18)',  border: 'rgba(139,92,246,0.4)' },
-  race:     { dot: '#ec4899', label: 'Race',      bg: 'rgba(236,72,153,0.18)',  border: 'rgba(236,72,153,0.4)' },
-  rest:     { dot: '#9ca3af', label: 'Rest',      bg: 'rgba(156,163,175,0.10)', border: 'rgba(156,163,175,0.2)'},
+function getSessionColour(code: string | null | undefined) {
+  const c = (code ?? '').toLowerCase()
+  if (c.includes('tempo'))                           return '#ffb800'
+  if (c.includes('interval') || c.includes('speed')) return '#ff7438'
+  if (c.includes('long'))                            return '#4d8aff'
+  if (c.includes('recovery'))                        return '#00e676'
+  if (c.includes('gym') || c.includes('strength'))   return '#a855f7'
+  if (c.includes('race'))                            return '#ff2d9e'
+  return '#00e676'
 }
 
-function getCol(code: string | null | undefined) {
-  if (!code) return SESSION_COLOURS.easy
-  const c = code.toLowerCase()
-  if (c.includes('tempo')) return SESSION_COLOURS.tempo
-  if (c.includes('interval') || c.includes('speed')) return SESSION_COLOURS.interval
-  if (c.includes('long')) return SESSION_COLOURS.long
-  if (c.includes('recovery')) return SESSION_COLOURS.recovery
-  if (c.includes('gym') || c.includes('strength')) return SESSION_COLOURS.gym
-  if (c.includes('race')) return SESSION_COLOURS.race
-  return SESSION_COLOURS.easy
-}
+// ── XP Header Bar ─────────────────────────────────────────────────────────────
 
-// ── XP Bar ──────────────────────────────────────────────────────────────────
-
-function XPBar({ xp, streak }: { xp: number; streak: number }) {
-  const level  = getLevelForXP(xp)
-  const pct    = getXPProgress(xp)
-  const hour   = new Date().getHours()
-  const streakAtRisk = streak > 0 && hour >= 19
+function XPHeaderBar({ xp, streak }: { xp: number; streak: number }) {
+  const level = getLevelForXP(xp)
+  const pct   = getXPProgress(xp)
+  const hour  = new Date().getHours()
+  const atRisk = streak > 0 && hour >= 19
 
   return (
-    <div className="flex items-center gap-2.5 px-4 py-2">
-      {/* Streak pill — glows when active, pulses red in evening */}
-      <button className="flex items-center gap-1 rounded-full px-2.5 py-1 flex-shrink-0 transition-all"
+    <div className="flex items-center gap-2 px-4 py-2">
+      {/* Streak */}
+      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full flex-shrink-0"
         style={{
-          background: streak > 0
-            ? streakAtRisk ? 'rgba(255,61,110,0.2)' : 'rgba(255,184,0,0.15)'
-            : 'var(--color-surface-2)',
-          border: streak > 0
-            ? `1px solid ${streakAtRisk ? 'rgba(255,61,110,0.5)' : 'rgba(255,184,0,0.4)'}`
-            : '1px solid var(--color-border)',
-          boxShadow: streak > 0 && !streakAtRisk ? '0 0 8px rgba(255,184,0,0.3)' : 'none',
-          animation: streakAtRisk ? 'pulse 1.5s ease-in-out infinite' : 'none',
+          background: streak > 0 ? (atRisk ? 'rgba(255,61,110,0.15)' : 'rgba(255,184,0,0.12)') : 'var(--color-surface-2)',
+          border: `2px solid ${streak > 0 ? (atRisk ? 'rgba(255,61,110,0.5)' : 'rgba(255,184,0,0.5)') : 'var(--color-border)'}`,
+          boxShadow: streak > 0 && !atRisk ? '0 0 10px rgba(255,184,0,0.25)' : 'none',
         }}>
-        <span className="text-sm leading-none">{streak > 0 ? '🔥' : '💤'}</span>
-        <span className="text-[11px] font-black leading-none"
-          style={{ color: streak > 0 ? (streakAtRisk ? '#ff3d6e' : '#ffb800') : 'var(--color-text-tertiary)' }}>
+        <span className="text-sm">{streak > 0 ? '🔥' : '💤'}</span>
+        <span className="text-[11px] font-black"
+          style={{ color: streak > 0 ? (atRisk ? '#ff3d6e' : '#ffb800') : 'var(--color-text-tertiary)' }}>
           {streak > 0 ? streak : '0'}
         </span>
-      </button>
-
-      {/* XP progress bar */}
-      <div className="flex-1 relative">
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-2)' }}>
-          <div className="h-full rounded-full transition-all duration-700"
-            style={{
-              width: `${pct * 100}%`,
-              background: 'linear-gradient(90deg,#ffb800,#ff8c00)',
-              boxShadow: pct > 0 ? '0 0 6px rgba(255,184,0,0.5)' : 'none',
-            }} />
-        </div>
       </div>
 
-      {/* Level badge */}
-      <div className="flex items-center gap-1 flex-shrink-0 rounded-full px-2.5 py-1"
-        style={{ background: 'rgba(255,184,0,0.12)', border: '1px solid rgba(255,184,0,0.3)' }}>
-        <span className="text-[10px] font-black" style={{ color: '#ffb800' }}>Lv</span>
+      {/* XP bar */}
+      <div className="flex-1 h-2 rounded-full overflow-hidden"
+        style={{ background: 'var(--color-surface-2)' }}>
+        <div className="h-full rounded-full transition-all duration-1000"
+          style={{
+            width: `${pct * 100}%`,
+            background: 'linear-gradient(90deg, #ffb800, #ff8c00)',
+            boxShadow: pct > 0.1 ? '0 0 8px rgba(255,184,0,0.4)' : 'none',
+          }} />
+      </div>
+
+      {/* Level */}
+      <div className="flex items-center gap-1 px-2.5 py-1 rounded-full flex-shrink-0"
+        style={{ background: 'rgba(255,184,0,0.12)', border: '2px solid rgba(255,184,0,0.35)' }}>
+        <span className="text-[9px] font-black" style={{ color: '#ffb800' }}>LV</span>
         <span className="text-sm font-black leading-none" style={{ color: '#ffb800' }}>{level.level}</span>
       </div>
     </div>
   )
 }
 
-// ── Hero cards ───────────────────────────────────────────────────────────────
+// ── Hero: Training day ────────────────────────────────────────────────────────
 
-function HeroTraining({ sessions, planName, weekN, totalWeeks }: {
-  sessions: PlanSession[]; planName: string; weekN: number; totalWeeks: number
+function HeroTraining({ sessions, planName, weekN, totalWeeks, daysToRace }: {
+  sessions: PlanSession[]
+  planName: string
+  weekN: number
+  totalWeeks: number
+  daysToRace: number | null
 }) {
-  const totalKm = sessions.reduce((s, sess) => s + (sess.km ?? 0), 0)
+  const primary = sessions[0]
+  const colour  = getSessionColour(primary?.c)
+  const isMulti = sessions.length > 1
+  const totalKm = sessions.reduce((s, s2) => s + (s2.km ?? 0), 0)
+
   return (
-    <Link href="/train" className="block rounded-2xl overflow-hidden active:scale-[0.99] transition-all"
-      style={{ background: 'rgba(255,77,109,0.12)', border: '1.5px solid rgba(255,77,109,0.4)', boxShadow: '0 4px 24px rgba(255,77,109,0.15)' }}>
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: '#ff4d6d' }}>
-              Today · Week {weekN} of {totalWeeks}
+    <Link href="/train" className="block mx-4 active:scale-[0.98] transition-all">
+      <div className="rounded-3xl overflow-hidden"
+        style={{
+          background: `linear-gradient(135deg, ${colour}18, ${colour}08)`,
+          border: `3px solid ${colour}`,
+          boxShadow: `0 0 0 1px ${colour}15, 0 8px 32px ${colour}30`,
+        }}>
+        <div className="p-5">
+          {/* Session label */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: colour }} />
+            <span className="ns-label" style={{ color: colour }}>
+              Today · Week {weekN}/{totalWeeks}
+            </span>
+            {daysToRace !== null && daysToRace <= 30 && (
+              <span className="ns-label ml-auto" style={{ color: '#ff2d9e' }}>
+                🏁 {daysToRace}d
+              </span>
+            )}
+          </div>
+
+          {/* Primary session — massive type */}
+          <div className="mb-1">
+            <span style={{
+              fontSize: totalKm >= 20 ? 52 : 60,
+              fontWeight: 900,
+              color: 'var(--color-text-primary)',
+              letterSpacing: '-0.04em',
+              lineHeight: 1,
+            }}>
+              {totalKm > 0 ? totalKm : primary?.km ?? 0}
+            </span>
+            <span className="text-2xl font-black ml-1" style={{ color: 'var(--color-text-secondary)' }}>km</span>
+          </div>
+
+          <p className="text-base font-black mb-1" style={{ color: colour }}>
+            {isMulti ? `${sessions.length} sessions today` : primary?.n ?? 'Session'}
+          </p>
+
+          {/* Session pills */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {sessions.map((s, i) => (
+              <span key={i} className="ns-pill"
+                style={{
+                  background: `${getSessionColour(s.c)}15`,
+                  borderColor: `${getSessionColour(s.c)}40`,
+                  color: getSessionColour(s.c),
+                }}>
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: getSessionColour(s.c) }} />
+                {s.n ?? s.c} {s.km > 0 ? `· ${s.km}km` : ''}
+              </span>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="py-4 rounded-2xl text-center font-black text-base"
+            style={{ background: colour, color: 'white', boxShadow: `0 4px 20px ${colour}60` }}>
+            Start today&apos;s session →
+          </div>
+        </div>
+
+        {/* Plan name footer */}
+        <div className="px-5 py-3 border-t flex items-center justify-between"
+          style={{ borderColor: `${colour}20` }}>
+          <span className="text-xs font-bold" style={{ color: 'var(--color-text-tertiary)' }}>
+            📋 {planName}
+          </span>
+          <span className="text-xs font-bold" style={{ color: colour }}>
+            View full plan →
+          </span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// ── Hero: Rest day ────────────────────────────────────────────────────────────
+
+function HeroRest({ planName, nextSessions }: { planName: string; nextSessions: PlanSession[] }) {
+  return (
+    <div className="mx-4">
+      <div className="rounded-3xl overflow-hidden"
+        style={{
+          background: 'var(--color-surface)',
+          border: '2.5px solid var(--color-border-2)',
+        }}>
+        <div className="p-5 flex items-center gap-4">
+          <div className="flex-shrink-0">
+            <Splity size={64} mood="sleepy" animate />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="ns-label" style={{ color: 'var(--color-text-tertiary)' }}>Rest day</span>
+            <p className="text-2xl font-black mt-1" style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>
+              Recovery is training 💤
             </p>
-            <p className="text-2xl font-black leading-tight" style={{ color: "var(--color-text-primary)", letterSpacing: '-0.02em' }}>
-              {sessions.length} session{sessions.length !== 1 ? 's' : ''}
-              {totalKm > 0 ? ` · ${fmtKm(totalKm)}` : ''}
-            </p>
-            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
               {planName}
             </p>
           </div>
-          <div className="rounded-xl px-4 py-2 font-black text-sm text-white flex-shrink-0"
-            style={{ background: '#ff4d6d' }}>
-            Start →
-          </div>
         </div>
-        <div className="flex gap-2 flex-wrap">
-          {sessions.map((s, i) => {
-            const col = getCol(s.c)
-            return (
-              <div key={i} className="flex items-center gap-1.5 rounded-lg px-3 py-2"
-                style={{ background: col.bg, border: `1px solid ${col.border}` }}>
-                <div className="w-1.5 h-1.5 rounded-full" style={{ background: col.dot }} />
-                <span className="text-xs font-bold text-white">
-                  {col.label}{s.km > 0 ? ` ${fmtKm(s.km)}` : ''}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-function HeroRestDay({ planName, weekN, totalWeeks }: { planName: string; weekN: number; totalWeeks: number }) {
-  return (
-    <div className="rounded-2xl p-4"
-      style={{ background: 'rgba(156,163,175,0.08)', border: '1.5px solid rgba(156,163,175,0.15)' }}>
-      <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
-        Today · Week {weekN} of {totalWeeks}
-      </p>
-      <p className="text-2xl font-black mb-1" style={{ color: "var(--color-text-primary)" }}>Rest day 😴</p>
-      <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
-        {planName} · Recovery is training. Next session tomorrow.
-      </p>
-    </div>
-  )
-}
-
-function HeroCoach({ coach }: { coach: CoachProfile }) {
-  return (
-    <Link href="/train" className="block rounded-2xl overflow-hidden active:scale-[0.99] transition-all"
-      style={{ background: 'rgba(139,92,246,0.12)', border: '1.5px solid rgba(139,92,246,0.4)', boxShadow: '0 4px 24px rgba(139,92,246,0.12)' }}>
-      <div className="p-4">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-11 h-11 rounded-full flex items-center justify-center text-xl flex-shrink-0 overflow-hidden"
-            style={{ background: 'rgba(139,92,246,0.2)', border: '2px solid rgba(139,92,246,0.4)' }}>
-            {coach.photo_url
-              ? <img src={coach.photo_url} className="w-full h-full object-cover" alt="" />
-              : '🎓'}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: '#8b5cf6' }}>Your coach</p>
-            <p className="text-base font-black text-white">{coach.display_name}</p>
-          </div>
-          <div className="rounded-xl px-3 py-1.5 text-xs font-black text-white flex-shrink-0"
-            style={{ background: '#8b5cf6' }}>
-            Message →
-          </div>
-        </div>
-        <p className="text-xs rounded-xl px-3 py-2.5"
-          style={{ color: 'rgba(255,255,255,0.55)', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          Tap to see your coached plan and latest messages.
-        </p>
-      </div>
-    </Link>
-  )
-}
-
-function HeroSquadLeader({ squad }: { squad: Squad }) {
-  const colour = squad.colour || '#84cc16'
-  const isLeader = true
-  const memberCount = squad.squad_members?.length ?? 0
-  return (
-    <Link href="/squad" className="block rounded-2xl overflow-hidden active:scale-[0.99] transition-all"
-      style={{ background: `${colour}12`, border: `2px solid ${colour}45`, boxShadow: `0 4px 24px ${colour}20` }}>
-      <div className="p-4">
-        <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: colour }}>
-          Your squad · {isLeader ? 'Split Leader 👑' : 'Member'}
-        </p>
-        <p className="text-2xl font-black text-white mb-1" style={{ letterSpacing: '-0.02em' }}>{squad.name}</p>
-        <p className="text-xs mb-3" style={{ color: 'rgba(255,255,255,0.45)' }}>
-          {memberCount} member{memberCount !== 1 ? 's' : ''} · Tap to check in on your squad
-        </p>
-        <div className="flex gap-2">
-          <div className="flex-1 rounded-xl px-3 py-2 text-center"
-            style={{ background: `${colour}20`, border: `1px solid ${colour}35` }}>
-            <p className="text-[10px] font-bold" style={{ color: colour }}>Leaderboard</p>
-          </div>
-          <div className="flex-1 rounded-xl px-3 py-2 text-center"
-            style={{ background: `${colour}20`, border: `1px solid ${colour}35` }}>
-            <p className="text-[10px] font-bold" style={{ color: colour }}>Nudge team →</p>
-          </div>
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-function HeroNewUser() {
-  return (
-    <div className="rounded-2xl overflow-hidden"
-      style={{
-        background: 'linear-gradient(135deg, rgba(0,212,255,0.12), rgba(77,138,255,0.08))',
-        border: '1.5px solid rgba(0,212,255,0.35)',
-        boxShadow: '0 4px 32px rgba(0,212,255,0.1)',
-      }}>
-      <div className="p-5">
-        {/* Splity welcome */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{ background: 'rgba(0,212,255,0.15)', border: '2px solid rgba(0,212,255,0.4)' }}>
-            <span className="text-2xl">🏃</span>
-          </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: '#00d4ff' }}>
-              Hey! I&apos;m Splity
-            </p>
-            <p className="text-lg font-black text-white" style={{ letterSpacing: '-0.02em' }}>
-              Let&apos;s get you running 🚀
-            </p>
-          </div>
-        </div>
-
-        <p className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.5)' }}>
-          Pick a path and I&apos;ll build your training around it. Takes 3 minutes.
-        </p>
-
-        {/* Primary CTA */}
-        <Link href="/onboarding/ai"
-          className="flex items-center gap-3 rounded-xl p-3.5 mb-2 active:scale-[0.98] transition-all"
-          style={{ background: '#00d4ff', boxShadow: '0 4px 20px rgba(0,212,255,0.4)' }}>
-          <span className="text-xl">🧠</span>
-          <div className="flex-1">
-            <p className="text-sm font-black" style={{ color: '#0a0e1a' }}>AI bespoke plan</p>
-            <p className="text-[10px]" style={{ color: 'rgba(10,14,26,0.6)' }}>Built around your life, goals and schedule</p>
-          </div>
-          <span style={{ color: 'rgba(10,14,26,0.5)' }}>→</span>
-        </Link>
-
-        <div className="grid grid-cols-2 gap-2">
-          {[
-            { href: '/onboarding/predetermined', label: 'Expert plans', icon: '📋', colour: '#ff3d6e', desc: '17 plans, 5K to ultra' },
-            { href: '/onboarding/manual',        label: 'Build my own', icon: '✏️', colour: '#7fff4d', desc: 'Total control' },
-          ].map(p => (
-            <Link key={p.href} href={p.href}
-              className="rounded-xl p-3 active:scale-[0.97] transition-all"
-              style={{ background: `${p.colour}10`, border: `1px solid ${p.colour}30` }}>
-              <div className="text-lg mb-1">{p.icon}</div>
-              <div className="text-xs font-black text-white mb-0.5">{p.label}</div>
-              <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{p.desc}</div>
-            </Link>
-          ))}
-        </div>
+        {nextSessions.length > 0 && (
+          <Link href="/train"
+            className="flex items-center justify-between px-5 py-3 border-t"
+            style={{ borderColor: 'var(--color-border)' }}>
+            <span className="text-xs font-bold" style={{ color: 'var(--color-text-tertiary)' }}>
+              Tomorrow: {nextSessions[0]?.n}
+            </span>
+            <span className="text-xs font-black" style={{ color: 'var(--ns-cobalt)' }}>See plan →</span>
+          </Link>
+        )}
       </div>
     </div>
   )
 }
+
+// ── Hero: Streak at risk ──────────────────────────────────────────────────────
 
 function HeroStreakAtRisk({ streak }: { streak: number }) {
   return (
-    <Link href="/train" className="block rounded-2xl overflow-hidden active:scale-[0.99] transition-all"
-      style={{
-        background: 'linear-gradient(135deg, rgba(255,184,0,0.12), rgba(255,61,110,0.08))',
-        border: '1.5px solid rgba(255,184,0,0.45)',
-        boxShadow: '0 4px 24px rgba(255,184,0,0.2)',
-      }}>
-      <div className="p-4 flex items-start gap-4">
-        {/* Splity worried face */}
-        <div className="flex-shrink-0 flex flex-col items-center gap-1">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center relative"
-            style={{ background: 'rgba(255,184,0,0.15)', border: '2px solid rgba(255,184,0,0.4)' }}>
-            <span className="text-2xl" style={{ animation: 'pulse 1s ease-in-out infinite' }}>😰</span>
-          </div>
-          <p className="text-[9px] font-black" style={{ color: 'rgba(255,184,0,0.6)' }}>Splity</p>
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: '#ffb800' }}>
-            🔥 Streak at risk
-          </p>
-          <p className="text-xl font-black text-white mb-1" style={{ letterSpacing: '-0.02em' }}>
-            {streak} days — don&apos;t stop now!
-          </p>
-          <p className="text-xs mb-3" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            Log before midnight or your streak resets to zero.
-          </p>
-          <div className="rounded-xl px-4 py-2.5 text-center font-black text-sm"
-            style={{ background: '#ffb800', color: '#0a0e1a' }}>
-            Log today → save the streak 🔥
+    <Link href="/train" className="block mx-4 active:scale-[0.98] transition-all">
+      <div className="rounded-3xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,184,0,0.12), rgba(255,61,110,0.08))',
+          border: '3px solid #ffb800',
+          boxShadow: '0 0 0 1px rgba(255,184,0,0.1), 0 8px 32px rgba(255,184,0,0.2)',
+        }}>
+        <div className="p-5 flex items-start gap-4">
+          <Splity size={72} mood="worried" animate />
+          <div className="flex-1 min-w-0">
+            <span className="ns-label" style={{ color: '#ffb800' }}>🔥 Streak at risk</span>
+            <p className="text-3xl font-black mt-1 mb-1"
+              style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.03em' }}>
+              {streak} days at stake
+            </p>
+            <p className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              Log before midnight or your streak resets to zero.
+            </p>
+            <div className="py-3.5 rounded-2xl text-center font-black text-sm"
+              style={{ background: '#ffb800', color: '#0a0e1a', boxShadow: '0 4px 16px rgba(255,184,0,0.5)' }}>
+              Save my streak →
+            </div>
           </div>
         </div>
       </div>
@@ -335,38 +260,183 @@ function HeroStreakAtRisk({ streak }: { streak: number }) {
   )
 }
 
-// ── Persistent cards ─────────────────────────────────────────────────────────
+// ── Hero: No plan ─────────────────────────────────────────────────────────────
+
+function HeroNoPlan() {
+  return (
+    <div className="mx-4">
+      <div className="rounded-3xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, rgba(0,212,255,0.12), rgba(77,138,255,0.06))',
+          border: '3px solid rgba(0,212,255,0.5)',
+          boxShadow: '0 8px 32px rgba(0,212,255,0.15)',
+        }}>
+        <div className="p-5">
+          <div className="flex items-center gap-3 mb-4">
+            <Splity size={56} mood="excited" animate label="Let's run!" />
+            <div>
+              <span className="ns-label" style={{ color: '#00d4ff' }}>Welcome to NextSplit</span>
+              <p className="text-2xl font-black mt-0.5"
+                style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.03em' }}>
+                Pick your path 🚀
+              </p>
+            </div>
+          </div>
+
+          {/* AI plan — primary, full width */}
+          <Link href="/onboarding/ai"
+            className="flex items-center gap-3 rounded-2xl p-4 mb-2 active:scale-[0.98] transition-all"
+            style={{ background: '#00d4ff', boxShadow: '0 4px 24px rgba(0,212,255,0.5)' }}>
+            <span className="text-2xl">🧠</span>
+            <div className="flex-1">
+              <p className="text-sm font-black" style={{ color: '#0a0e1a' }}>Build AI bespoke plan</p>
+              <p className="text-[10px]" style={{ color: 'rgba(10,14,26,0.6)' }}>
+                Built around your life, goals and schedule
+              </p>
+            </div>
+            <span style={{ color: 'rgba(10,14,26,0.5)', fontWeight: 900 }}>→</span>
+          </Link>
+
+          {/* Secondary options */}
+          <div className="grid grid-cols-2 gap-2">
+            <Link href="/onboarding/predetermined"
+              className="rounded-2xl p-3.5 active:scale-[0.97] transition-all"
+              style={{ background: 'rgba(255,61,110,0.1)', border: '2px solid rgba(255,61,110,0.35)' }}>
+              <div className="text-xl mb-1.5">📋</div>
+              <p className="text-xs font-black" style={{ color: '#ff3d6e' }}>Expert plans</p>
+              <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>17 plans, 5K to ultra</p>
+            </Link>
+            <Link href="/coaches"
+              className="rounded-2xl p-3.5 active:scale-[0.97] transition-all"
+              style={{ background: 'rgba(168,85,247,0.1)', border: '2px solid rgba(168,85,247,0.35)' }}>
+              <div className="text-xl mb-1.5">🎓</div>
+              <p className="text-xs font-black" style={{ color: '#a855f7' }}>Find a coach</p>
+              <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>From £30/month</p>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Hero: Has coach ───────────────────────────────────────────────────────────
+
+function HeroCoach({ coach }: { coach: { display_name: string; photo_url?: string | null; slug?: string } }) {
+  return (
+    <Link href="/coach/messages" className="block mx-4 active:scale-[0.98] transition-all">
+      <div className="rounded-3xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, rgba(168,85,247,0.12), rgba(168,85,247,0.06))',
+          border: '3px solid rgba(168,85,247,0.5)',
+          boxShadow: '0 8px 32px rgba(168,85,247,0.2)',
+        }}>
+        <div className="p-5 flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0"
+            style={{ border: '2.5px solid rgba(168,85,247,0.5)' }}>
+            {coach.photo_url
+              ? <img src={coach.photo_url} className="w-full h-full object-cover" alt="" />
+              : <div className="w-full h-full flex items-center justify-center text-2xl"
+                  style={{ background: 'rgba(168,85,247,0.2)' }}>🎓</div>}
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="ns-label" style={{ color: '#a855f7' }}>Your coach</span>
+            <p className="text-xl font-black mt-0.5" style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>
+              {coach.display_name}
+            </p>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
+              Tap to see latest messages →
+            </p>
+          </div>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// ── Race countdown strip ──────────────────────────────────────────────────────
+
+function RaceCountdown({ raceDate, raceName }: { raceDate: string; raceName?: string | null }) {
+  const days = Math.ceil((new Date(raceDate).getTime() - Date.now()) / 86400000)
+  if (days < 0 || days > 365) return null
+  const urgency = days <= 7 ? '#ff2d9e' : days <= 21 ? '#ff3d6e' : days <= 42 ? '#ffb800' : '#4d8aff'
+
+  return (
+    <div className="mx-4">
+      <div className="rounded-2xl px-4 py-3 flex items-center gap-3"
+        style={{ background: `${urgency}10`, border: `2px solid ${urgency}40` }}>
+        <span className="text-2xl">🏁</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-black truncate" style={{ color: urgency }}>
+            {raceName ?? 'Race day'}
+          </p>
+          <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
+            {days === 0 ? 'TODAY! Go get it 🔥' : `${days} day${days !== 1 ? 's' : ''} to go`}
+          </p>
+        </div>
+        <div className="text-right flex-shrink-0">
+          <p className="text-2xl font-black" style={{ color: urgency, letterSpacing: '-0.04em' }}>{days}</p>
+          <p className="text-[9px] font-bold" style={{ color: `${urgency}80` }}>days</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Stats strip ───────────────────────────────────────────────────────────────
 
 function StatsStrip({ weeklyKm, streak }: { weeklyKm: number; streak: number }) {
+  const hour = new Date().getHours()
+  const atRisk = streak > 0 && hour >= 19
+
   return (
-    <Link href="/train" className="block">
-      <div className="flex gap-2">
-        <div className="flex-1 rounded-xl py-3 text-center"
-          style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.15)' }}>
-          <p className="text-lg font-black" style={{ color: '#2563eb' }}>{weeklyKm.toFixed(1)}</p>
-          <p className="text-[9px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>km this week</p>
-        </div>
-        <div className="flex-1 rounded-xl py-3 text-center"
-          style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.15)' }}>
-          <p className="text-sm font-black" style={{ color: '#2563eb' }}>Full stats →</p>
-          <p className="text-[9px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>ACWR · pace · load</p>
-        </div>
+    <div className="flex gap-2 mx-4">
+      <Link href="/train" className="flex-1 rounded-2xl py-3.5 text-center"
+        style={{ background: 'var(--color-surface)', border: '2.5px solid rgba(77,138,255,0.35)' }}>
+        <p className="ns-stat" style={{ color: '#4d8aff' }}>{weeklyKm.toFixed(1)}</p>
+        <p className="ns-label mt-0.5" style={{ color: 'rgba(77,138,255,0.6)' }}>km / week</p>
+      </Link>
+
+      <div className="rounded-2xl py-3.5 px-4 text-center"
+        style={{
+          background: 'var(--color-surface)',
+          border: `2.5px solid ${streak > 0 ? (atRisk ? 'rgba(255,61,110,0.5)' : 'rgba(255,184,0,0.5)') : 'var(--color-border-2)'}`,
+          boxShadow: streak > 0 && !atRisk ? '0 0 16px rgba(255,184,0,0.2)' : 'none',
+          minWidth: 88,
+        }}>
+        <p className="ns-stat" style={{ color: streak > 0 ? (atRisk ? '#ff3d6e' : '#ffb800') : 'var(--color-text-tertiary)' }}>
+          {streak > 0 ? `🔥${streak}` : '—'}
+        </p>
+        <p className="ns-label mt-0.5"
+          style={{ color: streak > 0 ? (atRisk ? 'rgba(255,61,110,0.7)' : 'rgba(255,184,0,0.7)') : 'var(--color-text-tertiary)' }}>
+          {atRisk ? 'at risk!' : 'streak'}
+        </p>
       </div>
-    </Link>
+
+      <Link href="/you" className="rounded-2xl py-3.5 px-3 text-center"
+        style={{ background: 'var(--color-surface)', border: '2.5px solid var(--color-border-2)', minWidth: 60 }}>
+        <p className="text-xl" style={{ lineHeight: 1.2 }}>📊</p>
+        <p className="ns-label mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>stats</p>
+      </Link>
+    </div>
   )
 }
 
-function SquadCard({ squad }: { squad: Squad }) {
-  const colour = squad.colour || '#84cc16'
+// ── Squad mini card ───────────────────────────────────────────────────────────
+
+function SquadMini({ squad }: { squad: { name: string; colour?: string; squad_members?: unknown[] } }) {
+  const colour = squad.colour ?? '#7fff4d'
+  const count = squad.squad_members?.length ?? 0
   return (
-    <Link href="/squad" className="block rounded-2xl p-4 active:scale-[0.99] transition-all"
-      style={{ background: `${colour}08`, border: `1px solid ${colour}25` }}>
-      <div className="flex items-center gap-3">
-        <div className="text-2xl">👥</div>
+    <Link href="/squad" className="mx-4 block active:scale-[0.98] transition-all">
+      <div className="rounded-2xl p-4 flex items-center gap-3"
+        style={{ background: 'var(--color-surface)', border: `2.5px solid ${colour}50` }}>
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+          style={{ background: `${colour}15`, border: `2px solid ${colour}40` }}>👥</div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-black" style={{ color: colour }}>{squad.name}</p>
-          <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
-            {squad.squad_members?.length ?? 0} members · Tap to open →
+          <p className="text-sm font-black truncate" style={{ color: colour }}>{squad.name}</p>
+          <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
+            {count} member{count !== 1 ? 's' : ''} · Tap to see leaderboard →
           </p>
         </div>
       </div>
@@ -374,180 +444,220 @@ function SquadCard({ squad }: { squad: Squad }) {
   )
 }
 
-function FindCoachCard() {
+// ── Conversion cards ──────────────────────────────────────────────────────────
+
+function CoachNudge() {
   return (
-    <Link href="/explore" className="block rounded-2xl p-4 active:scale-[0.99] transition-all"
-      style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.2)' }}>
-      <div className="flex items-center gap-3">
+    <Link href="/coaches" className="mx-4 block active:scale-[0.98] transition-all">
+      <div className="rounded-2xl p-4 flex items-center gap-3"
+        style={{ background: 'var(--color-surface)', border: '2.5px solid rgba(168,85,247,0.35)' }}>
         <div className="text-2xl">🎓</div>
-        <div className="flex-1">
-          <p className="text-sm font-black" style={{ color: '#8b5cf6' }}>Get a coach</p>
-          <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Verified coaches from £30/mo</p>
-        </div>
-        <div className="text-xs font-black rounded-lg px-3 py-1.5 text-white flex-shrink-0"
-          style={{ background: '#8b5cf6' }}>Browse</div>
-      </div>
-    </Link>
-  )
-}
-
-function StartSquadCard() {
-  return (
-    <Link href="/explore?tab=squads" className="block rounded-2xl p-4 active:scale-[0.99] transition-all"
-      style={{ background: 'rgba(132,204,22,0.08)', border: '1px solid rgba(132,204,22,0.2)' }}>
-      <div className="flex items-center gap-3">
-        <div className="text-2xl">👥</div>
-        <div className="flex-1">
-          <p className="text-sm font-black" style={{ color: '#84cc16' }}>Join a squad</p>
-          <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Train together, go further</p>
-        </div>
-        <div className="text-xs font-black rounded-lg px-3 py-1.5 flex-shrink-0"
-          style={{ background: '#84cc16', color: '#0d1a05' }}>Find one</div>
-      </div>
-    </Link>
-  )
-}
-
-function PremiumCard() {
-  return (
-    <Link href="/settings" className="block rounded-2xl p-4 active:scale-[0.99] transition-all"
-      style={{ background: 'rgba(240,165,0,0.08)', border: '1px solid rgba(240,165,0,0.2)' }}>
-      <div className="flex items-center gap-3">
-        <div className="text-2xl">⭐</div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-black" style={{ color: '#f0a500' }}>Go Elite — £7.99/mo</p>
-          <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
+          <p className="text-sm font-black" style={{ color: '#a855f7' }}>Get a verified coach</p>
+          <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
+            They see your logs, ACWR and pace trends · from £30/mo
+          </p>
+        </div>
+        <span style={{ color: '#a855f7', fontWeight: 900 }}>→</span>
+      </div>
+    </Link>
+  )
+}
+
+function SquadNudge() {
+  return (
+    <Link href="/squad" className="mx-4 block active:scale-[0.98] transition-all">
+      <div className="rounded-2xl p-4 flex items-center gap-3"
+        style={{ background: 'var(--color-surface)', border: '2.5px solid rgba(127,255,77,0.35)' }}>
+        <div className="text-2xl">👥</div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-black" style={{ color: '#7fff4d' }}>Start a squad</p>
+          <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
+            Train together · weekly leaderboard · nudges
+          </p>
+        </div>
+        <span style={{ color: '#7fff4d', fontWeight: 900 }}>→</span>
+      </div>
+    </Link>
+  )
+}
+
+function EliteNudge() {
+  return (
+    <Link href="/settings" className="mx-4 block active:scale-[0.98] transition-all">
+      <div className="rounded-2xl p-4 flex items-center gap-3"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,184,0,0.1), rgba(255,140,0,0.06))',
+          border: '2.5px solid rgba(255,184,0,0.45)',
+        }}>
+        <span className="text-2xl">⭐</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-black" style={{ color: '#ffb800' }}>
+            Go Elite — £7.99/mo
+          </p>
+          <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
             AI coaching · ACWR · adaptive plans · founding price
           </p>
         </div>
-        <span className="text-xs font-black rounded-lg px-3 py-1.5 flex-shrink-0"
-          style={{ background: '#f0a500', color: '#1a0e00' }}>Upgrade</span>
+        <div className="rounded-xl px-3 py-1.5 font-black text-xs"
+          style={{ background: '#ffb800', color: '#0a0e1a' }}>
+          Upgrade
+        </div>
       </div>
     </Link>
   )
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
+// ── Notification strip ────────────────────────────────────────────────────────
+
+function NotifStrip({ notifications, markRead }: {
+  notifications: Array<{ id: string; type: string; title: string; body: string }>
+  markRead: (id: string) => void
+}) {
+  if (!notifications.length) return null
+  return (
+    <div className="mx-4 space-y-2">
+      {notifications.map(n => (
+        <div key={n.id} className="flex items-start gap-3 rounded-2xl px-4 py-3"
+          style={{
+            background: n.type === 'squad_nudge' ? 'rgba(127,255,77,0.08)' : 'rgba(77,138,255,0.08)',
+            border: `2px solid ${n.type === 'squad_nudge' ? 'rgba(127,255,77,0.3)' : 'rgba(77,138,255,0.25)'}`,
+          }}>
+          <span className="text-lg flex-shrink-0">{n.type === 'squad_nudge' ? '👋' : '🔔'}</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-black" style={{ color: 'var(--color-text-primary)' }}>{n.title}</p>
+            <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>{n.body}</p>
+          </div>
+          <button onClick={() => markRead(n.id)} aria-label="Dismiss"
+            className="flex-shrink-0 text-base leading-none"
+            style={{ color: 'var(--color-text-tertiary)' }}>×</button>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ── Main HomeClient ───────────────────────────────────────────────────────────
 
 export default function HomeClient() {
-  const { plan, currentWeek }   = useActivePlan()
-  const { logs: allLogs }       = useAllTrainingLogs()
-  const { profile }             = useProfile()
-  const { squad, role }         = useSquad()
-  const { coach, hasCoach }     = useMyCoach()
-  const { isPro }               = useSubscription()
+  const { plan }          = useActivePlan()
+  const { logs: allLogs } = useAllTrainingLogs()
+  const { profile }       = useProfile()
+  const { squad, role }   = useSquad()
+  const { coach, hasCoach } = useMyCoach()
+  const { isPro }         = useSubscription()
   const { notifications, markRead } = useNotifications()
 
-  const streak    = useMemo(() =>
+  const streak   = useMemo(() =>
     computeStreak(allLogs.map((l: TrainingLog) => ({ logged_at: l.created_at, done: l.done }))).current,
-  [allLogs])
+    [allLogs])
+  const weeklyKm = useMemo(() => getWeeklyKm(allLogs), [allLogs])
+  const xp       = useMemo(() => allLogs.filter((l: TrainingLog) => l.done).length * 15, [allLogs])
 
-  const weeklyKm  = useMemo(() => getWeeklyKm(allLogs), [allLogs])
-
-  const sessions  = useMemo(() =>
-    plan ? getTodaySessions({ current_week: plan.current_week, weeks_data: plan.weeks_data }) : [],
-  [plan])
-
-  const xp = useMemo(() =>
-    allLogs.filter((l: TrainingLog) => l.done).length * 15,
-  [allLogs])
-
-  const isLeader = role === 'leader'
-
-  // Greeting
-  const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
   const firstName = (profile?.display_name as string | null)?.split(' ')[0] ?? 'runner'
+  const hour      = new Date().getHours()
 
-  // Hero state priority:
-  // new user → coach (if has coach) → leader (if leading squad) →
-  // training day → streak at risk → rest day
-  type HeroState = 'new' | 'training' | 'rest' | 'coach' | 'leader' | 'streak'
-  const heroState: HeroState = (() => {
-    if (!plan) return 'new'
-    if (hasCoach && coach) return 'coach'
-    if (isLeader && squad) return 'leader'
-    if (sessions.length > 0) return 'training'
-    const todayStr = new Date().toISOString().slice(0, 10)
-    const loggedToday = allLogs.some((l: TrainingLog) => l.done && l.created_at.startsWith(todayStr))
-    if (streak >= 3 && !loggedToday) return 'streak'
-    return 'rest'
-  })()
+  const greeting  = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening'
+
+  const todaySessions = useMemo(() => getTodaySessions(plan), [plan])
+  const isRestDay     = plan && todaySessions.length === 0
+  const hasLoggedToday = allLogs.some((l: TrainingLog) =>
+    l.done && l.created_at.startsWith(new Date().toISOString().slice(0, 10)))
+  const streakAtRisk = streak > 0 && hour >= 19 && !hasLoggedToday
+
+  // Next day sessions for rest day preview
+  const nextSessions = useMemo((): PlanSession[] => {
+    if (!plan?.weeks_data) return []
+    const weeks = plan.weeks_data as unknown as PlanWeek[]
+    const cw    = weeks.find(w => w.n === plan.current_week)
+    if (!cw) return []
+    const tomorrowI = (todayDayIndex() + 1) % 7
+    return (cw.days?.[tomorrowI]?.sessions ?? []).filter((s: PlanSession) => s.c && s.c !== 'rest')
+  }, [plan])
+
+  // Race date info
+  const daysToRace = plan?.race_date
+    ? Math.ceil((new Date(plan.race_date).getTime() - Date.now()) / 86400000)
+    : null
+
+  // Hero state priority
+  type HeroState = 'no_plan' | 'streak_risk' | 'coach' | 'training' | 'rest'
+  const heroState: HeroState = !plan
+    ? 'no_plan'
+    : streakAtRisk
+      ? 'streak_risk'
+      : hasCoach && coach && !plan
+        ? 'coach'
+        : !isRestDay
+          ? 'training'
+          : 'rest'
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--color-bg)' }}>
 
       {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-40 border-b"
-        style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-        <div className="max-w-lg mx-auto px-4 pt-12 pb-1">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-base font-black tracking-tight" style={{ color: '#06b6d4', letterSpacing: '-0.02em' }}>
-              NextSplit
-            </span>
-            <div className="flex items-center gap-2">
-              <DarkModeToggle />
-              <Link href="/you" className="text-lg" style={{ color: 'var(--color-text-tertiary)' }} aria-label="Settings">
-                ⚙
-              </Link>
+      <div className="sticky top-0 z-40"
+        style={{ background: 'var(--color-surface)', borderBottom: '2.5px solid var(--color-border-2)' }}>
+        <div className="max-w-lg mx-auto px-4 pt-12 pb-1 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <Splity size={32} mood={streakAtRisk ? 'worried' : plan ? 'happy' : 'idle'} animate={false} />
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest"
+                style={{ color: 'var(--color-text-tertiary)' }}>
+                {greeting}, {firstName}
+              </p>
+              <p className="text-base font-black leading-tight"
+                style={{ color: '#00d4ff', letterSpacing: '-0.02em' }}>NextSplit</p>
             </div>
           </div>
-          <XPBar xp={xp} streak={streak} />
+          <div className="flex items-center gap-2">
+            <Link href="/settings" aria-label="Settings"
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ background: 'var(--color-surface-2)', border: '2px solid var(--color-border-2)' }}>
+              <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
+                stroke="var(--color-text-tertiary)" strokeWidth={2}>
+                <circle cx={12} cy={12} r={3} />
+                <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+              </svg>
+            </Link>
+          </div>
         </div>
+        <XPHeaderBar xp={xp} streak={streak} />
       </div>
 
-      <div className="max-w-lg mx-auto px-4 pt-5 space-y-3">
+      {/* ── Content ── */}
+      <div className="max-w-lg mx-auto py-4 space-y-3">
 
-        {/* Greeting */}
-        <div className="mb-1">
-          <p className="text-2xl font-black leading-tight" style={{ color: "var(--color-text-primary)", letterSpacing: '-0.02em' }}>
-            {greeting}, {firstName} 👋
-          </p>
-          {plan && (
-            <p className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
-              {plan.name} · Week {plan.current_week} of {plan.total_weeks}
-            </p>
-          )}
-        </div>
+        {/* Notification strip */}
+        <NotifStrip notifications={notifications} markRead={markRead} />
 
-        {/* ── Hero card (state-driven) ── */}
-        {heroState === 'new'      && <HeroNewUser />}
-        {heroState === 'training' && plan && (
-          <HeroTraining sessions={sessions} planName={plan.name} weekN={plan.current_week} totalWeeks={plan.total_weeks} />
+        {/* Race countdown */}
+        {plan?.race_date && daysToRace !== null && daysToRace >= 0 && (
+          <RaceCountdown
+            raceDate={plan.race_date}
+            raceName={(plan as unknown as { goal?: string }).goal ?? null}
+          />
         )}
-        {heroState === 'rest'     && plan && (
-          <HeroRestDay planName={plan.name} weekN={plan.current_week} totalWeeks={plan.total_weeks} />
-        )}
-        {heroState === 'coach'    && coach && <HeroCoach coach={coach} />}
-        {heroState === 'leader'   && squad && <HeroSquadLeader squad={squad} />}
-        {heroState === 'streak'   && <HeroStreakAtRisk streak={streak} />}
 
-        {/* ── Stats strip (if has plan) ── */}
+        {/* ── Hero (full-bleed, one dominant action) ── */}
+        {heroState === 'no_plan'     && <HeroNoPlan />}
+        {heroState === 'streak_risk' && <HeroStreakAtRisk streak={streak} />}
+        {heroState === 'coach'       && coach && <HeroCoach coach={coach} />}
+        {heroState === 'training'    && plan && (
+          <HeroTraining
+            sessions={todaySessions}
+            planName={plan.name}
+            weekN={plan.current_week}
+            totalWeeks={plan.total_weeks}
+            daysToRace={daysToRace}
+          />
+        )}
+        {heroState === 'rest'        && plan && (
+          <HeroRest planName={plan.name} nextSessions={nextSessions} />
+        )}
+
+        {/* ── Stats strip ── */}
         {plan && <StatsStrip weeklyKm={weeklyKm} streak={streak} />}
-
-        {/* ── Notification strip ── */}
-        {notifications.length > 0 && (
-          <div className="space-y-2">
-            {notifications.map(n => (
-              <div key={n.id} className="flex items-start gap-3 rounded-2xl px-4 py-3"
-                style={{
-                  background: n.type === 'squad_nudge' ? 'rgba(127,255,77,0.08)' : 'rgba(77,138,255,0.08)',
-                  border: `1px solid ${n.type === 'squad_nudge' ? 'rgba(127,255,77,0.25)' : 'rgba(77,138,255,0.2)'}`,
-                }}>
-                <span className="text-xl flex-shrink-0">
-                  {n.type === 'squad_nudge' ? '👋' : '🔔'}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-black" style={{ color: 'var(--color-text-primary)' }}>{n.title}</p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>{n.body}</p>
-                </div>
-                <button onClick={() => markRead(n.id)}
-                  className="flex-shrink-0 text-sm" style={{ color: 'var(--color-text-tertiary)' }}
-                  aria-label="Dismiss">×</button>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* ── Daily quests ── */}
         {plan && (
@@ -559,19 +669,13 @@ export default function HomeClient() {
           />
         )}
 
-        {/* ── Contextual persistent cards ── */}
+        {/* ── Squad mini ── */}
+        {squad && <SquadMini squad={squad} />}
 
-        {/* Squad — show if in squad and wasn't the hero */}
-        {squad && heroState !== 'leader' && <SquadCard squad={squad} />}
-
-        {/* Coach nudge — if no coach */}
-        {!hasCoach && heroState !== 'new' && <FindCoachCard />}
-
-        {/* Squad nudge — if no squad */}
-        {!squad && heroState !== 'new' && <StartSquadCard />}
-
-        {/* Premium upsell — if free + has plan */}
-        {plan && !isPro && <PremiumCard />}
+        {/* ── Conversion nudges (contextual) ── */}
+        {!hasCoach && plan && <CoachNudge />}
+        {!squad   && plan && <SquadNudge />}
+        {!isPro   && plan && <EliteNudge />}
 
       </div>
     </div>
