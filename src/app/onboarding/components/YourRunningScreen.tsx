@@ -162,7 +162,7 @@ export function YourRunningScreen() {
                     className="w-full text-left px-3 py-2.5 rounded-xl border-2 text-xs font-semibold transition-all"
                     style={isOn
                       ? { background: 'var(--ns-ember)', color: 'white', borderColor: 'var(--ns-ember)' }
-                      : { background: 'white', color: '#374151', borderColor: '#e5e7eb' }}>
+                      : { background: 'var(--color-surface-2)', color: 'var(--color-text-primary)', borderColor: 'var(--color-border-2)' }}>
                     {opt.label}
                   </button>
                 )
@@ -182,7 +182,7 @@ export function YourRunningScreen() {
                 className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all`}
                 style={experience === o.id
                   ? { background: 'var(--ns-cyan-light)', borderColor: 'var(--ns-ember)' }
-                  : { background: 'white', borderColor: '#e5e7eb' }}
+                  : { background: 'var(--color-surface-2)', borderColor: 'var(--color-border)' }}
               >
                 <p className={`text-sm font-bold ${experience === o.id ? 'text-white' : 'text-[var(--color-text-secondary)]'}`}>{o.label}</p>
                 <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{o.desc}</p>

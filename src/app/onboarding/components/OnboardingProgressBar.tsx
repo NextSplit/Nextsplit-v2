@@ -178,7 +178,7 @@ export function OnboardingProgressBar({ step, character, showFinishLine = false 
           <div className="absolute right-2 top-0 bottom-0 flex flex-col items-center justify-center gap-0.5">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="w-1.5 h-1"
-                style={{ background: i % 2 === 0 ? 'white' : 'var(--color-text-tertiary)', opacity: 0.5 }} />
+                style={{ background: i % 2 === 0 ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)', opacity: 0.5 }} />
             ))}
           </div>
         )}

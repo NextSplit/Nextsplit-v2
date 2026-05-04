@@ -241,27 +241,52 @@ function HeroSquadLeader({ squad }: { squad: Squad }) {
 function HeroNewUser() {
   return (
     <div className="rounded-2xl overflow-hidden"
-      style={{ background: 'rgba(6,182,212,0.10)', border: '1.5px solid rgba(6,182,212,0.3)' }}>
-      <div className="p-4">
-        <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: '#06b6d4' }}>
-          Welcome to NextSplit
+      style={{
+        background: 'linear-gradient(135deg, rgba(0,212,255,0.12), rgba(77,138,255,0.08))',
+        border: '1.5px solid rgba(0,212,255,0.35)',
+        boxShadow: '0 4px 32px rgba(0,212,255,0.1)',
+      }}>
+      <div className="p-5">
+        {/* Splity welcome */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(0,212,255,0.15)', border: '2px solid rgba(0,212,255,0.4)' }}>
+            <span className="text-2xl">🏃</span>
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: '#00d4ff' }}>
+              Hey! I&apos;m Splity
+            </p>
+            <p className="text-lg font-black text-white" style={{ letterSpacing: '-0.02em' }}>
+              Let&apos;s get you running 🚀
+            </p>
+          </div>
+        </div>
+
+        <p className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.5)' }}>
+          Pick a path and I&apos;ll build your training around it. Takes 3 minutes.
         </p>
-        <p className="text-2xl font-black text-white mb-1" style={{ letterSpacing: '-0.02em' }}>
-          Pick your path. 🚀
-        </p>
-        <p className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.45)' }}>
-          Four ways to start training — takes 3 minutes.
-        </p>
+
+        {/* Primary CTA */}
+        <Link href="/onboarding/ai"
+          className="flex items-center gap-3 rounded-xl p-3.5 mb-2 active:scale-[0.98] transition-all"
+          style={{ background: '#00d4ff', boxShadow: '0 4px 20px rgba(0,212,255,0.4)' }}>
+          <span className="text-xl">🧠</span>
+          <div className="flex-1">
+            <p className="text-sm font-black" style={{ color: '#0a0e1a' }}>AI bespoke plan</p>
+            <p className="text-[10px]" style={{ color: 'rgba(10,14,26,0.6)' }}>Built around your life, goals and schedule</p>
+          </div>
+          <span style={{ color: 'rgba(10,14,26,0.5)' }}>→</span>
+        </Link>
+
         <div className="grid grid-cols-2 gap-2">
           {[
-            { href: '/onboarding/predetermined', label: 'Expert plans', icon: '📋', colour: '#ff4d6d', desc: '17 plans, 5K to ultra' },
-            { href: '/onboarding/ai',            label: 'AI bespoke',   icon: '🧠', colour: '#06b6d4', desc: 'Built around your life' },
-            { href: '/explore',                  label: 'Find a coach', icon: '🎓', colour: '#8b5cf6', desc: 'From £30/month' },
-            { href: '/onboarding/manual',        label: 'Build my own', icon: '✏️', colour: '#84cc16', desc: 'Total control' },
+            { href: '/onboarding/predetermined', label: 'Expert plans', icon: '📋', colour: '#ff3d6e', desc: '17 plans, 5K to ultra' },
+            { href: '/onboarding/manual',        label: 'Build my own', icon: '✏️', colour: '#7fff4d', desc: 'Total control' },
           ].map(p => (
             <Link key={p.href} href={p.href}
               className="rounded-xl p-3 active:scale-[0.97] transition-all"
-              style={{ background: `${p.colour}12`, border: `1px solid ${p.colour}30` }}>
+              style={{ background: `${p.colour}10`, border: `1px solid ${p.colour}30` }}>
               <div className="text-lg mb-1">{p.icon}</div>
               <div className="text-xs font-black text-white mb-0.5">{p.label}</div>
               <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{p.desc}</div>

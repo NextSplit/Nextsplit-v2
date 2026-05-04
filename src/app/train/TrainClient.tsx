@@ -17,6 +17,7 @@ import { TodayModals } from '../today/TodayModals'
 import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
 import FuelPlanCard from '@/components/FuelPlanCard'
 import SessionCelebration from '@/components/SessionCelebration'
+import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import PlanPathSVG from '@/components/plan/PlanPathSVG'
 
 // ── Session colour system ──────────────────────────────────────────────────────
@@ -169,6 +170,7 @@ export default function TrainClient() {
   const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
   const [celebration, setCelebration] = useState<{ session: PlanSession; log: TrainingLog; xpEarned: number } | null>(null)
   const [tappedWeek, setTappedWeek] = useState<PlanWeek | null>(null)
+  const [showCompletion, setShowCompletion] = useState(false)
   const [planTab, setPlanTab] = useState<'plan' | 'fuel'>('plan')
   const [planView, setPlanView] = useState<'path' | 'list'>('path')
 
@@ -230,6 +232,25 @@ export default function TrainClient() {
         if (log.done && session) {
           setShareSession({ session, log })
           setCelebration({ session, log, xpEarned: xp })
+          // Check if final week is now complete
+          const isFinalWeek = plan.current_week === plan.total_weeks
+          if (isFinalWeek && plan.total_weeks > 0) {
+            const finalWeek = weeks.find((w: PlanWeek) => w.n === plan.current_week)
+            if (finalWeek) {
+              const allSessions = finalWeek.days.flatMap((d) => d.sessions?.filter(s => s.c && s.c !== 'rest') ?? [])
+              const allDone = allSessions.every((_, sIdx) => {
+                const dIdx = finalWeek.days.findIndex(d => (d.sessions ?? []).some((_, si) => si === sIdx))
+                return logs[`${plan.current_week}_${dIdx}_${sIdx}`]?.done
+              })
+              if (allDone && allSessions.length > 0) {
+                setTimeout(() => {
+                  setShowCompletion(true)
+                  advanceWeek().catch(() => {})
+                }, 3000) // show after celebration fades
+              }
+            }
+          }
+
           // Fire community progress + squad feed (non-blocking)
           fetch('/api/community/progress', {
             method: 'POST',
@@ -560,6 +581,15 @@ export default function TrainClient() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Plan completion ceremony */}
+      {showCompletion && plan && (
+        <PlanCompletionCeremony
+          plan={plan}
+          logs={logs}
+          onClose={() => setShowCompletion(false)}
+        />
       )}
 
       {/* Session celebration */}
