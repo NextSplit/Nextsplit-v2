@@ -1,14 +1,39 @@
-# NextSplit v2 — Claude Entry Point
+# NextSplit — Claude Entry Point
+**READ THIS FIRST. Every session.**
 
-**START HERE.** Read in this order before touching anything:
+## Step 1 — Read HANDOFF.md
+`HANDOFF.md` is the single source of truth. It contains:
+- Current app state (what's built, what's pending)
+- Visual system (colours, CSS vars — do not deviate)
+- Environment variables (what's confirmed, what's missing)
+- Database tables and test account
+- Key file locations
+- What to build next
 
-1. `HANDOFF-7.md` — current build state, environment, DB schema, what's next
-2. `MASTER-DELIVERY-PLAN-V2.md` — full A→I phase plan, alpha-first
-3. Run: `cd /home/claude/nextsplit-v2 && git pull origin main && node_modules/.bin/tsc --noEmit`
+## Step 2 — Sync and type-check
+```bash
+cd /home/claude/nextsplit-v2
+git pull origin main
+npx tsc --noEmit 2>&1 | grep "error TS" | grep -v "Cannot find module\|jsx-runtime" | head -20
+```
 
-**The founding principle:**
-> Users become believers the first time the plan adapts around something that
-> went wrong in their life. Everything traces back to that moment.
+## Step 3 — Push changes
+```bash
+git add -A && git commit -m "type: description"
+git remote set-url origin https://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@github.com/NextSplit/Nextsplit-v2.git
+git push origin main
+git remote set-url origin https://github.com/NextSplit/Nextsplit-v2.git
+```
 
-**Current phase: A (Foundation & Legal) — pre-alpha, no users yet**
-**Do not build anything before reading HANDOFF-7.**
+## Core principles
+- **Single visual mode** — deep navy `#0a0e1a` base, vivid accents. No light/dark toggle.
+- **Dark mode via CSS vars** — `:root` and `.dark` are identical. The inline script in `layout.tsx` applies `dark` class before hydration.
+- **Bold and bright** — avoid flat black, muted greys, or washed-out colours. High contrast, saturated.
+- **Mobile-first** — everything built for Android Chrome first. Safe area insets on all bottom sheets.
+- **Update HANDOFF.md** at the end of every significant session with new commits and state changes.
+
+## Live URL
+https://nextsplit.app
+
+## The founding thesis
+> The number one predictor of long-term running consistency is social accountability — someone waiting for you, someone who notices when you don't show up. Everything in NextSplit traces back to that truth.

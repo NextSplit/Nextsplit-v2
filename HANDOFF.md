@@ -1,204 +1,296 @@
-# NextSplit v2 — Handoff Document
-**Last updated:** 23 April 2026 — Session 4  
-**App URL:** nextsplit-v2.vercel.app (custom domain nextsplit.app in progress)  
-**GitHub:** github.com/NextSplit/Nextsplit-v2  
-**Latest commit:** 87e0c58  
-**Tests:** 52 passing ✅ | TypeScript: clean ✅
+# NextSplit — Master Handoff
+**Version:** 8.0 | **May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Live URL:** https://nextsplit.app
+**GitHub:** https://github.com/NextSplit/Nextsplit-v2
+**Stack:** Next.js 15 App Router · TypeScript strict · Supabase · Tailwind · CSS vars · PWA · Anthropic SDK
+
+> Previous handoffs (HANDOFF.md through HANDOFF-7.md) are archived in `/docs/archive/`.
+> This is the single source of truth going forward.
 
 ---
 
-## What Was Done This Session
+## How to Start a New Session
 
-### Design System v2 — Full Light Mode (150+ files)
-Complete overhaul from dark forest theme to warm light base.
-
-**Design tokens (src/app/globals.css):**
-- `--color-bg: #f8f7f5` — warm off-white page background
-- `--color-surface: #ffffff` — card surface
-- `--ns-ember: #e85d26` — ALL CTAs, buttons, active states
-- `--ns-forest: #2b5c3f` — brand wordmark, active nav dot, Split Leader ONLY
-- `--ns-track: #c49a3c` — Splity, XP, achievements
-- Plus Jakarta Sans 800 — display font throughout
-
-**Rule:** Forest green is NEVER used as a UI action colour. Ember only.
-
-### Splity — Coach Character (new)
-- `src/components/Splity.tsx` — SVG running shoe with face, 4 moods
-- Moods: default / happy / encouraging / celebrating
-- Used in: TodayHeader coaching line, TodayBelowFold toggle
-- Gold/amber colour matching `--ns-track`
-
-### Today Tab
-- Sessions are hero — nothing competes above fold
-- Splity coaching line with mood-aware coaching text
-- Week note / sleep → inline pills (not large cards)
-- Fuel plan → collapsible FuelPlanCard
-- Check-in + weather → behind Splity toggle
-
-### Plan Tab
-- DayDrawer REMOVED entirely
-- WeekRow → tap expands inline showing session dots
-- InlineDayRow → NEW: day expands sessions inline below
-- Session tapped → Splity coach note + Log button
-
-### Log Modal
-- Full-screen overlay (92dvh), X close, tap backdrop dismisses
-- Distance + time: type-in fields (not steppers)
-- Quick-done button opens modal (not auto-complete)
-
-### Character Tab (Profile)
-- HeroCard rebuilt for light mode — gradient accent bar replaces dark bg
-- StatBar: visible colours (blue/purple/green/amber) on light background
-- WeeklyXPChart: ember bars
-- Tab switcher: ember active state
-
-### ShareSessionCard
-- Preview card: white surface + forest→ember→gold gradient bar
-- Canvas share image: light background, ember type pill, gold XP badge
-
-### Squad Dashboard
-- Fixed PGRST200 (nested profile joins fail with PostgREST)
-- Solution: separate profile fetch after squad query, no nested joins
-
-### Splity Email Notifications
-- `src/lib/notificationEmails.ts` — 5 types with Splity voice + HTML templates
-- `src/app/api/cron/notify-email/route.ts` — email dispatcher
-- `.github/workflows/notify.yml` — GitHub Actions daily 9am UTC cron (free)
-- `src/app/api/debug/notify-test/route.ts` — debug test endpoint
-- Sender: `onboarding@resend.dev` (temporary — see pending below)
-- Guardrails: 1/day per user, at-risk once only, priority ordering
-
-### HTML Entity Fixes
-- Fixed `&apos;` / `&amp;` raw text rendering across 34 files
-
----
-
-## PENDING — Must Complete
-
-### 🔴 Domain: nextsplit.app → Vercel (NOT DONE)
-nextsplit.app registered on Cloudflare (23 Apr 2026).
-Vercel shows "Invalid Configuration" for nextsplit.app.
-
-**Next step:** In Vercel Domains page, tap `nextsplit.app` row → **DNS Records** tab → **Manual setup** → add the records it shows into Cloudflare DNS.
-
-OR: Change Cloudflare nameservers to Vercel's:
-- `ns1.vercel-dns.com`
-- `ns2.vercel-dns.com`
-Then re-add Resend DNS records in Vercel DNS panel.
-
-### 🔴 Resend Domain: nextsplit.app (PENDING PROPAGATION)
-DNS records added to Cloudflare but status shows "Pending".
-Check resend.com/domains — when green, run:
+Read this file. Then run:
 ```bash
-sed -i 's/onboarding@resend.dev/coach@nextsplit.app/g' \
-  src/app/api/cron/notify-email/route.ts \
-  src/app/api/cron/lifecycle-emails/route.ts \
-  src/app/api/debug/notify-test/route.ts
-git add -A && git commit -m "feat: switch email sender to coach@nextsplit.app"
+cd /home/claude/nextsplit-v2
+git pull origin main
+npx tsc --noEmit 2>&1 | grep "error TS" | grep -v "Cannot find module\|jsx-runtime" | head -20
+```
+
+Then push any changes using:
+```bash
+git add -A && git commit -m "type: description"
+git remote set-url origin https://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@github.com/NextSplit/Nextsplit-v2.git
 git push origin main
+git remote set-url origin https://github.com/NextSplit/Nextsplit-v2.git
 ```
 
-### 🟡 GitHub Secret: CRON_SECRET
-Add to: github.com/NextSplit/Nextsplit-v2 → Settings → Secrets → Actions → New secret
-- Name: `CRON_SECRET`
-- Value: same as Vercel CRON_SECRET env var
+---
 
-### 🟡 Buy nextsplit.co.uk
-Redirect to nextsplit.app. ~£5/year. Do before launch.
+## Product Position
 
-### 🟡 SQL: Add missing column if not present
-```sql
-ALTER TABLE profiles
-ADD COLUMN IF NOT EXISTS notif_at_risk_reengagement boolean DEFAULT true;
+**NextSplit** is a running training app built around social accountability. The core thesis: the number one predictor of long-term running consistency is having people who notice when you don't show up.
+
+**Go-to-market strategy:** Athlete-first → athlete invites friends via squad → squad introduces coach → coach brings their full roster.
+
+**Pricing:** Free tier (plans + basic logging) + Elite £7.99/mo founding price (AI coaching, ACWR, adaptive plans, squad leadership, coach marketplace). 500 founding member spots.
+
+**Three pillars:**
+1. **Bespoke digital coaching** — predetermined plans (17 templates), AI-generated plans, coach-authored plans. All VDOT pace-personalised.
+2. **Squad / Split Leader** — private accountability squads of up to 5. Orbital UI, nudges, leaderboard, collective goals.
+3. **Coaching marketplace** — verified coaches, plan marketplace, athlete management tools.
+
+---
+
+## Current App State (May 2026)
+
+### Navigation
+| Tab | Colour | Content |
+|-----|--------|---------|
+| 🏠 Home | `#00d4ff` cyan | Smart dashboard — 6 hero states, daily quests, streak widget |
+| 📅 Train | `#ff3d6e` coral | SVG illustrated plan path + today sessions + week tap sheet |
+| 🔍 Explore | `#7fff4d` lime | Coaches / Squads / Plans / AI — squad orbit if already in squad |
+| ⭐ You | `#ffb800` amber | Achievements / Character / Stats / Account |
+
+### Features Built ✅
+| Feature | State | Notes |
+|---------|-------|-------|
+| Auth (email + Google OAuth) | ✅ Live | |
+| Full onboarding (4 paths) | ✅ Live | Predetermined / AI bespoke / Manual / Lifestyle |
+| Plan browser (17 templates) | ✅ Live | Filterable by distance, level, duration |
+| Plan activation + VDOT personalisation | ✅ Live | Race date alignment warning |
+| AI plan generation | ✅ Live | Claude Sonnet 4, 8000 token plans |
+| Session logging (LogModal) | ✅ Live | Effort, km, pace, notes |
+| Session celebration | ✅ Live | Full screen confetti, XP float, Splity, sound, haptics |
+| SVG illustrated plan path | ✅ Live | 5 environments, animated runner, progress arcs |
+| Week tap → session sheet | ✅ Live | Tap any week node to see sessions, tap to log |
+| Daily quests | ✅ Live | 3 quests/day, XP rewards, progress bars |
+| Streak widget | ✅ Live | Pulsing amber when active, red warning at evening |
+| XP + levelling system | ✅ Live | 20 levels, runner classes |
+| Squad orbital UI | ✅ Live | Circular orbit, swipe to focus, per-member stats |
+| Squad member detail page | ✅ Live | 7-day heatmap, plan progress, nudge button |
+| Nudge system | ✅ Live | 6 message options, rate-limited 1/day |
+| Explore → squad inline | ✅ Live | Shows squad card if in squad, join/create if not |
+| You tab (4 sub-tabs) | ✅ Live | Achievements / Character / Stats / Account |
+| Dark-only visual system | ✅ Live | Deep navy `#0a0e1a` base, vivid accents, single mode |
+| Bold & bright colour system | ✅ Live | Cyan/coral/cobalt/lime/amber/violet palette |
+| Coach application flow | ✅ Live | Split Leader vs Professional coach |
+| Plan browser (marketplace) | ✅ Live | Browse / My Plans tabs |
+| AI coach chat | ✅ Live | In Explore → AI tab |
+| Strava connect | ✅ Built | Not wired to env var |
+| Push notifications | ✅ Built | VAPID, Android Chrome |
+| PWA (installable) | ✅ Live | Manifest, service worker |
+| UAT test suite | ✅ Built | Playwright + DB verify + 105 manual cases |
+| Back buttons | ✅ Fixed | Coaches, squad create, settings |
+| Re-onboarding | ✅ Fixed | Archive plan → skips to step 7 (Goals), not step 1 |
+
+### Features Pending / Partial
+| Feature | State | Notes |
+|---------|-------|-------|
+| Stripe payments | ⚠️ Partial | Code built, signed up to Stripe, keys not confirmed in Vercel |
+| Resend email | ⚠️ Partial | Code built, key status unknown — needs confirming in Vercel |
+| AI plan double sessions | ⚠️ Partial | Prompt fixed, needs testing with new plan generation |
+| Plan activation error | ⚠️ Partial | Zod fix deployed, needs real-device confirmation |
+| Squad/squad page 404 | ⚠️ Check | `/squad/` trailing slash issue |
+| Strava OAuth | ⚠️ Built | Not connected to live Strava app |
+| Coaching marketplace | ⚠️ Partial | UI built, no live coaches yet |
+| ACWR chart | ⚠️ Unlocks | Shows after 4+ sessions logged |
+| Lifecycle emails (cron) | ⚠️ Partial | Built, needs RESEND_API_KEY confirmed |
+
+---
+
+## Visual System (single mode — never change)
+
+```css
+/* Base */
+--color-bg:           #0a0e1a;   /* Deep navy */
+--color-surface:      #111827;
+--color-surface-2:    #1a2235;
+--color-surface-3:    #243048;
+--color-border:       rgba(99,130,255,0.12);
+--color-border-2:     rgba(99,130,255,0.22);
+--color-text-primary:   #f8faff;
+--color-text-secondary: rgba(248,250,255,0.72);
+--color-text-tertiary:  rgba(248,250,255,0.38);
+
+/* Brand colours */
+--ns-cyan:    #00d4ff;   /* Brand anchor, Home tab */
+--ns-ember:   #ff3d6e;   /* Athlete/CTA, Train tab */
+--ns-cobalt:  #4d8aff;   /* Plan/data */
+--ns-lime:    #7fff4d;   /* Squad, Split Leader */
+--ns-amber:   #ffb800;   /* XP/gold, You tab */
+--ns-violet:  #a855f7;   /* Coach */
+--ns-forest:  #00e676;   /* Success/easy run */
+--ns-magenta: #ff2d9e;   /* Level up, special moments */
 ```
 
-### 🟡 Stripe keys
-Add to Vercel env vars before any paid features go live.
+**No light mode. No toggle. One consistent experience.**
 
 ---
 
 ## Environment Variables
 
-| Variable | Vercel | GitHub Secrets |
-|---|---|---|
-| SUPABASE_URL | ✅ | — |
-| SUPABASE_ANON_KEY | ✅ | — |
-| SUPABASE_SERVICE_ROLE_KEY | ✅ | — |
-| RESEND_API_KEY | ✅ | — |
-| CRON_SECRET | ✅ | ❌ MISSING |
-| NEXT_PUBLIC_VAPID_PUBLIC_KEY | ❌ | — |
-| VAPID_PRIVATE_KEY | ❌ | — |
-
----
-
-## Key File Paths
-
+### Confirmed in Vercel Production ✅
 ```
-Design:
-src/app/globals.css                          ← design tokens
-src/components/Splity.tsx                    ← Splity SVG character
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+ANTHROPIC_API_KEY
+NEXT_PUBLIC_SENTRY_DSN
+SENTRY_AUTH_TOKEN
+NEXT_PUBLIC_POSTHOG_KEY
+NEXT_PUBLIC_PREMIUM_ENFORCED=false
+ADMIN_EMAILS=nextsplitplans@gmail.com
+```
 
-Today:
-src/app/today/TodayClient.tsx
-src/app/today/TodayHeader.tsx                ← Splity coaching line
-src/app/today/TodayBelowFold.tsx
-src/components/FuelPlanCard.tsx
-src/components/SessionCard.tsx
-src/components/LogModal.tsx
+### Needs Confirming / Adding ⚠️
+```
+STRIPE_SECRET_KEY              — signed up to Stripe, key needs adding to Vercel
+STRIPE_WEBHOOK_SECRET          — set up after adding secret key
+STRIPE_PRICE_FOUNDING_MONTHLY  — create price in Stripe dashboard
+STRIPE_PRICE_FOUNDING_ANNUAL   — create price in Stripe dashboard
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+RESEND_API_KEY                 — check if this is in Vercel already
+```
 
-Plan:
-src/app/plan/PlanClient.tsx
-src/components/plan/WeekRow.tsx
-src/components/plan/InlineDayRow.tsx         ← NEW this session
-
-Squad:
-src/app/squad/SquadPageClient.tsx
-src/app/api/squad/route.ts
-
-Notifications:
-src/lib/notificationEmails.ts               ← Splity email templates
-src/lib/notifications.ts                    ← Push notification copy
-src/app/api/cron/notify-email/route.ts      ← Email cron
-src/app/api/debug/notify-test/route.ts      ← Debug test
-.github/workflows/notify.yml                ← GitHub Actions cron
+### Future (not needed yet)
+```
+NEXT_PUBLIC_REFERRAL_ENABLED=false  — flip to true when referral goes live
+NEXT_PUBLIC_VAPID_PUBLIC_KEY        — for push notifications
 ```
 
 ---
 
-## Architecture
+## Database
 
-```
-Next.js 15 + Supabase + Vercel (hobby)
-├── Auth: email + Google OAuth
-├── DB: 9-table Supabase schema with RLS
-├── Plans: 17 seeded templates + AI bespoke
-├── Notifications: Resend email via GitHub Actions (free cron)
-├── Payments: Stripe (not yet wired)
-└── Strava: OAuth connect (Settings page)
-```
+**Production:** Supabase project `wlrmeiczqgmharvfmalq`
+**Staging:** nextsplit-staging (separate project, same schema)
 
-**Deploy:** GitHub push → CI (TS + tests) → Vercel auto-deploy  
-**Never** manually promote in Vercel dashboard.
+### Tables (all migrated ✅)
+`profiles` · `user_plans` · `training_logs` · `plan_templates` · `squads` · `squad_members` · `squad_invites` · `squad_nudges` · `squad_feed` · `coach_profiles` · `coach_athletes` · `coach_messages` · `coaching_subscriptions` · `coach_earnings` · `ai_usage` · `notifications` · `push_subscriptions`
+
+### Key RPCs
+`computeStreakForUser` · `getACWR` · `can_nudge` · `marketplace_coaches` · `squad_monthly_km`
+
+### Test Account
+```
+Email:    uat@nextsplit.app
+Password: UATtest2026!
+Created by: scripts/uat-db-verify.ts
+```
 
 ---
 
-## Test Account
-- Profile ID: `71ac42c2-543a-4672-ac34-e8221c5f071d`
-- Email: `nextsplitplans@gmail.com`
-- Squad "Tatata" exists in DB
-- `notifications_enabled = true`
+## Key File Locations
+
+```
+src/app/home/HomeClient.tsx          Smart Home dashboard (6 states)
+src/app/train/TrainClient.tsx        Train tab (path + today + week sheet)
+src/app/explore/ExploreClient.tsx    Explore (4 tabs, inline squad)
+src/app/profile/ProfileClient.tsx    You tab (4 sub-tabs)
+src/app/squad/SquadPageClient.tsx    Squad page wrapper
+src/app/squad/SquadOrbit.tsx         Circular orbital squad UI
+src/app/squad/member/[userId]/       Member detail page
+src/app/onboarding/                  All 4 onboarding paths
+src/app/api/squad/                   Squad API routes
+src/app/api/ai/                      AI routes (coach, generate, adapt)
+src/app/api/plans/activate/          Plan activation
+src/app/api/stripe/                  Stripe (checkout, webhook, connect, portal)
+
+src/components/SessionCelebration.tsx  Full screen post-log celebration
+src/components/DailyQuests.tsx         Daily quest strip
+src/components/plan/PlanPathSVG.tsx    SVG illustrated plan path
+src/components/LogModal.tsx            Session logging modal
+
+src/lib/rpg.ts           XP, levels, runner classes
+src/lib/vdot.ts          Pace calculator
+src/lib/stripe.ts        Stripe singleton
+src/lib/schemas.ts       All Zod schemas
+src/lib/squad-nudges.ts  8 nudge message templates
+
+src/hooks/useActivePlan.ts      Active plan + weeks data
+src/hooks/useAllTrainingLogs.ts All logs for current user
+src/hooks/useSquad.ts           Squad state
+src/hooks/useProfile.ts         Profile + RPG data
+src/hooks/useSubscription.ts    Pro/free status
+```
 
 ---
 
 ## What's Next (Priority Order)
 
-1. Complete nextsplit.app → Vercel domain setup
-2. Resend domain verification → switch sender to coach@nextsplit.app
-3. Add CRON_SECRET to GitHub secrets
-4. Test notification email: visit /api/debug/notify-test while logged in
-5. Buy nextsplit.co.uk
-6. Undo after logging (8-second undo toast — spec exists, not wired)
-7. Today tab "all done" Splity celebration state
-8. Settings page full light mode audit
-9. Stripe keys + paywall
-10. Alpha user invites
+### Immediate — Pre-Alpha Prep
+1. **Confirm Stripe keys in Vercel** — check dashboard, add if missing
+2. **Confirm Resend key in Vercel** — check dashboard, add if missing
+3. **Test plan activation on device** — "Invalid request" error needs real-device confirmation post-fix
+4. **Test AI plan generation** — confirm double-session gym days generate correctly
+
+### Short Term — Before Friend Test
+5. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
+6. **Fix any blockers** found in F1 test
+7. **Run UAT DB verify** — `SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts`
+
+### Medium Term — After Friend Test
+8. **Stripe payments live** — flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true`, test checkout flow
+9. **Wider alpha invite** — 10-20 runners, mix of experience levels
+10. **Sentry review** — check what errors are being captured
+11. **Lighthouse audit** — target ≥80 performance on Home and Train
+
+### Longer Term — Post Alpha
+12. **Squad Trophy Room** — collective achievements
+13. **Squad seasons** — monthly/annual leaderboard resets
+14. **Coaching marketplace live** — need at least 2 verified coaches
+15. **Strava OAuth live** — connect to live Strava app credentials
+16. **Company formation** — Companies House £12
+17. **ICO registration** — ico.org.uk £40
+
+---
+
+## UAT Assets
+
+```bash
+# 1. Create test user + verify DB integrity
+SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts
+
+# 2. Run Playwright E2E suite
+BASE_URL=https://nextsplit.app \
+UAT_EMAIL=uat@nextsplit.app \
+UAT_PASSWORD=UATtest2026! \
+npx playwright test src/test/e2e/uat-full.spec.ts
+
+# 3. View HTML report
+npx playwright show-report
+
+# Manual: UAT-SCRIPT-V1.md — 105 test cases across 10 sections
+```
+
+---
+
+## Commit History (Sessions 8–9, May 2026)
+
+| Commit | Description |
+|--------|-------------|
+| `1822dfa` | Daily quests, streak emotional widget, nudge wired, plan activation fix, onboarding polish (101 files) |
+| `4965291` | Bold & bright visual system, week tap session sheet, ai_usage fix, AI plan generation fix |
+| `5c87fc1` | Session celebration — confetti, XP float, level up, Splity, sound, haptics |
+| `3b51b60` | SVG illustrated plan path — 5 environments, animated runner |
+| `810c44a` | Dark-only mode, squad API includes leader, orbit full circle, Explore squad inline |
+| `3b9ab86` | Visual plan path — winding path, week nodes, phase milestones |
+| `45b9d22` | Squad orbital UI — circular orbit, swipe, member stats, invite slots |
+| `f4da333` | Dark mode hydration fix, DarkModeToggle, LogModal safe area |
+| `b61dc1c` | Full UAT suite — Playwright, DB verify, 105 manual cases |
+| `1e5cd85` | Re-onboarding skips to step 7, handle check fix, handle pre-fill |
+| `e4f1620` | Dark mode script, Home toggle, log modal, back buttons, gym double sessions |
+
+---
+
+## Business Context
+
+- **Product:** NextSplit v2 (v1 frozen at nextsplit.github.io/NextSplit-Training-Tracker)
+- **Founder:** Ash
+- **Stage:** Pre-alpha, approaching friend test
+- **Stripe:** Signed up, keys need confirming in Vercel
+- **Legal:** Not yet incorporated. ICO and Companies House pending.
+- **Pricing:** Elite £7.99/mo founding (500 spots), standard £9.99/mo. Annual £59.99/yr.
+- **Coach pricing:** £29/mo platform fee for Pro coaches. 15%→8% sliding commission.

@@ -1,5 +1,5 @@
 # NextSplit — Three Pillars Master Strategy
-**Version:** 1.0 | **April 2026**
+**Version:** 1.1 | **May 2026** | Updated: Live URL is nextsplit.app. Stripe signed up, not yet live. Legal/company formation pending.
 **Status:** Locked spec — drives all Phase G+ development
 
 ---
