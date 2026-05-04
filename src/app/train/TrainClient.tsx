@@ -16,6 +16,7 @@ import WeekRow from '@/components/plan/WeekRow'
 import { TodayModals } from '../today/TodayModals'
 import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
 import FuelPlanCard from '@/components/FuelPlanCard'
+import PlanPath from '@/components/plan/PlanPath'
 
 // ── Session colour system ──────────────────────────────────────────────────────
 const SESSION_COLOURS: Record<string, { gradient: string; tint: string; border: string; dot: string; label: string }> = {
@@ -166,6 +167,7 @@ export default function TrainClient() {
   const [undoSecsLeft, setUndoSecsLeft] = useState(0)
   const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
   const [planTab, setPlanTab] = useState<'plan' | 'fuel'>('plan')
+  const [planView, setPlanView] = useState<'path' | 'list'>('path')
 
   const weekRefs = useRef<Map<number, { current: HTMLDivElement | null }>>(new Map())
 
@@ -322,7 +324,25 @@ export default function TrainClient() {
       {plan && planTab === 'plan' && (
         <div className="max-w-lg mx-auto px-4 pt-4 space-y-3">
 
-          {/* ══ TODAY section ══ */}
+          {/* Path / List toggle */}
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--ns-cobalt)' }}>
+            {planView === 'path' ? 'Training path' : 'Week list'}
+          </p>
+          <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: 'var(--color-surface-2)' }}>
+            {(['path', 'list'] as const).map(v => (
+              <button key={v} onClick={() => setPlanView(v)}
+                className="px-3 py-1 rounded-md text-[10px] font-bold transition-all"
+                style={planView === v
+                  ? { background: 'var(--color-surface-3)', color: 'var(--color-text-primary)' }
+                  : { color: 'var(--color-text-tertiary)' }}>
+                {v === 'path' ? '🛤 Path' : '☰ List'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ══ TODAY section ══ */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#ff4d6d' }}>
