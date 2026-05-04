@@ -120,12 +120,35 @@ export async function GET() {
         ? await s.from('profiles').select('id, display_name, handle, runner_class, is_split_leader').in('id', memberIds)
         : { data: [] }
       const profileMap = Object.fromEntries((profiles ?? []).map((p: { id: string }) => [p.id, p]))
-      const leaderStats = await fetchMemberStats(s, memberIds)
-      ledSquad.squad_members = activeMembers.map((m: { user_id: string }) => ({
-        ...m,
-        profiles: profileMap[m.user_id] ?? null,
-        stats: leaderStats[m.user_id] ?? null,
-      }))
+      // Include leader in members list (leader_id is not in squad_members table)
+      const allIds = [user.id, ...memberIds.filter((id: string) => id !== user.id)]
+      const leaderStats = await fetchMemberStats(s, allIds)
+      
+      // Add leader profile if not already in profileMap
+      if (!profileMap[user.id]) {
+        const { data: leaderProfile } = await s.from('profiles').select('id, display_name, handle, runner_class, is_split_leader').eq('id', user.id).single()
+        if (leaderProfile) profileMap[user.id] = leaderProfile
+      }
+      
+      // Synthetic leader entry at position 0
+      const leaderEntry = {
+        id: `leader-${user.id}`,
+        user_id: user.id,
+        joined_at: ledSquad.created_at,
+        last_active_at: new Date().toISOString(),
+        removed_at: null,
+        profiles: profileMap[user.id] ?? null,
+        stats: leaderStats[user.id] ?? null,
+      }
+      
+      ledSquad.squad_members = [
+        leaderEntry,
+        ...activeMembers.filter((m: { user_id: string }) => m.user_id !== user.id).map((m: { user_id: string }) => ({
+          ...m,
+          profiles: profileMap[m.user_id] ?? null,
+          stats: leaderStats[m.user_id] ?? null,
+        }))
+      ]
       return NextResponse.json({ squad: ledSquad, role: 'leader' })
     }
 
@@ -152,12 +175,35 @@ export async function GET() {
           ? await s.from('profiles').select('id, display_name, handle, runner_class').in('id', memberIds)
           : { data: [] }
         const profileMap = Object.fromEntries((profiles ?? []).map((p: { id: string }) => [p.id, p]))
-        const memberStats = await fetchMemberStats(s, memberIds)
-        squad.squad_members = activeMembers.map((m: { user_id: string }) => ({
-          ...m,
-          profiles: profileMap[m.user_id] ?? null,
-          stats: memberStats[m.user_id] ?? null,
-        }))
+        // Also fetch leader stats if not in members
+        const leaderId = squad.leader_id
+        const allIds = [...new Set([leaderId, ...memberIds])]
+        const memberStats = await fetchMemberStats(s, allIds)
+        
+        if (!profileMap[leaderId]) {
+          const { data: lp } = await s.from('profiles').select('id, display_name, handle, runner_class, is_split_leader').eq('id', leaderId).single()
+          if (lp) profileMap[leaderId] = lp
+        }
+        
+        const leaderInMembers = activeMembers.some((m: { user_id: string }) => m.user_id === leaderId)
+        const leaderEntry = !leaderInMembers ? [{
+          id: `leader-${leaderId}`,
+          user_id: leaderId,
+          joined_at: squad.created_at,
+          last_active_at: new Date().toISOString(),
+          removed_at: null,
+          profiles: profileMap[leaderId] ?? null,
+          stats: memberStats[leaderId] ?? null,
+        }] : []
+        
+        squad.squad_members = [
+          ...leaderEntry,
+          ...activeMembers.map((m: { user_id: string }) => ({
+            ...m,
+            profiles: profileMap[m.user_id] ?? null,
+            stats: memberStats[m.user_id] ?? null,
+          }))
+        ]
         return NextResponse.json({ squad, role: 'member' })
       }
     }

@@ -217,7 +217,7 @@ export default function SquadOrbit({ squad, members, myUserId, role, inviteCode 
 
       {/* ── Squad name + goal ── */}
       <div className="w-full max-w-sm text-center mb-2 px-4">
-        <h2 className="text-2xl font-black tracking-tight" style={{ color: squad.colour, letterSpacing: '-0.02em' }}>
+        <h2 className="text-3xl font-black tracking-tight" style={{ color: squad.colour, letterSpacing: '-0.03em', textShadow: `0 0 30px ${squad.colour}60` }}>
           {squad.name}
         </h2>
         {squad.goal_type === 'km' && squad.goal_value && (
@@ -240,7 +240,7 @@ export default function SquadOrbit({ squad, members, myUserId, role, inviteCode 
         {/* Orbit ring */}
         <svg className="absolute inset-0" width={320} height={320}>
           <circle cx={160} cy={160} r={130}
-            fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={1.5}
+            fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={2}
             strokeDasharray="6 6" />
           {/* Orbit progress arc for squad goal */}
           {goalPct !== null && (
@@ -271,17 +271,16 @@ export default function SquadOrbit({ squad, members, myUserId, role, inviteCode 
           </div>
         </div>
 
-        {/* Orbital members — positioned around the ring */}
+        {/* Orbital members — spread evenly around full circle */}
         {nonFocusSlots.map(({ slotIdx, slot }, i) => {
-          // Spread from 200deg to 340deg (bottom arc, 5 positions)
-          const angleDeg = 200 + (i * 35)
+          // 4 positions evenly spread: 50°, 140°, 220°, 310°
+          const positions = [50, 140, 220, 310]
+          const angleDeg = positions[i] ?? (50 + i * 90)
           const angleRad = (angleDeg * Math.PI) / 180
-          const x = 160 + 130 * Math.cos(angleRad)
-          const y = 160 + 130 * Math.sin(angleRad)
+          const x = 160 + 128 * Math.cos(angleRad)
+          const y = 160 + 128 * Math.sin(angleRad)
           const isLeader = slot?.user_id === squad.leader_id
-          // Size varies slightly based on position — centre-bottom largest
-          const distFromCentre = Math.abs(i - 2)
-          const size = 56 - distFromCentre * 4
+          const size = 60
 
           return (
             <div key={slotIdx} className="absolute transition-all duration-400"
