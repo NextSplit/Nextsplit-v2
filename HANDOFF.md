@@ -1,6 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 8.3 | **May 2026** | **Canonical — replaces all previous HANDOFF files**
-<!-- 8.3: post-GitHub-App-reinstall webhook test -->
+**Version:** 8.4 | **May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 8.4: post-OAuth-refresh deploy verification -->
 **Live URL:** https://nextsplit.app
 **GitHub:** https://github.com/NextSplit/Nextsplit-v2
 **Stack:** Next.js 15 App Router · TypeScript strict · Supabase · Tailwind · CSS vars · PWA · Anthropic SDK
