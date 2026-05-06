@@ -41,7 +41,10 @@ export default function ManualOnboardingClient() {
         body: JSON.stringify({ slug: baseSlug, name: planName.trim(), race_date: raceDate || undefined, plan_type: 'manual', include_gym: includeGym }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed')
+      if (!res.ok) {
+        const detail = data.details ? ` (${data.details.join(', ')})` : ''
+        throw new Error((data.error ?? 'Failed to activate plan') + detail)
+      }
       router.push(data.raceTooSoon ? '/home?notice=race_soon' : '/home')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')

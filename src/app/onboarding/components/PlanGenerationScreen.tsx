@@ -70,7 +70,7 @@ Rules:
 - Long run on ${data.preferredLongRunDay || 'Sunday'}
 - Each day's "sessions" array can contain MULTIPLE sessions (e.g. a run AND a gym session)
 
-Respond ONLY with valid JSON, no markdown, no explanation:
+Respond ONLY with valid JSON, no markdown, no explanation. Use these EXACT field names and "c" type values — do not invent new ones:
 {
   "name": "plan name",
   "totalWeeks": ${weeksOut},
@@ -79,24 +79,82 @@ Respond ONLY with valid JSON, no markdown, no explanation:
     {
       "n": 1,
       "title": "Base Building",
-      "phase": "base",
-      "targetKm": number,
+      "ph": "p1",
+      "kl": [low_km, high_km],
       "days": [
         {
-          "day": "Mon",
+          "d": "Mon",
           "sessions": [
             {
-              "type": "easy_run|tempo|interval|long_run|recovery|rest|gym|cross",
-              "name": "session name",
-              "detail": "specific coaching instruction with target pace or effort",
-              "km": number or null
+              "c": "run-easy | run-tempo | run-int | run-long | run-mp | run-race | gym-a | gym-b | gym-c | gym-bw | rest",
+              "n": "session name",
+              "det": "specific coaching instruction with target pace or effort",
+              "km": number
             }
           ]
         }
       ]
     }
   ]
-}`
+}
+
+Type guide:
+- run-easy = easy aerobic run
+- run-tempo = tempo / threshold
+- run-int = intervals / VO2 work
+- run-long = long run
+- run-mp = marathon-pace run
+- run-race = race day
+- gym-a = lower body strength
+- gym-b = upper body strength
+- gym-c = mobility / core
+- gym-bw = bodyweight strength
+- rest = full rest day (km: 0)
+
+For double-session days, put TWO objects in the same day's "sessions" array (e.g. one "run-easy" and one "gym-a"). Use km: 0 for non-running sessions like gym and rest.`
+}
+
+// ── Normalize AI plan output to canonical PlanWeek/PlanDay/PlanSession shape ──
+// The renderer reads { c, n, det, km } / { d, sessions } / { n, ph, kl, days }.
+// Tolerates legacy { type, name, detail } / { day, sessions } shapes in case
+// the model deviates from the prompt schema.
+type RawAISession = { c?: string; n?: string; det?: string; km?: number; type?: string; name?: string; detail?: string }
+type RawAIDay     = { d?: string; day?: string; sessions?: RawAISession[] }
+type RawAIWeek    = { n?: number; title?: string; ph?: string; phase?: string; kl?: [number, number]; targetKm?: number; days?: RawAIDay[] }
+
+const TYPE_ALIAS: Record<string, string> = {
+  easy_run: 'run-easy', easy: 'run-easy', recovery: 'run-easy',
+  tempo: 'run-tempo', threshold: 'run-tempo',
+  interval: 'run-int', intervals: 'run-int', vo2: 'run-int', vo2max: 'run-int',
+  long_run: 'run-long', long: 'run-long',
+  marathon_pace: 'run-mp', mp: 'run-mp',
+  race: 'run-race',
+  gym: 'gym-bw', strength: 'gym-bw',
+  cross: 'gym-c', mobility: 'gym-c', yoga: 'gym-c',
+  rest: 'rest',
+}
+
+function normalizeAIWeeks(weeks: RawAIWeek[] | undefined): unknown[] {
+  if (!Array.isArray(weeks)) return []
+  return weeks.map((w, wi) => ({
+    n:     typeof w.n === 'number' ? w.n : wi + 1,
+    title: w.title ?? `Week ${wi + 1}`,
+    ph:    w.ph ?? w.phase ?? 'p1',
+    kl:    Array.isArray(w.kl) ? w.kl : [w.targetKm ?? 0, w.targetKm ?? 0],
+    days: (w.days ?? []).map((day) => ({
+      d: day.d ?? day.day ?? '',
+      sessions: (day.sessions ?? []).map((s) => {
+        const rawType = (s.c ?? s.type ?? '').toString().toLowerCase().trim()
+        const c = TYPE_ALIAS[rawType] ?? (rawType.startsWith('run-') || rawType.startsWith('gym-') || rawType === 'rest' || rawType === 'pilates' || rawType === 'sauna' ? rawType : 'run-easy')
+        return {
+          c,
+          n:   s.n   ?? s.name   ?? '',
+          det: s.det ?? s.detail ?? '',
+          km:  typeof s.km === 'number' ? s.km : 0,
+        }
+      }),
+    })),
+  }))
 }
 
 export function PlanGenerationScreen() {
@@ -183,7 +241,7 @@ export function PlanGenerationScreen() {
             name:         plan.name ?? 'My AI Plan',
             total_weeks:  plan.totalWeeks ?? 12,
             current_week: 1,
-            weeks_data:   plan.weeks ?? [],
+            weeks_data:   normalizeAIWeeks(plan.weeks),
             meta:         { generated_at: new Date().toISOString(), peak_km: plan.peakWeeklyKm },
             start_date:   new Date().toISOString().split('T')[0],
           })
@@ -233,12 +291,16 @@ export function PlanGenerationScreen() {
               body:    JSON.stringify({
                 template_id:  best.id,
                 name:         best.name,
-                race_date:    raceDate,
+                race_date:    raceDate ?? undefined,
                 plan_type:    'predetermined',
                 include_gym:  data.gymEnabled,
               }),
             })
-            if (!activateRes.ok) throw new Error(`Activate failed: ${activateRes.status}`)
+            if (!activateRes.ok) {
+              const body = await activateRes.json().catch(() => ({} as { error?: string; details?: string[] }))
+              const detail = body.details ? ` (${body.details.join(', ')})` : ''
+              throw new Error(`${body.error ?? `Activate failed: ${activateRes.status}`}${detail}`)
+            }
           }
 
         } else if (data.trainingPath === 'lifestyle') {
