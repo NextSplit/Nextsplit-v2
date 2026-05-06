@@ -18,12 +18,12 @@
 
 **Fix:** commit `8b84582` reduced `smart-notify` to `0 14 * * *` (single 14:00 UTC fire). One push and every commit since `b466b6f` shipped in one go — Option E redesign, Splity, 4-tab nav, 20-feature build, plus Session 10's plan-activate and AI-plan fixes.
 
-**Side-effect to be aware of:** the `smart-notify` route handler at `src/app/api/cron/smart-notify/route.ts` branches on UTC hour. With only the 14:00 fire active:
-- `hour === 14` → "Session waiting" notification ✅ still fires
-- `hour === 18` → "Streak at risk" notification ❌ never fires
-- `hour === 9 && Sunday` → "Weekly wrap" notification ❌ never fires
+**Notification dispatch:** the `smart-notify` route at `src/app/api/cron/smart-notify/route.ts` was rewritten to suit the once-daily fire. Each user now gets at most one notification per day, prioritised:
+- Sunday → "Weekly wrap" (regardless of log state)
+- Mon–Sat with active plan and not logged today → "Keep the streak — log before evening"
+- Otherwise → no notification
 
-To restore the 18:00 streak warning and Sunday weekly wrap, either consolidate all three message types into the single 14:00 dispatch (changes UX timing), or upgrade to Vercel Pro and restore the 3× schedule. Decision deferred to post-F1.
+If you later upgrade to Vercel Pro and want to restore split morning/midday/evening dispatches, re-introduce the hour conditions and bump `vercel.json` back to a multi-fire schedule.
 
 **Cleanup outstanding:**
 - Close the Vercel support ticket — webhooks were never broken, no action needed from their side.
@@ -250,7 +250,7 @@ src/hooks/useSubscription.ts    Pro/free status
 3. **Confirm Resend key in Vercel** — already in env vars list, test send
 4. **Test plan activation on device** — Session 10 added `details[]` surfacing in all 5 callers, so any future Zod failure now shows the failing field name in the error message
 5. **Test AI plan generation** — confirm double-session gym days render correctly. Session 10 fixed the session-shape mismatch (AI was emitting `{type, name, detail}`, app reads `{c, n, det}`); plans now go through `normalizeAIWeeks()` before insert
-6. **Decide on smart-notify schedule** — currently single 14:00 UTC fire; the 18:00 streak warning and Sunday weekly wrap branches in the route are dead code. Options: consolidate into 14:00 dispatch, or upgrade to Pro
+6. **Smart-notify** — single 14:00 UTC fire. Sundays send "Weekly wrap"; other days send "Keep the streak" if user has an active plan and hasn't logged. One notification per user per day, max
 
 ### Short Term — Before Friend Test
 6. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
