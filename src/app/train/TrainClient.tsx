@@ -301,7 +301,7 @@ export default function TrainClient() {
 
       {/* ── Sticky header ── */}
       <div className="sticky top-0 z-40 border-b"
-        style={{ background: 'linear-gradient(180deg, rgba(37,99,235,0.08) 0%, var(--color-surface) 100%)', borderColor: 'var(--color-border)' }}>
+        style={{ background: 'var(--color-bg)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderColor: 'var(--color-border)' }}>
         <div className="max-w-lg mx-auto px-4 pt-12 pb-3">
           <div className="flex items-center justify-between mb-1">
             <div>
@@ -511,20 +511,28 @@ export default function TrainClient() {
       )}
 
       {/* Fuel tab */}
-      {plan && planTab === 'fuel' && (
-        <div className="max-w-lg mx-auto px-4 pt-4">
-          {currentWeek?.days[todayDayIndex] ? (
-            <FuelPlanCard planDay={currentWeek.days[todayDayIndex]} />
-          ) : (
-            <div className="rounded-2xl p-8 text-center"
-              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-              <div className="text-4xl mb-3">🥗</div>
-              <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>No fuel plan for today</p>
-              <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>Fuel guidance appears on active training days.</p>
-            </div>
-          )}
-        </div>
-      )}
+      {plan && planTab === 'fuel' && (() => {
+        const today = currentWeek?.days[todayDayIndex]
+        const hasFuelData = !!today && Array.isArray(today.nut) && today.nut.length > 0
+        return (
+          <div className="max-w-lg mx-auto px-4 pt-4 pb-32">
+            {hasFuelData ? (
+              <FuelPlanCard planDay={today} />
+            ) : (
+              <div className="rounded-2xl p-8 text-center"
+                style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+                <div className="text-4xl mb-3">🥗</div>
+                <p className="text-sm font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>
+                  Fuel plan coming soon
+                </p>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-tertiary)' }}>
+                  Personalised hydration, pre-run snacks and post-run recovery guidance will appear here once your plan template includes nutrition timings — or after you generate a bespoke AI plan with fuel guidance.
+                </p>
+              </div>
+            )}
+          </div>
+        )
+      })()}
 
       {/* Week detail bottom sheet */}
       {tappedWeek && (

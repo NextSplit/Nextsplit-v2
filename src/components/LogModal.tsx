@@ -110,8 +110,8 @@ function LogModal({
   // ── REST DAY ───────────────────────────────────────────────────────────────
   if (mode === 'rest') {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
-        <div className="w-full max-w-lg mx-auto p-6 text-center mt-auto" style={{ background: "var(--color-surface)", borderRadius: "24px 24px 0 0" }} onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 z-[60] flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
+        <div className="w-full max-w-lg mx-auto p-6 text-center mt-auto" style={{ background: "var(--color-surface)", borderRadius: "24px 24px 0 0", marginBottom: "calc(60px + env(safe-area-inset-bottom, 0px))" }} onClick={e => e.stopPropagation()}>
           <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: 'var(--color-border-2)' }} />
           <div className="text-4xl mb-3">😴</div>
           <h2 className="text-base font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>Rest day</h2>
@@ -132,9 +132,9 @@ function LogModal({
   // ── ONE-TAP (Easy runs) ────────────────────────────────────────────────────
   if (mode === 'one-tap' && !existingLog) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
+      <div className="fixed inset-0 z-[60] flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
         <div className="w-full max-w-lg mx-auto mt-auto"
-          style={{ background: 'var(--color-surface)', borderRadius: "24px 24px 0 0" }} onClick={e => e.stopPropagation()}>
+          style={{ background: 'var(--color-surface)', borderRadius: "24px 24px 0 0", marginBottom: "calc(60px + env(safe-area-inset-bottom, 0px))" }} onClick={e => e.stopPropagation()}>
           <div className="p-6 pb-safe" style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))" }}>
             <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ background: 'var(--color-border-2)' }} />
             <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${cfg.colour} ${cfg.textColour} text-xs font-semibold mb-3`}>
@@ -179,8 +179,8 @@ function LogModal({
   // ── FULL DEBRIEF (Intervals + Race) ───────────────────────────────────────
   if (mode === 'full-debrief') {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
-        <div className="w-full max-w-lg mx-auto flex flex-col mt-auto" style={{ background: "var(--color-surface)", borderRadius: "24px 24px 0 0", height: "92dvh", maxHeight: "92dvh" }} onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 z-[60] flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
+        <div className="w-full max-w-lg mx-auto flex flex-col mt-auto" style={{ background: "var(--color-surface)", borderRadius: "24px 24px 0 0", height: "calc(92dvh - 60px - env(safe-area-inset-bottom, 0px))", maxHeight: "calc(92dvh - 60px - env(safe-area-inset-bottom, 0px))", marginBottom: "calc(60px + env(safe-area-inset-bottom, 0px))" }} onClick={e => e.stopPropagation()}>
           <div className="flex items-center justify-between px-6 pt-4 pb-2 flex-shrink-0">
             <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-border-2)' }} />
             <button aria-label="Close" onClick={onClose}
@@ -297,8 +297,8 @@ function LogModal({
 
   // ── STANDARD (Tempo, Long, MP, default) ────────────────────────────────────
   return (
-    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
-      <div className="w-full max-w-lg mx-auto flex flex-col mt-auto" style={{ background: "var(--color-surface)", borderRadius: "24px 24px 0 0", height: "92dvh", maxHeight: "92dvh" }} onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[60] flex flex-col" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={handleBackdropClick}>
+      <div className="w-full max-w-lg mx-auto flex flex-col mt-auto" style={{ background: "var(--color-surface)", borderRadius: "24px 24px 0 0", height: "calc(92dvh - 60px - env(safe-area-inset-bottom, 0px))", maxHeight: "calc(92dvh - 60px - env(safe-area-inset-bottom, 0px))", marginBottom: "calc(60px + env(safe-area-inset-bottom, 0px))" }} onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 pt-4 pb-2 flex-shrink-0">
           <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-border-2)' }} />
           <button aria-label="Close" onClick={onClose}
