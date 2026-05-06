@@ -1,6 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.0 | **May 2026** | **Canonical — replaces all previous HANDOFF files**
-<!-- 9.0: deploy pipeline broken — Vercel webhook not firing on push, support ticket open -->
+**Version:** 9.1 | **6 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.1: deploy unblocked — Session 9's "webhook broken" theory was wrong, real cause was Hobby cron-tier validation. Fixed by reducing smart-notify to once daily. -->
 **Live URL:** https://nextsplit.app
 **GitHub:** https://github.com/NextSplit/Nextsplit-v2
 **Stack:** Next.js 15 App Router · TypeScript strict · Supabase · Tailwind · CSS vars · PWA · Anthropic SDK
@@ -10,30 +10,24 @@
 
 ---
 
-## 🚨 ACTIVE BLOCKER — Deploy Pipeline Broken
+## ✅ Deploy Pipeline — Unblocked (6 May 2026)
 
-**Status as of session end (May 2026):** Pushes to `main` are not triggering Vercel deployments. nextsplit.app is running stale code (commit `d9cff8c` "plan completion ceremony") — the entire Option E redesign + Splity + 4-tab nav + 20 features build is committed to `main` but not deployed.
+**Status:** Auto-deploy on push to `main` is working again. Session 9's "Vercel webhook not firing" diagnosis was wrong from the start.
 
-**What broke it:** A GitHub PAT was committed to a doc → GitHub secret-scanning auto-revoked it → that revocation appears to have invalidated the credentials Vercel uses to receive webhooks from GitHub. From that point on, pushes go through to GitHub fine but Vercel never gets notified.
+**Real root cause:** Vercel Hobby tier rejects any cron expression that fires more than once per day. `vercel.json` had `smart-notify` on `0 9,14,18 * * *` (3× daily, added in commit `b466b6f` Session 8). Every deploy from that commit onward failed at build-time validation with the error `Hobby accounts are limited to daily cron jobs.` Pushes were going through, GitHub was notifying Vercel, Vercel was building — and the build was dying silently at cron validation. The auto-deploy on `main` never surfaced the error in any UI Session 9 looked at; the failure only became visible when a PR was opened in Session 10 and the PR check showed "Vercel — Deployment failed".
 
-**What was tried this session (none worked):**
-- Vercel Git integration disconnect/reconnect ✗
-- Vercel GitHub App uninstall/reinstall ✗
-- Manual deploy hook trigger (returns `{job: PENDING}` but no deployment appears) ✗
-- Force-commit via GitHub web UI ✗
-- GitHub Actions workflow calling deploy hook (workflow runs green but deploy never appears) ✗
-- OAuth re-check ✗
+**Fix:** commit `8b84582` reduced `smart-notify` to `0 14 * * *` (single 14:00 UTC fire). One push and every commit since `b466b6f` shipped in one go — Option E redesign, Splity, 4-tab nav, 20-feature build, plus Session 10's plan-activate and AI-plan fixes.
 
-**What is verified working:**
-- Local build is clean: `npx tsc --noEmit` zero errors, `npm run build` 117 pages, 45s
-- Code on `main` includes all 4 commits of redesign + features
-- The `useMyCoach` import fix is in place at `src/app/home/HomeClient.tsx:9`
-- env vars in Vercel are intact (25 vars confirmed)
-- nextsplit.app domain still serves (just from old build)
+**Side-effect to be aware of:** the `smart-notify` route handler at `src/app/api/cron/smart-notify/route.ts` branches on UTC hour. With only the 14:00 fire active:
+- `hour === 14` → "Session waiting" notification ✅ still fires
+- `hour === 18` → "Streak at risk" notification ❌ never fires
+- `hour === 9 && Sunday` → "Weekly wrap" notification ❌ never fires
 
-**Path forward:** Vercel support ticket filed [DATE]. Reference project ID `prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri`. Once Vercel re-establishes webhook delivery from their side, push will auto-deploy normally.
+To restore the 18:00 streak warning and Sunday weekly wrap, either consolidate all three message types into the single 14:00 dispatch (changes UX timing), or upgrade to Vercel Pro and restore the 3× schedule. Decision deferred to post-F1.
 
-**Backup path if support is slow:** Vercel CLI from laptop. `npm install -g vercel`, `vercel login`, `cd` into repo, `vercel --prod`. Bypasses webhook entirely. ~5 minutes.
+**Cleanup outstanding:**
+- Close the Vercel support ticket — webhooks were never broken, no action needed from their side.
+- The Session 9 diagnostic commits (`f4f6ff8`, `7e65a4c`, `8bcff06`, `e7a8bba`, `0ee3757`, `1f2e448`) are no-op chore commits and the GitHub Actions deploy-hook workflow they introduced is now redundant. Safe to leave for history; can be tidied up later.
 
 ---
 
@@ -52,15 +46,9 @@ git add -A && git commit -m "type: description"
 git push https://ghp_YOUR_PAT@github.com/NextSplit/Nextsplit-v2.git main
 ```
 
-**Deploy: BROKEN (see ACTIVE BLOCKER above).** Pushes succeed on GitHub but Vercel doesn't receive webhooks. Until Vercel support fixes from their side, deploys must be done via Vercel CLI from a laptop:
+**Deploy:** auto-deploy on push to `main` is working. PR checks surface Vercel build failures — if a check goes red, read the Vercel log first; don't reach for webhook diagnostics.
 
-```bash
-npm install -g vercel
-vercel login
-vercel --prod
-```
-
-The deploy hook URL is `https://api.vercel.com/v1/integrations/deploy/prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri/YT5tNVE9Kl` — accepts the request and returns PENDING but does not currently produce a deployment. Don't waste time on it until Vercel responds.
+If you ever add a cron to `vercel.json`, it must fire **once per day or less** while we're on Hobby (e.g. `0 14 * * *` ✓, `*/30 * * * *` ✗, `0 9,14,18 * * *` ✗). Anything more frequent fails the deploy with `Hobby accounts are limited to daily cron jobs.`
 
 ---
 
@@ -256,15 +244,13 @@ src/hooks/useSubscription.ts    Pro/free status
 
 ## What's Next (Priority Order)
 
-### Immediate — Unblock the deploy pipeline
-0. **🚨 Get Vercel webhook delivery working again** (see ACTIVE BLOCKER at top of file). Until this is fixed, redesign + 20 features stay invisible to users. Two paths: (a) Vercel support reply, (b) Vercel CLI from laptop. Either gets us live in minutes once unblocked.
-
-### Pre-Alpha Prep (after deploy fixed)
-1. **Verify nextsplit.app shows redesign** — deep navy, Splity in hero, 4-tab nav without labels
+### Pre-Alpha Prep
+1. **Verify nextsplit.app shows redesign** — deep navy, Splity in hero, 4-tab nav without labels (deploy is now live, refresh and confirm)
 2. **Confirm Stripe keys in Vercel** — already in env vars list, double-check working
 3. **Confirm Resend key in Vercel** — already in env vars list, test send
-4. **Test plan activation on device** — "Invalid request" error needs real-device confirmation post-fix
-5. **Test AI plan generation** — confirm double-session gym days generate correctly
+4. **Test plan activation on device** — Session 10 added `details[]` surfacing in all 5 callers, so any future Zod failure now shows the failing field name in the error message
+5. **Test AI plan generation** — confirm double-session gym days render correctly. Session 10 fixed the session-shape mismatch (AI was emitting `{type, name, detail}`, app reads `{c, n, det}`); plans now go through `normalizeAIWeeks()` before insert
+6. **Decide on smart-notify schedule** — currently single 14:00 UTC fire; the 18:00 streak warning and Sunday weekly wrap branches in the route are dead code. Options: consolidate into 14:00 dispatch, or upgrade to Pro
 
 ### Short Term — Before Friend Test
 6. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
@@ -307,19 +293,28 @@ npx playwright show-report
 
 ---
 
-## Commit History (Sessions 8–9, May 2026)
+## Commit History (Sessions 8–10, May 2026)
 
-### Session 9 (May 2026) — Deploy diagnosis session
-Four no-op commits pushed to test webhook delivery during the broken-deploy investigation. None of these triggered Vercel builds. They are safe (HANDOFF version bumps only) and can be left on `main`:
+### Session 10 (6 May 2026) — Deploy unblocked + plan-activate hardening + AI plan normalize
 
 | Commit | Description |
 |--------|-------------|
-| `f4f6ff8` | chore: verify deploy pipeline (GitHub Actions → Vercel hook) |
+| `8b84582` | fix: reduce smart-notify cron to once daily (`0 14 * * *`) — the actual fix that unblocked auto-deploy. Hobby tier rejects multi-fire crons |
+| `3245781` | fix: surface Zod `details[]` in all 5 plan-activate callers (PlanBrowse, AI/Manual/Lifestyle onboarding, PlanGenerationScreen) + add `normalizeAIWeeks()` to remap AI plan output `{type,name,detail}` → canonical `{c,n,det,km}` so gym pills, pace personalisation and session styling work on AI-generated plans |
+
+### Session 9 (May 2026) — Deploy diagnosis (red herring)
+Six commits pushed during a wrong-track investigation into "broken webhook delivery." None of them deployed because the real issue (Hobby cron-tier validation) was unrelated. Safe to leave on `main`; the GitHub Actions deploy-hook workflow they introduced is now redundant.
+
+| Commit | Description |
+|--------|-------------|
+| `1f2e448` | ci: GitHub Action triggers Vercel deploy hook on every push (redundant — auto-deploy works fine) |
+| `0ee3757` | ci: deploy workflow + HANDOFF |
+| `f4f6ff8` | chore: verify deploy pipeline |
 | `7e65a4c` | chore: verify Vercel auto-deploy after Git reconnect |
 | `8bcff06` | chore: webhook test after Vercel GitHub App reinstall |
 | `e7a8bba` | chore: deploy test after OAuth refresh |
 
-### Session 8 (April–May 2026) — Redesign + features (committed, not deployed)
+### Session 8 (April–May 2026) — Redesign + features (now deployed via Session 10 fix)
 
 | Commit | Description |
 |--------|-------------|
