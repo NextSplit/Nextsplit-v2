@@ -47,7 +47,10 @@ export default function LifestyleOnboardingClient() {
         body: JSON.stringify({ slug: selectedFocus?.slug ?? '5k_couch_to_5k', name: planName.trim(), plan_type: 'lifestyle', include_gym: includeGym }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed')
+      if (!res.ok) {
+        const detail = data.details ? ` (${data.details.join(', ')})` : ''
+        throw new Error((data.error ?? 'Failed to activate plan') + detail)
+      }
       router.push(data.raceTooSoon ? '/home?notice=race_soon' : '/home')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')

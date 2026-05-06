@@ -119,7 +119,10 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
         }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Failed to activate plan')
+      if (!res.ok) {
+        const detail = data.details ? ` (${data.details.join(', ')})` : ''
+        throw new Error((data.error ?? 'Failed to activate plan') + detail)
+      }
       router.push('/home?notice=plan_activated')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
