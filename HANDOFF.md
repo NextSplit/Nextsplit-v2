@@ -1,12 +1,39 @@
 # NextSplit — Master Handoff
-**Version:** 8.4 | **May 2026** | **Canonical — replaces all previous HANDOFF files**
-<!-- 8.4: post-OAuth-refresh deploy verification -->
+**Version:** 9.0 | **May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.0: deploy pipeline broken — Vercel webhook not firing on push, support ticket open -->
 **Live URL:** https://nextsplit.app
 **GitHub:** https://github.com/NextSplit/Nextsplit-v2
 **Stack:** Next.js 15 App Router · TypeScript strict · Supabase · Tailwind · CSS vars · PWA · Anthropic SDK
 
-> Previous handoffs (HANDOFF.md through HANDOFF-7.md) are archived in `/docs/archive/`.
+> Previous handoffs (HANDOFF.md through HANDOFF-8.md) are archived in `/docs/archive/`.
 > This is the single source of truth going forward.
+
+---
+
+## 🚨 ACTIVE BLOCKER — Deploy Pipeline Broken
+
+**Status as of session end (May 2026):** Pushes to `main` are not triggering Vercel deployments. nextsplit.app is running stale code (commit `d9cff8c` "plan completion ceremony") — the entire Option E redesign + Splity + 4-tab nav + 20 features build is committed to `main` but not deployed.
+
+**What broke it:** A GitHub PAT was committed to a doc → GitHub secret-scanning auto-revoked it → that revocation appears to have invalidated the credentials Vercel uses to receive webhooks from GitHub. From that point on, pushes go through to GitHub fine but Vercel never gets notified.
+
+**What was tried this session (none worked):**
+- Vercel Git integration disconnect/reconnect ✗
+- Vercel GitHub App uninstall/reinstall ✗
+- Manual deploy hook trigger (returns `{job: PENDING}` but no deployment appears) ✗
+- Force-commit via GitHub web UI ✗
+- GitHub Actions workflow calling deploy hook (workflow runs green but deploy never appears) ✗
+- OAuth re-check ✗
+
+**What is verified working:**
+- Local build is clean: `npx tsc --noEmit` zero errors, `npm run build` 117 pages, 45s
+- Code on `main` includes all 4 commits of redesign + features
+- The `useMyCoach` import fix is in place at `src/app/home/HomeClient.tsx:9`
+- env vars in Vercel are intact (25 vars confirmed)
+- nextsplit.app domain still serves (just from old build)
+
+**Path forward:** Vercel support ticket filed [DATE]. Reference project ID `prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri`. Once Vercel re-establishes webhook delivery from their side, push will auto-deploy normally.
+
+**Backup path if support is slow:** Vercel CLI from laptop. `npm install -g vercel`, `vercel login`, `cd` into repo, `vercel --prod`. Bypasses webhook entirely. ~5 minutes.
 
 ---
 
@@ -25,9 +52,15 @@ git add -A && git commit -m "type: description"
 git push https://ghp_YOUR_PAT@github.com/NextSplit/Nextsplit-v2.git main
 ```
 
-**Deploy triggers automatically** via GitHub Actions → Vercel deploy hook on every push to main.
-**Deploy hook:** `https://api.vercel.com/v1/integrations/deploy/prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri/YT5tNVE9Kl`
-**To trigger manually (from browser):** visit the deploy hook URL above.
+**Deploy: BROKEN (see ACTIVE BLOCKER above).** Pushes succeed on GitHub but Vercel doesn't receive webhooks. Until Vercel support fixes from their side, deploys must be done via Vercel CLI from a laptop:
+
+```bash
+npm install -g vercel
+vercel login
+vercel --prod
+```
+
+The deploy hook URL is `https://api.vercel.com/v1/integrations/deploy/prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri/YT5tNVE9Kl` — accepts the request and returns PENDING but does not currently produce a deployment. Don't waste time on it until Vercel responds.
 
 ---
 
@@ -223,30 +256,34 @@ src/hooks/useSubscription.ts    Pro/free status
 
 ## What's Next (Priority Order)
 
-### Immediate — Pre-Alpha Prep
-1. **Confirm Stripe keys in Vercel** — check dashboard, add if missing
-2. **Confirm Resend key in Vercel** — check dashboard, add if missing
-3. **Test plan activation on device** — "Invalid request" error needs real-device confirmation post-fix
-4. **Test AI plan generation** — confirm double-session gym days generate correctly
+### Immediate — Unblock the deploy pipeline
+0. **🚨 Get Vercel webhook delivery working again** (see ACTIVE BLOCKER at top of file). Until this is fixed, redesign + 20 features stay invisible to users. Two paths: (a) Vercel support reply, (b) Vercel CLI from laptop. Either gets us live in minutes once unblocked.
+
+### Pre-Alpha Prep (after deploy fixed)
+1. **Verify nextsplit.app shows redesign** — deep navy, Splity in hero, 4-tab nav without labels
+2. **Confirm Stripe keys in Vercel** — already in env vars list, double-check working
+3. **Confirm Resend key in Vercel** — already in env vars list, test send
+4. **Test plan activation on device** — "Invalid request" error needs real-device confirmation post-fix
+5. **Test AI plan generation** — confirm double-session gym days generate correctly
 
 ### Short Term — Before Friend Test
-5. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
-6. **Fix any blockers** found in F1 test
-7. **Run UAT DB verify** — `SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts`
+6. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
+7. **Fix any blockers** found in F1 test
+8. **Run UAT DB verify** — `SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts`
 
 ### Medium Term — After Friend Test
-8. **Stripe payments live** — flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true`, test checkout flow
-9. **Wider alpha invite** — 10-20 runners, mix of experience levels
-10. **Sentry review** — check what errors are being captured
-11. **Lighthouse audit** — target ≥80 performance on Home and Train
+9. **Stripe payments live** — flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true`, test checkout flow
+10. **Wider alpha invite** — 10-20 runners, mix of experience levels
+11. **Sentry review** — check what errors are being captured
+12. **Lighthouse audit** — target ≥80 performance on Home and Train
 
 ### Longer Term — Post Alpha
-12. **Squad Trophy Room** — collective achievements
-13. **Squad seasons** — monthly/annual leaderboard resets
-14. **Coaching marketplace live** — need at least 2 verified coaches
-15. **Strava OAuth live** — connect to live Strava app credentials
-16. **Company formation** — Companies House £12
-17. **ICO registration** — ico.org.uk £40
+13. **Squad Trophy Room** — collective achievements
+14. **Squad seasons** — monthly/annual leaderboard resets
+15. **Coaching marketplace live** — need at least 2 verified coaches
+16. **Strava OAuth live** — connect to live Strava app credentials
+17. **Company formation** — Companies House £12
+18. **ICO registration** — ico.org.uk £40
 
 ---
 
@@ -272,16 +309,33 @@ npx playwright show-report
 
 ## Commit History (Sessions 8–9, May 2026)
 
+### Session 9 (May 2026) — Deploy diagnosis session
+Four no-op commits pushed to test webhook delivery during the broken-deploy investigation. None of these triggered Vercel builds. They are safe (HANDOFF version bumps only) and can be left on `main`:
+
 | Commit | Description |
 |--------|-------------|
-| `3d5218c` | Option E redesign — ultra-dark navy, Splity animated shoe, 4-tab label-less nav, Home rebuild |
-| `[latest]` | 20-feature build — share card, weekly summary, pre-run brief, milestone cards, elite previews, founding countdown, smart notifications, week summary, squad leaderboard |
+| `f4f6ff8` | chore: verify deploy pipeline (GitHub Actions → Vercel hook) |
+| `7e65a4c` | chore: verify Vercel auto-deploy after Git reconnect |
+| `8bcff06` | chore: webhook test after Vercel GitHub App reinstall |
+| `e7a8bba` | chore: deploy test after OAuth refresh |
+
+### Session 8 (April–May 2026) — Redesign + features (committed, not deployed)
+
+| Commit | Description |
+|--------|-------------|
+| `0ee3757` | ci: deploy workflow + HANDOFF updated (no secrets in files) |
 | `1f2e448` | CI: GitHub Action triggers Vercel deploy hook on every push |
 | `926e6f9` | Fix: CSS @import order, useMyCoach confirmed fixed |
 | `d400703` | Fix: useMyCoach import path (was blocking all builds) |
 | `a02083b` | Feat: Strava auto-import, injury flag, training diary, training zones chart |
 | `b466b6f` | Feat: 20-feature build — share card, weekly summary, pre-run brief, milestones, ElitePreview |
 | `3d5218c` | Feat: Option E redesign — ultra-dark navy, Splity animated shoe, 4-tab nav, Home rebuild |
+
+### Earlier (currently the live build on nextsplit.app)
+
+| Commit | Description |
+|--------|-------------|
+| `d9cff8c` | feat: plan completion ceremony wired, squad leaderboard, onboarding final dark fixes, HeroNewUser Splity + AI-first, week completion detection |
 | `1822dfa` | Daily quests, streak emotional widget, nudge wired, plan activation fix, onboarding polish (101 files) |
 | `4965291` | Bold & bright visual system, week tap session sheet, ai_usage fix, AI plan generation fix |
 | `5c87fc1` | Session celebration — confetti, XP float, level up, Splity, sound, haptics |
