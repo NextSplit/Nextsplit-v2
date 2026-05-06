@@ -7,7 +7,7 @@
     },
     {
       "path": "/api/cron/smart-notify",
-      "schedule": "0 9,14,18 * * *"
+      "schedule": "0 14 * * *"
     }
   ],
   "headers": [
