@@ -213,4 +213,14 @@ export const Analytics = {
     track('share_card_generated', props),
   shareCardShared:    (props: { session_type?: string; km?: number; method: 'web_share' | 'clipboard' }) =>
     track('share_card_shared', props),
+
+  // P2.7 Third-Week Hold-the-Line: fires once per Week3Reanchor mount.
+  // Funnel pairs with log_completed @ week_number=3+ to measure how the
+  // re-anchor moment shifts continuation rates through weeks 4-6.
+  week3ReanchorShown: (props: {
+    sessions_done:   number
+    sessions_total:  number
+    total_km:        number
+    in_acwr_band:    boolean
+  }) => track('week3_reanchor_shown', props),
 }

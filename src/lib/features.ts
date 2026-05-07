@@ -68,9 +68,14 @@ export const FEATURE_TIERS: Record<FeatureKey, Tier> = {
   plan_history_preview:      'free',
 
   // Analytics — basic free, advanced pro
+  // P2.7 (Third-Week Hold-the-Line): acwr_chart moves pro → free.
+  // The thesis: training-load injury prevention is a safety feature, not a
+  // revenue lever. Surfacing ACWR free at week 3 is the public commitment
+  // behind "we'll keep you running, not bill you for not getting injured".
+  // Founding-pillar T7 + retention-pillar T3 convergence (council /forge v0.2).
   advanced_stats:            'pro',
   pace_trends:               'pro',
-  acwr_chart:                'pro',
+  acwr_chart:                'free',
   wellness_trends:           'pro',
 
   // Integrations

@@ -166,8 +166,15 @@ export function PlanGenerationScreen() {
   const [error, setError]       = useState('')
   const hasRun = useRef(false)
 
-  // Cycle messages + fill progress bar
+  // Cycle messages + fill progress bar (skipped under prefers-reduced-motion;
+  // the underlying request still runs and the screen still progresses, just
+  // without the animated message rotation / progress fill).
   useEffect(() => {
+    if (typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setProgress(85)
+      return
+    }
     const msgTimer      = setInterval(() => setMsgIndex(i => (i+1) % MESSAGES.length), 1200)
     const progressTimer = setInterval(() => setProgress(p => p < 85 ? p+2 : p), 160)
     return () => { clearInterval(msgTimer); clearInterval(progressTimer) }
