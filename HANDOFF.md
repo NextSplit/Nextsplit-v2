@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.3 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 9.4 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.4: Direction split out into docs/ROADMAP.md (v0.1) — single source of truth for delivery, threads, phases, persona coverage. HANDOFF now state-only; §What's Next is a pointer. -->
 <!-- 9.3: claude/new-session-2Ldeo merged to main as PR #2 (3326449). Council/forge systems and all Session 10 work now on main. Vercel preview-vs-production tagging gotcha documented. -->
 <!-- 9.2: post-deploy-unblock — visual redesign of PlanPathSVG via inaugural council pass; council and /forge multi-agent systems shipped as standard tooling. Three live-app UI fixes (header/modal/fuel) ahead of F1. -->
 **Live URL:** https://nextsplit.app
@@ -34,7 +35,9 @@ If you later upgrade to Vercel Pro and want to restore split morning/midday/even
 
 ## How to Start a New Session
 
-Read this file. Then run:
+**Read order:** `CLAUDE.md` → **this file (state)** → `docs/ROADMAP.md` (direction).
+
+Then run:
 ```bash
 cd /home/claude/nextsplit-v2
 git pull origin main
@@ -258,39 +261,25 @@ Both systems are opt-in and built to right-size by default. See `.claude/agents/
 
 The **inaugural council pass** ran on the PlanPathSVG redesign in Session 10 (commit `562a384`) — produced SHIP-WITH-FOLLOWUP with three pre-ship blockers all addressed, plus follow-up tickets (below) logged for post-F1.
 
-## What's Next (Priority Order)
+## What's Next
 
-### Pre-Alpha Prep
-1. **Verify nextsplit.app shows the latest redesign** — deep navy, Splity in hero, 4-tab nav without labels, **single violet finish arch framing single ember finish flag** (no more "three gates"), refined water surface, refined tree density. Refresh and confirm.
-2. **Confirm Stripe keys in Vercel** — already in env vars list, double-check working
-3. **Confirm Resend key in Vercel** — already in env vars list, test send
-4. **Test plan activation on device** — Session 10 added `details[]` surfacing in all 5 callers, so any future Zod failure now shows the failing field name in the error message
-5. **Test AI plan generation** — confirm double-session gym days render correctly. Session 10 fixed the session-shape mismatch (AI was emitting `{type, name, detail}`, app reads `{c, n, det}`); plans now go through `normalizeAIWeeks()` before insert
-6. **Smart-notify** — single 14:00 UTC fire. Sundays send "Weekly wrap"; other days send "Keep the streak" if user has an active plan and hasn't logged. One notification per user per day, max
-7. **3-template regression spot-check** for PlanPathSVG — 8wk 5K, 16wk half, 24wk marathon. Council follow-up. Visual sanity: one arch + one flag at the end; no overlapping trees; coastal water reads as a surface.
+> **Direction now lives in [`docs/ROADMAP.md`](docs/ROADMAP.md)** — the single source of truth for all planned delivery, threads (T1-T10), phases (P0-P4), and persona coverage (A-F). HANDOFF tracks _state_; ROADMAP tracks _direction_.
+>
+> Read `docs/ROADMAP.md` at the start of every session, after this file.
 
-### Short Term — Before Friend Test
-8. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
-9. **Fix any blockers** found in F1 test
-10. **Run UAT DB verify** — `SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts`
+### Session-resume checklist (state verifications only)
 
-### Medium Term — After Friend Test
-11. **Stripe payments live** — flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true`, test checkout flow
-12. **Wider alpha invite** — 10-20 runners, mix of experience levels
-13. **Sentry review** — check what errors are being captured
-14. **Lighthouse audit** — target ≥80 performance on Home and Train
-15. **PlanPathSVG `<animateMotion>` runner** — council-deferred PR-B; runner moves between completed nodes when a week is logged. Native SVG, no bundle cost; gate behind feature flag and `prefers-reduced-motion`.
-16. **PlanPathSVG periodisation glyphs** — council follow-up from coach-domain-expert. Per-week node size scaled to weekly km / ACWR band; deload + taper weeks marked with distinct glyph; stadium zone alignment to taper duration by race distance.
+Quick checks to confirm the deployed app matches the codebase before doing any work. Everything else is in ROADMAP.
 
-### Longer Term — Post Alpha
-17. **Full a11y retrofit on PlanPathSVG** — pre-paid-users. Week-node `role="button"` + `tabIndex` + visible focus ring + keyboard handlers; 4.5:1 contrast on number-on-coloured fills; full `<animate>` reduced-motion coverage. (Baseline already in: `role="img"` + `<title>`, 44×44 hit-rect, reduced-motion gate on pulse animation.)
-18. **Squad Trophy Room** — collective achievements
-19. **Squad seasons** — monthly/annual leaderboard resets
-20. **Coaching marketplace live** — need at least 2 verified coaches
-21. **Strava OAuth live** — connect to live Strava app credentials
-22. **Company formation** — Companies House £12
-23. **ICO registration** — ico.org.uk £40
-24. **Pre-paid-users third-party security audit** — £500-2000, before flipping `NEXT_PUBLIC_PREMIUM_ENFORCED=true` and onboarding paying users. The `ns-security-privacy` agent catches the common failures but is not a substitute for a real pentest.
+1. **Verify nextsplit.app shows the latest redesign** — deep navy, Splity in hero, 4-tab nav without labels, single violet finish arch framing single ember finish flag, refined water surface, refined tree density.
+2. **Confirm Stripe keys live in Vercel** — already in env vars list. (Roadmap: P0 OP2)
+3. **Confirm Resend key live in Vercel** — already in env vars list. (Roadmap: P0 OP2)
+4. **Device-test plan activation** — Session 10 added `details[]` surfacing in all 5 callers; any Zod failure now shows the failing field name. (Roadmap: P0 OP3)
+5. **Device-test AI plan generation** — confirm double-session gym days render. Session 10 fixed `{type,name,detail}` ↔ `{c,n,det}` shape mismatch via `normalizeAIWeeks()`. (Roadmap: P0 OP3)
+6. **Smart-notify** — single 14:00 UTC fire. Sundays "Weekly wrap"; other days "Keep the streak" if active plan and no log. One per user per day max.
+7. **3-template regression spot-check on PlanPathSVG** — 8wk 5K, 16wk half, 24wk marathon. One arch + one flag at the end; no overlapping trees; coastal water reads as a surface.
+
+Everything below this line — F1 friend test, paywall flip, marketplace, security audit, ICO registration, animateMotion runner, periodisation glyphs, Trophy Room, seasons, Strava OAuth, etc. — has been absorbed into `docs/ROADMAP.md` with thread + phase + persona tagging. **Do not duplicate it here.**
 
 ---
 
