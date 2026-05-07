@@ -69,6 +69,23 @@ export function useProfile(): UseProfileReturn {
               sport_focus:         ext.sport_focus,
             })
           } catch { /* PostHog not loaded */ }
+
+          // P2.7 timezone capture — write the user's IANA timezone if it's
+          // missing or has changed (e.g. the user moved). Fire-and-forget;
+          // smart-notify reads this to gate per-user delivery to a sensible
+          // local-time window. Skipped silently if Intl is unavailable.
+          try {
+            const detected = Intl.DateTimeFormat().resolvedOptions().timeZone
+            const stored   = (p as Record<string, unknown>).timezone as string | null | undefined
+            if (detected && detected !== stored) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              void (db(supabase) as any)
+                .from('profiles')
+                .update({ timezone: detected })
+                .eq('id', user.id)
+                .then(() => { /* fire-and-forget */ })
+            }
+          } catch { /* Intl unavailable or update failed — no-op */ }
         }
         setLoading(false)
       }

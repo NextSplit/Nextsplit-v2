@@ -113,9 +113,12 @@ export default function AIOnboardingClient() {
   const selectedLevel = LEVELS.find(l => l.id === level)
   const today         = new Date().toISOString().split('T')[0]
 
-  // Cycle analysis messages
+  // Cycle analysis messages (skipped under prefers-reduced-motion — the
+  // underlying analysis still runs; only the message rotation is animation)
   useEffect(() => {
     if (step !== 'analysing') return
+    if (typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const t = setInterval(() => setMsgIdx(i => (i + 1) % ANALYSE_MESSAGES.length), 1100)
     return () => clearInterval(t)
   }, [step])

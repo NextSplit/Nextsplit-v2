@@ -19,6 +19,7 @@ import { TodayModals } from '../today/TodayModals'
 import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
 import FuelPlanCard from '@/components/FuelPlanCard'
 import SessionCelebration from '@/components/SessionCelebration'
+import Week3Reanchor from '@/components/Week3Reanchor'
 import { shareSessionWithSquadAction } from '@/app/today/actions'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import PreRunBrief from '@/components/PreRunBrief'
@@ -187,6 +188,7 @@ export default function TrainClient() {
   const [milestone, setMilestone]         = useState<keyof typeof MILESTONES | null>(null)
   const [planTab, setPlanTab] = useState<'plan' | 'fuel'>('plan')
   const [planView, setPlanView] = useState<'path' | 'list'>('path')
+  const [showReanchor, setShowReanchor] = useState(false)
 
   const weekRefs = useRef<Map<number, { current: HTMLDivElement | null }>>(new Map())
 
@@ -202,6 +204,22 @@ export default function TrainClient() {
     return Object.values(logs).filter((l: TrainingLog) => !!l.done && new Date(l.created_at) >= mon)
       .reduce((s: number, l: TrainingLog) => s + (l.km ?? 0), 0)
   })()
+
+  // P2.7 Third-Week Hold-the-Line: trigger the re-anchor once per plan when
+  // the user reaches week 3. Persist the seen-state in localStorage keyed
+  // on plan.id so it doesn't re-fire on every session resume. Skipped if
+  // the user has no logs yet (nothing to re-anchor against).
+  useEffect(() => {
+    if (!plan?.id) return
+    if ((plan.current_week ?? 0) !== 3) return
+    if (allLogs.filter((l: TrainingLog) => l.done).length === 0) return
+    const seenKey = `nextsplit_reanchor_seen_${plan.id}`
+    try {
+      if (localStorage.getItem(seenKey) === '1') return
+      setShowReanchor(true)
+      localStorage.setItem(seenKey, '1')
+    } catch { /* localStorage unavailable */ }
+  }, [plan?.id, plan?.current_week, allLogs])
 
   // Total XP
   const totalXP = allLogs.filter((l: TrainingLog) => l.done).length * 15
@@ -691,6 +709,23 @@ export default function TrainClient() {
       )}
 
       {/* Session celebration */}
+      {/* P2.7 Third-Week Hold-the-Line — fires once per plan when user
+          reaches week 3 and has at least one done log. */}
+      {showReanchor && plan && (
+        <Week3Reanchor
+          sessionsDone={allLogs.filter((l: TrainingLog) => l.done).length}
+          sessionsTotal={(weeks ?? []).reduce((sum, w) => sum +
+            (w.days ?? []).reduce((s2, d) => s2 +
+              (d.sessions ?? []).filter(ss => ss.c && ss.c !== 'rest').length, 0), 0)}
+          totalKm={allLogs.filter((l: TrainingLog) => l.done).reduce((s: number, l: TrainingLog) => s + (l.km ?? 0), 0)}
+          acwr={(() => {
+            const series = calcACWR(allLogs, weeks)
+            return series.length > 0 ? series[series.length - 1].acwr : null
+          })()}
+          onDismiss={() => setShowReanchor(false)}
+        />
+      )}
+
       {celebration && (
         <SessionCelebration
           session={celebration.session}

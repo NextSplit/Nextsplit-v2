@@ -1,7 +1,13 @@
 // Single consolidated cron — Vercel Hobby caps daily crons at 2 (founder
 // decision 2026-05-07, roadmap §9 v0.3). All time-driven push dispatch lands
-// here, NOT in a separate /api/cron/squad-nudges route. Per-timezone delivery
-// returns to the table at the paywall flip (Open Q #5).
+// here, NOT in a separate /api/cron/squad-nudges route.
+//
+// Per-user timezone gate (P2.7 followup): the cron fires once daily at
+// 14:00 UTC. For each user we compute their local hour using their stored
+// IANA timezone (`profiles.timezone`, captured client-side in useProfile)
+// and skip delivery if the local hour is outside 09:00-21:00. Users
+// without a timezone fall back to "send" — preserves the original behaviour
+// for accounts created before the column existed.
 //
 // Priority order, first match wins (one notification per user per fire):
 //   1. Sunday → weekly wrap (regardless of log state)
@@ -13,6 +19,27 @@
 import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+
+// Returns the user's local hour (0-23) given an IANA timezone, or null
+// if Intl can't resolve it. Errors are swallowed to default-allow.
+function localHourFor(timezone: string | null): number | null {
+  if (!timezone) return null
+  try {
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: timezone, hour: '2-digit', hour12: false,
+    })
+    const parts = fmt.formatToParts(new Date())
+    const hourStr = parts.find(p => p.type === 'hour')?.value
+    if (!hourStr) return null
+    const h = parseInt(hourStr, 10)
+    return Number.isFinite(h) ? h : null
+  } catch {
+    return null
+  }
+}
+
+const QUIET_START_HOUR = 9   // 09:00 local
+const QUIET_END_HOUR   = 21  // 21:00 local — last fire window starts at 20:59
 
 export async function GET(req: Request) {
   const authHeader = req.headers.get('authorization')
@@ -28,7 +55,7 @@ export async function GET(req: Request) {
     const todayStr = new Date().toISOString().slice(0, 10)
 
     const { data: users } = await s
-      .from('profiles').select('id, display_name')
+      .from('profiles').select('id, display_name, timezone')
       .not('push_subscription', 'is', null).limit(500)
 
     if (!users?.length) return NextResponse.json({ sent: 0 })
@@ -51,7 +78,16 @@ export async function GET(req: Request) {
     // First match wins; any user gets at most ONE notification per fire.
     const toNotify: Array<{ userId: string; title: string; body: string }> = []
 
+    let skippedQuietHours = 0
     for (const user of users) {
+      // P2.7 timezone gate: skip if outside the user's 09:00-21:00 local
+      // window. Users without a timezone fall back to "send" (default-allow).
+      const localHour = localHourFor((user as { timezone: string | null }).timezone)
+      if (localHour !== null && (localHour < QUIET_START_HOUR || localHour >= QUIET_END_HOUR)) {
+        skippedQuietHours++
+        continue
+      }
+
       // Slot 1: Sunday weekly wrap.
       if (isSunday) {
         toNotify.push({
@@ -88,7 +124,7 @@ export async function GET(req: Request) {
       ).catch(() => {})
     }
 
-    return NextResponse.json({ sent: toNotify.length, isSunday })
+    return NextResponse.json({ sent: toNotify.length, isSunday, skippedQuietHours })
   } catch (err) {
     Sentry.captureException(err)
     return NextResponse.json({ error: 'Failed' }, { status: 500 })

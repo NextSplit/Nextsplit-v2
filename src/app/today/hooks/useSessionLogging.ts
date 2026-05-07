@@ -24,6 +24,7 @@ import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import { getSessionXP } from '@/lib/rpg'
 import { shareSessionWithSquadAction } from '../actions'
+import { creditReferralRewardIfEligibleAction } from '../referral'
 import type { PlanDay, PlanSession, TrainingLog, UserPlan } from '@/types/database'
 
 interface LogParams {
@@ -143,6 +144,11 @@ export function useSessionLogging(deps: Deps) {
       // awaits this for its feed-card preview; here we just ensure the
       // squad sees the log. RPC errors are Sentry-captured server-side.
       shareSessionWithSquadAction(log.id).catch(() => {})
+
+      // P2.3 referral reward — fire-and-forget. RPC short-circuits if the
+      // caller wasn't referred, was already credited, or has < 5 done logs.
+      // Idempotent under repeat fires; safe to call on every log.
+      creditReferralRewardIfEligibleAction().catch(() => {})
     }
 
     beginUndo(

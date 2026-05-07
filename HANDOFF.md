@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.6 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 9.7 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.7: Marathon dev session shipped Phase 1 + Phase 2 code-feasible items across PR #5 (merged), PR #6 (merged), PR #7 (open: P1.2 PECR fix + reaction notifications + 6 follow-ups), PR #8 (open: P2.2 + P2.3 + P2.6 + P2.7 partial). Two open PRs need founder action: (a) Vercel env var rename NEXT_PUBLIC_PREMIUM_ENFORCED → PREMIUM_ENFORCED for PR #7's P1.3; (b) 2 Supabase migrations for PR #8 (phase-p2-3-referral-reward.sql + phase-p2-7-timezone.sql). Phase 1 done; Phase 2 6/7 done (P2.1 squad-tab IA promotion + P2.5 friction audit + P2.7 deload suppression deferred — all gated on F1 friend-test signal or council). Phase 3 (Coach Suite + retention proof) deliberately not started — it's roadmap week 7-14, dependent on F1 retention data. NEXT GATING EVENT: F1 friend test (P1.8). -->
 <!-- 9.6: P1.0 partial decomposition landed on claude/review-project-status-lGBPu (5 commits 29d7307..cdf8fd5). Council /council 2026-05-07 verdict HOLD on full P1.0; founder picked Path B (surgical fixes + decomposition). Pre-ship blockers all resolved: S1+S2 capture session+effectivePace before await (kills stale-closure planDay → wrong squad_feed metadata bug + propagates derived pace into milestone payload); S3 react-hooks/exhaustive-deps bumped warn→error so future stale-closure regressions fail CI. T1 useUndoCountdown hook + T2 useSessionLogging hook extracted from TodayClient (870→759 lines, 15→10 useState). L1 useLogFormState lift in LogModal closes the silent km/duration discard-warning gap (12→3 useState). Remaining: L2 LogModal split into BasicEntry/AdvancedEntry/SaveControls and A1 AthleteDetailClient split into 4 sections — both pure JSX surgery, no bug-fix value, deferred pending live smoke-test on nextsplit.app. -->
 <!-- 9.5: P1.0a Prerequisites PR landed on claude/review-project-status-lGBPu (10 commits b310fc0..4547cdd). Schema migration applied + verified in Supabase: squad_feed.milestone_type CHECK gains 'session_logged'; training_log_id FK + partial UNIQUE; profiles.share_logs_with_squad NOT NULL DEFAULT true; SECURITY DEFINER RPC insert_squad_feed_on_log fan-out; INSERT lockdown via REVOKE FROM authenticated. Three migration-fragility fixes pushed (CHECK lookup canonical-form, RPC loop reset, policy-drop by predicate). Code-side P1.1 wire-up live: SessionCelebration shows "Posted to your squad's feed" affirmation, ACWR-band gated single-line copy, NudgeSquadPill on Home (30min post-log), iOS standalone push gate, PostHog logCompleted/squadFeedCardShown/nudgeSent/nudgeOpened taxonomy. Branch is unmerged — PR-to-main pending. -->
 <!-- 9.4: Direction split out into docs/ROADMAP.md (v0.1) — single source of truth for delivery, threads, phases, persona coverage. HANDOFF now state-only; §What's Next is a pointer. -->
@@ -273,18 +274,55 @@ The **inaugural council pass** ran on the PlanPathSVG redesign in Session 10 (co
 
 Quick checks to confirm the deployed app matches the codebase before doing any work. Everything else is in ROADMAP.
 
-**P1.0/P1.0a/P1.1 entry-point (top priority next session):**
-0. **Branch `claude/review-project-status-lGBPu` is unmerged after PR #4 merged P1.0a + P1.1 to main.** New work since: 5 commits implementing council-mandated surgical bug fixes + partial P1.0 decomposition (`29d7307` capture session+effectivePace → `cdf8fd5` useLogFormState lift). Open a fresh PR to ship these to nextsplit.app, or continue with L2 + A1 first.
-0a. **Council-mandated SURGICAL FIXES already shipped on this branch:**
-   - `29d7307` captures `session` and `effectivePace` before async log save — kills stale-closure `planDay` writing wrong session_name/session_type silently to squad_feed and milestone payloads (qa-risk + coach-domain-expert + security-privacy GDPR Article 5(1)(d) convergence).
-   - `2fdaa87` bumps `react-hooks/exhaustive-deps` from `warn` → `error` so future stale-closure regressions fail CI.
-   - `71c5d76` extracts `useUndoCountdown` hook (eliminates the eslint-disable on 2 effects).
-   - `70513fb` extracts `useSessionLogging` hook (returns `Promise<TrainingLog | null>`).
-   - `cdf8fd5` lifts `useLogFormState` in LogModal — comprehensive `isDirty` covers all 7 form fields (was just notes + paceInput; closes silent km/duration discard-loss gap).
-0b. **Smoke-test checklist before shipping these:** start dev server (`npm run dev`), then on `/today` and `/train` verify (a) log a session, see celebration with green "Posted to your squad's feed" pill if user has a squad, (b) tap Undo within 8s, undo works, (c) re-log and see celebration again, (d) open LogModal, type km only, tap X — discard warning MUST appear (was silently lost before L1), (e) navigate date offset between save and async-resolve — no wrong session_name in squad_feed, (f) RPE on touchend (mobile), (g) slow-network double-submit guard.
-0c. **Remaining P1.0 work (deferred):** L2 LogModal split into BasicEntry/AdvancedEntry/SaveControls (pure JSX surgery, no bug-fix value); A1 AthleteDetailClient split into 4 sections (coach-side, not F1-critical). Both can wait until after live smoke-test confirms current state is stable.
-0d. **One Supabase cleanup still recommended:** run `DROP POLICY IF EXISTS "Members post to feed" ON public.squad_feed;` to remove the dead RLS policy left from a pre-migration rename. The lockdown holds either way (REVOKE blocks at the role layer), but cleanup is recommended for hygiene.
-0e. **P1.1 user-facing additions live on main since PR #4:** post-log celebration shows green "Posted to your squad's feed" pill (or empty-state "share when you're ready" copy); Splity reaction line is ACWR-band gated; Home tab shows "🚀 Nudge squad" pill for 30 minutes after every done log; iOS Safari push subscribe is gated on standalone display-mode. Squad-nudge guilt copy purged from `src/lib/squad-nudges.ts`. Cron consolidation is comment-level only — slots 2 + 3 are TODOs in `src/app/api/cron/smart-notify/route.ts`.
+**Resume entry-point (top priority next session):**
+
+0. **TWO OPEN PRS NEED FOUNDER ACTION** before more code:
+
+   **PR #7** (https://github.com/NextSplit/Nextsplit-v2/pull/7) — P1.2 PECR + reaction notifications + 6 follow-ups
+   - **Founder action:** rename Vercel env var `NEXT_PUBLIC_PREMIUM_ENFORCED` → `PREMIUM_ENFORCED` (drop the `NEXT_PUBLIC_` prefix). Keep value `false` for now. Redeploy.
+   - **Smoke-test (5 cases):** fresh-browser cookie state pre/post Accept; 2-account reaction → push test; SquadFeed pagination + realtime; LogModal inputs unchanged; AthleteDetail charts render.
+
+   **PR #8** (https://github.com/NextSplit/Nextsplit-v2/pull/8) — Phase 2 batch (P2.2 + P2.3 + P2.6 + P2.7)
+   - **Founder action: apply 2 Supabase migrations IN ORDER:**
+     1. `supabase/migrations/phase-p2-3-referral-reward.sql` — adds `profiles.referral_reward_months` + `credit_referral_reward_if_eligible()` RPC.
+     2. `supabase/migrations/phase-p2-7-timezone.sql` — adds `profiles.timezone`.
+     - Verify: `SELECT column_name FROM information_schema.columns WHERE table_name='profiles' AND (column_name LIKE 'referral_%' OR column_name='timezone');` should include `referral_reward_months` and `timezone`.
+   - **Smoke-test (5 cases):** /you renders lean YouClient (character + XP + badges + Settings link); /squad Week3Reanchor fires once on plan week 3; reduced-motion onboarding skips animations; referred user's 5th log credits both parties; smart-notify response includes `skippedQuietHours` count.
+
+1. **NEXT GATING EVENT: F1 friend test (P1.8).** 4-5 real runners on real Android devices over 1-2 weeks. F1 data unlocks:
+   - **P2.1** (squad → first-class tab decision) — keep or replace based on `/squad` engagement
+   - **P2.5** (daily-log friction audit) — needs real friction reports, not synthetic
+   - **P2.7 deload suppression council** — what does "ACWR-aware adapt" mean concretely
+   - **Phase 3 prioritisation** — coach-suite items vs retention-proof items
+
+2. **Phase 2 status: 6 of 7 items done.** P2.1 + P2.5 + P2.7-deload all gated on F1.
+
+3. **Phase 3 deliberately not started.** Roadmap week 7-14, gated on F1 retention proof clearing the bar (P3.8). Starting Phase 3 before F1 = building on assumptions.
+
+4. **What's live on main right now** (after PR #4, #5, #6 merged):
+   - P1.0a schema migration applied (squad_feed CHECK + RPC + share_logs_with_squad + lockdown)
+   - P1.1 loop: post-log celebration with "Posted to your squad's feed" affirmation, ACWR-band Splity copy, NudgeSquadPill on /today, iOS standalone push gate
+   - P1.0 partial decomposition: useUndoCountdown + useSessionLogging + useLogFormState lifted; surgical S1+S2 fixes (planDay capture + effectivePace propagation)
+   - P1.3 server-side paywall enforcement (server-only flag)
+   - P1.4 6 missing CSS tokens defined
+   - P1.5 Splity small-size animation discipline
+   - P1.6 PostHog taxonomy (logCompleted, squadFeedCardShown, nudgeSent, nudgeOpened, celebrationScreenShown, shareCardGenerated, shareCardShared, week3ReanchorShown) + timezone enrichment on every event
+   - SquadFeed recipient view + reactions + pagination + realtime + reaction notifications
+   - HANDOFF v9.6 (this section now v9.7)
+
+5. **What lands on main when PR #7 + #8 merge:**
+   - PR #7: PECR PostHog gating (cookie set only after Accept), reaction → push notifications, banner Decline parity, P1.6 timezone enrichment
+   - PR #8: Phase 2 — referral 5-log reward + Week3Reanchor + acwr_chart pro→free + motion guards + lean YouClient at /you + per-user timezone gate on smart-notify + docs/motion.md
+
+6. **Deferred concrete work (resume candidates after F1):**
+   - **L2** — LogModal full BasicEntry/AdvancedEntry/SaveControls structural split (current: just file-extraction of inputs)
+   - **A1** — AthleteDetailClient 4-section split (current: just charts file-extraction)
+   - **P2.7 deload suppression** — needs council pass on what ACWR-aware adapt means
+   - **Reaction grouping** in push notifications (3-people-reacted aggregation)
+   - **SquadFeed delete-old-rows** maintenance job
+   - **Founder health-check endpoint** /api/admin/health (single URL for F1 monitoring)
+
+7. **Known Supabase cleanup recommended (low priority):** `DROP POLICY IF EXISTS "Members post to feed" ON public.squad_feed;` — dead RLS policy from pre-migration rename. Lockdown still holds via REVOKE; this is hygiene only.
 1. **Verify nextsplit.app shows the latest redesign** — deep navy, Splity in hero, 4-tab nav without labels, single violet finish arch framing single ember finish flag, refined water surface, refined tree density.
 2. **Confirm Stripe keys live in Vercel** — already in env vars list. (Roadmap: P0 OP2)
 3. **Confirm Resend key live in Vercel** — already in env vars list. (Roadmap: P0 OP2)
