@@ -1,7 +1,7 @@
 'use client'
 
-import { useRef, useEffect, useState, useCallback } from 'react'
-import type { PlanWeek, PlanSession, TrainingLog } from '@/types/database'
+import { useRef, useEffect, useState } from 'react'
+import type { PlanWeek, TrainingLog } from '@/types/database'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -12,6 +12,20 @@ interface Props {
   onWeekTap:    (week: PlanWeek) => void
   planName:     string
   raceDate:     string | null
+}
+
+// ── Reduced-motion detection ──────────────────────────────────────────────────
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReduced(mq.matches)
+    const onChange = (e: MediaQueryListEvent) => setReduced(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return reduced
 }
 
 // ── Environment zones based on week position ──────────────────────────────────
@@ -151,17 +165,6 @@ function Cloud({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
   )
 }
 
-function Wave({ x, y, width = 60 }: { x: number; y: number; width?: number }) {
-  return (
-    <g transform={`translate(${x},${y})`} opacity={0.5}>
-      <path d={`M 0 0 Q ${width*0.25} -5 ${width*0.5} 0 Q ${width*0.75} 5 ${width} 0`}
-        fill="none" stroke="#1e90d4" strokeWidth={2} />
-      <path d={`M 5 8 Q ${width*0.3} 3 ${width*0.6} 8 Q ${width*0.8} 13 ${width-5} 8`}
-        fill="none" stroke="#1e90d4" strokeWidth={1.5} />
-    </g>
-  )
-}
-
 function Cliff({ x, y, w = 50, h = 60 }: { x: number; y: number; w?: number; h?: number }) {
   return (
     <g transform={`translate(${x},${y})`} opacity={0.65}>
@@ -190,16 +193,16 @@ function Crowd({ x, y, count = 8 }: { x: number; y: number; count?: number }) {
 }
 
 function Stadium({ x, y }: { x: number; y: number }) {
+  // Single composed centrepiece — frames the finish flag rendered separately at the same x.
+  // No "FINISH" banner here; the lone ember finish flag is the finish signal.
   return (
-    <g transform={`translate(${x},${y})`} opacity={0.7}>
+    <g transform={`translate(${x},${y})`} opacity={0.85}>
       {/* Arch */}
-      <path d="M -50 0 Q -50 -60 0 -60 Q 50 -60 50 0" fill="none" stroke="#8b5cf6" strokeWidth={4} />
+      <path d="M -55 0 Q -55 -65 0 -65 Q 55 -65 55 0" fill="none"
+        stroke="var(--ns-violet, #a855f7)" strokeWidth={4} strokeLinecap="round" />
       {/* Pillars */}
-      <rect x={-52} y={-40} width={6} height={40} fill="#6b3fa0" />
-      <rect x={46} y={-40} width={6} height={40} fill="#6b3fa0" />
-      {/* Finish banner */}
-      <rect x={-40} y={-55} width={80} height={8} rx={2} fill="#ec4899" opacity={0.9} />
-      <text x={0} y={-48} textAnchor="middle" fontSize={5} fill="white" fontWeight="bold">FINISH</text>
+      <rect x={-58} y={-45} width={6} height={45} rx={1} fill="var(--ns-violet, #a855f7)" opacity={0.55} />
+      <rect x={52}  y={-45} width={6} height={45} rx={1} fill="var(--ns-violet, #a855f7)" opacity={0.55} />
     </g>
   )
 }
@@ -267,29 +270,27 @@ function SceneryLayer({
 
   if (zone === 'forest') return (
     <g>
-      {/* Dense forest - trees on both sides */}
-      {[0,1,2].map(i => (
-        <Tree key={`l${i}`} x={5 + i * 18}  y={y} h={35 + r(i)*12} variant={1} />
+      {/* Foreground trees — left then right; rendered after midground scenery in main loop.
+          Density capped at 2 per side per week (was 3) to prevent stacking compounding into a wall. */}
+      {[0,1].map(i => (
+        <Tree key={`l${i}`} x={8 + i * 22}  y={y} h={35 + r(i)*12} variant={1} />
       ))}
-      {[0,1,2].map(i => (
-        <Tree key={`r${i}`} x={295 + i * 18} y={y} h={35 + r(i+10)*12} variant={1} />
+      {[0,1].map(i => (
+        <Tree key={`r${i}`} x={300 + i * 22} y={y} h={35 + r(i+10)*12} variant={1} />
       ))}
-      <Tree x={20 + r(20)*15} y={y + 15} h={28} variant={2} />
-      <Tree x={310 + r(21)*10} y={y + 15} h={28} variant={2} />
       {/* Firefly dots */}
       {[0,1,2,3].map(i => (
         <circle key={i} cx={r(30+i) * width} cy={y - r(31+i) * 40} r={1.5}
-          fill="#84cc16" opacity={0.4 + r(32+i) * 0.4} />
+          fill="var(--ns-lime, #7fff4d)" opacity={0.4 + r(32+i) * 0.4} />
       ))}
     </g>
   )
 
   if (zone === 'coastal') return (
     <g>
+      {/* Cliffs only — water surface is rendered once as a backdrop band, not per week. */}
       <Cliff x={10}  y={y + 10} w={45} h={55} />
       <Cliff x={270} y={y + 10} w={55} h={45} />
-      <Wave  x={50 + r(1) * 80} y={y + 30} width={70} />
-      <Wave  x={150 + r(2) * 60} y={y + 45} width={50} />
       <Cloud x={r(3) * width * 0.5 + 30}  y={y - 35} scale={0.8} />
       <Cloud x={r(4) * width * 0.3 + 180} y={y - 50} scale={0.6} />
       {/* Seagulls */}
@@ -298,17 +299,14 @@ function SceneryLayer({
     </g>
   )
 
-  // Stadium
+  // Stadium zone — per-week elements only (lights, crowd flecks).
+  // The single Stadium arch is rendered once in the main canvas, not per week.
   return (
     <g>
-      <Stadium x={width / 2} y={y - 20} />
-      <Crowd x={width * 0.25} y={y + 15} count={6} />
-      <Crowd x={width * 0.65} y={y + 15} count={6} />
-      {/* Lights */}
-      <circle cx={40}  cy={y - 60} r={6} fill="#f0a500" opacity={0.7} />
-      <circle cx={320} cy={y - 60} r={6} fill="#f0a500" opacity={0.7} />
-      <line x1={40}  y1={y-60} x2={40}  y2={y+20} stroke="#555" strokeWidth={2} />
-      <line x1={320} y1={y-60} x2={320} y2={y+20} stroke="#555" strokeWidth={2} />
+      <Crowd x={width * 0.22} y={y + 15} count={5} />
+      <Crowd x={width * 0.68} y={y + 15} count={5} />
+      <circle cx={40}  cy={y - 60} r={5} fill="var(--ns-amber, #ffb800)" opacity={0.6} />
+      <circle cx={320} cy={y - 60} r={5} fill="var(--ns-amber, #ffb800)" opacity={0.6} />
     </g>
   )
 }
@@ -336,33 +334,67 @@ function StarsBackground({ width, height }: { width: number; height: number }) {
 export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, planName, raceDate }: Props) {
   const svgRef    = useRef<SVGSVGElement>(null)
   const [active, setActive] = useState<number | null>(null)
-  const W         = 360
-  const perWeek   = 90
-  const totalH    = 80 + weeks.length * perWeek + 160
+  const reducedMotion = useReducedMotion()
 
   // Scroll to current week
   useEffect(() => {
+    if (!weeks?.length) return
     const el = document.getElementById(`week-node-${currentWeekN}`)
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }, [currentWeekN])
+  }, [currentWeekN, weeks?.length])
 
+  // QA edge guard — empty/loading state. Placed AFTER all hooks to keep call
+  // order stable across the empty→loaded transition.
+  if (!weeks?.length) return null
+
+  const W         = 360
+  const perWeek   = 90
+  const totalH    = 80 + weeks.length * perWeek + 160
   const points = buildPath(weeks.length, W)
+  const lastIdx = weeks.length - 1
+  const lastPt = points[lastIdx]
 
-  // Compute zone transitions (gradient background bands)
-  const zones = weeks.map((w, i) => getZone(i / Math.max(weeks.length - 1, 1)))
+  // Compute zone membership and y-bounds from weeks actually present (not the
+  // fixed 5-zone array — a 6-week plan may have no coastal zone at all).
+  const zones = weeks.map((_, i) => getZone(i / Math.max(weeks.length - 1, 1)))
+  const zoneRange = (zone: typeof zones[number]) => {
+    const idxs = zones.map((z, i) => z === zone ? i : -1).filter(i => i >= 0)
+    if (idxs.length === 0) return null
+    const yStart = points[idxs[0]]?.y ?? 0
+    const yEnd   = points[idxs[idxs.length - 1]]?.y ?? yStart
+    return { yStart, yEnd }
+  }
+  const coastalRange = zoneRange('coastal')
 
-  // Build the track path (slightly wider — dual lines like a road)
+  // Build the track path
   const pathStr = pointsToSVGPath(points)
 
+  // Finish-moment composition: arch + flag share the final week node's x,
+  // positioned just below the last node so they read as one finish.
+  const finishX = lastPt?.x ?? W / 2
+  const finishY = (lastPt?.y ?? 0) + 80
+
   return (
-    <div className="relative" style={{ width: '100%', overflowX: 'hidden' }}>
+    <div className="relative" style={{
+      width: '100%',
+      overflowX: 'hidden',
+      minHeight: '100dvh',
+      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+    }}>
       <svg
         ref={svgRef}
+        role="img"
+        aria-labelledby="planpath-title planpath-desc"
         width="100%"
         viewBox={`0 0 ${W} ${totalH}`}
-        style={{ display: 'block' }}
+        style={{ display: 'block', touchAction: 'manipulation' }}
         preserveAspectRatio="xMidYMin meet"
       >
+        <title id="planpath-title">{planName} — training plan path</title>
+        <desc id="planpath-desc">
+          {`A scrollable visual path of ${weeks.length} weeks. Currently on week ${currentWeekN} of ${weeks.length}.`}
+          {raceDate ? ` Race day: ${new Date(raceDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.` : ''}
+        </desc>
         <defs>
           {/* Sky gradients per zone */}
           {(['park','hills','forest','coastal','stadium'] as const).map(z => (
@@ -371,19 +403,18 @@ export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, plan
               <stop offset="100%" stopColor={ZONE_SKY[z][1]} />
             </linearGradient>
           ))}
-          {/* Track gradient */}
-          <linearGradient id="track-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3a3a4a" />
-            <stop offset="100%" stopColor="#2a2a3a" />
-          </linearGradient>
+          {/* Water surface pattern — replaces per-week wave glyphs.
+              Tiles a soft horizontal ripple. Uses --ns-cobalt brand colour. */}
+          <pattern id="water-pattern" x="0" y="0" width="60" height="14" patternUnits="userSpaceOnUse">
+            <path d="M 0 7 Q 15 2 30 7 T 60 7" fill="none"
+              stroke="var(--ns-cobalt, #4d8aff)" strokeWidth="1.2" opacity="0.55" />
+            <path d="M -5 11 Q 12 7 25 11 T 55 11" fill="none"
+              stroke="var(--ns-cobalt, #4d8aff)" strokeWidth="0.8" opacity="0.35" />
+          </pattern>
           {/* Glow filter */}
           <filter id="glow">
             <feGaussianBlur stdDeviation="3" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          {/* Soft filter */}
-          <filter id="soft">
-            <feGaussianBlur stdDeviation="1.5" />
           </filter>
           {/* Clip path */}
           <clipPath id="svg-clip">
@@ -407,10 +438,18 @@ export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, plan
             )
           })}
 
-          {/* ── Scenery layers ── */}
+          {/* ── Once-per-zone backdrop centrepieces ── */}
+          {/* Single water surface for the full coastal range — replaces N stacked Wave glyphs */}
+          {coastalRange && (
+            <rect x={0} y={coastalRange.yStart - 30} width={W}
+              height={coastalRange.yEnd - coastalRange.yStart + 80}
+              fill="url(#water-pattern)" opacity={0.85} />
+          )}
+
+          {/* ── Per-week scenery layers ── */}
           {weeks.map((w, i) => {
             const pt   = points[i] ?? { x: 0, y: 0 }
-            const zone = getZone(i / Math.max(weeks.length - 1, 1))
+            const zone = zones[i]
             return (
               <SceneryLayer key={i} zone={zone} y={pt.y} width={W} seed={i * 7 + 3} />
             )
@@ -448,7 +487,6 @@ export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, plan
             const pct      = total > 0 ? done / total : 0
             const isPast   = week.n < currentWeekN
             const isCurrent = week.n === currentWeekN
-            const isActive = active === week.n
             const r        = isCurrent ? 20 : 15
 
             // Arc calculations
@@ -458,7 +496,15 @@ export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, plan
             return (
               <g key={week.n} id={`week-node-${week.n}`}
                 onClick={() => { setActive(week.n); onWeekTap(week) }}
-                style={{ cursor: 'pointer' }}>
+                role="button"
+                aria-label={`Week ${week.n}${week.title ? `: ${week.title}` : ''}, ${done} of ${total} sessions complete${isCurrent ? ' (current)' : isPast ? ' (past)' : ''}`}
+                style={{ cursor: 'pointer', touchAction: 'manipulation' }}>
+
+                {/* Invisible 44×44 hit-rect for thumb-zone tap target (Mobile + a11y).
+                    Sits beneath the visual node so tap area is always large enough,
+                    even when the visual node is r=15 (30×30 visual). */}
+                <rect x={pt.x - 22} y={pt.y - 22} width={44} height={44}
+                  fill="transparent" pointerEvents="all" />
 
                 {/* Node glow for current */}
                 {isCurrent && (
@@ -501,13 +547,18 @@ export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, plan
                   </text>
                 )}
 
-                {/* Pulsing ring for current */}
+                {/* Pulsing ring for current — gated behind prefers-reduced-motion (WCAG 2.3.3) */}
                 {isCurrent && (
-                  <circle cx={pt.x} cy={pt.y} r={r + 4} fill="none"
-                    stroke={colour} strokeWidth={2} opacity={0.4}>
-                    <animate attributeName="r" values={`${r+2};${r+10};${r+2}`} dur="2s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite" />
-                  </circle>
+                  reducedMotion ? (
+                    <circle cx={pt.x} cy={pt.y} r={r + 4} fill="none"
+                      stroke={colour} strokeWidth={2} opacity={0.4} />
+                  ) : (
+                    <circle cx={pt.x} cy={pt.y} r={r + 4} fill="none"
+                      stroke={colour} strokeWidth={2} opacity={0.4}>
+                      <animate attributeName="r" values={`${r+2};${r+10};${r+2}`} dur="2s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite" />
+                    </circle>
+                  )
                 )}
 
                 {/* Week label card on alternating sides */}
@@ -553,21 +604,29 @@ export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, plan
           {/* ── Runner on current week ── */}
           {points[currentWeekN - 1] && (() => {
             const pt = points[currentWeekN - 1]
-            return <RunnerIcon x={pt.x} y={pt.y - 32} colour="#06b6d4" />
+            return <RunnerIcon x={pt.x} y={pt.y - 32} colour="var(--ns-cobalt, #4d8aff)" />
           })()}
 
           {/* ── Start marker ── */}
           <g transform={`translate(${points[0]?.x ?? W/2}, 40)`}>
-            <circle cx={0} cy={0} r={14} fill="#22c55e" opacity={0.9} />
+            <circle cx={0} cy={0} r={14} fill="var(--ns-forest, #00e676)" opacity={0.9} />
             <text x={0} y={5} textAnchor="middle" fontSize={10}>🚀</text>
           </g>
 
-          {/* ── Finish marker ── */}
-          <g transform={`translate(${points[weeks.length - 1]?.x ?? W/2}, ${totalH - 60})`}>
-            <circle cx={0} cy={0} r={18} fill="#ec4899" opacity={0.9} filter="url(#glow)" />
+          {/* ── Finish moment — single composed arch + flag ──
+              UX/Visual recommendation: nest the ember finish flag at the same x as
+              the violet Stadium arch so the arch frames the flag as ONE finish, not two
+              competing markers. The arch is rendered only when the final week is in
+              the stadium zone (true for all but very short plans). */}
+          {zones[lastIdx] === 'stadium' && lastPt && (
+            <Stadium x={finishX} y={finishY} />
+          )}
+          <g transform={`translate(${finishX}, ${finishY})`}>
+            <circle cx={0} cy={0} r={18} fill="var(--ns-ember, #ff3d6e)" opacity={0.95} filter="url(#glow)" />
             <text x={0} y={6} textAnchor="middle" fontSize={13}>🏁</text>
             {raceDate && (
-              <text x={0} y={28} textAnchor="middle" fontSize={6.5} fill="#ec4899" fontWeight="bold">
+              <text x={0} y={32} textAnchor="middle" fontSize={6.5}
+                fill="var(--ns-ember, #ff3d6e)" fontWeight="bold">
                 {new Date(raceDate).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'2-digit' })}
               </text>
             )}

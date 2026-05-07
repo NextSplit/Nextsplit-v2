@@ -1,6 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.0 | **May 2026** | **Canonical — replaces all previous HANDOFF files**
-<!-- 9.0: deploy pipeline broken — Vercel webhook not firing on push, support ticket open -->
+**Version:** 9.2 | **6 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.2: post-deploy-unblock — visual redesign of PlanPathSVG via inaugural council pass; council and /forge multi-agent systems shipped as standard tooling. Three live-app UI fixes (header/modal/fuel) ahead of F1. -->
 **Live URL:** https://nextsplit.app
 **GitHub:** https://github.com/NextSplit/Nextsplit-v2
 **Stack:** Next.js 15 App Router · TypeScript strict · Supabase · Tailwind · CSS vars · PWA · Anthropic SDK
@@ -10,30 +10,24 @@
 
 ---
 
-## 🚨 ACTIVE BLOCKER — Deploy Pipeline Broken
+## ✅ Deploy Pipeline — Unblocked (6 May 2026)
 
-**Status as of session end (May 2026):** Pushes to `main` are not triggering Vercel deployments. nextsplit.app is running stale code (commit `d9cff8c` "plan completion ceremony") — the entire Option E redesign + Splity + 4-tab nav + 20 features build is committed to `main` but not deployed.
+**Status:** Auto-deploy on push to `main` is working again. Session 9's "Vercel webhook not firing" diagnosis was wrong from the start.
 
-**What broke it:** A GitHub PAT was committed to a doc → GitHub secret-scanning auto-revoked it → that revocation appears to have invalidated the credentials Vercel uses to receive webhooks from GitHub. From that point on, pushes go through to GitHub fine but Vercel never gets notified.
+**Real root cause:** Vercel Hobby tier rejects any cron expression that fires more than once per day. `vercel.json` had `smart-notify` on `0 9,14,18 * * *` (3× daily, added in commit `b466b6f` Session 8). Every deploy from that commit onward failed at build-time validation with the error `Hobby accounts are limited to daily cron jobs.` Pushes were going through, GitHub was notifying Vercel, Vercel was building — and the build was dying silently at cron validation. The auto-deploy on `main` never surfaced the error in any UI Session 9 looked at; the failure only became visible when a PR was opened in Session 10 and the PR check showed "Vercel — Deployment failed".
 
-**What was tried this session (none worked):**
-- Vercel Git integration disconnect/reconnect ✗
-- Vercel GitHub App uninstall/reinstall ✗
-- Manual deploy hook trigger (returns `{job: PENDING}` but no deployment appears) ✗
-- Force-commit via GitHub web UI ✗
-- GitHub Actions workflow calling deploy hook (workflow runs green but deploy never appears) ✗
-- OAuth re-check ✗
+**Fix:** commit `8b84582` reduced `smart-notify` to `0 14 * * *` (single 14:00 UTC fire). One push and every commit since `b466b6f` shipped in one go — Option E redesign, Splity, 4-tab nav, 20-feature build, plus Session 10's plan-activate and AI-plan fixes.
 
-**What is verified working:**
-- Local build is clean: `npx tsc --noEmit` zero errors, `npm run build` 117 pages, 45s
-- Code on `main` includes all 4 commits of redesign + features
-- The `useMyCoach` import fix is in place at `src/app/home/HomeClient.tsx:9`
-- env vars in Vercel are intact (25 vars confirmed)
-- nextsplit.app domain still serves (just from old build)
+**Notification dispatch:** the `smart-notify` route at `src/app/api/cron/smart-notify/route.ts` was rewritten to suit the once-daily fire. Each user now gets at most one notification per day, prioritised:
+- Sunday → "Weekly wrap" (regardless of log state)
+- Mon–Sat with active plan and not logged today → "Keep the streak — log before evening"
+- Otherwise → no notification
 
-**Path forward:** Vercel support ticket filed [DATE]. Reference project ID `prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri`. Once Vercel re-establishes webhook delivery from their side, push will auto-deploy normally.
+If you later upgrade to Vercel Pro and want to restore split morning/midday/evening dispatches, re-introduce the hour conditions and bump `vercel.json` back to a multi-fire schedule.
 
-**Backup path if support is slow:** Vercel CLI from laptop. `npm install -g vercel`, `vercel login`, `cd` into repo, `vercel --prod`. Bypasses webhook entirely. ~5 minutes.
+**Cleanup outstanding:**
+- Close the Vercel support ticket — webhooks were never broken, no action needed from their side.
+- The Session 9 diagnostic commits (`f4f6ff8`, `7e65a4c`, `8bcff06`, `e7a8bba`, `0ee3757`, `1f2e448`) are no-op chore commits and the GitHub Actions deploy-hook workflow they introduced is now redundant. Safe to leave for history; can be tidied up later.
 
 ---
 
@@ -52,15 +46,9 @@ git add -A && git commit -m "type: description"
 git push https://ghp_YOUR_PAT@github.com/NextSplit/Nextsplit-v2.git main
 ```
 
-**Deploy: BROKEN (see ACTIVE BLOCKER above).** Pushes succeed on GitHub but Vercel doesn't receive webhooks. Until Vercel support fixes from their side, deploys must be done via Vercel CLI from a laptop:
+**Deploy:** auto-deploy on push to `main` is working. PR checks surface Vercel build failures — if a check goes red, read the Vercel log first; don't reach for webhook diagnostics.
 
-```bash
-npm install -g vercel
-vercel login
-vercel --prod
-```
-
-The deploy hook URL is `https://api.vercel.com/v1/integrations/deploy/prj_pEA372Qu7gpT6SbskQbeuveYZ9Ri/YT5tNVE9Kl` — accepts the request and returns PENDING but does not currently produce a deployment. Don't waste time on it until Vercel responds.
+If you ever add a cron to `vercel.json`, it must fire **once per day or less** while we're on Hobby (e.g. `0 14 * * *` ✓, `*/30 * * * *` ✗, `0 9,14,18 * * *` ✗). Anything more frequent fails the deploy with `Hobby accounts are limited to daily cron jobs.`
 
 ---
 
@@ -254,36 +242,50 @@ src/hooks/useSubscription.ts    Pro/free status
 
 ---
 
+## Council & Forge — multi-agent review and ideation
+
+The repo now has two slash commands backed by 24 agent charters in `.claude/agents/`:
+
+- **`/council <proposal>`** — multi-agent **review**. Auto-detects scope, runs Tier A always-on (9 roles) plus Tier B auto-included (6 roles) in a two-round protocol; `ns-synthesizer` produces a SHIP / SHIP-WITH-FOLLOWUP / HOLD / ESCALATE verdict with forced pre-mortem.
+- **`/forge <topic>`** — multi-agent **ideation**. Right-sized roster (LEAD generates, CONSULT adds lens), preset table maps topics to rosters; `ns-shortlister` produces a 2-4 option shortlist with named recommendation and pre-filled `/council` handoff.
+
+Both systems are opt-in and built to right-size by default. See `.claude/agents/README.md` for the full system docs (when to use what, antagonist pairs, founder-override, output contracts).
+
+The **inaugural council pass** ran on the PlanPathSVG redesign in Session 10 (commit `562a384`) — produced SHIP-WITH-FOLLOWUP with three pre-ship blockers all addressed, plus follow-up tickets (below) logged for post-F1.
+
 ## What's Next (Priority Order)
 
-### Immediate — Unblock the deploy pipeline
-0. **🚨 Get Vercel webhook delivery working again** (see ACTIVE BLOCKER at top of file). Until this is fixed, redesign + 20 features stay invisible to users. Two paths: (a) Vercel support reply, (b) Vercel CLI from laptop. Either gets us live in minutes once unblocked.
-
-### Pre-Alpha Prep (after deploy fixed)
-1. **Verify nextsplit.app shows redesign** — deep navy, Splity in hero, 4-tab nav without labels
+### Pre-Alpha Prep
+1. **Verify nextsplit.app shows the latest redesign** — deep navy, Splity in hero, 4-tab nav without labels, **single violet finish arch framing single ember finish flag** (no more "three gates"), refined water surface, refined tree density. Refresh and confirm.
 2. **Confirm Stripe keys in Vercel** — already in env vars list, double-check working
 3. **Confirm Resend key in Vercel** — already in env vars list, test send
-4. **Test plan activation on device** — "Invalid request" error needs real-device confirmation post-fix
-5. **Test AI plan generation** — confirm double-session gym days generate correctly
+4. **Test plan activation on device** — Session 10 added `details[]` surfacing in all 5 callers, so any future Zod failure now shows the failing field name in the error message
+5. **Test AI plan generation** — confirm double-session gym days render correctly. Session 10 fixed the session-shape mismatch (AI was emitting `{type, name, detail}`, app reads `{c, n, det}`); plans now go through `normalizeAIWeeks()` before insert
+6. **Smart-notify** — single 14:00 UTC fire. Sundays send "Weekly wrap"; other days send "Keep the streak" if user has an active plan and hasn't logged. One notification per user per day, max
+7. **3-template regression spot-check** for PlanPathSVG — 8wk 5K, 16wk half, 24wk marathon. Council follow-up. Visual sanity: one arch + one flag at the end; no overlapping trees; coastal water reads as a surface.
 
 ### Short Term — Before Friend Test
-6. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
-7. **Fix any blockers** found in F1 test
-8. **Run UAT DB verify** — `SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts`
+8. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
+9. **Fix any blockers** found in F1 test
+10. **Run UAT DB verify** — `SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts`
 
 ### Medium Term — After Friend Test
-9. **Stripe payments live** — flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true`, test checkout flow
-10. **Wider alpha invite** — 10-20 runners, mix of experience levels
-11. **Sentry review** — check what errors are being captured
-12. **Lighthouse audit** — target ≥80 performance on Home and Train
+11. **Stripe payments live** — flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true`, test checkout flow
+12. **Wider alpha invite** — 10-20 runners, mix of experience levels
+13. **Sentry review** — check what errors are being captured
+14. **Lighthouse audit** — target ≥80 performance on Home and Train
+15. **PlanPathSVG `<animateMotion>` runner** — council-deferred PR-B; runner moves between completed nodes when a week is logged. Native SVG, no bundle cost; gate behind feature flag and `prefers-reduced-motion`.
+16. **PlanPathSVG periodisation glyphs** — council follow-up from coach-domain-expert. Per-week node size scaled to weekly km / ACWR band; deload + taper weeks marked with distinct glyph; stadium zone alignment to taper duration by race distance.
 
 ### Longer Term — Post Alpha
-13. **Squad Trophy Room** — collective achievements
-14. **Squad seasons** — monthly/annual leaderboard resets
-15. **Coaching marketplace live** — need at least 2 verified coaches
-16. **Strava OAuth live** — connect to live Strava app credentials
-17. **Company formation** — Companies House £12
-18. **ICO registration** — ico.org.uk £40
+17. **Full a11y retrofit on PlanPathSVG** — pre-paid-users. Week-node `role="button"` + `tabIndex` + visible focus ring + keyboard handlers; 4.5:1 contrast on number-on-coloured fills; full `<animate>` reduced-motion coverage. (Baseline already in: `role="img"` + `<title>`, 44×44 hit-rect, reduced-motion gate on pulse animation.)
+18. **Squad Trophy Room** — collective achievements
+19. **Squad seasons** — monthly/annual leaderboard resets
+20. **Coaching marketplace live** — need at least 2 verified coaches
+21. **Strava OAuth live** — connect to live Strava app credentials
+22. **Company formation** — Companies House £12
+23. **ICO registration** — ico.org.uk £40
+24. **Pre-paid-users third-party security audit** — £500-2000, before flipping `NEXT_PUBLIC_PREMIUM_ENFORCED=true` and onboarding paying users. The `ns-security-privacy` agent catches the common failures but is not a substitute for a real pentest.
 
 ---
 
@@ -307,19 +309,36 @@ npx playwright show-report
 
 ---
 
-## Commit History (Sessions 8–9, May 2026)
+## Commit History (Sessions 8–10, May 2026)
 
-### Session 9 (May 2026) — Deploy diagnosis session
-Four no-op commits pushed to test webhook delivery during the broken-deploy investigation. None of these triggered Vercel builds. They are safe (HANDOFF version bumps only) and can be left on `main`:
+### Session 10 (6 May 2026) — Deploy unblock + plan-activate hardening + visual redesign + council & forge multi-agent systems
+
+The single most productive session of the project. Eight commits land together on merge.
 
 | Commit | Description |
 |--------|-------------|
-| `f4f6ff8` | chore: verify deploy pipeline (GitHub Actions → Vercel hook) |
+| `3245781` | fix: surface Zod `details[]` in all 5 plan-activate callers (PlanBrowse, AI/Manual/Lifestyle onboarding, PlanGenerationScreen) + add `normalizeAIWeeks()` to remap AI plan output `{type,name,detail}` → canonical `{c,n,det,km}` so gym pills, pace personalisation and session styling work on AI-generated plans |
+| `8b84582` | fix: reduce smart-notify cron to once daily (`0 14 * * *`) — the **actual** fix that unblocked auto-deploy. Hobby tier rejects multi-fire crons; Session 9's "webhook" diagnosis was wrong |
+| `23a88ef` | docs: HANDOFF v9.1 — deploy unblocked, real root cause documented; ACTIVE BLOCKER section replaced with post-mortem |
+| `1ebb0bf` | refactor: smart-notify dispatch consolidated for once-daily Hobby cron — Sundays send "Weekly wrap"; Mon-Sat with active plan and not-logged send "Keep the streak"; one notification per user per day max |
+| `2942cda` | fix(train): solid sticky header (no more bleed-through), log modal clears bottom-nav (z-[60] + 60px+safe-area marginBottom on inner panels for all 4 mode branches), Fuel tab empty state (was rendering null when planDay.nut was empty) |
+| `c786c5c` | feat: NextSplit council — 23 agent charters in `.claude/agents/` (Tier A always-on, Tier B auto-included by scope keyword/file matching, Knowledge-base dormant) + `/council` slash command running two-round protocol with `ns-synthesizer` producing SHIP/HOLD/ESCALATE verdict + forced pre-mortem |
+| `562a384` | feat(plan-path): single composed finish moment (violet arch frames ember flag, deleted duplicate FINISH banner), water as `<pattern>` band (replaces N stacked Wave glyphs), forest density capped 6→4 trees per side, hex tokenised to `--ns-*` vars, role="img"+`<title>`, 44×44 hit-rect per week node, reduced-motion gate on pulse animation, 100dvh container + safe-area-inset-bottom — implements the inaugural council pass's SHIP-WITH-FOLLOWUP verdict |
+| `e3d7408` | feat: NextSplit `/forge` ideation orchestrator (sibling to `/council`) — preset roster table maps topic-keyword sets to LEAD/CONSULT splits, two-round protocol with implicit cluster framing (STRATEGY/EXPERIENCE/ENGINEERING/DOMAIN/RISK), `ns-shortlister` produces 2-4 option shortlist with named recommendation and pre-filled `/council` handoff. Three modes: default, `--quick` (top 2 LEAD, single round), `--wide` (all 23, two rounds, auto-promoted by end-to-end keywords) |
+
+### Session 9 (May 2026) — Deploy diagnosis (red herring)
+Six commits pushed during a wrong-track investigation into "broken webhook delivery." None of them deployed because the real issue (Hobby cron-tier validation) was unrelated. Safe to leave on `main`; the GitHub Actions deploy-hook workflow they introduced is now redundant.
+
+| Commit | Description |
+|--------|-------------|
+| `1f2e448` | ci: GitHub Action triggers Vercel deploy hook on every push (redundant — auto-deploy works fine) |
+| `0ee3757` | ci: deploy workflow + HANDOFF |
+| `f4f6ff8` | chore: verify deploy pipeline |
 | `7e65a4c` | chore: verify Vercel auto-deploy after Git reconnect |
 | `8bcff06` | chore: webhook test after Vercel GitHub App reinstall |
 | `e7a8bba` | chore: deploy test after OAuth refresh |
 
-### Session 8 (April–May 2026) — Redesign + features (committed, not deployed)
+### Session 8 (April–May 2026) — Redesign + features (now deployed via Session 10 fix)
 
 | Commit | Description |
 |--------|-------------|

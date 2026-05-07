@@ -12,8 +12,7 @@ export async function GET(req: Request) {
     const supabase = await createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const s = supabase as any
-    const hour = new Date().getUTCHours()
-    const dayOfWeek = new Date().getDay()
+    const isSunday = new Date().getUTCDay() === 0
     const todayStr = new Date().toISOString().slice(0, 10)
 
     const { data: users } = await s
@@ -36,18 +35,26 @@ export async function GET(req: Request) {
 
     const hasPlan = new Set((plans ?? []).map((p: { user_id: string }) => p.user_id))
 
+    // Single 14:00 UTC dispatch — Hobby tier allows one cron fire per day,
+    // so each user gets at most ONE notification, prioritised:
+    //   Sunday → weekly wrap (regardless of log state)
+    //   Otherwise, active plan + not logged today → "log before evening"
+    //   Otherwise → no notification
     const toNotify: Array<{ userId: string; title: string; body: string }> = []
 
     for (const user of users) {
-      const hasLogged = loggedToday.has(user.id)
-      const hasActivePlan = hasPlan.has(user.id)
-
-      if (hour === 14 && hasActivePlan && !hasLogged) {
-        toNotify.push({ userId: user.id, title: '🏃 Your session is waiting', body: 'Keep the momentum going — log your run today.' })
-      } else if (hour === 18 && hasActivePlan && !hasLogged) {
-        toNotify.push({ userId: user.id, title: '🔥 Streak at risk', body: 'Log before midnight to keep your streak alive.' })
-      } else if (hour === 9 && dayOfWeek === 0) {
-        toNotify.push({ userId: user.id, title: '📊 Weekly wrap', body: 'Check how your week went and get ready for the week ahead.' })
+      if (isSunday) {
+        toNotify.push({
+          userId: user.id,
+          title:  '📊 Weekly wrap',
+          body:   'Check how your week went and get ready for the week ahead.',
+        })
+      } else if (hasPlan.has(user.id) && !loggedToday.has(user.id)) {
+        toNotify.push({
+          userId: user.id,
+          title:  '🔥 Keep the streak — log before evening',
+          body:   'Your session is waiting. Get it logged today and keep the momentum going.',
+        })
       }
     }
 
@@ -57,7 +64,7 @@ export async function GET(req: Request) {
       ).catch(() => {})
     }
 
-    return NextResponse.json({ sent: toNotify.length, hour, dayOfWeek })
+    return NextResponse.json({ sent: toNotify.length, isSunday })
   } catch (err) {
     Sentry.captureException(err)
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
