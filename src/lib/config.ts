@@ -10,7 +10,6 @@ export const config = {
   supabaseUrl:           process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
   supabaseAnonKey:       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
   stripePublishableKey:  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '',
-  premiumEnforced:       process.env.NEXT_PUBLIC_PREMIUM_ENFORCED === 'true',
   referralEnabled:       process.env.NEXT_PUBLIC_REFERRAL_ENABLED === 'true',
   posthogKey:            process.env.NEXT_PUBLIC_POSTHOG_KEY ?? '',
   posthogHost:           process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.posthog.com',
@@ -40,6 +39,10 @@ export const serverConfig = {
   vapidPrivateKey:        process.env.VAPID_PRIVATE_KEY ?? '',
   vapidEmail:             process.env.VAPID_EMAIL ?? '',
   resendApiKey:           process.env.RESEND_API_KEY ?? '',
+  // P1.3: relocated from public config so the value cannot be inlined into
+  // the client bundle. Client code reads effective dev-mode via
+  // /api/subscription/dev-mode, which reads this field server-side.
+  premiumEnforced:        process.env.PREMIUM_ENFORCED === 'true',
 } as const
 
 // ── Type guard — call in server startup to verify critical vars ─────────────

@@ -172,4 +172,27 @@ export const Analytics = {
     is_leader_nudge: boolean
     squad_id: string
   }) => track('nudge_opened', props),
+
+  // ── Celebration + share funnel (P1.6) ─────────────────────────────────────
+  // celebration_screen_shown fires once per SessionCelebration mount; pairs
+  // with log_completed in funnel reports to measure how often the rich
+  // celebration actually surfaces (vs. being skipped via offline-queue or
+  // fast-dismiss).
+  celebrationScreenShown: (props: {
+    session_type?: string
+    leveled_up:    boolean
+    has_pb:        boolean
+    in_acwr_band:  boolean   // 0.8 ≤ acwr ≤ 1.3 — true means the Splity
+                              // reaction line cited the figure
+  }) => track('celebration_screen_shown', props),
+
+  // share_card_generated fires when ShareSessionCard mounts (the card
+  // the user might screenshot or trigger native-share from).
+  // share_card_shared fires only when navigator.share resolves successfully
+  // OR the clipboard fallback runs — i.e. an actual share intent was
+  // expressed. Cancellations don't fire.
+  shareCardGenerated: (props: { session_type?: string; km?: number }) =>
+    track('share_card_generated', props),
+  shareCardShared:    (props: { session_type?: string; km?: number; method: 'web_share' | 'clipboard' }) =>
+    track('share_card_shared', props),
 }

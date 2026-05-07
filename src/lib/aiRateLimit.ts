@@ -18,7 +18,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
-import { AI_RATE_LIMIT_DEV, AI_RATE_LIMITS, PREMIUM_ENFORCED, type Tier } from './features'
+import { AI_RATE_LIMIT_DEV, AI_RATE_LIMITS, type Tier } from './features'
 import { config, serverConfig } from '@/lib/config'
 
 const SUPABASE_URL = config.supabaseUrl
@@ -48,8 +48,8 @@ export async function checkAndIncrementAIUsage(
   userId: string,
   tier: Tier = 'free'
 ): Promise<RateLimitResult> {
-  // Determine limit
-  const limit = PREMIUM_ENFORCED
+  // Determine limit (server-side; reads server-only env)
+  const limit = serverConfig.premiumEnforced
     ? AI_RATE_LIMITS[tier]
     : AI_RATE_LIMIT_DEV
 

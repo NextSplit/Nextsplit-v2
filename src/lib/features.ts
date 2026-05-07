@@ -4,10 +4,15 @@
  * This file is the single source of truth for:
  *  - Which features exist
  *  - Which tier each feature requires
- *  - Whether premium is enforced (dev vs prod)
+ *
+ * Whether premium is enforced is NOT in this file — it's a server-only
+ * value (`serverConfig.premiumEnforced`) per council /council 2026-05-07
+ * P1.3. Client code reads effective dev-mode via the
+ * /api/subscription/dev-mode endpoint; never reads the env var directly.
  *
  * TO ENABLE MONETISATION:
- *  1. Set NEXT_PUBLIC_PREMIUM_ENFORCED=true in Vercel env vars
+ *  1. Set PREMIUM_ENFORCED=true in Vercel env vars (note: no NEXT_PUBLIC_
+ *     prefix — server-only). Old NEXT_PUBLIC_PREMIUM_ENFORCED can be deleted.
  *  2. Wire up Stripe in /api/stripe/* (scaffold exists in Phase 11)
  *  3. That's it — all gates activate automatically
  *
@@ -16,8 +21,6 @@
  *  pro     — paid subscription (£4.99/mo or equivalent)
  *  coach   — future coach/team tier
  */
-
-import { config } from '@/lib/config'
 
 export type Tier = 'free' | 'pro' | 'coach'
 
@@ -84,13 +87,6 @@ export const FEATURE_TIERS: Record<FeatureKey, Tier> = {
 }
 
 /**
- * Whether premium gating is enforced.
- * false = all features available to everyone (dev/test mode)
- * true  = tiers are enforced (production monetisation)
- */
-export const PREMIUM_ENFORCED = config.premiumEnforced
-
-/**
  * Tier hierarchy — higher index = higher access
  */
 const TIER_RANK: Record<Tier, number> = {
@@ -100,11 +96,15 @@ const TIER_RANK: Record<Tier, number> = {
 }
 
 /**
- * Check if a given tier can access a feature.
- * When PREMIUM_ENFORCED is false, always returns true.
+ * Pure tier-vs-feature comparison. Callers decide whether to short-circuit
+ * via dev-mode by passing `enforced: false`. Server callers read
+ * `serverConfig.premiumEnforced`; client callers read the dev-mode flag from
+ * the /api/subscription/dev-mode endpoint and pass it in. Keeping `enforced`
+ * out of module scope keeps the function pure and the build-time bundle
+ * free of leaked operational state.
  */
-export function canAccess(userTier: Tier, feature: FeatureKey): boolean {
-  if (!PREMIUM_ENFORCED) return true
+export function canAccess(userTier: Tier, feature: FeatureKey, enforced: boolean): boolean {
+  if (!enforced) return true
   const required = FEATURE_TIERS[feature]
   return TIER_RANK[userTier] >= TIER_RANK[required]
 }

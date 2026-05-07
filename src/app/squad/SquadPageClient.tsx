@@ -3,6 +3,7 @@
 import { useSquad } from '@/hooks/useSquad'
 import SquadOrbit from './SquadOrbit'
 import SquadLeaderboard from './SquadLeaderboard'
+import SquadFeed from './SquadFeed'
 import Link from 'next/link'
 
 interface Props { userId: string }
@@ -83,6 +84,10 @@ export default function SquadPageClient({ userId }: Props) {
         <SquadLeaderboard
           squad={squad}
           members={members}
+          myUserId={userId}
+        />
+        <SquadFeed
+          squadId={squad.id}
           myUserId={userId}
         />
       </div>

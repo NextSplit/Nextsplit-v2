@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './useSupabase'
-import { canAccess, PREMIUM_ENFORCED, type Tier, type FeatureKey } from '@/lib/features'
+import { canAccess, type Tier, type FeatureKey } from '@/lib/features'
 import { db } from '@/lib/supabase/db'
 
 export interface Subscription {
@@ -40,9 +40,24 @@ export function useSubscription(): UseSubscriptionReturn {
   const supabase = useSupabase()
   const [subscription, setSubscription] = useState<Subscription>(DEFAULT_SUB)
   const [loading, setLoading]           = useState(true)
+  const [isDevMode, setIsDevMode]       = useState<boolean>(false)
   const [tick, setTick]                 = useState(0)
 
   const refresh = useCallback(() => setTick(t => t + 1), [])
+
+  // P1.3: dev-mode is a server-only flag (PREMIUM_ENFORCED env). We fetch
+  // its boolean effect once on mount; the value cannot leak into the
+  // client bundle as a constant.
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/subscription/dev-mode')
+      .then(r => r.ok ? r.json() : { isDevMode: false })
+      .then(({ isDevMode: serverFlag }) => {
+        if (!cancelled) setIsDevMode(Boolean(serverFlag))
+      })
+      .catch(() => { /* default false (enforced) on error */ })
+    return () => { cancelled = true }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -101,8 +116,10 @@ export function useSubscription(): UseSubscriptionReturn {
   const isPro = subscription.tier === 'pro' || subscription.tier === 'coach'
 
   const canUseFeature = useCallback(
-    (feature: FeatureKey) => canAccess(subscription.tier, feature),
-    [subscription.tier]
+    // canAccess takes `enforced` as a parameter — we pass !isDevMode.
+    // When dev-mode is true, every feature returns true regardless of tier.
+    (feature: FeatureKey) => canAccess(subscription.tier, feature, !isDevMode),
+    [subscription.tier, isDevMode]
   )
 
   return {
@@ -111,7 +128,7 @@ export function useSubscription(): UseSubscriptionReturn {
     isPro,
     isFounding:   subscription.isFounding,
     foundingLeft: subscription.foundingLeft,
-    isDevMode:    !PREMIUM_ENFORCED,
+    isDevMode,
     canUseFeature,
     refresh,
   }

@@ -45,6 +45,22 @@
   --ns-forest-mid:  #00c45a;
   --ns-cyan-mid:    #00b8e0;
   --ns-cobalt-mid:  #3a6fe0;
+
+  /* P1.4 brand audit (council 2026-05-07): six tokens were referenced by
+     14+ components without ever being defined in this file, falling back
+     to invalid `unset` and rendering as inherited / transparent. Defined
+     here at 12% alpha for `-light` (matching the ember/forest pattern) and
+     a darker shade for `-mid`. Components affected included LeadDashboard
+     pill backgrounds, CommunityClient avatar tints, LevelUpScreen class
+     name, CoachingCard borders/dots, CoachMessageThread avatar, and
+     SmartInputs focus rings. */
+  --ns-cyan-light:    rgba(0,212,255,0.12);
+  --ns-lime-light:    rgba(127,255,77,0.12);
+  --ns-magenta-light: rgba(255,45,158,0.12);
+  --ns-violet-light:  rgba(168,85,247,0.12);
+  --ns-violet-mid:    #8b3fd1;
+  --ns-track-light:   rgba(255,61,110,0.12);
+
   --ns-track:       #ff3d6e;
   --ns-paper:       var(--color-bg);
   --ns-ink:         var(--color-text-primary);

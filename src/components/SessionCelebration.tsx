@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { getLevelForXP, getXPProgress, RPG_LEVELS } from '@/lib/rpg'
+import { Analytics } from '@/lib/analytics'
 import Splity from './Splity'
 import type { PlanSession, TrainingLog } from '@/types/database'
 
@@ -256,6 +257,23 @@ export default function SessionCelebration({
     if (leveledUp) setNewLevel(currLevel)
     return () => { clearTimeout(t1); if (t2) clearTimeout(t2) }
   }, [playSound, vibrate, leveledUp, currLevel])
+
+  // P1.6: fire celebration_screen_shown once per mount. Props let funnel
+  // reports slice by session type, level-up vs. not, PB vs. not, and
+  // whether the ACWR-band reaction line cited the figure.
+  useEffect(() => {
+    Analytics.celebrationScreenShown({
+      session_type: session.c,
+      leveled_up:   leveledUp,
+      has_pb:       false,  // PB toast lives in TodayClient state; the
+                            // celebration doesn't yet know. Wire pb signal
+                            // through props in a follow-up if the funnel
+                            // needs it.
+      in_acwr_band: typeof acwr === 'number' && acwr >= 0.8 && acwr <= 1.3,
+    })
+    // Mount-only; deps intentionally empty so re-renders don't re-fire.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const splityMood: 'celebrating' | 'happy' | 'excited' =
     leveledUp ? 'celebrating' : session.c?.includes('long') ? 'happy' : 'excited'
