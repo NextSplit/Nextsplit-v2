@@ -51,8 +51,26 @@ export async function GET(req: Request) {
     const supabase = await createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const s = supabase as any
-    const isSunday = new Date().getUTCDay() === 0
-    const todayStr = new Date().toISOString().slice(0, 10)
+    const now      = new Date()
+    const isSunday = now.getUTCDay() === 0
+    const todayStr = now.toISOString().slice(0, 10)
+
+    // P3.10 Squad seasons (light): if this is the 1st of the month, snapshot
+    // the previous month's squad season totals before the user-notify cycle.
+    // Idempotent server-side via UNIQUE (squad_id, season_type, period) +
+    // UPSERT, so multiple fires of the same period just overwrite. Fire-and-
+    // forget; failures Sentry-log but don't block notifications.
+    if (now.getUTCDate() === 1) {
+      const prevMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1))
+      const prevPeriod = `${prevMonth.getUTCFullYear()}-${String(prevMonth.getUTCMonth() + 1).padStart(2, '0')}`
+      try {
+        await s.rpc('snapshot_squad_seasons_for_month', { p_period: prevPeriod })
+      } catch (snapErr) {
+        Sentry.captureException(snapErr, {
+          extra: { context: '[smart-notify season snapshot]', period: prevPeriod },
+        })
+      }
+    }
 
     const { data: users } = await s
       .from('profiles').select('id, display_name, timezone')

@@ -4,6 +4,7 @@ import { useSquad } from '@/hooks/useSquad'
 import SquadOrbit from './SquadOrbit'
 import SquadLeaderboard from './SquadLeaderboard'
 import SquadFeed from './SquadFeed'
+import SquadSeasonCard from './SquadSeasonCard'
 import Link from 'next/link'
 
 interface Props { userId: string }
@@ -86,6 +87,7 @@ export default function SquadPageClient({ userId }: Props) {
           members={members}
           myUserId={userId}
         />
+        <SquadSeasonCard squadId={squad.id} />
         <SquadFeed
           squadId={squad.id}
           myUserId={userId}

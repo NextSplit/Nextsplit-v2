@@ -154,12 +154,72 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
     } catch { /* silent */ } finally { setAiSuggesting(false) }
   }
 
+  // P3.2 — assign-to-athlete state. After save, the coach can pick one of
+  // their active athletes and the new template is materialised as a
+  // user_plans row for that athlete. Server-gated to (template_author ===
+  // caller) AND (active coach_athletes relationship).
+  const [savedTemplateId, setSavedTemplateId] = useState<string | null>(null)
+  const [showAssignSheet, setShowAssignSheet] = useState(false)
+  const [coachAthletes, setCoachAthletes]     = useState<Array<{ athlete_id: string; display_name: string | null }>>([])
+  const [assigning, setAssigning]             = useState<string | null>(null)
+  const [assignError, setAssignError]         = useState<string | null>(null)
+
+  async function loadCoachAthletes() {
+    try {
+      const res = await fetch('/api/coach/squad-status')
+      const data = await res.json()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setCoachAthletes((data.athletes ?? []).map((a: any) => ({
+        athlete_id:   a.athlete_id,
+        display_name: a.display_name,
+      })))
+    } catch { /* non-blocking */ }
+  }
+
+  async function assignToAthlete(athlete_id: string) {
+    if (!savedTemplateId) return
+    setAssigning(athlete_id)
+    setAssignError(null)
+    try {
+      const res = await fetch('/api/coach/plans/assign', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ template_id: savedTemplateId, athlete_id }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setAssignError(data.error ?? 'Failed to assign')
+        return
+      }
+      // Success — close sheet, show toast-ish confirmation, redirect.
+      setShowAssignSheet(false)
+      setTimeout(() => router.push('/coach/squad'), 800)
+    } catch {
+      setAssignError('Network error — try again')
+    } finally {
+      setAssigning(null)
+    }
+  }
+
   async function savePlan() {
     if (!name) return
     setSaving(true)
     try {
       const res = await fetch('/api/coach/plans', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, distance, level, description, price_gbp: price ? parseFloat(price) : null, is_public: isPublic, is_template: isTemplate, weeks_data: weeks, weeks_min: weeks.length, weeks_max: weeks.length }) })
-      if (res.ok) { setSaved(true); setTimeout(() => router.push('/coach/squad'), 1500) }
+      if (res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setSaved(true)
+        // P3.2: capture the new template id so assign-to-athlete can target it.
+        const tmplId = (data?.plan?.id ?? data?.id) as string | undefined
+        if (tmplId) {
+          setSavedTemplateId(tmplId)
+          // Pre-load athletes so the sheet is instant when opened.
+          loadCoachAthletes()
+        } else {
+          // Fallback to original redirect if the API didn't surface the id.
+          setTimeout(() => router.push('/coach/squad'), 1500)
+        }
+      }
     } finally { setSaving(false) }
   }
 
@@ -175,11 +235,90 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
             <h1 className="font-display text-xl font-black" style={{ color: 'var(--color-text-primary)' }}>Plan Builder</h1>
             <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>{coachName}</p>
           </div>
-          <button onClick={savePlan} disabled={saving || !name} className="px-4 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 active:scale-95" style={{ background: saved ? '#059669' : '#8b5cf6' }}>
-            {saved ? '✓ Saved!' : saving ? 'Saving…' : 'Save plan'}
-          </button>
+          <div className="flex items-center gap-2">
+            {/* P3.2 — assign-to-athlete CTA, only after a successful save. */}
+            {savedTemplateId && (
+              <button
+                onClick={() => setShowAssignSheet(true)}
+                className="px-3 py-2.5 rounded-xl text-xs font-bold text-white active:scale-95"
+                style={{ background: '#1e3a5f' }}>
+                Assign →
+              </button>
+            )}
+            <button onClick={savePlan} disabled={saving || !name} className="px-4 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 active:scale-95" style={{ background: saved ? '#059669' : '#8b5cf6' }}>
+              {saved ? '✓ Saved!' : saving ? 'Saving…' : 'Save plan'}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* P3.2 — Assign-to-athlete bottom sheet. Lists the coach's active
+          athletes and posts to /api/coach/plans/assign on tap. Server-side
+          gates ownership + relationship, so the picker doesn't need to
+          pre-filter. */}
+      {showAssignSheet && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-end"
+          style={{ background: 'rgba(0,0,0,0.7)' }}
+          onClick={() => assigning === null && setShowAssignSheet(false)}>
+          <div className="rounded-t-3xl p-6 max-w-lg w-full mx-auto"
+            style={{ background: 'var(--color-surface)' }}
+            onClick={e => e.stopPropagation()}>
+            <div className="w-10 h-1 rounded-full mx-auto mb-4"
+              style={{ background: 'var(--color-border-2)' }} />
+            <h2 className="text-base font-black mb-1"
+              style={{ color: 'var(--color-text-primary)' }}>
+              Assign &ldquo;{name}&rdquo; to an athlete
+            </h2>
+            <p className="text-xs mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+              Their current active plan will be archived.
+            </p>
+            {coachAthletes.length === 0 ? (
+              <p className="text-sm py-6 text-center"
+                style={{ color: 'var(--color-text-tertiary)' }}>
+                No active athletes yet. Invite one from /coach/squad.
+              </p>
+            ) : (
+              <div className="space-y-2 max-h-72 overflow-y-auto">
+                {coachAthletes.map(a => (
+                  <button
+                    key={a.athlete_id}
+                    type="button"
+                    onClick={() => assignToAthlete(a.athlete_id)}
+                    disabled={assigning !== null}
+                    className="w-full rounded-xl px-4 py-3 text-left flex items-center justify-between disabled:opacity-50"
+                    style={{
+                      background: 'var(--color-surface-2)',
+                      border: '1px solid var(--color-border)',
+                    }}>
+                    <span className="text-sm font-bold"
+                      style={{ color: 'var(--color-text-primary)' }}>
+                      {a.display_name ?? 'Athlete'}
+                    </span>
+                    <span className="text-xs"
+                      style={{ color: 'var(--color-text-tertiary)' }}>
+                      {assigning === a.athlete_id ? 'Assigning…' : 'Assign →'}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {assignError && (
+              <p className="text-xs mt-3 px-2 py-1.5 rounded-lg"
+                style={{ background: 'rgba(255,61,110,0.10)', color: '#ff3d6e' }}>
+                {assignError}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowAssignSheet(false)}
+              disabled={assigning !== null}
+              className="w-full mt-3 py-2.5 rounded-xl text-xs font-bold disabled:opacity-50"
+              style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
         {/* Meta */}

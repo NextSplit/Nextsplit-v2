@@ -466,15 +466,21 @@ export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, plan
           <path d={pathStr} fill="none" stroke="#f0a50030" strokeWidth={2}
             strokeLinecap="round" strokeLinejoin="round"
             strokeDasharray="12 18" />
-          {/* Completed track highlight */}
+          {/* Completed track highlight + animateMotion path (P3.11).
+              The path is given a stable id so the runner can trace it on
+              first mount via <animateMotion><mpath> below. Reduced-motion
+              users skip the entrance — the runner just appears at the
+              current-week position. */}
           {currentWeekN > 1 && (() => {
             const completedPts = points.slice(0, currentWeekN)
             const completedPath = pointsToSVGPath(completedPts)
             return (
-              <path d={completedPath} fill="none"
-                stroke="#06b6d4" strokeWidth={4} opacity={0.5}
-                strokeLinecap="round" strokeLinejoin="round"
-                filter="url(#glow)" />
+              <>
+                <path id="ns-runner-path" d={completedPath} fill="none"
+                  stroke="#06b6d4" strokeWidth={4} opacity={0.5}
+                  strokeLinecap="round" strokeLinejoin="round"
+                  filter="url(#glow)" />
+              </>
             )
           })()}
 
@@ -601,10 +607,73 @@ export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, plan
             )
           })}
 
-          {/* ── Runner on current week ── */}
+          {/* ── Runner on current week ──
+              P3.11: on first mount, the runner traces the completed path
+              from start to current week (1.4s, ease-out, fill=freeze).
+              After that one-shot entrance, it stays parked at the current
+              week marker. Reduced-motion users see only the parked state. */}
           {points[currentWeekN - 1] && (() => {
             const pt = points[currentWeekN - 1]
-            return <RunnerIcon x={pt.x} y={pt.y - 32} colour="var(--ns-cobalt, #4d8aff)" />
+            const showTrace = currentWeekN > 1 && !reducedMotion
+            return (
+              <g>
+                {showTrace ? (
+                  <g>
+                    <RunnerIcon x={0} y={-32} colour="var(--ns-cobalt, #4d8aff)" />
+                    <animateMotion dur="1.4s" begin="0.2s" fill="freeze"
+                      calcMode="spline" keySplines="0.25 0.1 0.25 1">
+                      <mpath href="#ns-runner-path" />
+                    </animateMotion>
+                  </g>
+                ) : (
+                  <RunnerIcon x={pt.x} y={pt.y - 32} colour="var(--ns-cobalt, #4d8aff)" />
+                )}
+              </g>
+            )
+          })()}
+
+          {/* P3.11 Periodisation glyphs — small indicators at week-node
+              positions for deload weeks (kmReduction ≥ 20% week-on-week)
+              and the race week (final week if raceDate is set). */}
+          {(() => {
+            const glyphs: Array<{ week: number; x: number; y: number; type: 'deload' | 'race' }> = []
+            for (let i = 0; i < weeks.length; i++) {
+              const pt = points[i]
+              if (!pt) continue
+              const wn = weeks[i].n
+              // Race glyph — final week if raceDate is set.
+              if (raceDate && i === weeks.length - 1) {
+                glyphs.push({ week: wn, x: pt.x, y: pt.y, type: 'race' })
+                continue
+              }
+              // Deload glyph — week's km is ≥20% lower than previous week's km.
+              if (i > 0) {
+                const wkKm = (weeks[i].days ?? []).reduce((s, d) =>
+                  s + (d.sessions ?? []).reduce((s2, ss) => s2 + (ss.km ?? 0), 0), 0)
+                const prevKm = (weeks[i-1].days ?? []).reduce((s, d) =>
+                  s + (d.sessions ?? []).reduce((s2, ss) => s2 + (ss.km ?? 0), 0), 0)
+                if (prevKm > 0 && wkKm <= prevKm * 0.8) {
+                  glyphs.push({ week: wn, x: pt.x, y: pt.y, type: 'deload' })
+                }
+              }
+            }
+            return glyphs.map(g => (
+              <g key={`glyph-${g.week}-${g.type}`}
+                transform={`translate(${g.x},${g.y - 18})`}
+                aria-label={g.type === 'race' ? `Race week ${g.week}` : `Deload week ${g.week}`}>
+                {g.type === 'race' ? (
+                  <>
+                    <circle cx={0} cy={0} r={6} fill="var(--ns-magenta, #ff2d9e)" opacity={0.85} />
+                    <text x={0} y={3} textAnchor="middle" fontSize={8} fill="white">🏁</text>
+                  </>
+                ) : (
+                  <>
+                    <circle cx={0} cy={0} r={5} fill="var(--ns-forest, #00e676)" opacity={0.65} />
+                    <text x={0} y={3} textAnchor="middle" fontSize={7}>🌿</text>
+                  </>
+                )}
+              </g>
+            ))
           })()}
 
           {/* ── Start marker ── */}

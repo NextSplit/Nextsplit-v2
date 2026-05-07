@@ -223,4 +223,20 @@ export const Analytics = {
     total_km:        number
     in_acwr_band:    boolean
   }) => track('week3_reanchor_shown', props),
+
+  // P2.7 soft-deload: ACWR advisory banner fires once per day when the
+  // user's latest ACWR is above the danger threshold (1.3). Per-day
+  // localStorage gate prevents echo across same-day mounts. session_type
+  // tells the council which prescribed sessions trigger the warning most
+  // often — informs the eventual hard-override design.
+  acwrAdvisoryShown: (props: {
+    acwr:          number
+    session_type?: string
+  }) => track('acwr_advisory_shown', props),
+
+  // P2.7 soft-deload: gap-recovery banner fires when the user returns
+  // after a 7+ day gap. Dismiss is keyed to the last-log timestamp so a
+  // fresh gap re-fires the banner. gap_days lets retention funnels
+  // segment re-engagement quality vs gap length.
+  gapRecoveryShown: (props: { gap_days: number }) => track('gap_recovery_shown', props),
 }
