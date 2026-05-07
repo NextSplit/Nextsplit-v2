@@ -18,6 +18,7 @@
 import { useEffect, useState } from 'react'
 import { useSupabase } from '@/hooks/useSupabase'
 import { Analytics } from '@/lib/analytics'
+import { notifyReactionAction } from './actions'
 
 type Emoji = '🔥' | '👏' | '💪' | '🎉' | '❤️'
 const REACTIONS: Emoji[] = ['🔥', '👏', '💪', '🎉', '❤️']
@@ -112,6 +113,15 @@ export default function SquadFeed({ squadId, myUserId }: Props) {
     if (error) {
       // Revert on failure — squad_feed_reactions RLS rejects, network blip, etc.
       setRows(previous)
+      return
+    }
+
+    // Notify the feed-card owner via push (and mirror into notifications
+    // table). Only fire on add/swap, not on remove — un-reacting shouldn't
+    // ping anyone. notifyReactionAction handles owner = reactor (no self-
+    // notify) and missing push_subscriptions internally.
+    if (!removing) {
+      void notifyReactionAction(feedId, emoji).catch(() => { /* non-blocking */ })
     }
   }
 
