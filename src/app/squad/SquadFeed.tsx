@@ -18,6 +18,7 @@
 import { useEffect, useState } from 'react'
 import { useSupabase } from '@/hooks/useSupabase'
 import { Analytics } from '@/lib/analytics'
+import { notifyReactionAction } from './actions'
 
 type Emoji = '🔥' | '👏' | '💪' | '🎉' | '❤️'
 const REACTIONS: Emoji[] = ['🔥', '👏', '💪', '🎉', '❤️']
@@ -75,10 +76,41 @@ function relativeTime(iso: string): string {
   return `${weeks}w ago`
 }
 
+const PAGE_SIZE = 20
+
 export default function SquadFeed({ squadId, myUserId }: Props) {
   const supabase = useSupabase()
-  const [rows, setRows]       = useState<FeedRow[]>([])
-  const [loading, setLoading] = useState(true)
+  const [rows, setRows]                 = useState<FeedRow[]>([])
+  const [loading, setLoading]           = useState(true)
+  const [loadingMore, setLoadingMore]   = useState(false)
+  const [reachedEnd, setReachedEnd]     = useState(false)
+
+  // Pagination — fetch the next 20 rows older than the current oldest.
+  // Hides the button if the page returned fewer than PAGE_SIZE (no more
+  // history to paginate).
+  async function loadMore() {
+    if (loadingMore || reachedEnd || rows.length === 0) return
+    setLoadingMore(true)
+    const oldestSeen = rows[rows.length - 1].created_at
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const s = supabase as any
+    const { data } = await s
+      .from('squad_feed')
+      .select(`
+        id, squad_id, user_id, milestone_type, value_km, value_secs,
+        value_streak, value_text, training_log_id, created_at,
+        profiles:user_id ( display_name, runner_class ),
+        squad_feed_reactions ( user_id, reaction )
+      `)
+      .eq('squad_id', squadId)
+      .lt('created_at', oldestSeen)
+      .order('created_at', { ascending: false })
+      .limit(PAGE_SIZE)
+    const next = (data as FeedRow[] | null) ?? []
+    setRows(prev => [...prev, ...next])
+    if (next.length < PAGE_SIZE) setReachedEnd(true)
+    setLoadingMore(false)
+  }
 
   // Optimistic-update toggle: tap same emoji again → DELETE; tap a different
   // emoji → upsert (DB UNIQUE on (feed_item_id, user_id) handles the swap).
@@ -112,6 +144,15 @@ export default function SquadFeed({ squadId, myUserId }: Props) {
     if (error) {
       // Revert on failure — squad_feed_reactions RLS rejects, network blip, etc.
       setRows(previous)
+      return
+    }
+
+    // Notify the feed-card owner via push (and mirror into notifications
+    // table). Only fire on add/swap, not on remove — un-reacting shouldn't
+    // ping anyone. notifyReactionAction handles owner = reactor (no self-
+    // notify) and missing push_subscriptions internally.
+    if (!removing) {
+      void notifyReactionAction(feedId, emoji).catch(() => { /* non-blocking */ })
     }
   }
 
@@ -131,14 +172,53 @@ export default function SquadFeed({ squadId, myUserId }: Props) {
         `)
         .eq('squad_id', squadId)
         .order('created_at', { ascending: false })
-        .limit(20)
+        .limit(PAGE_SIZE)
       if (!cancelled) {
-        setRows((data as FeedRow[] | null) ?? [])
+        const initial = (data as FeedRow[] | null) ?? []
+        setRows(initial)
+        if (initial.length < PAGE_SIZE) setReachedEnd(true)
         setLoading(false)
       }
     }
     load()
     return () => { cancelled = true }
+  }, [supabase, squadId])
+
+  // Realtime — listen for new squad_feed rows and prepend them. The Postgres
+  // INSERT payload doesn't include the joined profiles + reactions, so on
+  // each detection we fetch the full row by id with the joins. Cheap (single-
+  // row PK lookup) and keeps the rendered shape consistent with initial-load
+  // rows. Cleanup unsubscribes the channel on unmount or squadId change.
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const s = supabase as any
+    const channel = s.channel(`squad-feed-${squadId}`)
+      .on('postgres_changes', {
+        event:  'INSERT',
+        schema: 'public',
+        table:  'squad_feed',
+        filter: `squad_id=eq.${squadId}`,
+      }, async (payload: { new: { id: string } }) => {
+        const { data } = await s
+          .from('squad_feed')
+          .select(`
+            id, squad_id, user_id, milestone_type, value_km, value_secs,
+            value_streak, value_text, training_log_id, created_at,
+            profiles:user_id ( display_name, runner_class ),
+            squad_feed_reactions ( user_id, reaction )
+          `)
+          .eq('id', payload.new.id)
+          .single()
+        if (data) {
+          setRows(prev => {
+            // De-dupe in case the initial fetch already grabbed it.
+            if (prev.some(r => r.id === data.id)) return prev
+            return [data as FeedRow, ...prev]
+          })
+        }
+      })
+      .subscribe()
+    return () => { s.removeChannel(channel) }
   }, [supabase, squadId])
 
   if (loading) {
@@ -187,6 +267,20 @@ export default function SquadFeed({ squadId, myUserId }: Props) {
           />
         ))}
       </ul>
+      {!reachedEnd && rows.length >= PAGE_SIZE && (
+        <button
+          type="button"
+          onClick={loadMore}
+          disabled={loadingMore}
+          className="w-full mt-3 py-3 rounded-2xl text-xs font-bold disabled:opacity-50 transition-opacity"
+          style={{
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+            color: 'var(--color-text-secondary)',
+          }}>
+          {loadingMore ? 'Loading…' : 'Load more'}
+        </button>
+      )}
     </div>
   )
 }

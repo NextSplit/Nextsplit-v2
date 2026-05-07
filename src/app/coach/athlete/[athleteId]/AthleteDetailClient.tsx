@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { RUNNER_CLASSES } from '@/lib/rpg'
 import type { RunnerClassId } from '@/lib/rpg'
+import { Sparkline, WeeklyACWRBar } from './charts'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -29,41 +30,6 @@ const REACTIONS = [
   { id: 'easy',   emoji: '🧊', label: 'Take it easy'     },
   { id: 'talk',   emoji: '📞', label: 'Let\'s talk'      },
 ]
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
-
-function Sparkline({ values, colour }: { values: number[]; colour: string }) {
-  if (values.length < 2) return <span className="text-xs text-[var(--color-text-tertiary)]">—</span>
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  const range = max - min || 1
-  const w = 60
-  const h = 24
-  const pts = values.map((v, i) => {
-    const x = (i / (values.length - 1)) * w
-    const y = h - ((v - min) / range) * h
-    return `${x},${y}`
-  }).join(' ')
-  return (
-    <svg width={w} height={h} className="overflow-visible">
-      <polyline points={pts} fill="none" stroke={colour} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function WeeklyACWRBar({ week, acwr }: { week: number; acwr: number }) {
-  const colour = acwr > 1.3 ? '#ef4444' : acwr < 0.8 ? '#f59e0b' : '#8b5cf6'
-  const height = Math.min(Math.round(acwr * 30), 60)
-  return (
-    <div className="flex flex-col items-center gap-1">
-      <div className="relative flex items-end" style={{ height: 60 }}>
-        <div className="w-5 rounded-t-sm transition-all"
-          style={{ height, background: colour, opacity: 0.85 }} />
-      </div>
-      <span className="text-[8px] text-[var(--color-text-tertiary)]">W{week}</span>
-    </div>
-  )
-}
 
 // ─── Main component ──────────────────────────────────────────────────────────
 

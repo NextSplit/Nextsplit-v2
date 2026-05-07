@@ -16,13 +16,31 @@ import posthog from 'posthog-js'
 
 // ── Client-side events ────────────────────────────────────────────────────────
 
+// P1.6 property enrichment: every client event automatically carries the
+// user's timezone (Intl-derived; no permission needed) so funnel reports
+// can slice by region without a per-event manual prop. Computed once per
+// page lifetime (lazy, memoised in the closure) — Intl is fast but
+// repeating the call on every track() is wasteful.
+let cachedTimezone: string | null = null
+function getTimezone(): string | undefined {
+  if (typeof window === 'undefined') return undefined
+  if (cachedTimezone !== null) return cachedTimezone
+  try {
+    cachedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+  } catch {
+    cachedTimezone = ''
+  }
+  return cachedTimezone || undefined
+}
+
 function track(event: string, props?: Record<string, unknown>) {
   if (typeof window === 'undefined') return
   if (process.env.NODE_ENV !== 'production') {
     // Analytics debug logging disabled in production
     return
   }
-  posthog.capture(event, props)
+  const enriched = { ...(props ?? {}), timezone: getTimezone() }
+  posthog.capture(event, enriched)
 }
 
 function identify(userId: string, traits?: Record<string, unknown>) {
