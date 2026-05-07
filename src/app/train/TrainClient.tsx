@@ -17,6 +17,7 @@ import { TodayModals } from '../today/TodayModals'
 import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
 import FuelPlanCard from '@/components/FuelPlanCard'
 import SessionCelebration from '@/components/SessionCelebration'
+import { shareSessionWithSquadAction } from '@/app/today/actions'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import PreRunBrief from '@/components/PreRunBrief'
 import MilestoneCard, { MILESTONES } from '@/components/MilestoneCard'
@@ -170,7 +171,13 @@ export default function TrainClient() {
   const [undoXP, setUndoXP] = useState(0)
   const [undoSecsLeft, setUndoSecsLeft] = useState(0)
   const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
-  const [celebration, setCelebration] = useState<{ session: PlanSession; log: TrainingLog; xpEarned: number } | null>(null)
+  const [celebration, setCelebration] = useState<{
+    session:      PlanSession
+    log:          TrainingLog
+    xpEarned:     number
+    feedCardIds?: string[]
+    feedError?:   string | null
+  } | null>(null)
   const [tappedWeek, setTappedWeek] = useState<PlanWeek | null>(null)
   const [showCompletion, setShowCompletion] = useState(false)
   const [briefSession, setBriefSession]   = useState<typeof modalSession>(null)
@@ -236,6 +243,22 @@ export default function TrainClient() {
         if (log.done && session) {
           setShareSession({ session, log })
           setCelebration({ session, log, xpEarned: xp })
+
+          // P1.1 squad-feed fan-out — fire async; celebration shows immediately
+          // and the feed-card preview / empty-state arrives when the RPC
+          // resolves. RPC errors are Sentry-captured server-side; client
+          // surfaces them as feedError → empty-state copy.
+          shareSessionWithSquadAction(log.id).then(({ feedCardIds, error }) => {
+            setCelebration(prev => prev && prev.log.id === log.id
+              ? { ...prev, feedCardIds, feedError: error }
+              : prev
+            )
+          }).catch(() => {
+            setCelebration(prev => prev && prev.log.id === log.id
+              ? { ...prev, feedCardIds: [], feedError: 'network' }
+              : prev
+            )
+          })
           // Detect milestones
           const totalDone = allLogs.filter((l: TrainingLog) => l.done).length + 1
           const totalKm = allLogs.filter((l: TrainingLog) => l.done).reduce((s: number, l: TrainingLog) => s + (l.km ?? 0), 0) + (params.km ?? 0)
@@ -636,6 +659,8 @@ export default function TrainClient() {
           log={celebration.log}
           xpEarned={celebration.xpEarned}
           totalXP={totalXP}
+          feedCardIds={celebration.feedCardIds}
+          feedError={celebration.feedError}
           onDismiss={() => setCelebration(null)}
           onShare={() => {
             setCelebration(null)

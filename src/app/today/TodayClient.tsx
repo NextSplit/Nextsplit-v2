@@ -34,6 +34,7 @@ import { useLeadMode } from '@/hooks/useLeadMode'
 import NPSPrompt from '@/components/NPSPrompt'
 import FirstSessionCelebration from '@/components/FirstSessionCelebration'
 import PushPrompt from '@/components/PushPrompt'
+import { shareSessionWithSquadAction } from './actions'
 
 
 export default function TodayClient() {
@@ -228,6 +229,12 @@ export default function TodayClient() {
 
       // Recompute runner class after every session (non-blocking)
       fetch('/api/runner-class', { method: 'POST' }).catch(() => {})
+
+      // P1.1 squad-feed fan-out — fire-and-forget from /today. The /train
+      // celebration UI awaits this for its feed-card preview; here we just
+      // ensure the squad sees the log. RPC errors are Sentry-captured
+      // server-side via the action wrapper.
+      shareSessionWithSquadAction(log.id).catch(() => {})
     }
 
     if (undoInfo) clearTimeout(undoInfo.timer)

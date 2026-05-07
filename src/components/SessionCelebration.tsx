@@ -14,6 +14,14 @@ interface Props {
   totalXP:   number
   onDismiss: () => void
   onShare?:  () => void
+  // P1.1 squad-feed wire-up. `feedCardIds` arrives asynchronously after the
+  // shareSessionWithSquadAction server action resolves. Render states:
+  //   undefined        → "Sharing with squad…" placeholder (brief)
+  //   []               → user has no active squad / opted out → hide section
+  //   [...uuids]       → "Posted to your squad's feed" preview
+  //   feedError set    → empty-state copy ("share when you're ready")
+  feedCardIds?: string[]
+  feedError?:   string | null
 }
 
 // ── Confetti particle ─────────────────────────────────────────────────────────
@@ -111,6 +119,7 @@ function LevelUpBurst({ newLevel, colour }: { newLevel: number; colour: string }
 
 export default function SessionCelebration({
   session, log, xpEarned, totalXP, onDismiss, onShare,
+  feedCardIds, feedError,
 }: Props) {
   const canvasRef        = useRef<HTMLCanvasElement>(null)
   const particlesRef     = useRef<Particle[]>([])
@@ -263,7 +272,10 @@ export default function SessionCelebration({
         aria-live="polite"
         aria-atomic="true"
         className="relative z-[102] flex flex-col items-center px-6 w-full max-w-sm"
-        style={{ animation: 'slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' }}
+        style={{
+          animation: 'slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        }}
         onClick={e => e.stopPropagation()}>
 
         {/* Splity — canonical brand-coral running-shoe character */}
@@ -317,6 +329,42 @@ export default function SessionCelebration({
             <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>total XP</p>
           </div>
         </div>
+
+        {/* Squad-feed status — P1.1 wire-up, populated from
+            shareSessionWithSquadAction. aria-live announces the result to SR
+            users without retriggering the parent role="status" container. */}
+        {feedCardIds === undefined && !feedError && (
+          <div
+            aria-live="polite"
+            className="mt-3 w-full rounded-xl px-3 py-2 text-xs text-center"
+            style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.5)' }}>
+            Sharing with squad…
+          </div>
+        )}
+        {feedCardIds && feedCardIds.length > 0 && (
+          <div
+            aria-live="polite"
+            className="mt-3 w-full rounded-xl px-3 py-2.5 text-xs text-center font-bold"
+            style={{
+              background: 'rgba(34,197,94,0.12)',
+              border: '1px solid rgba(34,197,94,0.3)',
+              color: '#22c55e',
+            }}>
+            Posted to your squad{feedCardIds.length > 1 ? 's' : ''}&apos; feed
+          </div>
+        )}
+        {feedError && (
+          <div
+            aria-live="polite"
+            className="mt-3 w-full rounded-xl px-3 py-2.5 text-xs text-center"
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              color: 'rgba(255,255,255,0.55)',
+            }}>
+            Your run is logged. Share it when you&apos;re ready.
+          </div>
+        )}
 
         {/* XP progress bar to next level */}
         <div className="mt-3 w-full">
