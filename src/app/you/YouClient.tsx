@@ -30,6 +30,9 @@ import { useProfile } from '@/hooks/useProfile'
 import { useWellness } from '@/hooks/useWellness'
 import { useMealPlan } from '@/hooks/useMealPlan'
 import { computeRPGStats, RPG_BADGES } from '@/lib/rpg'
+// RPG_BADGES is the canonical badge catalogue; each entry's `check(stats)`
+// predicate decides unlock. RPGStats itself doesn't carry a badges field
+// (intentional — badges are derived, not stored).
 import HeroCard from '@/components/rpg/HeroCard'
 import WeeklyXPChart from '@/components/rpg/WeeklyXPChart'
 import XPFeed from '@/components/rpg/XPFeed'
@@ -124,7 +127,10 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
   const planComplete    = plan?.status === 'completed'
   const medal           = planComplete ? '🥇' : rpgStats.streak >= 30 ? '🥈' : rpgStats.streak >= 7 ? '🥉' : null
   const charState       = rpgStats.streak === 0 ? 'idle' : rpgStats.streak < 7 ? 'running' : 'celebrating'
-  const unlockedIds     = useMemo(() => new Set(rpgStats.badges?.map(b => b.id) ?? []), [rpgStats.badges])
+  const unlockedIds     = useMemo(
+    () => new Set(RPG_BADGES.filter(b => b.check(rpgStats)).map(b => b.id)),
+    [rpgStats],
+  )
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--color-bg)' }}>
