@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.2 | **6 May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 9.3 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.3: claude/new-session-2Ldeo merged to main as PR #2 (3326449). Council/forge systems and all Session 10 work now on main. Vercel preview-vs-production tagging gotcha documented. -->
 <!-- 9.2: post-deploy-unblock — visual redesign of PlanPathSVG via inaugural council pass; council and /forge multi-agent systems shipped as standard tooling. Three live-app UI fixes (header/modal/fuel) ahead of F1. -->
 **Live URL:** https://nextsplit.app
 **GitHub:** https://github.com/NextSplit/Nextsplit-v2
@@ -47,6 +48,10 @@ git push https://ghp_YOUR_PAT@github.com/NextSplit/Nextsplit-v2.git main
 ```
 
 **Deploy:** auto-deploy on push to `main` is working. PR checks surface Vercel build failures — if a check goes red, read the Vercel log first; don't reach for webhook diagnostics.
+
+**Branch tagging gotcha (Session 11, 7 May):** Vercel only tags a build "Production" if its commit is on the production branch (`main`). Builds from `claude/*` feature branches succeed but get tagged "Preview" — they don't go to nextsplit.app on their own. Two ways to ship feature-branch work live: (a) **merge to `main` via PR** — preferred, keeps source of truth and live site aligned, and Vercel auto-promotes the merge; (b) **manually promote a Preview** from the deployment's `⋯` menu in Vercel — fast, but leaves `main` behind reality, so the next push to `main` will revert the live site.
+
+Claude Code sessions auto-create a `claude/<task>-<hash>` branch and develop there. They never push to `main` directly. To ship: open a PR from the Claude branch to `main` and merge — that's what produces a Production deploy.
 
 If you ever add a cron to `vercel.json`, it must fire **once per day or less** while we're on Hobby (e.g. `0 14 * * *` ✓, `*/30 * * * *` ✗, `0 9,14,18 * * *` ✗). Anything more frequent fails the deploy with `Hobby accounts are limited to daily cron jobs.`
 
@@ -309,7 +314,15 @@ npx playwright show-report
 
 ---
 
-## Commit History (Sessions 8–10, May 2026)
+## Commit History (Sessions 8–11, May 2026)
+
+### Session 11 (7 May 2026) — Council/forge + Session 10 work merged to main
+
+Session 10's work was confirmed live by manually promoting a Preview deployment to Production in Vercel (commit `a2d36e1`). After that, `claude/new-session-2Ldeo` was merged to `main` as PR #2, restoring source-of-truth alignment between `main`, the production branch, and nextsplit.app. The Vercel preview-vs-production tagging behaviour that caused the confusion is now documented in the Deploy section above.
+
+| Commit | Description |
+|--------|-------------|
+| `3326449` | Merge pull request #2 from `NextSplit/claude/new-session-2Ldeo` — brings council, /forge, plan-path redesign, smart-notify cron fix, and HANDOFF v9.2 onto main |
 
 ### Session 10 (6 May 2026) — Deploy unblock + plan-activate hardening + visual redesign + council & forge multi-agent systems
 
