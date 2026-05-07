@@ -20,22 +20,25 @@ BEGIN;
 
 -- ── 1. squad_feed.milestone_type — add 'session_logged' to CHECK ─────────────
 -- The original constraint is anonymously named via inline CHECK on the column
--- (CREATE TABLE squad_feed in phase-sl1-squads.sql:166). Look it up by shape
--- rather than guessing the name.
+-- (CREATE TABLE squad_feed in phase-sl1-squads.sql:166). Postgres canonicalises
+-- `IN ('a','b')` to `= ANY (ARRAY['a','b'])` internally, so a LIKE filter on
+-- 'IN' misses the canonicalised form. Use a broader filter and a FOR loop so
+-- this is safe to re-run after a partial-state failure (drops every CHECK
+-- referencing the milestone_type column, regardless of name or canonical form).
 
 DO $$
 DECLARE
   v_constraint text;
 BEGIN
-  SELECT conname INTO v_constraint
-  FROM pg_constraint
-  WHERE conrelid = 'public.squad_feed'::regclass
-    AND contype = 'c'
-    AND pg_get_constraintdef(oid) LIKE '%milestone_type%IN%';
-
-  IF v_constraint IS NOT NULL THEN
+  FOR v_constraint IN
+    SELECT conname
+      FROM pg_constraint
+     WHERE conrelid = 'public.squad_feed'::regclass
+       AND contype = 'c'
+       AND pg_get_constraintdef(oid) LIKE '%milestone_type%'
+  LOOP
     EXECUTE format('ALTER TABLE public.squad_feed DROP CONSTRAINT %I', v_constraint);
-  END IF;
+  END LOOP;
 END $$;
 
 ALTER TABLE public.squad_feed
