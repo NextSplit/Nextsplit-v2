@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.4 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 9.5 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.5: P1.0a Prerequisites PR landed on claude/review-project-status-lGBPu (10 commits b310fc0..4547cdd). Schema migration applied + verified in Supabase: squad_feed.milestone_type CHECK gains 'session_logged'; training_log_id FK + partial UNIQUE; profiles.share_logs_with_squad NOT NULL DEFAULT true; SECURITY DEFINER RPC insert_squad_feed_on_log fan-out; INSERT lockdown via REVOKE FROM authenticated. Three migration-fragility fixes pushed (CHECK lookup canonical-form, RPC loop reset, policy-drop by predicate). Code-side P1.1 wire-up live: SessionCelebration shows "Posted to your squad's feed" affirmation, ACWR-band gated single-line copy, NudgeSquadPill on Home (30min post-log), iOS standalone push gate, PostHog logCompleted/squadFeedCardShown/nudgeSent/nudgeOpened taxonomy. Branch is unmerged — PR-to-main pending. -->
 <!-- 9.4: Direction split out into docs/ROADMAP.md (v0.1) — single source of truth for delivery, threads, phases, persona coverage. HANDOFF now state-only; §What's Next is a pointer. -->
 <!-- 9.3: claude/new-session-2Ldeo merged to main as PR #2 (3326449). Council/forge systems and all Session 10 work now on main. Vercel preview-vs-production tagging gotcha documented. -->
 <!-- 9.2: post-deploy-unblock — visual redesign of PlanPathSVG via inaugural council pass; council and /forge multi-agent systems shipped as standard tooling. Three live-app UI fixes (header/modal/fuel) ahead of F1. -->
@@ -271,12 +272,16 @@ The **inaugural council pass** ran on the PlanPathSVG redesign in Session 10 (co
 
 Quick checks to confirm the deployed app matches the codebase before doing any work. Everything else is in ROADMAP.
 
+**P1.0a/P1.1 entry-point (top priority next session):**
+0. **Branch `claude/review-project-status-lGBPu` is unmerged.** 10 commits beyond main implementing P1.0a Prerequisites PR + P1.1 wire-up (commits `b310fc0` schema → `4547cdd` policy-drop fix). Schema migration is applied and verified in Supabase. Code is functional but not on `main`. Open a PR to `main` to ship P1.1 to nextsplit.app, or continue feature work on this branch first. Do NOT re-apply the migration — it's live.
+0a. **One Supabase cleanup pending:** run `DROP POLICY IF EXISTS "Members post to feed" ON public.squad_feed;` to remove the dead RLS policy left from a pre-migration rename. The lockdown holds either way (REVOKE blocks at the role layer; verified `has_table_privilege = false`), but cleanup is recommended.
+0b. **PR2 user-facing additions live on the branch only:** post-log celebration shows green "Posted to your squad's feed" pill (or empty-state "share when you're ready" copy); Splity reaction line is ACWR-band gated; Home tab shows "🚀 Nudge squad" pill for 30 minutes after every done log; iOS Safari push subscribe is gated on standalone display-mode. Squad-nudge guilt copy purged from `src/lib/squad-nudges.ts` (3 strings + tone tightening). Cron consolidation is comment-level only — slots 2 + 3 (leader-queued nudge, at-risk member detection) are TODOs in `src/app/api/cron/smart-notify/route.ts`.
 1. **Verify nextsplit.app shows the latest redesign** — deep navy, Splity in hero, 4-tab nav without labels, single violet finish arch framing single ember finish flag, refined water surface, refined tree density.
 2. **Confirm Stripe keys live in Vercel** — already in env vars list. (Roadmap: P0 OP2)
 3. **Confirm Resend key live in Vercel** — already in env vars list. (Roadmap: P0 OP2)
 4. **Device-test plan activation** — Session 10 added `details[]` surfacing in all 5 callers; any Zod failure now shows the failing field name. (Roadmap: P0 OP3)
 5. **Device-test AI plan generation** — confirm double-session gym days render. Session 10 fixed `{type,name,detail}` ↔ `{c,n,det}` shape mismatch via `normalizeAIWeeks()`. (Roadmap: P0 OP3)
-6. **Smart-notify** — single 14:00 UTC fire. Sundays "Weekly wrap"; other days "Keep the streak" if active plan and no log. One per user per day max.
+6. **Smart-notify** — single 14:00 UTC fire. Sundays "Weekly wrap"; other days "Keep the streak" if active plan and no log. One per user per day max. P1.x will absorb leader-nudge and at-risk-member dispatch into this same route (placeholders marked).
 7. **3-template regression spot-check on PlanPathSVG** — 8wk 5K, 16wk half, 24wk marathon. One arch + one flag at the end; no overlapping trees; coastal water reads as a surface.
 
 Everything below this line — F1 friend test, paywall flip, marketplace, security audit, ICO registration, animateMotion runner, periodisation glyphs, Trophy Room, seasons, Strava OAuth, etc. — has been absorbed into `docs/ROADMAP.md` with thread + phase + persona tagging. **Do not duplicate it here.**
