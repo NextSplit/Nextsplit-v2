@@ -614,7 +614,7 @@ export default function PlanPathSVG({ weeks, currentWeekN, logs, onWeekTap, plan
               week marker. Reduced-motion users see only the parked state. */}
           {points[currentWeekN - 1] && (() => {
             const pt = points[currentWeekN - 1]
-            const showTrace = currentWeekN > 1 && !reduced
+            const showTrace = currentWeekN > 1 && !reducedMotion
             return (
               <g>
                 {showTrace ? (
