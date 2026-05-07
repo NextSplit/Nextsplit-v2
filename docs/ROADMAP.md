@@ -1,4 +1,12 @@
 <!--
+  v0.3.1 — 2026-05-07 — P1.0a schema PR landed (migration + RPC). One scope
+                       correction logged: per-day UNIQUE on training_logs
+                       (council prereq sub-item 1) descoped — would block
+                       legitimate two-a-day runs and existing composite UNIQUE
+                       (user_id, plan_id, week_n, day_i, session_i) already
+                       handles plan-prescribed dedup (useTrainingLog.ts:106
+                       upsert). Ad-hoc-session dedup moves to P1.1 server
+                       action. Full §9 entry below.
   v0.3 — 2026-05-07 — /council pass on P1.1 Option A (16 reviewers, R1+R2+synth).
                        Verdict: HOLD pending P1.0a Prerequisites PR. 8 RED pre-ship
                        blockers (schema, motion, RLS, cron-cap, copy). 6 follow-ups
@@ -19,7 +27,7 @@
                        10 threads + cadence + opening ideation framing.
 -->
 # NextSplit Roadmap & Operating Manual
-**Status:** v0.3 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
+**Status:** v0.3.1 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
 
 > **READ ORDER for every session:** `CLAUDE.md` → `HANDOFF.md` (state) → **this doc (direction)**.
 > If a piece of work is not in here with a thread and a phase, it is **not a commitment**.
@@ -325,6 +333,7 @@ This is the source of truth. It changes via PR like any code.
 - **2026-05-07 · v0.2 · Q1 partially resolved** — Squad-tab promotion (Home / Train / Squad / You) is the recommended IA; final lock awaits F1 feedback per P2.1, but kill of Explore-as-tab is committed.
 - **2026-05-07 · v0.3 · /council on P1.1 Option A** — 16 reviewers (8 Tier A + 8 Tier B), R1 + R2 + synthesizer. Verdict: **HOLD** (confidence 5, low reversibility). R2 tally: 9 RED/HOLD, 7 YELLOW, 0 SHIP. Synthesizer pre-mortem item 1 (silent CHECK migration miss → F1 friends see celebrations with zero feed rows; non-reversible) confirmed HOLD independently of agent tally. **8 RED pre-ship blockers** captured in P1.0a. **6 follow-ups** captured in amended P1.1. **3 dissents overruled with reasons:** (a) product-strategist's full Splity removal — overruled in favour of ACWR-band gating + canonical render fix (coach-domain-expert + visual-brand convergence); (b) legal-compliance's ICO £40 reg as P1.1 code prerequisite — overruled, company-level obligation completes pre-F1 but does not block PR (pm-tech-lead); (c) devils-advocate's full-stop "build nothing, manual Slack" — overruled, schema fixes needed regardless and feed insert is core thesis at low marginal cost once schema lands. P1.1 cannot start until P1.0a merges.
 - **2026-05-07 · v0.3 · Cron path resolved** — Founder decision: squad-nudge dispatch is absorbed into existing smart-notify cron; no new route, no Vercel Pro upgrade. Single 14:00 UTC dispatch accepted for F1. Per-timezone delivery deferred until paywall flip. HANDOFF Open Q #5 partially resolved.
+- **2026-05-07 · v0.3.1 · P1.0a schema PR — scope correction** — Council prereq sub-item 1 listed `UNIQUE (user_id, (logged_at::date))` on `training_logs`. Descoped during implementation: the existing composite UNIQUE on `(user_id, plan_id, week_n, day_i, session_i)` (relied on by the `useTrainingLog.ts:106` upsert with `onConflict`) already handles plan-prescribed double-tap. A per-day UNIQUE would falsely reject legitimate two-a-day runs (AM run + PM gym, double-day plans). Ad-hoc-session dedup is moved to the P1.1 server action via an idempotency key. Migration `phase-p1-0a-schema.sql` ships the remaining 7 sub-items: CHECK update, `training_log_id` FK + partial UNIQUE on `(squad_id, training_log_id)`, `share_logs_with_squad` column, drop of overly-permissive `"System inserts feed posts"` policy, REVOKE direct INSERT, SECURITY DEFINER `insert_squad_feed_on_log` RPC fanning out to active squads, GRANT EXECUTE to `authenticated`.
 
 ### Open questions awaiting decision
 
