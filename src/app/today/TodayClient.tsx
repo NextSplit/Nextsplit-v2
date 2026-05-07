@@ -150,6 +150,24 @@ export default function TodayClient() {
     effort?: number; km?: number; notes?: string; duration_secs?: number; hr?: number; pace?: string
   }) => {
     if (!plan) return
+
+    // Capture once at call-time so date-offset shifts mid-await can't change
+    // which session metadata flows into squad-feed / community fetches /
+    // analytics / undo state. Council /council 2026-05-07 surgical fix S1
+    // (qa-risk + coach-domain-expert + security-privacy convergence).
+    const capturedSession = planDay?.sessions[params.session_i]
+
+    // Derive effective pace once for every downstream consumer (PB check,
+    // milestone payload). Council surgical fix S2 — milestone previously used
+    // raw params.pace, dropping a derivable PB-eligible pace silently.
+    let effectivePace = params.pace
+    if (!effectivePace && params.duration_secs && params.km && params.km > 0) {
+      const secsPerKm = params.duration_secs / params.km
+      const m = Math.floor(secsPerKm / 60)
+      const s = Math.round(secsPerKm % 60)
+      effectivePace = `${m}:${String(s).padStart(2, '0')}`
+    }
+
     let log: Awaited<ReturnType<typeof logSession>>
     try {
       log = await logSession({ plan_id: plan.id, ...params })
@@ -169,51 +187,38 @@ export default function TodayClient() {
 
     // Track session logged — the core retention event
     if (params.done) {
-      const sessionCode = planDay?.sessions[params.session_i]?.c ?? 'run'
-      Analytics.sessionLogged(sessionCode, params.km, params.effort)
+      Analytics.sessionLogged(capturedSession?.c ?? 'run', params.km, params.effort)
     }
 
-    // Check for new personal best — auto-calculate pace if not explicitly provided
-    if (params.km && params.done) {
-      // Derive pace from duration if not provided
-      let effectivePace = params.pace
-      if (!effectivePace && params.duration_secs && params.km > 0) {
-        const secsPerKm = params.duration_secs / params.km
-        const m = Math.floor(secsPerKm / 60)
-        const s = Math.round(secsPerKm % 60)
-        effectivePace = `${m}:${String(s).padStart(2, '0')}`
-      }
-      if (effectivePace) {
-        const existingLogs = Object.values(logs)
-        const existingPBs = computePersonalBests(existingLogs)
-        const pb = checkNewPB(
-          { km: params.km, pace: effectivePace, week_n: params.week_n, logged_at: new Date().toISOString(), done: true },
-          existingPBs
-        )
-        if (pb) {
-          hapticSuccess()
-          setNewPB({ distance: pb.distance, timeStr: pb.timeStr })
-          setTimeout(() => setNewPB(null), 6000)
-        }
+    // Check for new personal best
+    if (params.km && params.done && effectivePace) {
+      const existingLogs = Object.values(logs)
+      const existingPBs = computePersonalBests(existingLogs)
+      const pb = checkNewPB(
+        { km: params.km, pace: effectivePace, week_n: params.week_n, logged_at: new Date().toISOString(), done: true },
+        existingPBs
+      )
+      if (pb) {
+        hapticSuccess()
+        setNewPB({ distance: pb.distance, timeStr: pb.timeStr })
+        setTimeout(() => setNewPB(null), 6000)
       }
     }
 
     // Fire-and-forget community progress update
     if (params.done) {
-      const session = planDay?.sessions[params.session_i]
-      const communityPayload = {
-        km:           params.km ?? 0,
-        done:         true,
-        session_type: session?.c ?? 'run',
-        session_name: session?.n ?? 'Session',
-        duration_secs: params.duration_secs,
-        pace:         params.pace,
-        effort:       params.effort,
-      }
       fetch('/api/community/progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(communityPayload),
+        body: JSON.stringify({
+          km:           params.km ?? 0,
+          done:         true,
+          session_type: capturedSession?.c ?? 'run',
+          session_name: capturedSession?.n ?? 'Session',
+          duration_secs: params.duration_secs,
+          pace:         effectivePace,
+          effort:       params.effort,
+        }),
       }).catch(() => {}) // non-blocking
 
       // Milestone detection — PBs, streaks, first runs (non-blocking)
@@ -222,9 +227,9 @@ export default function TodayClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           km:           params.km ?? 0,
-          pace:         params.pace,
-          session_name: session?.n ?? 'Session',
-          session_type: session?.c ?? 'run',
+          pace:         effectivePace,
+          session_name: capturedSession?.n ?? 'Session',
+          session_type: capturedSession?.c ?? 'run',
         }),
       }).catch(() => {}) // non-blocking
 
@@ -239,13 +244,12 @@ export default function TodayClient() {
     }
 
     if (undoInfo) clearTimeout(undoInfo.timer)
-    const session = planDay?.sessions[params.session_i]
-    setUndoLabel(session?.n ?? 'session')
-    setUndoXP(session ? getSessionXP(session.c) : 10)
+    setUndoLabel(capturedSession?.n ?? 'session')
+    setUndoXP(capturedSession ? getSessionXP(capturedSession.c) : 10)
     const timer = setTimeout(() => setUndoInfo(null), 8000)
     setUndoInfo({ logId: log.id, timer })
-    if (session) setShareSession({ session, log })
-  }, [plan, logSession, undoInfo, planDay, logs])
+    if (capturedSession) setShareSession({ session: capturedSession, log })
+  }, [plan, logSession, undoInfo, planDay, logs, toastSuccess, toastError])
 
   const handleQuickDone = useCallback((dayI: number, sessI: number, session: PlanSession) => {
     // Always open the log modal — gives user control over distance/effort/notes
