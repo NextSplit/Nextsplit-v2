@@ -80,8 +80,20 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
   }, [])
 
   // Cross-plan logs power XP (RPG persists across plan resets); plan-scoped
-  // logs power streak.
-  const allPlanLogsArr = useMemo(() => Object.values(allPlanLogs ?? {}) as TrainingLog[], [allPlanLogs])
+  // logs power streak. useAllTrainingLogs returns an array; XPFeed wants a
+  // keyed Record (it does its own Object.values internally), so build that
+  // shape once for it.
+  const allPlanLogsArr = useMemo(
+    () => (Array.isArray(allPlanLogs) ? allPlanLogs : Object.values(allPlanLogs ?? {})) as TrainingLog[],
+    [allPlanLogs],
+  )
+  const allPlanLogsRecord = useMemo(() => {
+    const rec: Record<string, TrainingLog> = {}
+    for (const l of allPlanLogsArr) {
+      rec[`${l.week_n}_${l.day_i}_${l.session_i}`] = l
+    }
+    return rec
+  }, [allPlanLogsArr])
   const wellnessCount  = wellnessLogs?.length ?? 0
   const mealDays       = Object.keys(mealsByDate ?? {}).length
 
@@ -171,8 +183,9 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
         {/* Weekly XP chart */}
         <WeeklyXPChart logs={logs} weeks={weeks} />
 
-        {/* XP feed (recent earnings) */}
-        <XPFeed logs={allPlanLogsArr} weeks={weeks} />
+        {/* XP feed (recent earnings) — XPFeed wants Record<string, TrainingLog>;
+            we build it from the array above keyed on week_n/day_i/session_i. */}
+        <XPFeed logs={allPlanLogsRecord} weeks={weeks} />
 
         {/* Next reward — the carrot */}
         <NextRewardCard stats={rpgStats} unlockedIds={unlockedIds} />
@@ -197,6 +210,7 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
       {levelUpShow && (
         <LevelUpScreen
           level={levelUpLevel}
+          charId={charId}
           onDismiss={() => setLevelUpShow(false)}
         />
       )}
