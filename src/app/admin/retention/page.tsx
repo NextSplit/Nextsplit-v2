@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import * as Sentry from '@sentry/nextjs'
 import { config, serverConfig } from '@/lib/config'
 import { redirect } from 'next/navigation'
 import RetentionDashboard from './RetentionDashboard'
@@ -143,6 +144,19 @@ export default async function RetentionPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const data = await loadRetentionData()
+  // BL-X8: wrap the cohort load in Sentry. If service-role queries throw
+  // (RLS misconfig, network timeout, schema drift), the page rendering
+  // crashes — without this the founder finds out at the Vercel error
+  // overlay rather than via the alerting channel.
+  let data
+  try {
+    data = await loadRetentionData()
+  } catch (err) {
+    Sentry.captureException(err, {
+      tags: { feature: 'p3.8-retention-dashboard' },
+      extra: { context: '[admin/retention loadRetentionData]' },
+    })
+    throw err
+  }
   return <RetentionDashboard {...data} />
 }
