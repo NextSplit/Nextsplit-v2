@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
@@ -36,6 +37,16 @@ export async function GET(request: Request) {
     })
 
     if (!tokenRes.ok) {
+      // P3.12 / BL-X8: surface Strava token-exchange failures to Sentry —
+      // otherwise users hit silent-redirect and the founder has no signal
+      // that Strava OAuth is broken in prod (e.g., expired client secret,
+      // Strava API outage, scope rejection).
+      const errBody = await tokenRes.text().catch(() => '<no body>')
+      Sentry.captureMessage('Strava token exchange failed', {
+        level: 'error',
+        tags:  { feature: 'p3.12-strava-oauth' },
+        extra: { status: tokenRes.status, body: errBody.slice(0, 500) },
+      })
       return NextResponse.redirect(errorDest)
     }
 
@@ -64,7 +75,11 @@ export async function GET(request: Request) {
     const nameParam   = athleteName ? `&athlete=${encodeURIComponent(athleteName)}` : ''
     return NextResponse.redirect(`${origin}/profile?strava=connected${nameParam}`)
 
-  } catch {
+  } catch (err) {
+    Sentry.captureException(err, {
+      tags:  { feature: 'p3.12-strava-oauth' },
+      extra: { context: '[strava/callback]' },
+    })
     return NextResponse.redirect(errorDest)
   }
 }

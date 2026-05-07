@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { serverConfig, config } from '@/lib/config'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -63,7 +64,14 @@ export async function GET() {
           token_expires_at: new Date(refreshed.expires_at * 1000).toISOString(),
         })
         .eq('user_id', user.id)
-    } catch {
+    } catch (err) {
+      // P3.12 / BL-X8: token refresh failure is silent for the user but
+      // critical to flag to the founder — refresh-token revoked,
+      // client-secret rotated without app update, Strava API outage.
+      Sentry.captureException(err, {
+        tags:  { feature: 'p3.12-strava-oauth', op: 'token_refresh' },
+        extra: { user_id: user.id },
+      })
       return NextResponse.json({ error: 'Token refresh failed' }, { status: 401 })
     }
   }
@@ -75,6 +83,11 @@ export async function GET() {
   )
 
   if (!activitiesRes.ok) {
+    Sentry.captureMessage('Strava activities fetch failed', {
+      level: 'error',
+      tags:  { feature: 'p3.12-strava-oauth', op: 'fetch_activities' },
+      extra: { status: activitiesRes.status, user_id: user.id },
+    })
     return NextResponse.json({ error: 'Failed to fetch activities' }, { status: 502 })
   }
 
