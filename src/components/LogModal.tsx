@@ -16,11 +16,14 @@ interface LogModalProps {
   existingLog: TrainingLog | null
   prefillDurationSecs?: number
   onClose: () => void
+  // Promise<unknown> so callers may return either void or TrainingLog | null
+  // depending on which orchestrator owns the save. handleSave below awaits
+  // and discards.
   onSave: (params: {
     week_n: number; day_i: number; session_i: number; done: boolean
     effort?: number; km?: number; notes?: string; duration_secs?: number
     hr?: number; pace?: string
-  }) => Promise<void>
+  }) => Promise<unknown>
 }
 
 function LogModal({

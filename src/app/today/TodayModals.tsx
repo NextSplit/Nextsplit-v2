@@ -44,7 +44,10 @@ interface Props {
   setShowAdHocModal:  (v: boolean) => void
   setCeremonyDismissed: (v: boolean) => void
   handleUndo:       () => void
-  handleLogSession: (params: { week_n: number; day_i: number; session_i: number; done: boolean; effort?: number; km?: number; notes?: string; duration_secs?: number; hr?: number; pace?: string }) => Promise<void>
+  // Promise<unknown> so the prop accepts both Promise<void> (TrainClient's
+  // inline handler) and Promise<TrainingLog | null> (TodayClient's
+  // useSessionLogging hook return). Consumers await but discard the result.
+  handleLogSession: (params: { week_n: number; day_i: number; session_i: number; done: boolean; effort?: number; km?: number; notes?: string; duration_secs?: number; hr?: number; pace?: string }) => Promise<unknown>
   toastSuccess:     (msg: string) => void
   runnerColour?:    string
 }
