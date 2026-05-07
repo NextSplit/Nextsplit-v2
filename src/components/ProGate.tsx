@@ -1,7 +1,7 @@
 'use client'
 
 import { useSubscription } from '@/hooks/useSubscription'
-import { PREMIUM_ENFORCED, type FeatureKey } from '@/lib/features'
+import type { FeatureKey } from '@/lib/features'
 import type { ReactNode } from 'react'
 
 interface ProGateProps {
@@ -21,7 +21,7 @@ interface ProGateProps {
 /**
  * ProGate — wraps any feature behind a subscription check.
  *
- * When NEXT_PUBLIC_PREMIUM_ENFORCED=false (dev mode), always renders children.
+ * When the server reports dev-mode (PREMIUM_ENFORCED=false), always renders children.
  * When enforced, checks the user's tier against FEATURE_TIERS[feature].
  *
  * Usage:
@@ -105,8 +105,9 @@ function DefaultUpgradePrompt({ feature }: { feature: FeatureKey }) {
     description: 'Upgrade to NextSplit Pro to unlock this feature',
   }
 
-  // Only show if premium is actually enforced — in dev this never renders
-  if (!PREMIUM_ENFORCED) return null
+  // Reaching this component means the parent ProGate's `isDevMode || loading`
+  // gate already returned children, so dev-mode handling is upstream — no
+  // re-check needed here (P1.3 cleanup).
 
   return (
     <div className="bg-gradient-to-br from-orange-50 to-emerald-50 rounded-2xl border border-orange-50 p-5 text-center">
