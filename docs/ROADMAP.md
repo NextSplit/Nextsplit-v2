@@ -1,9 +1,15 @@
 <!--
+  v0.2 — 2026-05-07 — Opening ideation /forge --wide complete (22 agents,
+                       30 R1 options, 18 R2 syntheses, shortlister verdict).
+                       Recommended Option A (Log-to-Squad Accountability Loop).
+                       Phase 1 backlog crystallised (P1.0-P1.8). Six rave
+                       moments locked. Kill list populated. Decision log + rolling
+                       backlog seeded.
   v0.1 — 2026-05-07 — Initial commit. Operating manual + persona register +
                        10 threads + cadence + opening ideation framing.
 -->
 # NextSplit Roadmap & Operating Manual
-**Status:** v0.1 draft | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
+**Status:** v0.2 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
 
 > **READ ORDER for every session:** `CLAUDE.md` → `HANDOFF.md` (state) → **this doc (direction)**.
 > If a piece of work is not in here with a thread and a phase, it is **not a commitment**.
@@ -199,15 +205,18 @@ Phases sequence threads. Items inside each phase are tagged with their thread (T
 - **OP3 [T1]** Device-test plan activation + AI plan generation.
 - **OP4 [T8]** PostHog event taxonomy v1 — agree what we measure before we measure anything else.
 
-### Phase 1 · Sharpen the device experience (week 1-3)
-*Goal: friends touch the app and get a clean first 7 days.*
+### Phase 1 · Ship Option A + foundation cleanup (week 1-3)
+*Goal: friends touch the app, the founding thesis fires in one observable mechanic, and the foundation no paying user can survive without is in place. Headline feature is **Option A — Log-to-Squad Accountability Loop**, picked from /forge --wide opening ideation (v0.2).*
 
-- **P1.1 [T1, T3] B,C** Wire squad nudge dispatch (cron + push). Code is 80% there; missing the dispatch route. Files: new `src/app/api/cron/squad-nudges/route.ts`, message bank at `src/lib/squad-nudges.ts`.
-- **P1.2 [T2] all** Brand-consistency audit: enumerate every surface that drifts from the deep-navy / vivid-accent system, the character voice, or the four-tab colour identity. Council T2 fix list.
-- **P1.3 [T2] all** Character continuity audit: where does the runner appear, where doesn't it, where does its tone shift unexpectedly.
-- **P1.4 [T1, T2] all** De-duplication pass: stats strip on Home/Train, Elite upsell on Profile/Explore, squad cards across three tabs. Decide canonical home for each.
-- **P1.5 [T6] all** GDPR/ICO baseline: confirm consent capture, cookie banner, T&Cs draft v1, privacy policy v1. We don't ship a paying user before this.
-- **P1.6 [T1, T3] all** Friend-test (F1) with 4-5 runners on real Android devices.
+- **P1.0 [T1] all — PREREQUISITE** Decompose oversized clients before any new modal/banner orchestration lands. `TodayClient.tsx` (860 lines, 15+ `useState`), `LogModal.tsx` (534 lines), `AthleteDetailClient.tsx` (581 lines) must be split into focused sub-components. Without this, P1.1's celebration handoff piles onto an already-fragile component and the undo-countdown stale-closure risk grows.
+- **P1.1 [T1, T2, T3] B,C — OPTION A CORE** Log-to-Squad accountability loop. Wire: log submit → `squad_feed` insert → feed-card render → Splity reaction frame → leader-nudge prompt, all on the celebration screen. New files: `src/app/api/cron/squad-nudges/route.ts`, `src/lib/squad-nudges.ts`. Nudge message bank uses forward-looking copy ("Alex is waiting. Run today?") not guilt copy. Squad-feed write must be awaitable, not fire-and-forget, so the celebration UI knows whether to show or hide the social card.
+- **P1.2 [T6] all** PECR / GDPR consent audit. Confirm existing push-permission wording covers behavioural nudges (squad nudge, streak rescue, coach msg). Update wording if not — re-consent UX before P1.1 reaches paying users. T&Cs draft v1, privacy policy v1, cookie banner verified. Trigger ICO registration (£40, ico.org.uk) — hard gate before any coach-data feature in Phase 3.
+- **P1.3 [T6] all** Server-side paywall enforcement. Rename `NEXT_PUBLIC_PREMIUM_ENFORCED` → `PREMIUM_ENFORCED` (drop the `NEXT_PUBLIC_` prefix); move all enforcement reads from client components into API routes / middleware. Current flag is client-bypassable — a hard prerequisite for the Phase 4 paywall flip and a recommended fix even pre-flip.
+- **P1.4 [T2] all** Brand-consistency audit. Enumerate every surface drifting from the `--ns-*` token system, the deep-navy base, or the four-tab colour identity. Hard fixes: lime-on-white text combinations (WCAG 1.4.3 fail at ~1.3:1; lime must sit on navy at ~14:1), reduced-motion fallbacks for the Splity sequencer and any tab-bar pulse, no infinite CSS animations. Council T2 fix list.
+- **P1.5 [T2] all** Character continuity audit. Where does the runner appear, disappear, or change voice? The Log celebration screen is the canonical character moment — align all other surfaces to it. Maintain a Splity message bank (variable-injected: pace, distance delta, ACWR trend) so reactions feel earned not generic.
+- **P1.6 [T8] all** PostHog event taxonomy v1. Minimum events: `log_completed`, `squad_feed_card_shown`, `nudge_sent`, `nudge_opened`, `celebration_screen_shown`, `share_card_generated`, `share_card_shared`, `week3_reanchor_shown`. Add properties: `time_to_log_ms`, `week_start_preference`, `unit_preference`, `timezone`. Stitch anonymous → authenticated user IDs at signup or D7/D30 cohorts are uncountable.
+- **P1.7 [T1, T9] all** Resume-state gates. Confirm Stripe + Resend keys live in Vercel; device-test plan activation; device-test AI plan generation (double-session gym days); spot-check 3 PlanPathSVG templates (8wk 5K, 16wk half, 24wk marathon). HANDOFF session-resume checklist items 2-5 + 7. Phase 1 cannot close with any of these red.
+- **P1.8 [T1, T3, T2] all** Friend-test F1 with 4-5 runners on real Android devices, multiple accounts, full flow. Capture: did any squad nudge fire correctly? Did anyone share unprompted? Was the celebration handoff legible? What did week-3 (if reachable) feel like? UAT script: `SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts`. Findings feed Phase 2 backlog refinement.
 
 ### Phase 2 · IA restructure + retention wiring (week 3-7)
 *Goal: fix the foundation. The squad-first thesis is reflected in the IA. Dormant retention loops are wired and observable.*
@@ -218,7 +227,7 @@ Phases sequence threads. Items inside each phase are tagged with their thread (T
 - **P2.4 [T3, T10] all** Lifecycle email message bank verified and populated. Real cohort run end-to-end. Open/click rate baselined.
 - **P2.5 [T2, T1] A,B** Daily-log friction audit. One-tap paths from Home hero. Real-device confirmation of undo, celebration, sound, haptic.
 - **P2.6 [T2] all** Motion + animation system documented. Reduced-motion compliance audited. FPS budget set.
-- **P2.7 [T3] all** "Third-week" experience design (from §5 question 7). Specific surfaces fire at days 14-21.
+- **P2.7 [T3, T2, T7] all — OPTION B HEADLINE** Third-Week Hold-the-Line sequence. Days 14-21: full-screen re-anchor (progress + character voice), ACWR visible free on Train tab (downgrade `acwr_chart` from `pro` → `free` in `src/lib/features.ts`), ACWR-aware deload suppression so plans don't push above-baseline runners into injury, gap-recovery copy that doesn't shame interrupted streaks. ACWR threshold parameterised, not hard-coded. Per-user timezone shifts the day-17 fire so APAC runners don't get it at midnight. Picked from /forge v0.2 opening ideation; the Option B convergence (29/30 conviction across all 6 LEAD agents) and second only to Option A.
 
 ### Phase 3 · Coach Suite full build + retention proof (week 7-14)
 *Goal: coaches have a product worth £29/month. Athletes with coaches get the rave moment. Retention is measured and meets bar before Phase 4 considers the paywall.*
@@ -288,19 +297,82 @@ This is the source of truth. It changes via PR like any code.
 
 ---
 
-## 9. Open questions, decision log, and rolling backlog
+## 9. Open questions, decision log, kill list, rolling backlog
 
 ### Decision log (chronological)
-- *(Empty until v0.2 — populated after opening ideation session.)*
+
+- **2026-05-07 · v0.2 · Opening ideation /forge --wide** — Ran 22 active agents (6 LEAD, 16 CONSULT) over the seven §5 framing questions. R1 produced 30 options; R2 produced 18 cluster-syntheses; `ns-shortlister` recommended **Option A — Log-to-Squad Accountability Loop** for Phase 1, **Option B — Third-Week Hold-the-Line** as Phase 2 headline. Six rave moments locked (one per persona, embedded in §2). Nine items added to kill list. Phase 1 backlog crystallised P1.0-P1.8. Phase 2 P2.7 promoted to Option B headline.
+- **2026-05-07 · v0.2 · Q3 resolved** — Explore tab is killed in current form; demoted to discovery-sheet on Squad surface and submenus on Home. Feeds P2.1.
+- **2026-05-07 · v0.2 · Q1 partially resolved** — Squad-tab promotion (Home / Train / Squad / You) is the recommended IA; final lock awaits F1 feedback per P2.1, but kill of Explore-as-tab is committed.
 
 ### Open questions awaiting decision
-1. **Squad-tab vs Squad-as-Home.** P2.1. Decide after F1 feedback. Recommend Squad-tab.
-2. **Retention bar values.** P3.8 / P4.0. D7 ≥ 30%, D30 ≥ 15% are illustrative. Final values need running-app benchmark research.
-3. **Explore tab fate.** Demoted into submenus or kept as a 5th tab? Decision feeds P2.1.
-4. **Coach-Pro tier feature split.** P3 gates which features sit behind the £29/month platform fee vs free for Split Leaders.
-5. **Pricing experiments.** Founding tier expires after 500 spots; what happens at 501? Council T5 needed pre-P4.
+
+1. **Retention bar values.** P3.8 / P4.0. D7 ≥ 30%, D30 ≥ 15% are illustrative. Final values need running-app benchmark research before Phase 3 close.
+2. **Coach-Pro tier feature split.** Phase 3 gates which features sit behind the £29/month platform fee vs free for Split Leaders. Council T5 needed.
+3. **Pricing experiments.** Founding tier expires after 500 spots; what happens at 501? Council T5 needed pre-Phase 4.
+4. **`session_annotations` migration timing.** Backend-data flagged the table is missing from `/supabase/migrations/*.sql`. The coach-react route at `/api/coach/annotate` will throw `relation does not exist` in prod the moment a coach annotates. Decide: ship migration in Phase 1 P1.0 cleanup, or defer until Phase 3 Coach Suite build?
+5. **Vercel Hobby → Pro upgrade timing.** Single 14:00 UTC cron caps all "timely" notification features (squad nudge, streak rescue, week-3 hold, plan-change push). Pro upgrade unlocks multi-cron and per-timezone delivery. Decide: pre-F1, post-F1, or at paywall flip?
+6. **Stripe verification gate.** HANDOFF resume-checklist #2-3 still open. Block Phase 1 close on a real test charge end-to-end? (Recommend yes.)
+
+### Kill list (with reason and thread)
+
+| Item | Reason | Thread |
+|---|---|---|
+| Explore tab as top-level navigation | Q3: no persona opens it unprompted; coaches/squads discoverable via Home submenus + Squad tab | T2, T1 |
+| **Squad-Or-Nothing Gate** (R1 #1) | Coerces solo runners into a social structure they didn't ask for; alienates Persona A entirely; not validated by any data | T3 |
+| **Hard Paywall ACWR-Only** (R1 #6) | Locks the primary safety feature behind money before trust is earned; ACWR should be a Phase 4 contextual conversion trigger, not a paywall | T5 |
+| **Squad Collective-KM Unlock** (R1 #9) | Cold-start paradox: unlock requires collective km which requires active squad; circular, no bootstrapping path | T3 |
+| `html2canvas` / `canvas-confetti` for share cards | Bundle / INP cost unjustified; `@vercel/og` server-side replaces html2canvas, CSS animations + dynamic import replace confetti | T1, T2 |
+| Stats-strip duplication (Home + Train) | P1.4 dedup pass — two surfaces showing identical stats; canonical Train = plan stats, Home = streak/XP | T2 |
+| Elite upsell duplication (Profile + Explore) | Same upsell card in two places dilutes both; canonical = contextual triggers in T5 / P4.3 | T5 |
+| `NEXT_PUBLIC_PREMIUM_ENFORCED` client flag | Client-bypassable; rename + move enforcement server-side before paywall flip (P1.3) | T6 |
+| **Ember-to-Cyan Handoff** (R1 #25) as standalone | Low conviction (3); high implementation risk (mid-gradient off-system colour); absorb into Option A celebration screen if earned, otherwise drop | T2 |
 
 ### Rolling backlog
-This section grows. Each item: ID, title, thread tag, persona tag, status (TRIAGE / NEXT / IN-FLIGHT / DONE / KILLED), phase target.
 
-- *(Populated by opening ideation session and ongoing intake.)*
+Each item: ID — Title (R1 source) — Thread / Persona / Status / Target phase.
+
+**OPTION A — Log-to-Squad Accountability Loop (committed P1.1)**
+- BL-A1 — 2-tap log submission — T1, T2 / A,B,C / NEXT / P1
+- BL-A2 — Squad-feed card on celebration — T1, T2 / B,C / NEXT / P1
+- BL-A3 — Splity reaction frame on log — T2 / all / NEXT / P1
+- BL-A4 — Leader nudge prompt on celebration — T1, T3 / C / NEXT / P1
+- BL-A5 — Nudge dispatch cron + message bank ("Alex is waiting" copy shape) — T1, T3 / B,C / NEXT / P1
+
+**OPTION B — Third-Week Hold-the-Line (Phase 2 headline, P2.7)**
+- BL-B1 — Day 14-21 full-screen re-anchor — T2, T3 / all / TRIAGE / P2
+- BL-B2 — ACWR visible free on Train tab (`acwr_chart`: pro → free in features.ts) — T1, T7 / A,D / TRIAGE / P2
+- BL-B3 — ACWR-baseline-aware deload suppression — T7 / all / TRIAGE / P2
+- BL-B4 — Per-user timezone for day-17 fire (requires `profiles.timezone` column) — T1, T3 / all / TRIAGE / P2
+- BL-B5 — Gap-recovery copy that doesn't shame interrupted streaks — T2 / all / TRIAGE / P2
+
+**OPTION C — Coach-React Loop + Delayed-Start Trial (Phase 3, BLOCKED on schema + ICO)**
+- BL-C1 — `session_annotations` migration (RLS, FK to `training_logs`, indices) — T1 / D,F / NEXT / P1 cleanup or P3 prereq
+- BL-C2 — Coach 2-tap reaction surface on athlete log — T4 / D,F / TRIAGE / P3
+- BL-C3 — Athlete plan-change push with reason field (mandatory, not optional) — T4 / D / TRIAGE / P3
+- BL-C4 — Coach-Pro Monday digest (cache layer + idempotency key + fan-out, not synchronous) — T4, T8 / F / TRIAGE / P3
+- BL-C5 — Delayed-start 14-day trial (begins day 8, overlaps churn window) — T5 / all / TRIAGE / P3 or P4
+- BL-C6 — Trial unlock on squad-join OR first coach msg (avoids hard Stripe dependency) — T5 / all / TRIAGE / P3
+
+**OPTION D — Milestone Share Cards (plug into A's celebration)**
+- BL-D1 — `@vercel/og` server-side card pipeline — T1, T2 / all / TRIAGE / P1 or P2
+- BL-D2 — Persona/squad-aware card variants — T2 / B,C / TRIAGE / P2
+- BL-D3 — In-app browser fallback (Instagram/Gmail WKWebView) — T1 / all / TRIAGE / P2
+- BL-D4 — Lime-on-navy contrast + alt-text on card — T2 / all / TRIAGE / P2
+
+**Cross-cutting backlog**
+- BL-X1 — Decompose `TodayClient.tsx` (860 lines) — T1 / all / NEXT / P1.0
+- BL-X2 — Decompose `LogModal.tsx` (534 lines) — T1 / all / NEXT / P1.0
+- BL-X3 — Decompose `AthleteDetailClient.tsx` (581 lines) — T1 / D,F / NEXT / P1.0
+- BL-X4 — `squad_nudges` index `(to_user, sent_at DESC)` — T1 / B,C / TRIAGE / P2
+- BL-X5 — `training_logs(user_id, logged_at)` index — T1 / all / TRIAGE / P2
+- BL-X6 — `profiles.timezone` + `profiles.unit_preference` + `profiles.week_start` columns — T1, T8 / all / TRIAGE / P2
+- BL-X7 — Posthog cohort: anonymous → authenticated ID stitching — T8 / all / TRIAGE / P1.6
+- BL-X8 — Sentry alerts on `/api/share-card`, `coach_messages`, `streak` RPC — T9 / all / TRIAGE / P2
+
+**Killed (do not implement; see Kill list above for reasons)**
+- BL-K1 — Squad-Or-Nothing Gate (R1 #1) — KILLED
+- BL-K2 — Hard Paywall ACWR-Only (R1 #6) — KILLED
+- BL-K3 — Squad Collective-KM Unlock (R1 #9) — KILLED
+- BL-K4 — Tab-Anchored Streak Pulse (R1 #23) infinite-loop pattern — KILLED (the *idea* survives as one-shot 400ms spring on streak increment per animation-motion CONSULT; KILL applies to the looping anti-pattern)
+- BL-K5 — Ember-to-Cyan Handoff (R1 #25) standalone — KILLED (absorb into A or drop)
