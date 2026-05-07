@@ -1,8 +1,9 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import type { PlanSession, TrainingLog } from '@/types/database'
 import { getSessionXP } from '@/lib/rpg'
+import { Analytics } from '@/lib/analytics'
 import Splity from '@/components/Splity'
 
 interface Props {
@@ -48,6 +49,12 @@ export default function ShareSessionCard({
   const meta    = getSessionMeta(session.c)
   const xp      = getSessionXP(session.c ?? 'easy')
 
+  // P1.6: card surface generated — fire once per mount.
+  useEffect(() => {
+    Analytics.shareCardGenerated({ session_type: session.c, km: log.km ?? undefined })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   async function handleShare() {
     // Web Share API — native share sheet on Android
     const text = [
@@ -62,11 +69,13 @@ export default function ShareSessionCard({
     if (navigator.share) {
       try {
         await navigator.share({ text, title: 'NextSplit session', url: 'https://nextsplit.app' })
+        Analytics.shareCardShared({ session_type: session.c, km: log.km ?? undefined, method: 'web_share' })
         onClose()
-      } catch { /* cancelled */ }
+      } catch { /* cancelled — no event */ }
     } else {
       // Fallback — copy to clipboard
       await navigator.clipboard?.writeText(text)
+      Analytics.shareCardShared({ session_type: session.c, km: log.km ?? undefined, method: 'clipboard' })
       setCopying(true)
       setTimeout(() => { setCopying(false); onClose() }, 1500)
     }
