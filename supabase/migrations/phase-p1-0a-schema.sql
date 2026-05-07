@@ -80,13 +80,27 @@ ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS share_logs_with_squad boolean NOT NULL DEFAULT true;
 
 -- ── 4. Lock down direct INSERT on squad_feed ────────────────────────────────
--- The existing "System inserts feed posts" policy let any authenticated user
+-- The original "System inserts feed posts" policy let any authenticated user
 -- INSERT any milestone_type with their own user_id — meaning a client could
--- forge plan_complete / race_result / first_run cards. Drop the policy and
--- REVOKE the role-level grant. All inserts now flow through the SECURITY
--- DEFINER RPC below.
+-- forge plan_complete / race_result / first_run cards. Drop ANY INSERT or ALL
+-- policy on squad_feed regardless of name (Supabase dashboards can rename
+-- policies; verified 2026-05-07 — a renamed copy was found post-original-
+-- migration). All inserts now flow through the SECURITY DEFINER RPC below.
 
-DROP POLICY IF EXISTS "System inserts feed posts" ON public.squad_feed;
+DO $$
+DECLARE
+  v_policy text;
+BEGIN
+  FOR v_policy IN
+    SELECT polname
+      FROM pg_policy
+     WHERE polrelid = 'public.squad_feed'::regclass
+       AND polcmd IN ('a', '*')  -- INSERT or ALL
+  LOOP
+    EXECUTE format('DROP POLICY %I ON public.squad_feed', v_policy);
+  END LOOP;
+END $$;
+
 REVOKE INSERT ON public.squad_feed FROM authenticated;
 
 -- ── 5. RPC: insert_squad_feed_on_log ────────────────────────────────────────
