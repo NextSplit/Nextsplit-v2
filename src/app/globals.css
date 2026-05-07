@@ -450,3 +450,20 @@ button.no-tap-scale:active { transform: none; }
 /* Scrollbar hide */
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── prefers-reduced-motion (WCAG 2.3.3) ─────────────────────────────────────
+   Neutralises all CSS animations site-wide for users who prefer reduced motion
+   (xpFloat, levelBurst, splityBounce, spin360, slideUp, fadeIn, pulse-glow,
+   and any future keyframes). Transitions are preserved so micro-interactions
+   like :active scale + :hover still feel responsive. JS-driven animations
+   (Splity setInterval bob, SessionCelebration confetti rAF) are guarded
+   imperatively at their source.
+   ─────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

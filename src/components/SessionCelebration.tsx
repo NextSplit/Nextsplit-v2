@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { getLevelForXP, getXPProgress, RPG_LEVELS } from '@/lib/rpg'
+import Splity from './Splity'
 import type { PlanSession, TrainingLog } from '@/types/database'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -106,33 +107,6 @@ function LevelUpBurst({ newLevel, colour }: { newLevel: number; colour: string }
   )
 }
 
-// ── Splity character ──────────────────────────────────────────────────────────
-
-function Splity({ mood }: { mood: 'excited' | 'proud' | 'fire' }) {
-  const face = mood === 'fire' ? '🔥' : mood === 'excited' ? '🎉' : '⭐'
-  return (
-    <div className="flex flex-col items-center gap-1"
-      style={{ animation: 'splityBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both' }}>
-      {/* Body */}
-      <div className="relative">
-        <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
-          style={{
-            background: 'linear-gradient(135deg,#06b6d4,#0891b2)',
-            boxShadow: '0 8px 32px rgba(6,182,212,0.5)',
-          }}>
-          🏃
-        </div>
-        {/* Expression badge */}
-        <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center text-lg"
-          style={{ background: '#0c0c0c', border: '2px solid #06b6d4' }}>
-          {face}
-        </div>
-      </div>
-      <p className="text-xs font-bold" style={{ color: '#06b6d4' }}>Splity</p>
-    </div>
-  )
-}
-
 // ── Main celebration ──────────────────────────────────────────────────────────
 
 export default function SessionCelebration({
@@ -189,8 +163,10 @@ export default function SessionCelebration({
     } catch { /* not supported */ }
   }, [leveledUp])
 
-  // Confetti canvas animation
+  // Confetti canvas animation (skipped under prefers-reduced-motion, WCAG 2.3.3)
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx2d  = canvas.getContext('2d')
@@ -266,7 +242,8 @@ export default function SessionCelebration({
     return () => { clearTimeout(t1); if (t2) clearTimeout(t2) }
   }, [playSound, vibrate, leveledUp, currLevel])
 
-  const splityMood = leveledUp ? 'fire' : session.c?.includes('long') ? 'proud' : 'excited'
+  const splityMood: 'celebrating' | 'happy' | 'excited' =
+    leveledUp ? 'celebrating' : session.c?.includes('long') ? 'happy' : 'excited'
 
   return (
     <div
@@ -281,12 +258,18 @@ export default function SessionCelebration({
       <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none" style={{ zIndex: 101 }} />
 
       {/* Content */}
-      <div className="relative z-[102] flex flex-col items-center px-6 w-full max-w-sm"
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="relative z-[102] flex flex-col items-center px-6 w-full max-w-sm"
         style={{ animation: 'slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' }}
         onClick={e => e.stopPropagation()}>
 
-        {/* Splity */}
-        <Splity mood={splityMood} />
+        {/* Splity — canonical brand-coral running-shoe character */}
+        <div style={{ animation: 'splityBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both' }}>
+          <Splity mood={splityMood} size={96} />
+        </div>
 
         {/* Session type pill */}
         <div className="mt-6 px-5 py-2 rounded-full text-sm font-black"

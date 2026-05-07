@@ -79,9 +79,13 @@ export default function Splity({
   const [bounce, setBounce] = useState(0)
   const eyes = EYES[mood]
 
-  // Idle animation — gentle bob
+  // Idle animation — gentle bob (skipped under prefers-reduced-motion, WCAG 2.3.3)
   useEffect(() => {
     if (!animate) return
+    if (typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return
+    }
     let frame = 0
     const id = setInterval(() => {
       frame++
