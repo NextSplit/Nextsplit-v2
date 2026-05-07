@@ -9,11 +9,8 @@ import { derivePaceZones } from '@/lib/paceZones'
 import type { PaceZones } from '@/lib/paceZones'
 import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml, parseDet } from '@/lib/sessionUtils'
 import type { PlanDay, PlanSession, PlanWeek, TrainingLog } from '@/types/database'
-import { getSessionXP } from '@/lib/rpg'
-import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/streak'
 import { calcACWR } from '@/lib/statsUtils'
-import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import { Analytics } from '@/lib/analytics'
 import TodayBelowFold from './TodayBelowFold'
 import Splity from '@/components/Splity'
@@ -35,7 +32,8 @@ import NPSPrompt from '@/components/NPSPrompt'
 import FirstSessionCelebration from '@/components/FirstSessionCelebration'
 import PushPrompt from '@/components/PushPrompt'
 import NudgeSquadPill from '@/components/NudgeSquadPill'
-import { shareSessionWithSquadAction } from './actions'
+import { useUndoCountdown } from './hooks/useUndoCountdown'
+import { useSessionLogging } from './hooks/useSessionLogging'
 
 
 export default function TodayClient() {
@@ -50,15 +48,12 @@ export default function TodayClient() {
   const [readinessScore, setReadinessScore] = useState<number | null>(null)
   const [modalSession, setModalSession] = useState<{ session: PlanSession; dayI: number; sessI: number; prefillDurationSecs?: number } | null>(null)
   const [focusSession, setFocusSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
-  const [undoInfo, setUndoInfo] = useState<{ logId: string; timer: ReturnType<typeof setTimeout> } | null>(null)
-  const [undoLabel, setUndoLabel] = useState('')
-  const [undoXP, setUndoXP] = useState(0)
-  const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
+  // Undo state machine — see src/app/today/hooks/useUndoCountdown.ts.
+  // resetKey = dateOffset so any date-offset shift clears the pending undo.
   const [showWelcome, setShowWelcome] = useState(() => {
     if (typeof window === 'undefined') return false
     return !localStorage.getItem('nextsplit_welcome_dismissed')
   })
-  const [undoSecsLeft, setUndoSecsLeft] = useState(8)
   const [shareSession, setShareSession] = useState<{ session: PlanSession; log: TrainingLog } | null>(null)
   const [showWeeklyShare, setShowWeeklyShare] = useState(false)
   const [ceremonyDismissed, setCeremonyDismissed] = useState(false)
@@ -121,131 +116,18 @@ export default function TodayClient() {
   const planDay: PlanDay | null = viewWeek?.days[planDayIndex] ?? null
   const weekN = isToday ? (plan?.current_week ?? 1) : viewWeekN
 
-  // Clear undo on date change
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (undoInfo) {
-      clearTimeout(undoInfo.timer)
-      setUndoInfo(null)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateOffset])
+  // Undo state — extracted into a hook so the countdown interval, the
+  // reset-on-date-change effect, and the cleanup-on-undo all share a single
+  // ref-backed source of truth instead of stale closures.
+  const {
+    undoInfo, undoLabel, undoXP, undoSecsLeft, beginUndo, cancelUndo,
+  } = useUndoCountdown(dateOffset)
 
-  // Undo countdown ticker — pre-existing pattern, setState called intentionally on mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (!undoInfo) return
-    setUndoSecsLeft(8)
-    const interval = setInterval(() => {
-      setUndoSecsLeft(s => {
-        if (s <= 1) { clearInterval(interval); return 0 }
-        return s - 1
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [undoInfo])
-
-  const handleLogSession = useCallback(async (params: {
-    week_n: number; day_i: number; session_i: number; done: boolean
-    effort?: number; km?: number; notes?: string; duration_secs?: number; hr?: number; pace?: string
-  }) => {
-    if (!plan) return
-    let log: Awaited<ReturnType<typeof logSession>>
-    try {
-      log = await logSession({ plan_id: plan.id, ...params })
-    } catch {
-      // Offline fallback — queue for sync on reconnect (Tech Pillar spec)
-      if (typeof navigator !== 'undefined' && !navigator.onLine) {
-        const { queueSession } = await import('@/lib/offlineQueue')
-        await queueSession({ plan_id: plan.id, ...params })
-        toastSuccess('Saved offline — will sync when back online')
-        hapticLight()
-        return
-      }
-      toastError('Failed to save — check your connection and try again')
-      return
-    }
-    hapticLight()
-
-    // Track session logged — the core retention event
-    if (params.done) {
-      const sessionCode = planDay?.sessions[params.session_i]?.c ?? 'run'
-      Analytics.sessionLogged(sessionCode, params.km, params.effort)
-    }
-
-    // Check for new personal best — auto-calculate pace if not explicitly provided
-    if (params.km && params.done) {
-      // Derive pace from duration if not provided
-      let effectivePace = params.pace
-      if (!effectivePace && params.duration_secs && params.km > 0) {
-        const secsPerKm = params.duration_secs / params.km
-        const m = Math.floor(secsPerKm / 60)
-        const s = Math.round(secsPerKm % 60)
-        effectivePace = `${m}:${String(s).padStart(2, '0')}`
-      }
-      if (effectivePace) {
-        const existingLogs = Object.values(logs)
-        const existingPBs = computePersonalBests(existingLogs)
-        const pb = checkNewPB(
-          { km: params.km, pace: effectivePace, week_n: params.week_n, logged_at: new Date().toISOString(), done: true },
-          existingPBs
-        )
-        if (pb) {
-          hapticSuccess()
-          setNewPB({ distance: pb.distance, timeStr: pb.timeStr })
-          setTimeout(() => setNewPB(null), 6000)
-        }
-      }
-    }
-
-    // Fire-and-forget community progress update
-    if (params.done) {
-      const session = planDay?.sessions[params.session_i]
-      const communityPayload = {
-        km:           params.km ?? 0,
-        done:         true,
-        session_type: session?.c ?? 'run',
-        session_name: session?.n ?? 'Session',
-        duration_secs: params.duration_secs,
-        pace:         params.pace,
-        effort:       params.effort,
-      }
-      fetch('/api/community/progress', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(communityPayload),
-      }).catch(() => {}) // non-blocking
-
-      // Milestone detection — PBs, streaks, first runs (non-blocking)
-      fetch('/api/community/milestone', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          km:           params.km ?? 0,
-          pace:         params.pace,
-          session_name: session?.n ?? 'Session',
-          session_type: session?.c ?? 'run',
-        }),
-      }).catch(() => {}) // non-blocking
-
-      // Recompute runner class after every session (non-blocking)
-      fetch('/api/runner-class', { method: 'POST' }).catch(() => {})
-
-      // P1.1 squad-feed fan-out — fire-and-forget from /today. The /train
-      // celebration UI awaits this for its feed-card preview; here we just
-      // ensure the squad sees the log. RPC errors are Sentry-captured
-      // server-side via the action wrapper.
-      shareSessionWithSquadAction(log.id).catch(() => {})
-    }
-
-    if (undoInfo) clearTimeout(undoInfo.timer)
-    const session = planDay?.sessions[params.session_i]
-    setUndoLabel(session?.n ?? 'session')
-    setUndoXP(session ? getSessionXP(session.c) : 10)
-    const timer = setTimeout(() => setUndoInfo(null), 8000)
-    setUndoInfo({ logId: log.id, timer })
-    if (session) setShareSession({ session, log })
-  }, [plan, logSession, undoInfo, planDay, logs])
+  // Post-log orchestration extracted to keep TodayClient lean.
+  const { handleLogSession, newPB } = useSessionLogging({
+    plan, planDay, logs, logSession,
+    beginUndo, setShareSession, toastSuccess, toastError,
+  })
 
   const handleQuickDone = useCallback((dayI: number, sessI: number, session: PlanSession) => {
     // Always open the log modal — gives user control over distance/effort/notes
@@ -255,14 +137,14 @@ export default function TodayClient() {
 
   const handleUndo = useCallback(async () => {
     if (!undoInfo) return
-    clearTimeout(undoInfo.timer)
+    const logId = undoInfo.logId
+    cancelUndo()
     try {
-      await undoSession(undoInfo.logId)
+      await undoSession(logId)
     } catch {
       toastError('Could not undo — session may already be saved')
     }
-    setUndoInfo(null)
-  }, [undoInfo, undoSession, toastError])
+  }, [undoInfo, undoSession, toastError, cancelUndo])
 
   const loading = planLoading || logsLoading
 

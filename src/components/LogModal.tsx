@@ -4,6 +4,7 @@ import InjuryFlag from '@/components/InjuryFlag'
 import { useState, useEffect } from 'react'
 import { getSessionType, getLogModalMode, parseDet } from '@/lib/sessionUtils'
 import { hapticLight } from '@/lib/haptics'
+import { useLogFormState } from './log-modal/useLogFormState'
 import type { PlanSession, TrainingLog } from '@/types/database'
 
 interface LogModalProps {
@@ -15,11 +16,14 @@ interface LogModalProps {
   existingLog: TrainingLog | null
   prefillDurationSecs?: number
   onClose: () => void
+  // Promise<unknown> so callers may return either void or TrainingLog | null
+  // depending on which orchestrator owns the save. handleSave below awaits
+  // and discards.
   onSave: (params: {
     week_n: number; day_i: number; session_i: number; done: boolean
     effort?: number; km?: number; notes?: string; duration_secs?: number
     hr?: number; pace?: string
-  }) => Promise<void>
+  }) => Promise<unknown>
 }
 
 function LogModal({
@@ -29,21 +33,26 @@ function LogModal({
   const cfg  = getSessionType(session.c)
   const mode = getLogModalMode(session.c ?? '')
 
-  const [effort, setEffort]           = useState(existingLog?.effort ?? 7)
-  const [km, setKm]                   = useState(existingLog?.km ?? session.km ?? 0)
-  const [notes, setNotes]             = useState(existingLog?.notes ?? '')
-  const [durationMins, setDurationMins] = useState(
-    existingLog?.duration_secs ? Math.round(existingLog.duration_secs / 60)
-    : prefillDurationSecs       ? Math.round(prefillDurationSecs / 60) : 0
-  )
-  const [paceInput, setPaceInput]     = useState(existingLog?.pace ?? '')
-  const [repsCompleted, setRepsCompleted] = useState<number | null>(null)
-  const [pacingFeel, setPacingFeel]   = useState<'too-easy' | 'spot-on' | 'too-hard' | null>(null)
-  const [feelRating, setFeelRating]   = useState<number>(3) // 1-5 for standard mode
-  const [saving, setSaving]           = useState(false)
+  // Form state — lifted into a hook so the comprehensive dirty-check covers
+  // every field, not just notes/paceInput. Prerequisite for the L2 sub-
+  // component split (council ux-designer R1).
+  const form = useLogFormState({ session, existingLog, prefillDurationSecs })
+  const {
+    effort, setEffort,
+    km, setKm,
+    notes, setNotes,
+    durationMins, setDurationMins,
+    paceInput, setPaceInput,
+    repsCompleted, setRepsCompleted,
+    pacingFeel, setPacingFeel,
+    feelRating, setFeelRating,
+    showExtra, setShowExtra,
+  } = form
+
+  // UI / lifecycle state — stays at LogModal level.
+  const [saving,             setSaving]             = useState(false)
   const [showDiscardWarning, setShowDiscardWarning] = useState(false)
-  const [bottomInset, setBottomInset] = useState(0)
-  const [showExtra, setShowExtra]     = useState(!!existingLog)
+  const [bottomInset,        setBottomInset]        = useState(0)
 
   // Extract rep count from session name e.g. "8 × 400m" → 8
   const targetReps = (() => {
@@ -81,8 +90,7 @@ function LogModal({
   }
 
   function handleBackdropClick() {
-    const dirty = notes.trim() !== (existingLog?.notes ?? '') || paceInput !== (existingLog?.pace ?? '')
-    if (dirty) { setShowDiscardWarning(true); return }
+    if (form.isDirty) { setShowDiscardWarning(true); return }
     onClose()
   }
 
