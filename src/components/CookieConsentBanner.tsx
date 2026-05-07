@@ -73,11 +73,14 @@ export default function CookieConsentBanner() {
             ))}
           </div>
 
-          {/* Actions */}
+          {/* Actions — equal-prominence per ICO 2019 PECR guidance:
+              "Reject must be as easy as accept." Both buttons are now
+              filled with bold text; only the colour distinguishes them. */}
           <div className="flex gap-3">
             <button
               onClick={decline}
-              className="flex-1 py-3 rounded-2xl border border-[var(--color-border-2)] text-sm font-semibold text-[var(--color-text-tertiary)] active:bg-gray-50 transition-all"
+              className="flex-1 py-3 rounded-2xl text-sm font-bold text-gray-700 active:scale-[0.98] transition-all"
+              style={{ background: '#e5e7eb' }}
             >
               Decline
             </button>
