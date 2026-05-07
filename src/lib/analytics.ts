@@ -135,4 +135,41 @@ export const Analytics = {
   // ── Engagement ────────────────────────────────────────────────────────────
   pageViewed:           (page: string)              => track('page_viewed', { page }),
   notificationReceived: (type: string)              => track('notification_received', { type }),
+
+  // ── Squad accountability loop (P1.1) ──────────────────────────────────────
+  // Anonymous→authenticated stitching is handled by useProfile.ts:64 calling
+  // posthog.identify(user.id, ...) on profile load. PostHog auto-aliases the
+  // previous anonymous distinct_id, so the funnel from pre-auth → signup →
+  // first log is contiguous without explicit alias calls.
+  //
+  // Privacy: recipient_user_id is always the opaque uuid (auth.users.id),
+  // never an email or display_name.
+  logCompleted: (props: {
+    km?: number
+    effort?: number
+    session_type?: string
+    squad_count: number
+    share_logs_with_squad: boolean
+    week_number: number
+    runner_class?: string
+  }) => track('log_completed', props),
+
+  squadFeedCardShown: (props: {
+    recipient_user_id: string  // opaque uuid — never email
+    squad_id: string
+    feed_card_id: string
+    milestone_type: string
+  }) => track('squad_feed_card_shown', props),
+
+  nudgeSent: (props: {
+    template_id: string  // e.g. 'streak_v2' — see squad-nudges.ts:nudgeTemplateId
+    is_leader_nudge: boolean
+    squad_id: string
+  }) => track('nudge_sent', props),
+
+  nudgeOpened: (props: {
+    template_id: string
+    is_leader_nudge: boolean
+    squad_id: string
+  }) => track('nudge_opened', props),
 }
