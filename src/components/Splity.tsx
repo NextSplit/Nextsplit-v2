@@ -4,6 +4,17 @@
  * empty states, and the Home header.
  *
  * Moods: idle | happy | excited | worried | celebrating | running | sleepy
+ *
+ * Animation convention (P1.5 Splity continuity audit, council 2026-05-07):
+ *   - Hero / focal-point instances (size ≥ 48px): default `animate` (true).
+ *     The 62.5 Hz setInterval bob is a UX accent, worth the frame cost.
+ *   - Icon-sized instances (size ≤ 32px): pass `animate={false}`. At small
+ *     scale the bob reads as jitter, not character; the cumulative cost
+ *     (3+ concurrent intervals on the celebration screen, performance R2)
+ *     is wasteful. Established by HomeClient.tsx:603 + applied to
+ *     TodayHeader.tsx:102 and TodayBelowFold.tsx:47.
+ *   - Reduced-motion users: bob is suppressed unconditionally regardless
+ *     of the animate prop (see useEffect below — matchMedia check).
  */
 
 'use client'
@@ -15,7 +26,7 @@ export type SplityMood = 'idle' | 'happy' | 'excited' | 'worried' | 'celebrating
 interface Props {
   size?:      number
   mood?:      SplityMood
-  animate?:   boolean   // enables idle bounce animation
+  animate?:   boolean   // enables idle bounce animation; opt out at size ≤ 32
   className?: string
   label?:     string    // speech bubble text
 }
