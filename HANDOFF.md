@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.7 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 9.8 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.8: Marathon execution session COMPLETE. 11 PRs merged into main (#4 P1.0a/P1.1 → #11 quick-wins). Phase 1 closed, Phase 2 6/7 shipped, Phase 3 9/11 + observability shipped, cross-cutting backlog 4/8 done + 2 partial. 5 Supabase migrations applied (P1.0a schema, P2.3 referral, P2.7 timezone, P3.10 squad seasons, BL-X4/X5 indexes). Founder admin remaining: £40 ICO registration; optional Sentry alert rule on tags.feature. NEXT GATING EVENT: F1 friend test (P1.8) — unblocks P2.1 (squad-tab IA), P2.5 (friction audit), P2.7 hard-deload council, P3.9 (nudge effectiveness baseline), P3.4/P3.7 (Stripe Connect work blocks Phase 4). All open code-only quick wins are now shipped. -->
 <!-- 9.7: Marathon dev session shipped Phase 1 + Phase 2 code-feasible items across PR #5 (merged), PR #6 (merged), PR #7 (open: P1.2 PECR fix + reaction notifications + 6 follow-ups), PR #8 (open: P2.2 + P2.3 + P2.6 + P2.7 partial). Two open PRs need founder action: (a) Vercel env var rename NEXT_PUBLIC_PREMIUM_ENFORCED → PREMIUM_ENFORCED for PR #7's P1.3; (b) 2 Supabase migrations for PR #8 (phase-p2-3-referral-reward.sql + phase-p2-7-timezone.sql). Phase 1 done; Phase 2 6/7 done (P2.1 squad-tab IA promotion + P2.5 friction audit + P2.7 deload suppression deferred — all gated on F1 friend-test signal or council). Phase 3 (Coach Suite + retention proof) deliberately not started — it's roadmap week 7-14, dependent on F1 retention data. NEXT GATING EVENT: F1 friend test (P1.8). -->
 <!-- 9.6: P1.0 partial decomposition landed on claude/review-project-status-lGBPu (5 commits 29d7307..cdf8fd5). Council /council 2026-05-07 verdict HOLD on full P1.0; founder picked Path B (surgical fixes + decomposition). Pre-ship blockers all resolved: S1+S2 capture session+effectivePace before await (kills stale-closure planDay → wrong squad_feed metadata bug + propagates derived pace into milestone payload); S3 react-hooks/exhaustive-deps bumped warn→error so future stale-closure regressions fail CI. T1 useUndoCountdown hook + T2 useSessionLogging hook extracted from TodayClient (870→759 lines, 15→10 useState). L1 useLogFormState lift in LogModal closes the silent km/duration discard-warning gap (12→3 useState). Remaining: L2 LogModal split into BasicEntry/AdvancedEntry/SaveControls and A1 AthleteDetailClient split into 4 sections — both pure JSX surgery, no bug-fix value, deferred pending live smoke-test on nextsplit.app. -->
 <!-- 9.5: P1.0a Prerequisites PR landed on claude/review-project-status-lGBPu (10 commits b310fc0..4547cdd). Schema migration applied + verified in Supabase: squad_feed.milestone_type CHECK gains 'session_logged'; training_log_id FK + partial UNIQUE; profiles.share_logs_with_squad NOT NULL DEFAULT true; SECURITY DEFINER RPC insert_squad_feed_on_log fan-out; INSERT lockdown via REVOKE FROM authenticated. Three migration-fragility fixes pushed (CHECK lookup canonical-form, RPC loop reset, policy-drop by predicate). Code-side P1.1 wire-up live: SessionCelebration shows "Posted to your squad's feed" affirmation, ACWR-band gated single-line copy, NudgeSquadPill on Home (30min post-log), iOS standalone push gate, PostHog logCompleted/squadFeedCardShown/nudgeSent/nudgeOpened taxonomy. Branch is unmerged — PR-to-main pending. -->
@@ -276,53 +277,58 @@ Quick checks to confirm the deployed app matches the codebase before doing any w
 
 **Resume entry-point (top priority next session):**
 
-0. **TWO OPEN PRS NEED FOUNDER ACTION** before more code:
-
-   **PR #7** (https://github.com/NextSplit/Nextsplit-v2/pull/7) — P1.2 PECR + reaction notifications + 6 follow-ups
-   - **Founder action:** rename Vercel env var `NEXT_PUBLIC_PREMIUM_ENFORCED` → `PREMIUM_ENFORCED` (drop the `NEXT_PUBLIC_` prefix). Keep value `false` for now. Redeploy.
-   - **Smoke-test (5 cases):** fresh-browser cookie state pre/post Accept; 2-account reaction → push test; SquadFeed pagination + realtime; LogModal inputs unchanged; AthleteDetail charts render.
-
-   **PR #8** (https://github.com/NextSplit/Nextsplit-v2/pull/8) — Phase 2 batch (P2.2 + P2.3 + P2.6 + P2.7)
-   - **Founder action: apply 2 Supabase migrations IN ORDER:**
-     1. `supabase/migrations/phase-p2-3-referral-reward.sql` — adds `profiles.referral_reward_months` + `credit_referral_reward_if_eligible()` RPC.
-     2. `supabase/migrations/phase-p2-7-timezone.sql` — adds `profiles.timezone`.
-     - Verify: `SELECT column_name FROM information_schema.columns WHERE table_name='profiles' AND (column_name LIKE 'referral_%' OR column_name='timezone');` should include `referral_reward_months` and `timezone`.
-   - **Smoke-test (5 cases):** /you renders lean YouClient (character + XP + badges + Settings link); /squad Week3Reanchor fires once on plan week 3; reduced-motion onboarding skips animations; referred user's 5th log credits both parties; smart-notify response includes `skippedQuietHours` count.
+0. **NO OPEN PRS — all 11 session PRs are merged.** Code-only backlog is exhausted; everything remaining needs F1 data, council passes, or external API work (Stripe, ICO, Strava developer console).
 
 1. **NEXT GATING EVENT: F1 friend test (P1.8).** 4-5 real runners on real Android devices over 1-2 weeks. F1 data unlocks:
-   - **P2.1** (squad → first-class tab decision) — keep or replace based on `/squad` engagement
-   - **P2.5** (daily-log friction audit) — needs real friction reports, not synthetic
-   - **P2.7 deload suppression council** — what does "ACWR-aware adapt" mean concretely
-   - **Phase 3 prioritisation** — coach-suite items vs retention-proof items
+   - **P2.1** squad-tab IA decision — keep or demote based on `/squad` engagement (≥3 of 4-5 testers visit /squad ≥3x/week unprompted = keep)
+   - **P2.5** daily-log friction audit — real friction reports, not synthetic
+   - **P2.7 hard-deload council** — what does "ACWR-aware adapt" mean concretely (4 design options enumerated; needs council T7 + content-copy)
+   - **P3.9** squad nudge effectiveness — A/B over alternate templates needs baseline conversion data
+   - **P3.8** retention dashboard cohort numbers — `/admin/retention` is built and starved of real cohort data
+   - **Phase 4 readiness** — P4.0 retention bar can only be evaluated against real D1/D7/D30
 
-2. **Phase 2 status: 6 of 7 items done.** P2.1 + P2.5 + P2.7-deload all gated on F1.
+2. **Phase summary after this session:**
+   - **Phase 1 — closed.** All 9 items shipped. L2/A1 full structural splits deferred (cosmetic).
+   - **Phase 2 — 6/7 shipped.** P2.1 + P2.5 + P2.7-hard-deload all gated on F1 / council.
+   - **Phase 3 — 9/11 shipped + P3.12 observability polished.** P3.4 + P3.7 stripe-blocked; P3.9 F1-gated.
+   - **Phase 4 — not started.** Gated on P3.8 retention bar clearing post-F1.
+   - **Cross-cutting backlog:** BL-X4 + BL-X5 + BL-X7 + BL-X8 done. BL-X1/X2/X3 partial (minimal splits). BL-X6 partial (timezone shipped, unit_pref + week_start open).
 
-3. **Phase 3 deliberately not started.** Roadmap week 7-14, gated on F1 retention proof clearing the bar (P3.8). Starting Phase 3 before F1 = building on assumptions.
+3. **What's live on nextsplit.app** (after merges of PR #4-#11):
+   - **P1.x stack:** P1.0a schema (squad_feed CHECK + RPC + share_logs_with_squad + INSERT lockdown). P1.1 social loop end-to-end (squad-feed RPC + post-log celebration affirmation + ACWR-band Splity reaction line + NudgeSquadPill on /today + iOS standalone push gate). P1.0 partial decomposition (useUndoCountdown + useSessionLogging + useLogFormState hooks). P1.2 PECR (posthog.init waits for cookie consent). P1.3 server-side paywall (PREMIUM_ENFORCED env-only). P1.4 6 CSS tokens. P1.5 Splity discipline. P1.6 PostHog taxonomy + timezone enrichment.
+   - **P2.x stack:** P2.2 lean YouClient at `/you` (HeroCard + XP + badges + Settings link). P2.3 referral 5-log reward via SECURITY DEFINER RPC. P2.4 lifecycle email bank (already-built — 7 templates + cron). P2.6 motion audit + `docs/motion.md`. P2.7 in-app: Week3Reanchor full-screen + acwr_chart pro→free + per-user timezone gate on smart-notify + soft-deload (AcwrAdvisoryBanner + GapRecoveryBanner).
+   - **P3.x stack:** P3.1 coach dashboard v2 (streak + days_since_message tiles + amber flags). P3.2 plan-assign (RPC + bottom-sheet picker in PlanBuilderClient). P3.3 push on coach↔athlete message. P3.5 athlete filter chips. P3.6 review submission form. P3.8 `/admin/retention` cohort dashboard. P3.10 squad seasons snapshot RPC + smart-notify month-1 piggyback + SquadSeasonCard. P3.11 PlanPath animateMotion runner trace + race/deload glyphs. P3.12 Strava OAuth feature-tagged Sentry alerts.
+   - **SquadFeed stack:** recipient view + 5-emoji reactions + Load more pagination + Supabase realtime subscription + reaction → push notifications.
+   - **Backlog stack:** BL-X4 squad_nudges_recipient_recent index. BL-X5 training_logs_user_logged_at index. BL-X7 anonymous→authenticated PostHog stitching (useProfile.ts:64). BL-X8 Sentry coverage on /admin/retention + Strava OAuth/sync.
 
-4. **What's live on main right now** (after PR #4, #5, #6 merged):
-   - P1.0a schema migration applied (squad_feed CHECK + RPC + share_logs_with_squad + lockdown)
-   - P1.1 loop: post-log celebration with "Posted to your squad's feed" affirmation, ACWR-band Splity copy, NudgeSquadPill on /today, iOS standalone push gate
-   - P1.0 partial decomposition: useUndoCountdown + useSessionLogging + useLogFormState lifted; surgical S1+S2 fixes (planDay capture + effectivePace propagation)
-   - P1.3 server-side paywall enforcement (server-only flag)
-   - P1.4 6 missing CSS tokens defined
-   - P1.5 Splity small-size animation discipline
-   - P1.6 PostHog taxonomy (logCompleted, squadFeedCardShown, nudgeSent, nudgeOpened, celebrationScreenShown, shareCardGenerated, shareCardShared, week3ReanchorShown) + timezone enrichment on every event
-   - SquadFeed recipient view + reactions + pagination + realtime + reaction notifications
-   - HANDOFF v9.6 (this section now v9.7)
+4. **Migration log (apply-order, all live in Supabase):**
+   1. `phase-p1-0a-schema.sql` — squad_feed CHECK + RPC + lockdown
+   2. `phase-p2-3-referral-reward.sql` — referral_reward_months + credit_referral_reward_if_eligible RPC
+   3. `phase-p2-7-timezone.sql` — profiles.timezone
+   4. `phase-p3-10-squad-seasons.sql` — snapshot_squad_seasons_for_month RPC
+   5. `phase-bl-x4-x5-indexes.sql` — squad_nudges_recipient_recent + training_logs_user_logged_at
 
-5. **What lands on main when PR #7 + #8 merge:**
-   - PR #7: PECR PostHog gating (cookie set only after Accept), reaction → push notifications, banner Decline parity, P1.6 timezone enrichment
-   - PR #8: Phase 2 — referral 5-log reward + Week3Reanchor + acwr_chart pro→free + motion guards + lean YouClient at /you + per-user timezone gate on smart-notify + docs/motion.md
+5. **Founder admin remaining (no code can replace these):**
+   - **£40 ICO registration** (privacy.tsx:25 placeholder waiting for the number) — no time pressure pre-F1; required before any payment flow ships
+   - **Sentry alert rule on `tags.feature`** (recommended) — set `tags.feature = "p3.12-strava-oauth" OR tags.feature = "p3.8-retention-dashboard" OR tags.feature = "p1.1-squad-feed" OR tags.feature = "p2.3-referral" OR tags.feature = "p3.3-messaging"` with threshold ≥ 1 event / 5 min → notification. Catches every shipped server-action regression in one rule.
+   - **Stripe Connect verification** (when ready for P3.4 / P3.7 / P4.x)
+   - **Strava developer console** (when ready to flip P3.12 from observability-only to active-marketing)
 
-6. **Deferred concrete work (resume candidates after F1):**
-   - **L2** — LogModal full BasicEntry/AdvancedEntry/SaveControls structural split (current: just file-extraction of inputs)
-   - **A1** — AthleteDetailClient 4-section split (current: just charts file-extraction)
-   - **P2.7 deload suppression** — needs council pass on what ACWR-aware adapt means
-   - **Reaction grouping** in push notifications (3-people-reacted aggregation)
-   - **SquadFeed delete-old-rows** maintenance job
-   - **Founder health-check endpoint** /api/admin/health (single URL for F1 monitoring)
+6. **Deferred resume candidates** (none blocking; do these only if you want code work in the F1 wait):
+   - **L2** — LogModal full BasicEntry/AdvancedEntry/SaveControls structural split (current: minimal `inputs.tsx` extraction). 2h, no bug-fix value, typecheck-cycle risk.
+   - **A1** — AthleteDetailClient full 4-section split (current: minimal `charts.tsx` extraction). Same shape as L2.
+   - **BL-X6 partial** — `profiles.unit_preference` + `profiles.week_start` columns + capture flow (timezone already shipped P2.7).
+   - **Reaction grouping** in push notifications (aggregate "3 people reacted" rather than 3 separate pushes). Off-roadmap.
+   - **SquadFeed delete-old-rows** maintenance job (year-old session_logged rows are dead weight). Off-roadmap.
 
-7. **Known Supabase cleanup recommended (low priority):** `DROP POLICY IF EXISTS "Members post to feed" ON public.squad_feed;` — dead RLS policy from pre-migration rename. Lockdown still holds via REVOKE; this is hygiene only.
+7. **F1 readiness checklist** (run before friends start logging):
+   - [ ] Test account confirmed in at least one squad with 1+ other test accounts (so the loop is observable)
+   - [ ] Push subscriptions enabled on test devices (PWA installed + Notification permission granted)
+   - [ ] PostHog production project receiving events (verify in PostHog Live Events)
+   - [ ] Sentry alert rule set per item 5 above
+   - [ ] HANDOFF and ROADMAP up to date for next-session resume (this v9.8 + ROADMAP v0.4 covers it)
+   - [ ] /admin/retention loads cleanly with current (likely empty or near-empty) cohort data
+   - [ ] One real test charge through Stripe (Open Q #6) — recommended before F1, required before paywall
 1. **Verify nextsplit.app shows the latest redesign** — deep navy, Splity in hero, 4-tab nav without labels, single violet finish arch framing single ember finish flag, refined water surface, refined tree density.
 2. **Confirm Stripe keys live in Vercel** — already in env vars list. (Roadmap: P0 OP2)
 3. **Confirm Resend key live in Vercel** — already in env vars list. (Roadmap: P0 OP2)
