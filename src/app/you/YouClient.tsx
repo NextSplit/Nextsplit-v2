@@ -171,8 +171,9 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
         {/* Weekly XP chart */}
         <WeeklyXPChart logs={logs} weeks={weeks} />
 
-        {/* XP feed (recent earnings) */}
-        <XPFeed logs={allPlanLogsArr} weeks={weeks} />
+        {/* XP feed (recent earnings) — XPFeed expects the keyed Record
+            shape returned directly by useAllTrainingLogs, not the array. */}
+        <XPFeed logs={allPlanLogs} weeks={weeks} />
 
         {/* Next reward — the carrot */}
         <NextRewardCard stats={rpgStats} unlockedIds={unlockedIds} />
