@@ -32,11 +32,13 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) return zodError(parsed.error)
     const { template_id, athlete_id } = parsed.data
 
-    // 1. Template ownership check — caller must be the author.
+    // 1. Template ownership check — caller must be the author. total_starts
+    // is selected here so the bump in step 5 reads the actual value (not
+    // a default-0 from a missing field).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: tmpl } = await db(supabase)
       .from('plan_templates')
-      .select('id, author_id, name, weeks_data, weeks_min, weeks_max')
+      .select('id, author_id, name, weeks_data, weeks_min, weeks_max, total_starts')
       .eq('id', template_id)
       .maybeSingle()
 
@@ -59,10 +61,14 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Archive athlete's existing active plan (one-active-plan rule).
+    // The `as never` cast matches the marketplace/purchase pattern — the
+    // generated Database['public']['Tables']['user_plans']['Update'] type
+    // doesn't include updated_at, so the type-checker rejects `any` but
+    // accepts `never` (TypeScript's universal-cast escape hatch).
     await supabase
       .from('user_plans')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .update({ status: 'archived', updated_at: new Date().toISOString() } as any)
+      .update({ status: 'archived', updated_at: new Date().toISOString() } as never)
       .eq('user_id', athlete_id)
       .eq('status', 'active')
 
@@ -88,13 +94,18 @@ export async function POST(req: NextRequest) {
     if (createErr) return NextResponse.json({ error: createErr.message }, { status: 500 })
 
     // 5. Bump the template's start counter so the coach's revenue dashboard
-    // and the marketplace metrics reflect the assignment.
-    await db(supabase)
-      .from('plan_templates')
+    // and the marketplace metrics reflect the assignment. Pattern matches
+    // marketplace/purchase: db(supabase) wrapper handles the typing without
+    // a cast. Wrapped in try/catch so a counter-bump failure doesn't
+    // shadow the successful plan creation.
+    try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .update({ total_starts: ((tmpl as any).total_starts ?? 0) + 1 })
-      .eq('id', template_id)
-      .catch(() => { /* non-blocking */ })
+      const tmplStarts = (tmpl as { total_starts?: number | null }).total_starts ?? 0
+      await db(supabase)
+        .from('plan_templates')
+        .update({ total_starts: tmplStarts + 1 })
+        .eq('id', template_id)
+    } catch { /* non-blocking — counter is decorative */ }
 
     return NextResponse.json({ ok: true, plan: newPlan })
 
