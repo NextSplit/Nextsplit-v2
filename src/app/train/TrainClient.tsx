@@ -20,6 +20,8 @@ import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
 import FuelPlanCard from '@/components/FuelPlanCard'
 import SessionCelebration from '@/components/SessionCelebration'
 import Week3Reanchor from '@/components/Week3Reanchor'
+import AcwrAdvisoryBanner from '@/components/AcwrAdvisoryBanner'
+import GapRecoveryBanner from '@/components/GapRecoveryBanner'
 import { shareSessionWithSquadAction } from '@/app/today/actions'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import PreRunBrief from '@/components/PreRunBrief'
@@ -476,6 +478,32 @@ export default function TrainClient() {
             ))}
           </div>
         </div>
+
+        {/* P2.7 soft-deload: ACWR advisory + gap-recovery banners. Both
+            render above today's session block; both are dismissible and
+            log-once-per-day (advisory) / log-once-per-gap (gap-recovery)
+            via localStorage. */}
+        {(() => {
+          const series       = calcACWR(allLogs, weeks)
+          const latestAcwr   = series.length > 0 ? series[series.length - 1].acwr : null
+          const todayCode    = todaySessions[0]?.c
+          const lastDoneLog  = allLogs
+            .filter((l: TrainingLog) => l.done)
+            .sort((a: TrainingLog, b: TrainingLog) =>
+              new Date(b.logged_at).getTime() - new Date(a.logged_at).getTime())[0]
+          const lastLoggedAt = (lastDoneLog?.logged_at as string | undefined) ?? null
+          return (
+            <div className="space-y-2 mb-3">
+              <GapRecoveryBanner lastLoggedAt={lastLoggedAt} />
+              {latestAcwr !== null && (
+                <AcwrAdvisoryBanner
+                  latestAcwr={latestAcwr}
+                  todaySessionType={todayCode}
+                />
+              )}
+            </div>
+          )
+        })()}
 
         {/* ══ TODAY section ══ */}
           <div>
