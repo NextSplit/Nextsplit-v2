@@ -66,6 +66,57 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
   const [sending, setSending]             = useState(false)
   const [activeTab, setActiveTab]         = useState<'about'|'plans'|'reviews'>('about')
 
+  // P3.6 review submission state. The /api/coach/review POST handler
+  // gates on coach_athletes relationship so we can show the form to any
+  // logged-in non-self viewer; the API rejects with 403 if they're not
+  // an actual past/current athlete. UX-wise: optimistic show, server-side
+  // gate. No client-side eligibility query needed.
+  const [showReviewForm, setShowReviewForm]     = useState(false)
+  const [reviewRating, setReviewRating]         = useState(0)
+  const [reviewText, setReviewText]             = useState('')
+  const [submittingReview, setSubmittingReview] = useState(false)
+  const [reviewError, setReviewError]           = useState<string | null>(null)
+  const [reviewSubmitted, setReviewSubmitted]   = useState(false)
+
+  async function submitReview() {
+    if (reviewRating < 1 || reviewRating > 5) {
+      setReviewError('Pick a star rating')
+      return
+    }
+    setSubmittingReview(true)
+    setReviewError(null)
+    try {
+      const res = await fetch('/api/coach/review', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          coach_id:    coach.user_id,
+          rating:      reviewRating,
+          review_text: reviewText.trim() || undefined,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setReviewError(data.error ?? 'Failed to submit review')
+        return
+      }
+      setReviewSubmitted(true)
+      // Reset form after a brief confirmation; refresh reviews list.
+      setTimeout(() => {
+        setShowReviewForm(false)
+        setReviewSubmitted(false)
+        setReviewRating(0)
+        setReviewText('')
+        // Re-fetch reviews so the new one (or its is_visible reveal) shows.
+        setReviewsLoaded(false)
+      }, 1500)
+    } catch {
+      setReviewError('Network error — try again')
+    } finally {
+      setSubmittingReview(false)
+    }
+  }
+
   useEffect(() => {
     if (activeTab === 'reviews' && !reviewsLoaded) {
       fetch(`/api/coaches/reviews?coach_id=${coach.user_id}`)
@@ -262,15 +313,97 @@ export default function CoachProfileClient({ coach, plans, isOwnProfile, viewerL
         )}
 
         {activeTab === 'reviews' && (
-          !reviewsLoaded
-            ? <div className="py-8 text-center" style={{ color: 'var(--color-text-tertiary)' }}><div className="animate-pulse text-2xl mb-2">⭐</div><p className="text-xs">Loading reviews…</p></div>
-            : reviews.length === 0
-              ? <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-                  <p className="text-2xl mb-2">⭐</p>
-                  <p className="text-sm font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>No reviews yet</p>
-                  <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Reviews unlock after 30 days of coaching.</p>
+          <>
+            {/* P3.6: leave-a-review CTA for logged-in non-self viewers. The
+                API gates on coach_athletes relationship; if the viewer
+                wasn't actually coached they get a 403 reflected as
+                reviewError. Hidden when a review has just been submitted. */}
+            {viewerLoggedIn && !isOwnProfile && !showReviewForm && !reviewSubmitted && (
+              <button
+                type="button"
+                onClick={() => setShowReviewForm(true)}
+                className="w-full rounded-2xl px-4 py-3 text-sm font-bold mb-2"
+                style={{ background: 'var(--ns-ember)', color: 'white' }}>
+                ✍️ Write a review
+              </button>
+            )}
+            {showReviewForm && !reviewSubmitted && (
+              <div className="rounded-2xl p-4 mb-2" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+                <p className="text-sm font-bold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                  How was coaching with {coach.display_name}?
+                </p>
+                <div className="flex gap-1 mb-3">
+                  {[1,2,3,4,5].map(n => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setReviewRating(n)}
+                      aria-label={`${n} star${n === 1 ? '' : 's'}`}
+                      className="p-1">
+                      <svg className="w-7 h-7" viewBox="0 0 20 20"
+                        fill={n <= reviewRating ? '#c49a3c' : 'none'}
+                        stroke={n <= reviewRating ? '#c49a3c' : '#5a8a6a'} strokeWidth={1.5}>
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                      </svg>
+                    </button>
+                  ))}
                 </div>
-              : <div className="space-y-3">{reviews.map(r => <ReviewCard key={r.id} review={r} />)}</div>
+                <textarea
+                  value={reviewText}
+                  onChange={e => setReviewText(e.target.value)}
+                  placeholder="What worked? What surprised you? (optional)"
+                  rows={3}
+                  maxLength={500}
+                  className="w-full rounded-xl px-3 py-2.5 text-sm resize-none mb-2"
+                  style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)' }} />
+                <p className="text-[10px] mb-3" style={{ color: 'var(--color-text-tertiary)' }}>
+                  Reviews are hidden until {coach.display_name} has 5+ — protects against single-review distortion.
+                </p>
+                {reviewError && (
+                  <p className="text-xs mb-2 px-2 py-1.5 rounded-lg"
+                    style={{ background: 'rgba(255,61,110,0.10)', color: '#ff3d6e' }}>
+                    {reviewError}
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setShowReviewForm(false); setReviewError(null) }}
+                    disabled={submittingReview}
+                    className="flex-1 py-2.5 rounded-xl text-xs font-bold"
+                    style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={submitReview}
+                    disabled={submittingReview || reviewRating < 1}
+                    className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white disabled:opacity-50"
+                    style={{ background: 'var(--ns-ember)' }}>
+                    {submittingReview ? 'Submitting…' : 'Submit'}
+                  </button>
+                </div>
+              </div>
+            )}
+            {reviewSubmitted && (
+              <div className="rounded-2xl p-4 mb-2 text-center" style={{ background: 'rgba(34,197,94,0.10)', border: '1px solid rgba(34,197,94,0.35)' }}>
+                <p className="text-2xl mb-1">✅</p>
+                <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Review submitted</p>
+                <p className="text-[11px]" style={{ color: 'var(--color-text-secondary)' }}>
+                  It&apos;ll appear here once {coach.display_name} has 5+ reviews.
+                </p>
+              </div>
+            )}
+            {!reviewsLoaded
+              ? <div className="py-8 text-center" style={{ color: 'var(--color-text-tertiary)' }}><div className="animate-pulse text-2xl mb-2">⭐</div><p className="text-xs">Loading reviews…</p></div>
+              : reviews.length === 0
+                ? <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+                    <p className="text-2xl mb-2">⭐</p>
+                    <p className="text-sm font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>No reviews yet</p>
+                    <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Reviews unlock after the coach has 5+ ratings.</p>
+                  </div>
+                : <div className="space-y-3">{reviews.map(r => <ReviewCard key={r.id} review={r} />)}</div>}
+          </>
         )}
       </div>
 
