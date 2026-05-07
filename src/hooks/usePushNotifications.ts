@@ -14,12 +14,35 @@ function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
   return arr.buffer
 }
 
-export type PushStatus = 'idle' | 'requesting' | 'subscribed' | 'denied' | 'error'
+export type PushStatus = 'idle' | 'requesting' | 'subscribed' | 'denied' | 'error' | 'requires_install'
+
+// iOS Safari only accepts web-push subscription when the PWA is installed to
+// the home screen (standalone display-mode). Subscribing from a regular Safari
+// tab silently fails or shows misleading prompts. Detect and bail early so the
+// UI can show an "install first" CTA instead of a broken permission flow.
+// (P1.1 mobile-pwa amendment, 2026-05-07.)
+function iosRequiresInstall(): boolean {
+  if (typeof window === 'undefined') return false
+  const ua = navigator.userAgent
+  const isIOS = /iPad|iPhone|iPod/.test(ua)
+  if (!isIOS) return false
+  const standalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    // Older iOS Safari exposes navigator.standalone; the modern matchMedia
+    // value lags behind on some versions, so check both.
+    (navigator as Navigator & { standalone?: boolean }).standalone === true
+  return !standalone
+}
 
 export function usePushNotifications() {
   const [status, setStatus] = useState<PushStatus>('idle')
 
   const subscribe = useCallback(async (): Promise<boolean> => {
+    if (iosRequiresInstall()) {
+      setStatus('requires_install')
+      return false
+    }
+
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       // Push notifications not supported in this browser
       setStatus('error')

@@ -22,6 +22,12 @@ interface Props {
   //   feedError set    → empty-state copy ("share when you're ready")
   feedCardIds?: string[]
   feedError?:   string | null
+  // P1.1 amendment: ACWR-band gated copy. When 0.8 ≤ acwr ≤ 1.3, the
+  // celebration shows a single Splity-reaction line citing the figure.
+  // Outside the band, copy falls back to a generic "great work" with no
+  // ACWR mention (per coach-domain-expert R2 — overrules the original
+  // unconditional ACWR injection that could surprise users in danger zones).
+  acwr?: number | null
 }
 
 // ── Confetti particle ─────────────────────────────────────────────────────────
@@ -119,7 +125,7 @@ function LevelUpBurst({ newLevel, colour }: { newLevel: number; colour: string }
 
 export default function SessionCelebration({
   session, log, xpEarned, totalXP, onDismiss, onShare,
-  feedCardIds, feedError,
+  feedCardIds, feedError, acwr,
 }: Props) {
   const canvasRef        = useRef<HTMLCanvasElement>(null)
   const particlesRef     = useRef<Particle[]>([])
@@ -282,6 +288,15 @@ export default function SessionCelebration({
         <div style={{ animation: 'splityBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both' }}>
           <Splity mood={splityMood} size={96} />
         </div>
+
+        {/* Splity reaction line — single line, ACWR-band gated.
+            In-band: cite the figure. Out-of-band or missing: generic copy with
+            no ACWR mention (coach-domain-expert R2 amendment). */}
+        <p className="mt-2 text-xs text-center font-bold" style={{ color: 'rgba(255,255,255,0.7)' }}>
+          {(typeof acwr === 'number' && acwr >= 0.8 && acwr <= 1.3)
+            ? `Steady — ACWR ${acwr.toFixed(2)}, dialled in.`
+            : 'Great work. Keep showing up.'}
+        </p>
 
         {/* Session type pill */}
         <div className="mt-6 px-5 py-2 rounded-full text-sm font-black"

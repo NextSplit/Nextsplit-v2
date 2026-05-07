@@ -9,8 +9,10 @@ import { useProfile } from '@/hooks/useProfile'
 import { useWellness } from '@/hooks/useWellness'
 import { useToast } from '@/components/Toast'
 import { computeStreak } from '@/lib/streak'
+import { calcACWR } from '@/lib/statsUtils'
 import { getSessionType, fmtKm, decodeHtml } from '@/lib/sessionUtils'
 import { getSessionXP } from '@/lib/rpg'
+import { Analytics } from '@/lib/analytics'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import WeekRow from '@/components/plan/WeekRow'
 import { TodayModals } from '../today/TodayModals'
@@ -175,6 +177,7 @@ export default function TrainClient() {
     session:      PlanSession
     log:          TrainingLog
     xpEarned:     number
+    acwr?:        number | null
     feedCardIds?: string[]
     feedError?:   string | null
   } | null>(null)
@@ -241,8 +244,29 @@ export default function TrainClient() {
         const timer = setTimeout(() => setUndoInfo(null), 8000)
         setUndoInfo({ logId: log.id, timer })
         if (log.done && session) {
+          // ACWR-band gated copy: compute the most-recent ACWR figure once,
+          // pass into celebration for the Splity reaction line. SessionCele-
+          // bration only cites the figure when 0.8 ≤ acwr ≤ 1.3.
+          const acwrSeries = calcACWR(allLogs, weeks)
+          const acwr = acwrSeries.length > 0
+            ? acwrSeries[acwrSeries.length - 1].acwr
+            : null
+
+          // logCompleted analytics event — fired for every session log,
+          // carries the loop-funnel context (squad_count is hydrated to 0
+          // here; the RPC fan-out is the source of truth for squad reach
+          // and surfaces via feedCardIds.length below).
+          Analytics.logCompleted({
+            km:                    params.km,
+            effort:                params.effort,
+            session_type:          session.c,
+            squad_count:           0,
+            share_logs_with_squad: true,
+            week_number:           params.week_n,
+          })
+
           setShareSession({ session, log })
-          setCelebration({ session, log, xpEarned: xp })
+          setCelebration({ session, log, xpEarned: xp, acwr })
 
           // P1.1 squad-feed fan-out — fire async; celebration shows immediately
           // and the feed-card preview / empty-state arrives when the RPC
@@ -253,6 +277,20 @@ export default function TrainClient() {
               ? { ...prev, feedCardIds, feedError: error }
               : prev
             )
+            // Re-fire logCompleted with the resolved squad_count so the
+            // funnel sees both the immediate event (above) and the squad
+            // reach. PostHog dedupes by event-time, so this gives a clean
+            // squad_count distribution without losing the immediate signal.
+            if (feedCardIds.length > 0) {
+              Analytics.logCompleted({
+                km:                    params.km,
+                effort:                params.effort,
+                session_type:          session.c,
+                squad_count:           feedCardIds.length,
+                share_logs_with_squad: true,
+                week_number:           params.week_n,
+              })
+            }
           }).catch(() => {
             setCelebration(prev => prev && prev.log.id === log.id
               ? { ...prev, feedCardIds: [], feedError: 'network' }
@@ -659,6 +697,7 @@ export default function TrainClient() {
           log={celebration.log}
           xpEarned={celebration.xpEarned}
           totalXP={totalXP}
+          acwr={celebration.acwr}
           feedCardIds={celebration.feedCardIds}
           feedError={celebration.feedError}
           onDismiss={() => setCelebration(null)}

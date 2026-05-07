@@ -34,6 +34,7 @@ import { useLeadMode } from '@/hooks/useLeadMode'
 import NPSPrompt from '@/components/NPSPrompt'
 import FirstSessionCelebration from '@/components/FirstSessionCelebration'
 import PushPrompt from '@/components/PushPrompt'
+import NudgeSquadPill from '@/components/NudgeSquadPill'
 import { shareSessionWithSquadAction } from './actions'
 
 
@@ -861,6 +862,15 @@ export default function TodayClient() {
         firstSessionAt={(profile as { first_session_logged_at?: string | null })?.first_session_logged_at ?? null}
         displayName={profile?.display_name ?? null}
       />
+      {/* P1.1 amendment: leader-nudge moved off celebration → Home pill,
+          visible for 30 minutes after the most recent done log. */}
+      <NudgeSquadPill mostRecentLogAt={
+        Object.values(allPlanLogs)
+          .filter((l: { done?: boolean }) => l.done)
+          .map((l: { logged_at?: string; created_at?: string }) => l.logged_at ?? l.created_at ?? null)
+          .filter((t): t is string => !!t)
+          .sort((a, b) => b.localeCompare(a))[0] ?? null
+      } />
     </div>
   )
 }
