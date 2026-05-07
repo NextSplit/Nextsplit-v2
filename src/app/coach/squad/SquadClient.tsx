@@ -21,6 +21,9 @@ interface AthleteStatus {
   total_weeks:         number | null
   plan_name:           string | null
   runner_class:        string | null
+  // P3.1 dashboard v2 additions
+  streak_current?:     number
+  days_since_message?: number | null
 }
 
 const STATUS = {
@@ -203,7 +206,9 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
         <span className="text-gray-300 text-lg shrink-0">›</span>
       </a>
 
-      {/* Stats strip */}
+      {/* Stats strip — P3.1 v2 split into two rows: training + comms.
+          Training row keeps the existing 3 tiles (sessions, ACWR, last active);
+          comms row adds streak + days-since-message at-a-glance health. */}
       <div className="grid grid-cols-3 divide-x divide-gray-100 border-t border-[var(--color-border)]">
         <div className="px-3 py-2 text-center">
           <p className="text-xs font-black text-gray-800">
@@ -230,6 +235,41 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
             {daysSince === null ? '—' : daysSince === 0 ? 'Today' : `${daysSince}d`}
           </p>
           <p className="text-[9px] text-[var(--color-text-tertiary)]">last active</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 divide-x divide-gray-100 border-t border-[var(--color-border)]">
+        <div className="px-3 py-2 text-center">
+          <p className={`text-xs font-black ${
+            (athlete.streak_current ?? 0) >= 7 ? 'text-amber-700' :
+            (athlete.streak_current ?? 0) >= 3 ? 'text-emerald-700' :
+            'text-gray-800'
+          }`}>
+            {athlete.streak_current && athlete.streak_current > 0
+              ? `🔥 ${athlete.streak_current}d`
+              : '—'}
+          </p>
+          <p className="text-[9px] text-[var(--color-text-tertiary)]">streak</p>
+        </div>
+        <div className={`px-3 py-2 text-center ${
+          athlete.days_since_message === null ? 'bg-amber-900/10' :
+          athlete.days_since_message !== undefined && athlete.days_since_message >= 14 ? 'bg-amber-900/10' :
+          ''
+        }`}>
+          <p className={`text-xs font-black ${
+            athlete.days_since_message === null ? 'text-amber-700' :
+            athlete.days_since_message !== undefined && athlete.days_since_message >= 14 ? 'text-amber-700' :
+            'text-gray-800'
+          }`}>
+            {athlete.days_since_message === null
+              ? 'Never'
+              : athlete.days_since_message === 0
+              ? 'Today'
+              : athlete.days_since_message !== undefined
+              ? `${athlete.days_since_message}d`
+              : '—'}
+          </p>
+          <p className="text-[9px] text-[var(--color-text-tertiary)]">since msg</p>
         </div>
       </div>
 
@@ -263,11 +303,30 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
   )
 }
 
+type AthleteFilter = 'all' | 'red' | 'amber' | 'green' | 'inactive' | 'silent'
+
 export default function SquadClient({ coachProfile }: { coachProfile: CoachProfile }) {
   const [athletes, setAthletes]       = useState<AthleteStatus[]>([])
   const [loading, setLoading]         = useState(true)
   const [showInvite, setShowInvite]   = useState(false)
   const [showBroadcast, setShowBroadcast] = useState(false)
+  // P3.5 filter state — defaults to 'all', persisted in localStorage so the
+  // coach's preferred view sticks across sessions.
+  const [filter, setFilter] = useState<AthleteFilter>('all')
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('nextsplit_coach_squad_filter') as AthleteFilter | null
+      if (stored && ['all', 'red', 'amber', 'green', 'inactive', 'silent'].includes(stored)) {
+        setFilter(stored)
+      }
+    } catch { /* localStorage unavailable */ }
+  }, [])
+
+  function applyFilter(next: AthleteFilter) {
+    setFilter(next)
+    try { localStorage.setItem('nextsplit_coach_squad_filter', next) } catch {}
+  }
 
   const fetchStatus = useCallback(async () => {
     setLoading(true)
@@ -284,8 +343,26 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchStatus() }, [fetchStatus])
 
-  const needsAttention = athletes.filter(a => a.status !== 'green')
-  const onTrack        = athletes.filter(a => a.status === 'green')
+  // Filtered view — applied after fetch. 'inactive' = ≥7 days since last log;
+  // 'silent' = coach hasn't messaged in ≥14 days OR never (P3.1 v2 amber flag).
+  const filteredAthletes = athletes.filter(a => {
+    if (filter === 'all')    return true
+    if (filter === 'red')    return a.status === 'red'
+    if (filter === 'amber')  return a.status === 'amber'
+    if (filter === 'green')  return a.status === 'green'
+    if (filter === 'inactive') {
+      if (!a.last_active) return true
+      const days = Math.floor((Date.now() - new Date(a.last_active).getTime()) / 86400000)
+      return days >= 7
+    }
+    if (filter === 'silent') {
+      return a.days_since_message === null || (a.days_since_message ?? 0) >= 14
+    }
+    return true
+  })
+
+  const needsAttention = filteredAthletes.filter(a => a.status !== 'green')
+  const onTrack        = filteredAthletes.filter(a => a.status === 'green')
   const today          = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })
 
   const handleMessage = (athleteId: string) => {
@@ -366,6 +443,38 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
             >
               Generate invite link →
             </button>
+          </div>
+        )}
+
+        {/* P3.5 Filter chips — applied to the rendered athlete lists.
+            Selection persists across sessions via localStorage. */}
+        {!loading && athletes.length > 0 && (
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1">
+            {([
+              { id: 'all',      label: `All (${athletes.length})` },
+              { id: 'red',      label: `Needs you (${athletes.filter(a => a.status === 'red').length})` },
+              { id: 'amber',    label: `Check in (${athletes.filter(a => a.status === 'amber').length})` },
+              { id: 'green',    label: `On track (${athletes.filter(a => a.status === 'green').length})` },
+              { id: 'inactive', label: `Inactive 7d+` },
+              { id: 'silent',   label: `Coach silent` },
+            ] as const).map(chip => {
+              const active = filter === chip.id
+              return (
+                <button
+                  key={chip.id}
+                  type="button"
+                  onClick={() => applyFilter(chip.id)}
+                  aria-pressed={active}
+                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors"
+                  style={{
+                    background: active ? 'var(--ns-ember)' : 'var(--color-surface)',
+                    border:     `1px solid ${active ? 'var(--ns-ember)' : 'var(--color-border)'}`,
+                    color:      active ? 'white' : 'var(--color-text-secondary)',
+                  }}>
+                  {chip.label}
+                </button>
+              )
+            })}
           </div>
         )}
 
