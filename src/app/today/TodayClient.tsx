@@ -9,11 +9,8 @@ import { derivePaceZones } from '@/lib/paceZones'
 import type { PaceZones } from '@/lib/paceZones'
 import { getSessionType, fmtKm, formatDate, offsetDate, decodeHtml, parseDet } from '@/lib/sessionUtils'
 import type { PlanDay, PlanSession, PlanWeek, TrainingLog } from '@/types/database'
-import { getSessionXP } from '@/lib/rpg'
-import { computePersonalBests, checkNewPB } from '@/lib/personalBests'
 import { computeStreak, computeConsistency, computeWeeklyReport } from '@/lib/streak'
 import { calcACWR } from '@/lib/statsUtils'
-import { hapticLight, hapticSuccess } from '@/lib/haptics'
 import { Analytics } from '@/lib/analytics'
 import TodayBelowFold from './TodayBelowFold'
 import Splity from '@/components/Splity'
@@ -35,8 +32,8 @@ import NPSPrompt from '@/components/NPSPrompt'
 import FirstSessionCelebration from '@/components/FirstSessionCelebration'
 import PushPrompt from '@/components/PushPrompt'
 import NudgeSquadPill from '@/components/NudgeSquadPill'
-import { shareSessionWithSquadAction } from './actions'
 import { useUndoCountdown } from './hooks/useUndoCountdown'
+import { useSessionLogging } from './hooks/useSessionLogging'
 
 
 export default function TodayClient() {
@@ -53,7 +50,6 @@ export default function TodayClient() {
   const [focusSession, setFocusSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
   // Undo state machine — see src/app/today/hooks/useUndoCountdown.ts.
   // resetKey = dateOffset so any date-offset shift clears the pending undo.
-  const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
   const [showWelcome, setShowWelcome] = useState(() => {
     if (typeof window === 'undefined') return false
     return !localStorage.getItem('nextsplit_welcome_dismissed')
@@ -127,111 +123,11 @@ export default function TodayClient() {
     undoInfo, undoLabel, undoXP, undoSecsLeft, beginUndo, cancelUndo,
   } = useUndoCountdown(dateOffset)
 
-  const handleLogSession = useCallback(async (params: {
-    week_n: number; day_i: number; session_i: number; done: boolean
-    effort?: number; km?: number; notes?: string; duration_secs?: number; hr?: number; pace?: string
-  }) => {
-    if (!plan) return
-
-    // Capture once at call-time so date-offset shifts mid-await can't change
-    // which session metadata flows into squad-feed / community fetches /
-    // analytics / undo state. Council /council 2026-05-07 surgical fix S1
-    // (qa-risk + coach-domain-expert + security-privacy convergence).
-    const capturedSession = planDay?.sessions[params.session_i]
-
-    // Derive effective pace once for every downstream consumer (PB check,
-    // milestone payload). Council surgical fix S2 — milestone previously used
-    // raw params.pace, dropping a derivable PB-eligible pace silently.
-    let effectivePace = params.pace
-    if (!effectivePace && params.duration_secs && params.km && params.km > 0) {
-      const secsPerKm = params.duration_secs / params.km
-      const m = Math.floor(secsPerKm / 60)
-      const s = Math.round(secsPerKm % 60)
-      effectivePace = `${m}:${String(s).padStart(2, '0')}`
-    }
-
-    let log: Awaited<ReturnType<typeof logSession>>
-    try {
-      log = await logSession({ plan_id: plan.id, ...params })
-    } catch {
-      // Offline fallback — queue for sync on reconnect (Tech Pillar spec)
-      if (typeof navigator !== 'undefined' && !navigator.onLine) {
-        const { queueSession } = await import('@/lib/offlineQueue')
-        await queueSession({ plan_id: plan.id, ...params })
-        toastSuccess('Saved offline — will sync when back online')
-        hapticLight()
-        return
-      }
-      toastError('Failed to save — check your connection and try again')
-      return
-    }
-    hapticLight()
-
-    // Track session logged — the core retention event
-    if (params.done) {
-      Analytics.sessionLogged(capturedSession?.c ?? 'run', params.km, params.effort)
-    }
-
-    // Check for new personal best
-    if (params.km && params.done && effectivePace) {
-      const existingLogs = Object.values(logs)
-      const existingPBs = computePersonalBests(existingLogs)
-      const pb = checkNewPB(
-        { km: params.km, pace: effectivePace, week_n: params.week_n, logged_at: new Date().toISOString(), done: true },
-        existingPBs
-      )
-      if (pb) {
-        hapticSuccess()
-        setNewPB({ distance: pb.distance, timeStr: pb.timeStr })
-        setTimeout(() => setNewPB(null), 6000)
-      }
-    }
-
-    // Fire-and-forget community progress update
-    if (params.done) {
-      fetch('/api/community/progress', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          km:           params.km ?? 0,
-          done:         true,
-          session_type: capturedSession?.c ?? 'run',
-          session_name: capturedSession?.n ?? 'Session',
-          duration_secs: params.duration_secs,
-          pace:         effectivePace,
-          effort:       params.effort,
-        }),
-      }).catch(() => {}) // non-blocking
-
-      // Milestone detection — PBs, streaks, first runs (non-blocking)
-      fetch('/api/community/milestone', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          km:           params.km ?? 0,
-          pace:         effectivePace,
-          session_name: capturedSession?.n ?? 'Session',
-          session_type: capturedSession?.c ?? 'run',
-        }),
-      }).catch(() => {}) // non-blocking
-
-      // Recompute runner class after every session (non-blocking)
-      fetch('/api/runner-class', { method: 'POST' }).catch(() => {})
-
-      // P1.1 squad-feed fan-out — fire-and-forget from /today. The /train
-      // celebration UI awaits this for its feed-card preview; here we just
-      // ensure the squad sees the log. RPC errors are Sentry-captured
-      // server-side via the action wrapper.
-      shareSessionWithSquadAction(log.id).catch(() => {})
-    }
-
-    beginUndo(
-      capturedSession?.n ?? 'session',
-      capturedSession ? getSessionXP(capturedSession.c) : 10,
-      log.id,
-    )
-    if (capturedSession) setShareSession({ session: capturedSession, log })
-  }, [plan, logSession, planDay, logs, toastSuccess, toastError, beginUndo])
+  // Post-log orchestration extracted to keep TodayClient lean.
+  const { handleLogSession, newPB } = useSessionLogging({
+    plan, planDay, logs, logSession,
+    beginUndo, setShareSession, toastSuccess, toastError,
+  })
 
   const handleQuickDone = useCallback((dayI: number, sessI: number, session: PlanSession) => {
     // Always open the log modal — gives user control over distance/effort/notes
