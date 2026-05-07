@@ -1,3 +1,15 @@
+// Single consolidated cron — Vercel Hobby caps daily crons at 2 (founder
+// decision 2026-05-07, roadmap §9 v0.3). All time-driven push dispatch lands
+// here, NOT in a separate /api/cron/squad-nudges route. Per-timezone delivery
+// returns to the table at the paywall flip (Open Q #5).
+//
+// Priority order, first match wins (one notification per user per fire):
+//   1. Sunday → weekly wrap (regardless of log state)
+//   2. TODO(P1.x): leader-queued squad nudge (from squad_nudges queue)
+//   3. TODO(P1.x): at-risk squad-member detection (no log in N+ days)
+//   4. Active plan + not logged today → keep-streak fallback
+//   5. No notification
+
 import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -35,21 +47,33 @@ export async function GET(req: Request) {
 
     const hasPlan = new Set((plans ?? []).map((p: { user_id: string }) => p.user_id))
 
-    // Single 14:00 UTC dispatch — Hobby tier allows one cron fire per day,
-    // so each user gets at most ONE notification, prioritised:
-    //   Sunday → weekly wrap (regardless of log state)
-    //   Otherwise, active plan + not logged today → "log before evening"
-    //   Otherwise → no notification
+    // Priority cascade — slots map to the ordered list in the file header.
+    // First match wins; any user gets at most ONE notification per fire.
     const toNotify: Array<{ userId: string; title: string; body: string }> = []
 
     for (const user of users) {
+      // Slot 1: Sunday weekly wrap.
       if (isSunday) {
         toNotify.push({
           userId: user.id,
           title:  '📊 Weekly wrap',
           body:   'Check how your week went and get ready for the week ahead.',
         })
-      } else if (hasPlan.has(user.id) && !loggedToday.has(user.id)) {
+        continue
+      }
+
+      // Slot 2 — TODO(P1.x): leader-queued squad nudge.
+      // SELECT FROM squad_nudges WHERE to_user = user.id AND queued_for_date = todayStr
+      //   → push using NUDGE_MESSAGES[message_key] from @/lib/squad-nudges.
+      // Lands here when the leader-nudge Home pill (P1.1) starts queuing.
+
+      // Slot 3 — TODO(P1.x): at-risk squad-member detection.
+      // For each squad the user belongs to, if no training_logs in last
+      // 3 days AND squad has ≥ 2 active members, push "your squad's lacing
+      // up — want in?". Forward-looking only (see squad-nudges.ts header).
+
+      // Slot 4: keep-streak fallback (active plan + nothing logged today).
+      if (hasPlan.has(user.id) && !loggedToday.has(user.id)) {
         toNotify.push({
           userId: user.id,
           title:  '🔥 Keep the streak — log before evening',
