@@ -1,6 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.1 | **6 May 2026** | **Canonical — replaces all previous HANDOFF files**
-<!-- 9.1: deploy unblocked — Session 9's "webhook broken" theory was wrong, real cause was Hobby cron-tier validation. Fixed by reducing smart-notify to once daily. -->
+**Version:** 9.2 | **6 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.2: post-deploy-unblock — visual redesign of PlanPathSVG via inaugural council pass; council and /forge multi-agent systems shipped as standard tooling. Three live-app UI fixes (header/modal/fuel) ahead of F1. -->
 **Live URL:** https://nextsplit.app
 **GitHub:** https://github.com/NextSplit/Nextsplit-v2
 **Stack:** Next.js 15 App Router · TypeScript strict · Supabase · Tailwind · CSS vars · PWA · Anthropic SDK
@@ -242,34 +242,50 @@ src/hooks/useSubscription.ts    Pro/free status
 
 ---
 
+## Council & Forge — multi-agent review and ideation
+
+The repo now has two slash commands backed by 24 agent charters in `.claude/agents/`:
+
+- **`/council <proposal>`** — multi-agent **review**. Auto-detects scope, runs Tier A always-on (9 roles) plus Tier B auto-included (6 roles) in a two-round protocol; `ns-synthesizer` produces a SHIP / SHIP-WITH-FOLLOWUP / HOLD / ESCALATE verdict with forced pre-mortem.
+- **`/forge <topic>`** — multi-agent **ideation**. Right-sized roster (LEAD generates, CONSULT adds lens), preset table maps topics to rosters; `ns-shortlister` produces a 2-4 option shortlist with named recommendation and pre-filled `/council` handoff.
+
+Both systems are opt-in and built to right-size by default. See `.claude/agents/README.md` for the full system docs (when to use what, antagonist pairs, founder-override, output contracts).
+
+The **inaugural council pass** ran on the PlanPathSVG redesign in Session 10 (commit `562a384`) — produced SHIP-WITH-FOLLOWUP with three pre-ship blockers all addressed, plus follow-up tickets (below) logged for post-F1.
+
 ## What's Next (Priority Order)
 
 ### Pre-Alpha Prep
-1. **Verify nextsplit.app shows redesign** — deep navy, Splity in hero, 4-tab nav without labels (deploy is now live, refresh and confirm)
+1. **Verify nextsplit.app shows the latest redesign** — deep navy, Splity in hero, 4-tab nav without labels, **single violet finish arch framing single ember finish flag** (no more "three gates"), refined water surface, refined tree density. Refresh and confirm.
 2. **Confirm Stripe keys in Vercel** — already in env vars list, double-check working
 3. **Confirm Resend key in Vercel** — already in env vars list, test send
 4. **Test plan activation on device** — Session 10 added `details[]` surfacing in all 5 callers, so any future Zod failure now shows the failing field name in the error message
 5. **Test AI plan generation** — confirm double-session gym days render correctly. Session 10 fixed the session-shape mismatch (AI was emitting `{type, name, detail}`, app reads `{c, n, det}`); plans now go through `normalizeAIWeeks()` before insert
 6. **Smart-notify** — single 14:00 UTC fire. Sundays send "Weekly wrap"; other days send "Keep the streak" if user has an active plan and hasn't logged. One notification per user per day, max
+7. **3-template regression spot-check** for PlanPathSVG — 8wk 5K, 16wk half, 24wk marathon. Council follow-up. Visual sanity: one arch + one flag at the end; no overlapping trees; coastal water reads as a surface.
 
 ### Short Term — Before Friend Test
-6. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
-7. **Fix any blockers** found in F1 test
-8. **Run UAT DB verify** — `SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts`
+8. **Founder F1 test** — 4-5 friends on real Android devices, multiple accounts, full flow
+9. **Fix any blockers** found in F1 test
+10. **Run UAT DB verify** — `SUPABASE_SERVICE_ROLE_KEY=<key> npx tsx scripts/uat-db-verify.ts`
 
 ### Medium Term — After Friend Test
-9. **Stripe payments live** — flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true`, test checkout flow
-10. **Wider alpha invite** — 10-20 runners, mix of experience levels
-11. **Sentry review** — check what errors are being captured
-12. **Lighthouse audit** — target ≥80 performance on Home and Train
+11. **Stripe payments live** — flip `NEXT_PUBLIC_PREMIUM_ENFORCED=true`, test checkout flow
+12. **Wider alpha invite** — 10-20 runners, mix of experience levels
+13. **Sentry review** — check what errors are being captured
+14. **Lighthouse audit** — target ≥80 performance on Home and Train
+15. **PlanPathSVG `<animateMotion>` runner** — council-deferred PR-B; runner moves between completed nodes when a week is logged. Native SVG, no bundle cost; gate behind feature flag and `prefers-reduced-motion`.
+16. **PlanPathSVG periodisation glyphs** — council follow-up from coach-domain-expert. Per-week node size scaled to weekly km / ACWR band; deload + taper weeks marked with distinct glyph; stadium zone alignment to taper duration by race distance.
 
 ### Longer Term — Post Alpha
-13. **Squad Trophy Room** — collective achievements
-14. **Squad seasons** — monthly/annual leaderboard resets
-15. **Coaching marketplace live** — need at least 2 verified coaches
-16. **Strava OAuth live** — connect to live Strava app credentials
-17. **Company formation** — Companies House £12
-18. **ICO registration** — ico.org.uk £40
+17. **Full a11y retrofit on PlanPathSVG** — pre-paid-users. Week-node `role="button"` + `tabIndex` + visible focus ring + keyboard handlers; 4.5:1 contrast on number-on-coloured fills; full `<animate>` reduced-motion coverage. (Baseline already in: `role="img"` + `<title>`, 44×44 hit-rect, reduced-motion gate on pulse animation.)
+18. **Squad Trophy Room** — collective achievements
+19. **Squad seasons** — monthly/annual leaderboard resets
+20. **Coaching marketplace live** — need at least 2 verified coaches
+21. **Strava OAuth live** — connect to live Strava app credentials
+22. **Company formation** — Companies House £12
+23. **ICO registration** — ico.org.uk £40
+24. **Pre-paid-users third-party security audit** — £500-2000, before flipping `NEXT_PUBLIC_PREMIUM_ENFORCED=true` and onboarding paying users. The `ns-security-privacy` agent catches the common failures but is not a substitute for a real pentest.
 
 ---
 
@@ -295,12 +311,20 @@ npx playwright show-report
 
 ## Commit History (Sessions 8–10, May 2026)
 
-### Session 10 (6 May 2026) — Deploy unblocked + plan-activate hardening + AI plan normalize
+### Session 10 (6 May 2026) — Deploy unblock + plan-activate hardening + visual redesign + council & forge multi-agent systems
+
+The single most productive session of the project. Eight commits land together on merge.
 
 | Commit | Description |
 |--------|-------------|
-| `8b84582` | fix: reduce smart-notify cron to once daily (`0 14 * * *`) — the actual fix that unblocked auto-deploy. Hobby tier rejects multi-fire crons |
 | `3245781` | fix: surface Zod `details[]` in all 5 plan-activate callers (PlanBrowse, AI/Manual/Lifestyle onboarding, PlanGenerationScreen) + add `normalizeAIWeeks()` to remap AI plan output `{type,name,detail}` → canonical `{c,n,det,km}` so gym pills, pace personalisation and session styling work on AI-generated plans |
+| `8b84582` | fix: reduce smart-notify cron to once daily (`0 14 * * *`) — the **actual** fix that unblocked auto-deploy. Hobby tier rejects multi-fire crons; Session 9's "webhook" diagnosis was wrong |
+| `23a88ef` | docs: HANDOFF v9.1 — deploy unblocked, real root cause documented; ACTIVE BLOCKER section replaced with post-mortem |
+| `1ebb0bf` | refactor: smart-notify dispatch consolidated for once-daily Hobby cron — Sundays send "Weekly wrap"; Mon-Sat with active plan and not-logged send "Keep the streak"; one notification per user per day max |
+| `2942cda` | fix(train): solid sticky header (no more bleed-through), log modal clears bottom-nav (z-[60] + 60px+safe-area marginBottom on inner panels for all 4 mode branches), Fuel tab empty state (was rendering null when planDay.nut was empty) |
+| `c786c5c` | feat: NextSplit council — 23 agent charters in `.claude/agents/` (Tier A always-on, Tier B auto-included by scope keyword/file matching, Knowledge-base dormant) + `/council` slash command running two-round protocol with `ns-synthesizer` producing SHIP/HOLD/ESCALATE verdict + forced pre-mortem |
+| `562a384` | feat(plan-path): single composed finish moment (violet arch frames ember flag, deleted duplicate FINISH banner), water as `<pattern>` band (replaces N stacked Wave glyphs), forest density capped 6→4 trees per side, hex tokenised to `--ns-*` vars, role="img"+`<title>`, 44×44 hit-rect per week node, reduced-motion gate on pulse animation, 100dvh container + safe-area-inset-bottom — implements the inaugural council pass's SHIP-WITH-FOLLOWUP verdict |
+| `e3d7408` | feat: NextSplit `/forge` ideation orchestrator (sibling to `/council`) — preset roster table maps topic-keyword sets to LEAD/CONSULT splits, two-round protocol with implicit cluster framing (STRATEGY/EXPERIENCE/ENGINEERING/DOMAIN/RISK), `ns-shortlister` produces 2-4 option shortlist with named recommendation and pre-filled `/council` handoff. Three modes: default, `--quick` (top 2 LEAD, single round), `--wide` (all 23, two rounds, auto-promoted by end-to-end keywords) |
 
 ### Session 9 (May 2026) — Deploy diagnosis (red herring)
 Six commits pushed during a wrong-track investigation into "broken webhook delivery." None of them deployed because the real issue (Hobby cron-tier validation) was unrelated. Safe to leave on `main`; the GitHub Actions deploy-hook workflow they introduced is now redundant.
