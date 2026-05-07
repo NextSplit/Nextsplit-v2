@@ -144,12 +144,16 @@ BEGIN
 
   -- Fan out: one feed card per active squad. ON CONFLICT DO NOTHING handles
   -- the partial UNIQUE (re-runs from a retried server action are idempotent).
+  -- v_new_id must be reset BEFORE each INSERT — `RETURNING ... INTO` leaves
+  -- the variable unchanged when the conflict skips, so without the reset a
+  -- skipped iteration would re-append the previous successful id.
   FOR v_squad_id IN
     SELECT squad_id
       FROM public.squad_members
      WHERE user_id = v_caller
        AND removed_at IS NULL
   LOOP
+    v_new_id := NULL;
     INSERT INTO public.squad_feed
       (squad_id, user_id, milestone_type, value_km, value_secs, training_log_id)
     VALUES
@@ -161,7 +165,6 @@ BEGIN
 
     IF v_new_id IS NOT NULL THEN
       v_inserted_ids := array_append(v_inserted_ids, v_new_id);
-      v_new_id := NULL;
     END IF;
   END LOOP;
 
