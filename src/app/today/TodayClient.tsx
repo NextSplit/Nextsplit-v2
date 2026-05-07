@@ -36,6 +36,7 @@ import FirstSessionCelebration from '@/components/FirstSessionCelebration'
 import PushPrompt from '@/components/PushPrompt'
 import NudgeSquadPill from '@/components/NudgeSquadPill'
 import { shareSessionWithSquadAction } from './actions'
+import { useUndoCountdown } from './hooks/useUndoCountdown'
 
 
 export default function TodayClient() {
@@ -50,15 +51,13 @@ export default function TodayClient() {
   const [readinessScore, setReadinessScore] = useState<number | null>(null)
   const [modalSession, setModalSession] = useState<{ session: PlanSession; dayI: number; sessI: number; prefillDurationSecs?: number } | null>(null)
   const [focusSession, setFocusSession] = useState<{ session: PlanSession; dayI: number; sessI: number } | null>(null)
-  const [undoInfo, setUndoInfo] = useState<{ logId: string; timer: ReturnType<typeof setTimeout> } | null>(null)
-  const [undoLabel, setUndoLabel] = useState('')
-  const [undoXP, setUndoXP] = useState(0)
+  // Undo state machine — see src/app/today/hooks/useUndoCountdown.ts.
+  // resetKey = dateOffset so any date-offset shift clears the pending undo.
   const [newPB, setNewPB] = useState<{ distance: string; timeStr: string } | null>(null)
   const [showWelcome, setShowWelcome] = useState(() => {
     if (typeof window === 'undefined') return false
     return !localStorage.getItem('nextsplit_welcome_dismissed')
   })
-  const [undoSecsLeft, setUndoSecsLeft] = useState(8)
   const [shareSession, setShareSession] = useState<{ session: PlanSession; log: TrainingLog } | null>(null)
   const [showWeeklyShare, setShowWeeklyShare] = useState(false)
   const [ceremonyDismissed, setCeremonyDismissed] = useState(false)
@@ -121,29 +120,12 @@ export default function TodayClient() {
   const planDay: PlanDay | null = viewWeek?.days[planDayIndex] ?? null
   const weekN = isToday ? (plan?.current_week ?? 1) : viewWeekN
 
-  // Clear undo on date change
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (undoInfo) {
-      clearTimeout(undoInfo.timer)
-      setUndoInfo(null)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateOffset])
-
-  // Undo countdown ticker — pre-existing pattern, setState called intentionally on mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (!undoInfo) return
-    setUndoSecsLeft(8)
-    const interval = setInterval(() => {
-      setUndoSecsLeft(s => {
-        if (s <= 1) { clearInterval(interval); return 0 }
-        return s - 1
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [undoInfo])
+  // Undo state — extracted into a hook so the countdown interval, the
+  // reset-on-date-change effect, and the cleanup-on-undo all share a single
+  // ref-backed source of truth instead of stale closures.
+  const {
+    undoInfo, undoLabel, undoXP, undoSecsLeft, beginUndo, cancelUndo,
+  } = useUndoCountdown(dateOffset)
 
   const handleLogSession = useCallback(async (params: {
     week_n: number; day_i: number; session_i: number; done: boolean
@@ -243,13 +225,13 @@ export default function TodayClient() {
       shareSessionWithSquadAction(log.id).catch(() => {})
     }
 
-    if (undoInfo) clearTimeout(undoInfo.timer)
-    setUndoLabel(capturedSession?.n ?? 'session')
-    setUndoXP(capturedSession ? getSessionXP(capturedSession.c) : 10)
-    const timer = setTimeout(() => setUndoInfo(null), 8000)
-    setUndoInfo({ logId: log.id, timer })
+    beginUndo(
+      capturedSession?.n ?? 'session',
+      capturedSession ? getSessionXP(capturedSession.c) : 10,
+      log.id,
+    )
     if (capturedSession) setShareSession({ session: capturedSession, log })
-  }, [plan, logSession, undoInfo, planDay, logs, toastSuccess, toastError])
+  }, [plan, logSession, planDay, logs, toastSuccess, toastError, beginUndo])
 
   const handleQuickDone = useCallback((dayI: number, sessI: number, session: PlanSession) => {
     // Always open the log modal — gives user control over distance/effort/notes
@@ -259,14 +241,14 @@ export default function TodayClient() {
 
   const handleUndo = useCallback(async () => {
     if (!undoInfo) return
-    clearTimeout(undoInfo.timer)
+    const logId = undoInfo.logId
+    cancelUndo()
     try {
-      await undoSession(undoInfo.logId)
+      await undoSession(logId)
     } catch {
       toastError('Could not undo — session may already be saved')
     }
-    setUndoInfo(null)
-  }, [undoInfo, undoSession, toastError])
+  }, [undoInfo, undoSession, toastError, cancelUndo])
 
   const loading = planLoading || logsLoading
 
