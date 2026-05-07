@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { getLevelForXP, getXPProgress, RPG_LEVELS } from '@/lib/rpg'
+import Splity from './Splity'
 import type { PlanSession, TrainingLog } from '@/types/database'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -13,6 +14,20 @@ interface Props {
   totalXP:   number
   onDismiss: () => void
   onShare?:  () => void
+  // P1.1 squad-feed wire-up. `feedCardIds` arrives asynchronously after the
+  // shareSessionWithSquadAction server action resolves. Render states:
+  //   undefined        → "Sharing with squad…" placeholder (brief)
+  //   []               → user has no active squad / opted out → hide section
+  //   [...uuids]       → "Posted to your squad's feed" preview
+  //   feedError set    → empty-state copy ("share when you're ready")
+  feedCardIds?: string[]
+  feedError?:   string | null
+  // P1.1 amendment: ACWR-band gated copy. When 0.8 ≤ acwr ≤ 1.3, the
+  // celebration shows a single Splity-reaction line citing the figure.
+  // Outside the band, copy falls back to a generic "great work" with no
+  // ACWR mention (per coach-domain-expert R2 — overrules the original
+  // unconditional ACWR injection that could surprise users in danger zones).
+  acwr?: number | null
 }
 
 // ── Confetti particle ─────────────────────────────────────────────────────────
@@ -106,37 +121,11 @@ function LevelUpBurst({ newLevel, colour }: { newLevel: number; colour: string }
   )
 }
 
-// ── Splity character ──────────────────────────────────────────────────────────
-
-function Splity({ mood }: { mood: 'excited' | 'proud' | 'fire' }) {
-  const face = mood === 'fire' ? '🔥' : mood === 'excited' ? '🎉' : '⭐'
-  return (
-    <div className="flex flex-col items-center gap-1"
-      style={{ animation: 'splityBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both' }}>
-      {/* Body */}
-      <div className="relative">
-        <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
-          style={{
-            background: 'linear-gradient(135deg,#06b6d4,#0891b2)',
-            boxShadow: '0 8px 32px rgba(6,182,212,0.5)',
-          }}>
-          🏃
-        </div>
-        {/* Expression badge */}
-        <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center text-lg"
-          style={{ background: '#0c0c0c', border: '2px solid #06b6d4' }}>
-          {face}
-        </div>
-      </div>
-      <p className="text-xs font-bold" style={{ color: '#06b6d4' }}>Splity</p>
-    </div>
-  )
-}
-
 // ── Main celebration ──────────────────────────────────────────────────────────
 
 export default function SessionCelebration({
   session, log, xpEarned, totalXP, onDismiss, onShare,
+  feedCardIds, feedError, acwr,
 }: Props) {
   const canvasRef        = useRef<HTMLCanvasElement>(null)
   const particlesRef     = useRef<Particle[]>([])
@@ -189,8 +178,10 @@ export default function SessionCelebration({
     } catch { /* not supported */ }
   }, [leveledUp])
 
-  // Confetti canvas animation
+  // Confetti canvas animation (skipped under prefers-reduced-motion, WCAG 2.3.3)
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx2d  = canvas.getContext('2d')
@@ -266,7 +257,8 @@ export default function SessionCelebration({
     return () => { clearTimeout(t1); if (t2) clearTimeout(t2) }
   }, [playSound, vibrate, leveledUp, currLevel])
 
-  const splityMood = leveledUp ? 'fire' : session.c?.includes('long') ? 'proud' : 'excited'
+  const splityMood: 'celebrating' | 'happy' | 'excited' =
+    leveledUp ? 'celebrating' : session.c?.includes('long') ? 'happy' : 'excited'
 
   return (
     <div
@@ -281,12 +273,30 @@ export default function SessionCelebration({
       <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none" style={{ zIndex: 101 }} />
 
       {/* Content */}
-      <div className="relative z-[102] flex flex-col items-center px-6 w-full max-w-sm"
-        style={{ animation: 'slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' }}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="relative z-[102] flex flex-col items-center px-6 w-full max-w-sm"
+        style={{
+          animation: 'slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        }}
         onClick={e => e.stopPropagation()}>
 
-        {/* Splity */}
-        <Splity mood={splityMood} />
+        {/* Splity — canonical brand-coral running-shoe character */}
+        <div style={{ animation: 'splityBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both' }}>
+          <Splity mood={splityMood} size={96} />
+        </div>
+
+        {/* Splity reaction line — single line, ACWR-band gated.
+            In-band: cite the figure. Out-of-band or missing: generic copy with
+            no ACWR mention (coach-domain-expert R2 amendment). */}
+        <p className="mt-2 text-xs text-center font-bold" style={{ color: 'rgba(255,255,255,0.7)' }}>
+          {(typeof acwr === 'number' && acwr >= 0.8 && acwr <= 1.3)
+            ? `Steady — ACWR ${acwr.toFixed(2)}, dialled in.`
+            : 'Great work. Keep showing up.'}
+        </p>
 
         {/* Session type pill */}
         <div className="mt-6 px-5 py-2 rounded-full text-sm font-black"
@@ -334,6 +344,42 @@ export default function SessionCelebration({
             <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>total XP</p>
           </div>
         </div>
+
+        {/* Squad-feed status — P1.1 wire-up, populated from
+            shareSessionWithSquadAction. aria-live announces the result to SR
+            users without retriggering the parent role="status" container. */}
+        {feedCardIds === undefined && !feedError && (
+          <div
+            aria-live="polite"
+            className="mt-3 w-full rounded-xl px-3 py-2 text-xs text-center"
+            style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.5)' }}>
+            Sharing with squad…
+          </div>
+        )}
+        {feedCardIds && feedCardIds.length > 0 && (
+          <div
+            aria-live="polite"
+            className="mt-3 w-full rounded-xl px-3 py-2.5 text-xs text-center font-bold"
+            style={{
+              background: 'rgba(34,197,94,0.12)',
+              border: '1px solid rgba(34,197,94,0.3)',
+              color: '#22c55e',
+            }}>
+            Posted to your squad{feedCardIds.length > 1 ? 's' : ''}&apos; feed
+          </div>
+        )}
+        {feedError && (
+          <div
+            aria-live="polite"
+            className="mt-3 w-full rounded-xl px-3 py-2.5 text-xs text-center"
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              color: 'rgba(255,255,255,0.55)',
+            }}>
+            Your run is logged. Share it when you&apos;re ready.
+          </div>
+        )}
 
         {/* XP progress bar to next level */}
         <div className="mt-3 w-full">
