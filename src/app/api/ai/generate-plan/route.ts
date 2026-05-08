@@ -3,8 +3,8 @@ import { serverConfig } from '@/lib/config'
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
-import { db } from '@/lib/supabase/db'
 import { GeneratePlanSchema, zodError } from '@/lib/schemas'
+import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -15,15 +15,20 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
+    // S6: rate-limit guard. Replaces a prior fire-and-forget upsert into
+    // ai_usage that counted calls but never gated them — any authenticated
+    // user could drain Anthropic quota. checkAndIncrementAIUsage upserts
+    // on the same (user_id, date) row used elsewhere and returns 429 once
+    // the daily cap is reached.
+    const rateCheck = await checkAndIncrementAIUsage(user.id, 'free')
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
+    }
+
     const parsed = GeneratePlanSchema.safeParse(await req.json())
     if (!parsed.success) return zodError(parsed.error)
     const { prompt } = parsed.data
 
-    const today = new Date().toISOString().split('T')[0]
-    await db(supabase).from('ai_usage').upsert(
-      { user_id: user.id, date: today, feature: 'generate_plan', call_count: 1 },
-      { onConflict: 'user_id,date,feature', ignoreDuplicates: false }
-    ).catch(() => {}) // Non-blocking
     const message = await anthropic.messages.create({
       model:      'claude-sonnet-4-20250514',
       max_tokens: 8000,

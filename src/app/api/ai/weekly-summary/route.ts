@@ -6,6 +6,7 @@ import { db } from '@/lib/supabase/db'
 import Anthropic from '@anthropic-ai/sdk'
 import { weeklyKm, calcACWR } from '@/lib/statsUtils'
 import type { TrainingLog, PlanWeek } from '@/types/database'
+import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -18,6 +19,12 @@ export async function POST() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
+    // S6: rate-limit guard — was unguarded; any authenticated user could drain Anthropic quota.
+    const rateCheck = await checkAndIncrementAIUsage(user.id, 'free')
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
+    }
 
     // Fetch last 4 weeks of training logs
     const fourWeeksAgo = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString()

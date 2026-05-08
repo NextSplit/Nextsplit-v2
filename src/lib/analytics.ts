@@ -13,6 +13,7 @@
  */
 
 import posthog from 'posthog-js'
+import { ONBOARDING_STARTED, ONBOARDING_COMPLETED } from '@/app/onboarding/events'
 
 // ── Client-side events ────────────────────────────────────────────────────────
 
@@ -58,7 +59,7 @@ export const Analytics = {
   reset,
 
   // ── Onboarding ────────────────────────────────────────────────────────────
-  onboardingStarted:    ()                          => track('onboarding_started'),
+  onboardingStarted:    ()                          => track(ONBOARDING_STARTED),
   onboardingStep:       (step: number, name: string, path?: string) =>
                           track('onboarding_step_completed', { step, name, training_path: path }),
   onboardingStepViewed: (step: number, name: string) =>
@@ -67,7 +68,7 @@ export const Analytics = {
   onboardingAbandoned:  (lastStep: number, stepName: string) =>
                           track('onboarding_abandoned', { last_step: lastStep, step_name: stepName }),
   stravaConnected:      (source: 'onboarding' | 'settings') => track('strava_connected', { source }),
-  onboardingCompleted:  (path: string)              => track('onboarding_completed', { training_path: path }),
+  onboardingCompleted:  (path: string)              => track(ONBOARDING_COMPLETED, { training_path: path }),
 
   // ── NPS ───────────────────────────────────────────────────────────────────
   npsShown:             (trigger: 'day_7' | 'day_30') => track('nps_shown', { trigger }),

@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import { AiRecommendSchema, zodError } from '@/lib/schemas'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
+import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -21,6 +22,12 @@ export async function POST(req: Request) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
+  // S6: rate-limit guard — was unguarded; any authenticated user could drain Anthropic quota.
+  const rateCheck = await checkAndIncrementAIUsage(user.id, 'free')
+  if (!rateCheck.allowed) {
+    return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
+  }
 
   try {
     const parsed = AiRecommendSchema.safeParse(await req.json())

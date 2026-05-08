@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useOnboarding } from '../context/OnboardingContext'
 import { createClient } from '@/lib/supabase/client'
 import { db } from '@/lib/supabase/db'
+import { Analytics } from '@/lib/analytics'
+import { ONBOARDING_PATH, type OnboardingPath } from '@/app/onboarding/events'
 
 const MESSAGES = [
   'Analysing your profile…',
@@ -344,10 +346,16 @@ export function PlanGenerationScreen() {
           onboarding_step:     11,
         }).eq('id', user.id)
 
+        // S10: emit unified onboarding_completed funnel event before redirect.
+        Analytics.onboardingCompleted(
+          (data.trainingPath ?? ONBOARDING_PATH.AI_BESPOKE) as OnboardingPath
+        )
+
         // Clear onboarding localStorage — prevents stale state on next visit
         try {
           localStorage.removeItem('nextsplit_onboarding_step')
           localStorage.removeItem('nextsplit_onboarding_data')
+          localStorage.removeItem('nextsplit_onboarding_started_at')
         } catch { /* ignore */ }
 
         // 5. Auto-accept coach invite if token stored from invite link
@@ -379,6 +387,9 @@ export function PlanGenerationScreen() {
             await db(supabase).from('profiles')
               .update({ onboarding_complete: true, onboarding_step: 11 })
               .eq('id', user.id)
+            Analytics.onboardingCompleted(
+              (data.trainingPath ?? ONBOARDING_PATH.AI_BESPOKE) as OnboardingPath
+            )
           }
         } catch { /* ignore */ }
         await new Promise(r => setTimeout(r, 2000))

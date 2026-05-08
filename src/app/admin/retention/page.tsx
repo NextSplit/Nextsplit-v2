@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
-import { db } from '@/lib/supabase/db'
 import * as Sentry from '@sentry/nextjs'
 import { config, serverConfig } from '@/lib/config'
 import { redirect } from 'next/navigation'
@@ -145,13 +144,13 @@ export default async function RetentionPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: profile } = await db(supabase)
-    .from('profiles').select('is_admin, email').eq('id', user.id).single()
-  const isAdmin =
-    profile?.is_admin === true ||
-    process.env.ADMIN_EMAILS?.split(',').map((e: string) => e.trim()).includes(profile?.email ?? '')
-  if (!isAdmin) redirect('/home')
+  // Admin gate: profiles table has neither `is_admin` nor `email` columns
+  // (verified via information_schema 2026-05-08), so the prior pattern was a
+  // dead-end that redirected every user including the founder. Use the email
+  // from auth.users via getUser() — same pattern as /api/admin/seed-plans and
+  // /api/debug/activate-test. ADMIN_EMAILS lives on Vercel Production.
+  const adminEmails = (process.env.ADMIN_EMAILS ?? '').split(',').map(e => e.trim()).filter(Boolean)
+  if (!adminEmails.includes(user.email ?? '')) redirect('/home')
 
   // BL-X8: wrap the cohort load in Sentry. If service-role queries throw
   // (RLS misconfig, network timeout, schema drift), the page rendering

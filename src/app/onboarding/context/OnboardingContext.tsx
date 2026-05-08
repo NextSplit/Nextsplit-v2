@@ -151,6 +151,19 @@ export function OnboardingProvider({ children, initialStep = 1, existingProfile 
     try {
       localStorage.removeItem('nextsplit_onboarding_data')
       localStorage.removeItem('nextsplit_onboarding_step')
+      localStorage.removeItem('nextsplit_onboarding_started_at')
+    } catch { /* ignore */ }
+  }, [])
+
+  // S10: fire `onboarding_started` exactly once per user, even if they refresh
+  // the page mid-flow. Uses a localStorage flag so resumes don't re-fire.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      if (!localStorage.getItem('nextsplit_onboarding_started_at')) {
+        localStorage.setItem('nextsplit_onboarding_started_at', String(Date.now()))
+        Analytics.onboardingStarted()
+      }
     } catch { /* ignore */ }
   }, [])
 

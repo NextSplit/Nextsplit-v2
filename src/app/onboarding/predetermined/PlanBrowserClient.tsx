@@ -3,6 +3,8 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import type { PlanTemplate } from '@/types/database'
+import { Analytics } from '@/lib/analytics'
+import { ONBOARDING_PATH } from '@/app/onboarding/events'
 
 const DISTANCE_ORDER = ['5k','10k','10mi','half','marathon','lifestyle','ultra_50mi','ultra_100mi','ultra']
 const DISTANCE_LABEL: Record<string, string> = {
@@ -333,6 +335,7 @@ function PlanDetail({ plan, onBack }: { plan: PlanTemplate; onBack: () => void }
         throw new Error((body.error ?? 'Failed to activate plan') + detail)
       }
       const result = await res.json()
+      Analytics.onboardingCompleted(ONBOARDING_PATH.PREDETERMINED)
       if (result.raceTooSoon) {
         window.location.href = '/home?notice=race_soon'
       } else {
