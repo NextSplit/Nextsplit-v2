@@ -1,9 +1,15 @@
 node_modules/
 .next/
+.env
 .env.local
+.env*.local
+.env.development
+.env.production
+.env.test
 *.log
 .DS_Store
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 .vercel
 .claude/settings.local.json
+coverage/

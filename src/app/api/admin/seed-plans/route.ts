@@ -24,10 +24,13 @@ export async function POST(req: Request) {
   if (!isAdmin) return NextResponse.json({ error: 'Admin only' }, { status: 403 })
 
   const supabaseUrl  = config.supabaseUrl
-  const supabaseKey  = serverConfig.supabaseServiceRoleKey || config.supabaseAnonKey
+  const supabaseKey  = serverConfig.supabaseServiceRoleKey
 
+  // F2.5 (audit): no anon-key fallback. Seed-plans needs service-role to
+  // bulk-insert plan templates; anon-key would silently fail per RLS but
+  // return success-shaped 500.
   if (!supabaseUrl || !supabaseKey) {
-    return NextResponse.json({ error: 'Missing Supabase env vars' }, { status: 500 })
+    return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY required (F2.5)' }, { status: 500 })
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey)
