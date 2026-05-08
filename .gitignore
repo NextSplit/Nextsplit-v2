@@ -6,3 +6,4 @@ node_modules/
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 .vercel
+.claude/settings.local.json
