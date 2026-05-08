@@ -136,13 +136,32 @@ export async function GET(req: Request) {
       }
     }
 
+    let sent = 0
+    let insertError: unknown = null
     if (toNotify.length > 0) {
-      await s.from('notifications').insert(
+      const { error } = await s.from('notifications').insert(
         toNotify.map(n => ({ user_id: n.userId, type: 'smart_notify', title: n.title, body: n.body, read: false }))
-      ).catch(() => {})
+      )
+      if (error) {
+        insertError = error
+      } else {
+        sent = toNotify.length
+      }
     }
 
-    return NextResponse.json({ sent: toNotify.length, isSunday, skippedQuietHours })
+    // F0.2 (audit) zero-send alert. If we matched users to slots but the
+    // single batch insert failed, the previous .catch(() => {}) silently
+    // swallowed the error and made the cron look successful. This surfaces
+    // it as a Sentry alert with the route tag.
+    if (toNotify.length > 0 && sent === 0) {
+      Sentry.captureMessage('cron-zero-send: smart-notify matched eligible users but inserted zero notifications', {
+        level: 'error',
+        tags: { feature: 'cron-zero-send', route: 'smart-notify' },
+        extra: { eligible: toNotify.length, sent, isSunday, skippedQuietHours, insertError },
+      })
+    }
+
+    return NextResponse.json({ sent, eligible: toNotify.length, isSunday, skippedQuietHours })
   } catch (err) {
     Sentry.captureException(err)
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
