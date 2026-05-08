@@ -19,6 +19,17 @@ const effort    = z.number().int().min(1).max(10)
 const km        = z.number().min(0).max(500)
 const pace      = z.string().regex(/^\d{1,2}:\d{2}$/).optional()
 
+// Future-date logging guard (mirrors phase-future-date-guard-v1.sql DB
+// CHECK constraint with the same +18h IANA-timezone tolerance). Use
+// `loggedAt` on any API route that accepts a user-supplied logged_at
+// timestamp (no such routes today; this is for future date-picker UI).
+export const loggedAt = z.string()
+  .datetime({ offset: true })
+  .refine(
+    (s) => new Date(s).getTime() <= Date.now() + 18 * 3600 * 1000,
+    { message: 'logged_at cannot be more than 18 hours in the future' },
+  )
+
 // ─── AI routes ───────────────────────────────────────────────────────────────
 
 export const AdaptPlanSchema = z.object({
