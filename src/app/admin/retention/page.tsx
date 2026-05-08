@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { db } from '@/lib/supabase/db'
 import * as Sentry from '@sentry/nextjs'
 import { config, serverConfig } from '@/lib/config'
 import { redirect } from 'next/navigation'
@@ -11,9 +12,9 @@ import RetentionDashboard from './RetentionDashboard'
 // return cohorts.
 //
 // All queries run server-side via service-role client (auth.users isn't
-// reachable from the anon client). The page is auth-gated only — there's no
-// explicit "is_admin" flag yet, so any logged-in user reaching /admin/retention
-// can see the data. F1-stage acceptable; harden before public launch.
+// reachable from the anon client). Gated to admins only via profiles.is_admin
+// or ADMIN_EMAILS allow-list (audit F0.3, Track 1 closeout 2026-05-08) —
+// matches the gating in /admin/plan-review and /admin/adapt-test.
 
 export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Retention — NextSplit Admin' }
@@ -143,6 +144,14 @@ export default async function RetentionPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: profile } = await db(supabase)
+    .from('profiles').select('is_admin, email').eq('id', user.id).single()
+  const isAdmin =
+    profile?.is_admin === true ||
+    process.env.ADMIN_EMAILS?.split(',').map((e: string) => e.trim()).includes(profile?.email ?? '')
+  if (!isAdmin) redirect('/home')
 
   // BL-X8: wrap the cohort load in Sentry. If service-role queries throw
   // (RLS misconfig, network timeout, schema drift), the page rendering
