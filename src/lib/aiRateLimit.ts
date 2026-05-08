@@ -22,10 +22,16 @@ import { AI_RATE_LIMIT_DEV, AI_RATE_LIMITS, type Tier } from './features'
 import { config, serverConfig } from '@/lib/config'
 
 const SUPABASE_URL = config.supabaseUrl
-const SUPABASE_SERVICE_KEY = serverConfig.supabaseServiceRoleKey || config.supabaseAnonKey
 
+// F2.5 (audit): no anon-key fallback. Rate-limit needs service-role to upsert
+// the ai_usage row regardless of RLS. Anon-key fallback let the cap silently
+// fail-open when the env var was missing (e.g. staging misconfig). Throw
+// loud at first call instead.
 function getAdminClient() {
-  return createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+  if (!serverConfig.supabaseServiceRoleKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY required for aiRateLimit (F2.5)')
+  }
+  return createClient(SUPABASE_URL, serverConfig.supabaseServiceRoleKey)
 }
 
 function todayStr(): string {
