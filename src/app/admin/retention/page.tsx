@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { db } from '@/lib/supabase/db'
 import * as Sentry from '@sentry/nextjs'
 import { config, serverConfig } from '@/lib/config'
 import { redirect } from 'next/navigation'
@@ -144,14 +145,12 @@ export default async function RetentionPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('is_admin, email')
-    .eq('id', user.id)
-    .single()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: profile } = await db(supabase)
+    .from('profiles').select('is_admin, email').eq('id', user.id).single()
   const isAdmin =
     profile?.is_admin === true ||
-    process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()).includes(profile?.email ?? '')
+    process.env.ADMIN_EMAILS?.split(',').map((e: string) => e.trim()).includes(profile?.email ?? '')
   if (!isAdmin) redirect('/home')
 
   // BL-X8: wrap the cohort load in Sentry. If service-role queries throw
