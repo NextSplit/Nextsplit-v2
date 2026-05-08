@@ -453,33 +453,18 @@ if (!serverConfig.supabaseServiceRoleKey) {
 
 `grep -rn "SUPABASE_SERVICE_ROLE_KEY" src/` returns ONLY server-side files (server actions, route handlers, server components, lib). No client component imports the service role. ✓ No client bundle leakage. The marathon session's new server actions (`shareSessionWithSquadAction`, `notifyReactionAction`, `creditReferralRewardIfEligibleAction`) all confine service-role to server context.
 
-### F2.7 [HIGH] · CRON_SECRET guard coverage on /api/cron/*
+### F2.7 [INFO] · CRON_SECRET guard coverage — clean
 
 **Files:** `src/app/api/cron/*/route.ts` (4 routes)
-**Evidence:** earlier grep audit:
-- `/api/cron/smart-notify/route.ts` — has `Authorization: Bearer ${CRON_SECRET}` guard ✓
-- `/api/cron/lifecycle-emails/route.ts` — needs verification
-- `/api/cron/notify-email/route.ts` — needs verification
-- `/api/cron/notify/route.ts` — likely dead (F0.2)
+**Evidence:** all four routes verify `req.headers.get('authorization') === \`Bearer ${serverConfig.cronSecret}\`` at the top of the handler:
+- `smart-notify/route.ts` ✓ (active cron)
+- `lifecycle-emails/route.ts:16` ✓ (active cron)
+- `notify-email/route.ts:21` ✓ (manual / deprecated path)
+- `notify/route.ts:19` ✓ (dead code per F0.2 — still guarded as belt-and-braces)
 
-[FOUNDER-RUN CHECK] verify all four routes have the bearer-token guard:
-
-```bash
-grep -l "Bearer.*CRON_SECRET" src/app/api/cron/*/route.ts
-```
-
-Should list 3 of 4 (notify excluded as deprecated). If lifecycle-emails or notify-email is missing, any unauthenticated GET to the URL fires the entire email cron — abuse vector.
-
-**Severity:** HIGH if not all guarded.
-**Persona:** all (Resend cost line + spam to users).
-**Fix:** add the bearer-token guard to any unguarded route. Pattern from `smart-notify`:
-
-```typescript
-const authHeader = req.headers.get('authorization')
-if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-}
-```
+**Severity:** CLEAN. No abuse vector on cron URLs.
+**Persona:** all.
+**Action:** none on the security side. Dead `notify` route should still be deleted per F0.2.
 
 ### F2.8 [MEDIUM] · CSP `'unsafe-inline'` and `'unsafe-eval'` on script-src
 
@@ -519,3 +504,573 @@ P1.2 PECR was shipped in PR #7 (cookie consent gate on `posthog.init`). The ICO 
 **Effort:** S (founder time, 30 min + £40).
 
 
+
+---
+
+## Phase 3 — Architecture audit
+
+Scope: code patterns, premium-gating cleanliness, AI surface
+sprawl, mascot continuity, council/forge tooling.
+
+### F3.1 [INFO] · Server-action / route-handler pattern is consistent
+
+The marathon session locked in a clean server-action pattern: `'use
+server'` directive at top, explicit `auth.getUser()` guard, validated
+inputs, service-role only when crossing user boundaries. New files
+(`src/app/today/actions.ts`, `src/app/today/referral.ts`,
+`src/app/squad/actions.ts`, `src/app/api/coach/plans/assign/route.ts`)
+all follow it.
+
+**Severity:** CLEAN. **Action:** keep this pattern documented in
+`CLAUDE.md` so future PRs don't drift.
+
+### F3.2 [INFO] · Premium gating refactor is clean
+
+PR #6 moved `PREMIUM_ENFORCED` server-side. Surface today:
+
+- `src/lib/config.ts:45` — `serverConfig.premiumEnforced` reads
+  `process.env.PREMIUM_ENFORCED` (no `NEXT_PUBLIC_*`).
+- `src/lib/features.ts:111` — `canAccess(userTier, feature, enforced)`
+  takes `enforced` as a parameter (no module-level constant).
+- `src/app/api/subscription/dev-mode/route.ts` — public GET
+  returns `{ isDevMode: !premiumEnforced }` with 60s cache.
+- `src/hooks/useSubscription.ts:121` — client uses the dev-mode
+  endpoint; falls back to enforcement on fetch failure.
+- `src/lib/aiRateLimit.ts:52` — server-only, reads
+  `serverConfig.premiumEnforced` directly.
+
+**Severity:** CLEAN. The flag can be flipped server-side without a
+client redeploy, and there is no client bundle leak.
+
+**Sub-finding F3.2a [LOW]:** `src/app/squad/trophies/TrophyRoomClient.tsx`
+and `src/app/api/squad/members/route.ts` still derive premium-ness
+ad-hoc from `subscription_tier`. They should call `canAccess(...)`
+or a typed helper for consistency. Effort: S.
+
+### F3.3 [MEDIUM] · AI surface is broad — 9 routes, no central registry
+
+```
+src/app/api/ai/generate-plan/route.ts       — AI onboarding plan
+src/app/api/ai/adapt-plan/route.ts          — week-by-week adapt
+src/app/api/ai/coach-digest/route.ts        — coach summary
+src/app/api/ai/coach/route.ts               — coach Q&A
+src/app/api/ai/fuel/route.ts                — fuelling
+src/app/api/ai/pre-race-brief/route.ts      — race-eve briefing
+src/app/api/ai/recommend/route.ts           — recommendations
+src/app/api/ai/suggestions/route.ts         — suggestion engine
+src/app/api/ai/weekly-summary/route.ts      — weekly digest
+```
+
+All hit `@anthropic-ai/sdk` directly (each file constructs its own
+`new Anthropic({...})`). No central wrapper for: model selection,
+prompt versioning, token-budget logging, rate-limit enforcement
+beyond `aiRateLimit.ts` (only the routes that opt in are gated).
+
+**Severity:** MEDIUM (cost / observability risk; minor architecture).
+**Persona:** A,D,F primarily (paying users hit AI hard).
+**Risks:**
+- Model upgrades require touching 9 files.
+- One forgotten `aiRateLimit` call → free unlimited Anthropic
+  calls for the user.
+- No PostHog event captures `(prompt_id, model, input_tokens,
+  output_tokens, latency_ms, user_tier)` consistently.
+- No cost dashboard; founder won't know the £/MAU until invoice arrives.
+
+**Fix:**
+1. Build `src/lib/ai/client.ts` — `aiCall({ feature, prompt,
+   maxTokens, userId, tier })` central wrapper that injects rate-
+   limit, captures PostHog `ai_invoke` event, applies model
+   default, surfaces Sentry on error.
+2. Migrate the 9 routes to it (mechanical change).
+3. Add a "AI cost / tier" dashboard query to retention page.
+
+**Effort:** M (1-2 days; mechanical migration plus wrapper design).
+
+### F3.4 [INFO] · Mascot / character continuity holds at the data layer
+
+`src/lib/rpg.ts` is the single source for the 6 character classes,
+4-stat schema, 15-level table, and 32 badges. SVG primitives in
+`src/lib/charSvg.ts` (and the `dangerouslySetInnerHTML` audit, F4.4
+below) confirm only that file emits character SVG. New surfaces
+(`SquadFeed`, `Week3Reanchor`, `NudgeSquadPill`, `SquadSeasonCard`,
+`AcwrAdvisoryBanner`, `GapRecoveryBanner`) do **not** introduce a
+mascot — they are functional UI only. The character lives
+exclusively where it's earned (Train, You).
+
+**Severity:** CLEAN. **Action:** the 8 new components shipped this
+session do not threaten character continuity. The audit task
+flagged in P1.3 (character continuity audit, ROADMAP §6) can be
+shortened to: "confirm no surface introduces a non-canonical
+character expression". Likely 30-min walkthrough.
+
+### F3.5 [INFO] · Council / forge tooling is intact
+
+`.claude/agents/` lists 23 personas (16 council pool + 7 specialists),
+each with a documented charter (`COMMON.md`, `README.md`). The
+ns-shortlister, ns-synthesizer, ns-devils-advocate, ns-pm-tech-lead
+roles are present and align with ROADMAP §3 / §4.
+
+**Severity:** CLEAN. The marathon session's claim "council/forge are
+not optional" is enforceable — the agents exist on disk.
+
+### F3.6 [LOW] · Onboarding path bifurcation — manual / predetermined / AI
+
+Three onboarding paths under `src/app/onboarding/`:
+
+- `manual/` — user picks their own paces / structure
+- `predetermined/` — pick from `plan_templates` (F1 friend-test path)
+- `ai/` — AI plan generator (P3.12 / coach-style)
+
+Each carries its own state machine, screen sequence, and analytics
+event surface. Code reuse is thin — `OnboardingEntry.tsx` only
+funnels into one of three sub-trees. Minor: when the founder runs an
+A/B over onboarding flow (likely Phase 2-3), the three branches will
+need a shared event taxonomy. Currently they don't share one.
+
+**Severity:** LOW. **Fix:** unify analytics event names across the
+three flows before the first onboarding A/B. **Effort:** S.
+
+---
+
+## Phase 4 — Quality + sprint-debt audit
+
+### F4.1 [HIGH] · `src/types/database.ts` is stale by 5 migrations
+
+**File:** `src/types/database.ts` (last modified 2026-04-24)
+**Evidence:** grep for column / RPC names from the 5 marathon
+migrations against the type file:
+
+```
+grep -c "referral_reward_months|timezone|training_log_id|
+        insert_squad_feed_on_log|consume_squad_season|
+        increment_squad_kms" src/types/database.ts
+→ 1
+```
+
+Only one of those identifiers is present. The 5 applied migrations
+(`phase-p1-0a-schema`, `phase-p2-3-referral-reward`, `phase-p2-7-
+timezone`, `phase-p3-10-squad-seasons`, `phase-bl-x4-x5-indexes`)
+all introduced new columns or RPCs whose types are not in the
+generated file.
+
+**Why this is HIGH, not LOW:** the workaround pattern in shipped
+code is `as never` casts (see `src/app/api/coach/plans/assign/
+route.ts:65`, `src/app/today/hooks/useSessionLogging.ts`, etc.).
+That cast disables the compiler's safety net. If a future migration
+renames `training_log_id`, no typecheck will catch the drift — only
+runtime errors / Sentry alerts will.
+
+**Severity:** HIGH (compounds with every migration; the longer it
+stays stale, the more `as never` casts accrue).
+**Persona:** all (production reliability).
+**Fix:**
+1. Run `npx supabase gen types typescript --project-id <id> >
+   src/types/database.ts`.
+2. Remove every `as never` cast that becomes unnecessary post-
+   regeneration.
+3. Add `scripts/gen-types.sh` (already exists, line 1 of the
+   `find` output above) to a post-migration checklist in
+   `CLAUDE.md`.
+
+**Effort:** S (15 min when DB is reachable).
+
+### F4.2 [LOW] · `: any` count = 120; hotspots = squad/route.ts (9), PlanBrowserClient (8), notify dead route (5)
+
+**Counts:**
+
+| File | `any` uses |
+|------|-----------|
+| `src/app/api/squad/route.ts` | 9 |
+| `src/app/onboarding/predetermined/PlanBrowserClient.tsx` | 8 |
+| `src/app/api/cron/notify/route.ts` | 5 (dead — F0.2) |
+| `src/app/squad/SquadFeed.tsx` | 4 |
+| `src/app/onboarding/components/PlanPreviewScreen.tsx` | 4 |
+
+Total in `src/`: 120.
+
+**Severity:** LOW (style / type-safety debt; not a defect).
+**Persona:** dev-only. **Fix:** opportunistic — address `any` when
+the file is otherwise touched. Don't open a "fix all `any`" PR;
+those churn for no user value. Foundation-sprint candidate
+alongside F4.1.
+
+### F4.3 [INFO] · TODO / FIXME / HACK / XXX scan
+
+Total: **4** TODOs, all in `src/app/api/cron/smart-notify/route.ts`
+lines 14-15 / 119 / 124 — all marked `TODO(P1.x)` for known backlog
+items (leader-queued nudge, at-risk detection). Intentional
+backlog markers, not abandoned code.
+
+`@ts-ignore` / `@ts-expect-error`: **0**.
+`console.*`: **1** (single use; not a leak).
+
+**Severity:** CLEAN (lowest sprint debt I've seen at this stage of
+a product).
+
+### F4.4 [INFO] · `dangerouslySetInnerHTML` audit — 6 sites, all safe
+
+```
+src/lib/charSvg.ts (renderCharSVG primitives)        — server-built SVG strings; no user input
+src/components/character/* (rpg avatar render)        — same primitives
+src/app/layout.tsx inline-script for dark-mode bootstrap — string literal; no template
+```
+
+No site interpolates user input. All strings are either:
+- compile-time constants;
+- the dark-mode bootstrap script (literal, no `${...}` from any
+  user-controlled source).
+
+**Severity:** CLEAN. (Matches F2.9 follow-up.)
+
+### F4.5 [→ F0.4] · CI continue-on-error — see Phase 0
+
+Already documented as **F0.4 [MEDIUM]**. The Phase 0 finding owns
+the fix; this entry retained as a Phase-4 cross-reference because
+the fix sequence (1. flip tests-blocking, 2. after F4.1 flip
+tsc-blocking, 3. flip eslint-blocking) is naturally a quality-gate
+foundation-sprint item. **Severity here:** I'd argue HIGH not
+MEDIUM — silent regression risk compounds with every PR. Either
+way the fix is the same. Cross-track with F4.1 in the foundation
+sprint.
+
+### F4.6 [INFO] · Deploy workflow is single-line and stable
+
+**File:** `.github/workflows/deploy.yml` — fires the Vercel deploy
+hook on `push` to `main`. No secrets in the workflow file beyond
+`VERCEL_DEPLOY_HOOK`. **Severity:** CLEAN.
+
+---
+
+## Phase 5 — Performance audit
+
+### F5.1 [INFO] · Kill-list dependencies are confirmed absent
+
+`package.json` has 19 deps and 16 devDeps. Confirmed **not** present:
+- `html2canvas` ✓ removed
+- `canvas-confetti` ✓ removed
+- `framer-motion` ✓ never added
+- `@react-spring/*` ✓ never added
+
+The bundle-weight kill-list from earlier councils held. SVG +
+native CSS animations + small canvas-based confetti
+(`SessionCelebration.tsx` rolls its own ~50-line raf loop) handle
+all motion needs.
+
+**Severity:** CLEAN.
+
+### F5.2 [INFO] · Reduced-motion guards are present at every animated surface
+
+```
+src/components/Splity.tsx:97         — bob skipped
+src/components/SessionCelebration.tsx:184 — confetti raf early-return
+src/components/plan/PlanPathSVG.tsx:22 — runner skipped
+src/app/globals.css:478              — global @media block
+src/app/onboarding/components/PlanGenerationScreen.tsx:174 — message cycling skipped
+src/app/onboarding/ai/AIOnboardingClient.tsx:121 — analysis cycling skipped
+```
+
+WCAG 2.3.3 compliance is consistent across surfaces. The pattern
+"`window.matchMedia('(prefers-reduced-motion: reduce)').matches`
+early-return" is repeated 5 times — opportunity to extract a
+`useReducedMotion()` hook (minor; F4.2 territory).
+
+**Severity:** CLEAN.
+
+### F5.3 [LOW] · `setInterval` audit — 8 sites, all justified
+
+| File | Interval | Purpose | Reduced-motion guard |
+|------|----------|---------|----------------------|
+| `Splity.tsx:101` | 16ms (62.5Hz) | bob | ✓ |
+| `FocusMode.tsx:37` | 1000ms | session timer | n/a (functional) |
+| `coach/VoiceRecorder.tsx:78` | 1000ms | record timer | n/a (functional) |
+| `gym/live/GymLiveClient.tsx:20` | n/a | rest timer | n/a (functional) |
+| `today/hooks/useUndoCountdown.ts:48` | 1000ms | undo countdown | n/a (functional) |
+| `onboarding/PlanGenerationScreen.tsx:178` | 1200ms | message cycle | ✓ |
+| `onboarding/PlanGenerationScreen.tsx:179` | 160ms | progress fill | ✓ |
+| `NudgeSquadPill.tsx:27` | 60_000ms | re-render gate | n/a |
+
+The Splity 16ms interval is the only one near "high cost". It is
+documented as intentional at the file header
+(`Splity.tsx:10` — "62.5 Hz setInterval bob is a UX accent, worth
+the frame cost") and is reduced-motion gated. CPU cost on mid-range
+Android: low. **Severity:** CLEAN.
+
+### F5.4 [LOW] · Bundle weight — Lighthouse audit script exists, run cadence is the gap
+
+`scripts/lighthouse-audit.js` exists. No CI integration. The roadmap
+(§7 Quality Bars row "Performance: Lighthouse ≥80 on Home/Train") is
+asserted but not enforced. **Fix:** add a Vercel preview-comment
+bot or a manual cadence (founder runs every Friday). **Effort:** S.
+
+### F5.5 [INFO] · Database indexes — BL-X4/X5 applied
+
+The marathon session's `phase-bl-x4-x5-indexes.sql` migration added
+critical indexes on `training_logs(user_id, completed_at desc)`,
+`squad_feed(squad_id, created_at desc)`, `community_progress
+(user_id, week_n, day_i)`. These cover the hot paths for Today,
+Squad, and community fan-out queries. **Severity:** CLEAN.
+
+---
+
+## Phase 6 — Testing + deploy-pipeline audit
+
+### F6.1 [HIGH] · Test surface is thin: 3 unit + 3 e2e for a 250+ file app
+
+```
+src/lib/rpg.test.ts                   — character / level / badge logic
+src/lib/statsUtils.test.ts            — stats rollups
+src/lib/notifications.test.ts         — push payload shape
+src/test/e2e/core-journey.spec.ts     — Playwright happy path
+src/test/e2e/pre-alpha-gates.spec.ts  — pre-alpha gate suite
+src/test/e2e/uat-full.spec.ts         — UAT expansion
+```
+
+Untested critical paths (highest blast radius):
+- ACWR / VDOT logic (T7 domain — only validated by `statsUtils.test`)
+- Push subscription lifecycle
+- Squad feed insert/fan-out RPC
+- Cron handlers (no test calls /api/cron/* with the bearer)
+- Stripe webhook (no fixture-based tests)
+
+**Severity:** HIGH (regression surface grows with every PR; F1
+friend-testing is the only real safety net).
+**Persona:** all (production reliability) but especially A,D
+(domain math correctness).
+**Fix:**
+1. Add 3-5 more unit tests on the highest-risk libs:
+   `acwr.ts`, `vdot.ts`, `referral.ts`, `streak.ts`.
+2. Add e2e for: signup → onboarding → first log; coach signup →
+   plan-author → assign-to-athlete; squad join → react → push.
+3. Fix vitest infra (the "pre-exist" issue; F4.5 unblock).
+
+**Effort:** M (2-3 days for the unit-test expansion; e2e is L).
+
+### F6.2 [INFO] · Deploy is decoupled, recovers cleanly
+
+`deploy.yml` is one curl. Vercel handles the rest. Hobby cron 2-fire
+limit was learned (per ROADMAP / HANDOFF) and the smart-notify cron
+piggy-backs P3.10's seasonal snapshot. The lesson is durable —
+documented, encoded in `vercel.json`. **Severity:** CLEAN.
+
+### F6.3 [MEDIUM] · No staging env
+
+There's `localhost`, `*.vercel.app` previews per PR, and
+`nextsplit.app` production. No persistent staging. Real users have
+been shielded by **no real users** (pre-alpha). Once F1 friend-test
+ships and the live test cohort is non-trivial, a staging branch with
+its own Supabase project becomes much more valuable than a one-off
+preview URL.
+
+**Severity:** MEDIUM (foundation cost; deferrable until ~50 active
+users).
+**Fix:** spin up `staging.nextsplit.app` (Vercel branch deploy from
+`develop` branch + a separate Supabase project). **Effort:** M.
+
+---
+
+## Phase 7 — Per-phase risk register
+
+This collates findings against the 4 ROADMAP phases (§6). Each
+phase has a top-3 risk + a "what blocks the next phase" line.
+
+### Phase 0 — opening ideation + foundation cleanup
+- **Status:** mostly done (op-ideation deferred until next major
+  council window; ops items shipped piecemeal in PRs #1-12).
+- **Top risks:**
+  1. F4.1 stale types → compounding `as never` debt.
+  2. F0.4 CI continues-on-error masking regressions.
+  3. F0.1 redundant deploy.yml + F0.2 duplicate cron firings →
+     deployment hygiene + Resend cost line.
+- **What blocks Phase 1:** none — F1 device test (P1.6) is the
+  remaining gate, and is non-code.
+
+### Phase 1 — sharpen the device experience
+- **Status:** P1.1 (squad nudges) shipped; P1.2 / P1.3 (brand
+  consistency, character continuity) not yet started; P1.4
+  de-dup pass in flight; P1.5 GDPR baseline at PECR done — ICO
+  registration outstanding (F2.10).
+- **Top risks:**
+  1. F1 friend-test surfaces a new IA blocker → Phase 2.1 changes
+     scope.
+  2. F2.10 ICO registration blocks any coach-data feature in
+     Phase 3 (already shipped — paying-coach path exposes us
+     until ICO completes; founder-admin task).
+  3. F2.2 nps_responses RLS hole exposes free-text feedback
+     before any audit (drop-table / drop-policy).
+- **What blocks Phase 2:** F1 friend-test outcome.
+
+### Phase 2 — IA restructure + retention wiring
+- **Status:** P2.3 referral loop shipped; P2.7 third-week experience
+  shipped (Week3Reanchor); P2.1 IA shape held for F1 input; P2.2
+  Profile split deferred; P2.4 lifecycle-email cohort run pending
+  Resend domain.
+- **Top risks:**
+  1. ROADMAP §6 P2.1 IA decision shipped without F1 → recovery
+     is a tab restructure (M effort) but kills any user mid-flight.
+  2. F3.6 onboarding event-name drift across 3 paths → A/B
+     analysis muddled.
+  3. F2.8 CSP `unsafe-inline` + any new third-party widget
+     compounds XSS risk.
+- **What blocks Phase 3 retention proof:** P3.8 dashboards live
+  (already done — admin/retention page); F0.3 admin gate
+  (CRITICAL).
+
+### Phase 3 — Coach Suite full build + retention proof
+- **Status:** P3.1, P3.2, P3.3, P3.6, P3.10, P3.11, P3.12 shipped;
+  P3.4 Revenue v2, P3.5 Athlete management bulk, P3.7 Coach
+  onboarding overhaul, P3.8 dashboards live (admin/retention),
+  P3.9 nudge effectiveness — partial.
+- **Top risks:**
+  1. **F0.3 admin/retention has no admin gate** — anyone with a
+     login can see service-role-derived cohort data. CRITICAL.
+  2. F3.3 AI surface fragmentation → cost spike at coach-tier
+     onboarding.
+  3. F4.1 stale types → coach plan-assign route used `as never`
+     to ship; compounding risk on the coach surface where bugs
+     hit paying users.
+- **What blocks Phase 4:** retention bar (P4.0 gate from §6) +
+  pre-paid security audit (P4.1, £500-2000 founder spend) +
+  fixing the 3 CRITICAL findings.
+
+### Phase 4 — revenue switch + scale
+- **Status:** not yet entered. Pre-flip gate (P4.0) requires
+  retention bar pass.
+- **Top risks (forecast):**
+  1. **F0.3 admin gate must be fixed** before anyone outside the
+     founder sees the dashboard, because Phase 4 will publicise
+     the URL.
+  2. F2.2 nps_responses + F2.4 SECURITY DEFINER RPCs + F2.1 RLS
+     verification all need to land before P4.1 pentest, or
+     pentest scope balloons (the audit firm finds these in 1h
+     and bills for it).
+  3. F2.8 CSP widening invites XSS regressions during P4.3
+     contextual-trigger UI work — every new banner is a CSP test.
+- **What blocks v1.0 launch:** P4.0 retention gate + P4.1
+  pentest + F0.3 fix + F2.1 / F2.2 / F2.4 fixes + ICO registration.
+
+---
+
+## Phase 9 — Integrations audit
+
+### Current integrations
+
+| Integration | Surface | Status | Notes |
+|-------------|---------|--------|-------|
+| **Anthropic Claude** | 9 routes under `/api/ai/*` | live | F3.3 — fragmented; needs central wrapper |
+| **PostHog** | client + server | live | gated by cookie consent (PR #7); event taxonomy v1 in flight (Phase 0 OP4) |
+| **Sentry** | feature-tagged | live | feature tags `p3.12-strava-oauth`, `bl-x8` etc. — alert rules need founder Sentry-side action |
+| **Resend** | lifecycle emails + transactional | infra live | domain verification confirmation pending (F0.5) |
+| **Stripe** | Connect (coach payouts) + checkout | deferred | live for coach onboarding test path; full Phase 3.7 / 4 work pending |
+| **Web Push (VAPID)** | reaction / nudge / coach msg | live | iOS standalone gating works (PR #5) |
+| **Supabase** | auth + DB + realtime + service-role | live | RLS audit ongoing (F2.1) |
+| **Strava OAuth** | connect + sync | live | observability hardened in BL-X8 quick-wins; P3.12 done |
+| **Vercel** | host + cron + analytics | live | Hobby cron 2-fire cap honoured |
+
+### Opportunity map — integrations not yet present
+
+These are not commitments. They are options for ROADMAP §9 backlog
+intake.
+
+1. **Garmin / Apple Health** — closes the persona-A logging-friction
+   loop (auto-import). Cost: medium (Garmin Connect API auth pain).
+   Persona: A. Trigger: when manual-log abandonment rate > 30%.
+2. **Whoop / Oura** — adds recovery signal to ACWR. Cost: low (OAuth).
+   Persona: A,D. Trigger: when domain-correctness team (T7) wants
+   richer recovery input.
+3. **Mailchimp / Customer.io** — replaces Resend for marketing
+   automation if Resend stays a dev-side tool. Cost: medium. Trigger:
+   when lifecycle-email cohort > 1k.
+4. **Stripe Tax** — handles VAT for cross-border coach payments at
+   Phase 4 scale. Cost: low (flag flip). Trigger: first non-UK
+   paying coach.
+5. **Discord / Slack webhooks** — squad chat on-platform deferred;
+   webhook export to a server is a cheap "we ship the data" bridge.
+   Cost: low. Persona: B,C,E.
+6. **Mux / Cloudflare Stream** — coach video delivery if the Coach
+   Suite Phase 3.6 marketplace adds video plans. Trigger: first
+   coach who asks for a "explain my plan" video.
+
+### Claude / Anthropic connector opportunities (specific)
+
+- **Plan generation cost dashboard** — F3.3's wrapper feeds a
+  PostHog group `(model, feature, user_tier)` event. Founder
+  builds a board: £/feature/day, latency p95, error rate. This
+  is the single most impactful 1-day improvement to the AI surface.
+- **Prompt versioning** — store prompt strings in `src/lib/ai/
+  prompts/` with semver. Lets the founder A/B prompt v1.1 vs v1.0
+  on a slice of users.
+- **Tool-use migration** — current routes run plain `messages.create`.
+  For the coach digest and plan adaptation surfaces (where Claude
+  needs structured output that today is parsed from prose),
+  switching to tool-use cuts hallucination + parsing fragility.
+  Effort: M per route; pays back on every prompt revision.
+
+---
+
+## Audit summary table — all findings ranked
+
+| ID | Sev | Phase | Title | Effort |
+|----|-----|-------|-------|--------|
+| F2.1 | **CRITICAL** | 2 | RLS verification gap on 15+ core tables | M |
+| F0.1 | HIGH | 0 | Session-9 redundant `deploy.yml` still on main | S |
+| F0.2 | HIGH | 0 | lifecycle-emails fires twice daily; dead `/api/cron/notify` | M |
+| F0.3 | HIGH | 0/3 | `/admin/retention` has no admin auth check | S |
+| F2.2 | HIGH | 2 | `nps_responses` SELECT policy leaks across users | S |
+| F2.4 | HIGH | 2 | older SECURITY DEFINER RPCs lack body-level caller validation | M |
+| F4.1 | HIGH | 4 | `src/types/database.ts` stale by 5 migrations | S |
+| F6.1 | HIGH | 6 | test surface thin: 3 unit + 3 e2e | M |
+| F0.4 | MEDIUM | 0 | CI continues-on-error on tsc/eslint/tests | S |
+| F0.5 | MEDIUM | 0 | files >500 lines beyond BL-X1/X2/X3 candidates | S |
+| F2.8 | MEDIUM | 2 | CSP `unsafe-inline` + `unsafe-eval` on script-src | L |
+| F3.3 | MEDIUM | 3 | AI fragmentation — 9 routes, no central wrapper | M |
+| F6.3 | MEDIUM | 6 | no staging env | M |
+| F0.6 | LOW | 0 | `.gitignore` minimal coverage | S |
+| F2.5 | LOW | 2 | aiRateLimit anon-key fallback foot-gun | S |
+| F2.9 | LOW | 2 | `dangerouslySetInnerHTML` audit (see F4.4) | — |
+| F3.2a | LOW | 3 | trophy-room / squad-members ad-hoc tier check | S |
+| F3.6 | LOW | 3 | onboarding event-name drift across 3 flows | S |
+| F4.2 | LOW | 4 | `: any` count = 120; hotspots | M |
+| F5.3 | LOW | 5 | `setInterval` audit — all justified | — |
+| F5.4 | LOW | 5 | Lighthouse cadence not enforced | S |
+| F0.7 | INFO | 0 | env-var inventory matches HANDOFF | — |
+| F1.x | INFO | 1 | reconnaissance details (see Phase 1 section) | — |
+| F2.3 | INFO | 2 | `group_coaching_sessions` SELECT-public — intentional | — |
+| F2.6 | INFO | 2 | service-role usage clean (no client leak) | — |
+| F2.7 | INFO | 2 | CRON_SECRET coverage clean (4/4 routes) | — |
+| F2.10 | INFO | 2 | ICO registration pending (founder-admin) | — |
+| F3.1 | INFO | 3 | server-action pattern consistent | — |
+| F3.2 | INFO | 3 | premium-gating refactor clean | — |
+| F3.4 | INFO | 3 | mascot continuity holds at data layer | — |
+| F3.5 | INFO | 3 | council/forge tooling intact (23 personas on disk) | — |
+| F4.3 | INFO | 4 | TODO/FIXME/HACK clean (4 marked TODOs, all P1.x) | — |
+| F4.4 | INFO | 4 | `dangerouslySetInnerHTML` clean (6 sites, all SVG primitives) | — |
+| F4.5 | INFO | 4 | cross-ref to F0.4 (CI continue-on-error) | — |
+| F4.6 | INFO | 4 | deploy workflow single-line and stable | — |
+| F5.1 | INFO | 5 | kill-list deps absent (html2canvas/canvas-confetti/framer/spring) | — |
+| F5.2 | INFO | 5 | reduced-motion guards present at every animated surface | — |
+| F5.5 | INFO | 5 | DB indexes BL-X4/X5 applied | — |
+| F6.2 | INFO | 6 | deploy decoupled / recoverable | — |
+
+**Critical-track items (must fix before any external traffic beyond
+F1):**
+- F2.1 RLS verification (deliver the SQL audit + cross-account test)
+- F0.3 admin gate (already noted twice; should be a 10-minute fix)
+- F2.2 nps_responses leak (drop the over-broad SELECT policy)
+
+**High-track items (must fix before paywall flip):**
+- F0.1 delete redundant `deploy.yml`
+- F0.2 consolidate cron firings + delete dead notify route
+- F2.4 SECURITY DEFINER body audit (coach earnings + can_nudge)
+- F4.1 regenerate `database.ts`
+- F6.1 add unit tests on T7 domain libs (`acwr.ts`, `vdot.ts`,
+  `referral.ts`, `streak.ts`)
+
+**Total findings:** 39 (1 critical, 7 high, 5 medium, 8 low, 18 info).
+The product is in good shape for pre-alpha. The critical-track is
+small (1 item — F2.1 — plus two HIGH items that read like
+criticals to a pentester: F0.3 and F2.2). High-track is also
+small and shippable in a 2-3 day **foundation sprint** between F1
+and Phase 4. Info-track shows the marathon session's discipline:
+service-role usage, cron-auth coverage, motion guards,
+dangerouslySetInnerHTML, kill-list dependencies, premium gating,
+character-continuity, server-action pattern — all clean.
