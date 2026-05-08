@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.11 | **8 May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 9.12 | **8 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.12: Late-evening sprint after v9.11 — 5 more PRs merged (#22, #23, #24, #25, #26 + this v9.12 close-out PR). Sequence: PR #22 future-date logging guard (DB CHECK + client + Zod schema; migration phase-future-date-guard-v1.sql applied as 20260508225349). PR #23 character-gamification V2 spec proposal + 19-lens /council verdict (HOLD with 5 RED pre-ship blockers + 4 concurrent live bugs found during review). FOUNDER OVERRULE: F1 friend testing BACKLOGGED — direction is now "build app to fully usable state before we let any test users in". This overrides several council recommendations that were F1-gated. Founder also overruled the council's recommended V0 sliver (character select + class display + daily 5K only) in favour of "push richer". PR #24 closed council blockers #2 (live RLS vulns: dropped Public-reads-entries USING(true) on challenge_entries + virtual_race_entries, recreated TO authenticated; migration 20260508231830) + #4 (MissedSessionFlow Pro→Elite £4.99→£7.99 pricing) + 4 live bugs (PlanPathSVG hydration flash via lazy useReducedMotion initialiser; BottomNav focus-visible WCAG 2.4.11 outline restoration; LevelUpScreen 6000ms→3500ms with prefers-reduced-motion gate; globals.css shimmer-gold infinite→4-iteration cap with reduced-motion override). PR #25 shipped passive Race V0: new /leaderboard route hosting existing SquadLeaderboard component as first-class page + global rankings teaser + privacy footer + Squad header link. PR #26 closed council blocker #3 (deleted rng_jitter from gamification V2 spec §3.3 — race sim now fully deterministic from character_snapshot + boost_loadout, addressing UK Gambling Commission concern under Gambling Act 2005 ss.6-9). Council blockers post-merge: 2 closed in code (#2, #4), 1 closed in spec (#3); 2 still open and founder-only (#1 ICO registration £40, #5 8 pre-alpha gates — but #5 is now explicitly backlogged per founder direction). NEXT WORK BLOCK: gamification character system build (Phase 3+ Race tab) — schema for user_characters + character_inventory + races/race_entries/race_results, class picker UI extension, basic XP from training_logs, completion-based race outcomes (no RNG, no VDOT-anchoring). Founder still owes ICO registration + Companies House (per devils-advocate personal-liability framing). All audit work that doesn't depend on F1 signal is now closed; Track 5 (F4.2/F5.4/F6.3) was F1-gated and is now backlog under the new "build first, test later" direction. -->
 <!-- 9.11: Track 2 partial + Track 3 partial + character-gamification /forge close-out. PRs 17-21 merged 2026-05-08 same evening as v9.10. F2.5 anon-key fallback dropped (aiRateLimit + seed-plans now throw if SUPABASE_SERVICE_ROLE_KEY missing instead of silently fail-open via anon-key). F0.6 tightened .gitignore (.env*, *.log, coverage/). F0.4 CI tests now BLOCKING (52→100 vitest cases all green; tsc + eslint stay continue-on-error until F4.1 cleanup PR + eslint error sweep). F0.2 cron consolidation: deleted dead /api/cron/notify route, removed lifecycle-emails from vercel.json (notify.yml is sole source of truth, frees a Hobby cron slot), added zero-send Sentry alert (eligible>0 && sent===0 fires) on lifecycle-emails + smart-notify. S9 src/lib/planValidator.ts shipped — pure-TS post-generation plan validator wired into /api/ai/generate-plan as advisory Sentry breadcrumb (flags missing taper for marathon/half/10mi/ultra; flags long-run > 30% of weekly km). 12 unit tests for planValidator. F2.4 SECURITY DEFINER body audit — 8 RPCs hardened in phase-rpc-hardening-v1.sql (recorded as 20260508222328): coach_earnings_summary/ytd, get_commission_rate, increment_profile_xp, increment_season_xp now check auth.uid()=p_*_id; refresh_coach_rating + decrement_club_members check auth.uid() IS NOT NULL; apply_split_leader_reward (zero src/ callers) revoked from authenticated/anon, granted only to service_role. All 8 also got SET search_path = public, pg_temp for schema-injection hygiene. F6.1 unit tests on core libs: 48 new cases across vdot.test.ts (13), streak.test.ts (11), referral.test.ts (11) + planValidator.test.ts (12 in PR 18) — meets audit ≥5 cases + zero-input + boundary acceptance bar per file. **Forge ran on character gamification idea**: docs/forge/character-gamification-v1.md captures 13-agent + shortlister output. SHORTLIST recommends Option A (XP Ceremony + Token SVG, conv 5) over Option B (Race Room) due to thesis-level concern raised by devil's-advocate that no other agent named — squad-as-safety-net (accountability) and squad-as-arena (competition) are opposing social contracts. Founder must resolve framing gate before any V1 ships. **PR 18 attempt was abandoned**: F4.1 narrow as-never cast cleanup hit a supabase-js typing wall (Update parameter still resolves to never even with type widening). Full F4.1 cleanup needs database.generated.ts adoption with literal-union enum preservation pass — tracked as a dedicated future PR. NEXT GATING EVENT: F1 friend test (P1.6/P1.8) + framing-gate decision on character gamification. Founder admin RED still: ICO registration. Track 4 (coach inline items F3.2a/F3.3) intentionally still deferred to trigger PRs. -->
 <!-- 9.10: Audit Tracks 1 + 1.5 CLOSED on main. PR #13 (Track 1 hotfix) and PR #14 (Track 1.5 follow-on) merged 2026-05-08. PR #15 (legacy claude/review-project-status-lGBPu branch with 2 stale commits) closed as not_planned — fully superseded. Migration phase-track1-hotfix-v1.sql applied live to Supabase project wlrmeiczqgmharvfmalq before PR #13 (recorded as 20260508195726_phase_track1_hotfix_v1); pre-flight RLS sweep confirmed all 52 public tables had RLS=true going in (the audit's worst-case "table without RLS" scenario didn't materialise). nps_responses SELECT policy now scoped TO service_role (was {-} = leak). plan_templates RLS canonical version-controlled record committed (live state was already correct — the migration is the audit trail). can_nudge SECURITY DEFINER auth.uid() guard verified live. F0.1 deploy.yml deleted, F0.3 admin gate via ADMIN_EMAILS env shipped on /admin/retention, S12 manifest.json bg #0a0e1a. Track 1.5 shipped: S5 gen-types.sh path fixed (writes to src/types/database.ts now), F4.1 partial (database.generated.ts saved as future-tool reference; full as-never cast cleanup deferred to dedicated PR), S6 checkAndIncrementAIUsage on 5 unguarded AI routes (generate-plan + adapt-plan + coach-digest + recommend + weekly-summary), S10 onboarding events.ts + onboardingStarted/onboardingCompleted wired across main flow + 4 sub-route Client files. **Discovery in PR #14:** the admin-gate pattern was broken on three pages (/admin/retention, /admin/plan-review, /admin/adapt-test) — profiles has neither is_admin nor email columns live, so the prior is_admin-OR-email check redirected every user including the founder. Retention fixed in #14; plan-review + adapt-test fixed in this v9.10 close-out PR. Bag-on-side: .claude/settings.local.json added to .gitignore defensively. NEXT GATING EVENT: F1 friend test (P1.6 / P1.8). Founder admin RED: ICO registration (£40, ico.org.uk — DPA 2018 s.17). Foundation sprint (Track 2, ~4 days, 6 items) is the next dev block after F1. -->
 <!-- 9.8: Marathon execution session COMPLETE. 11 PRs merged into main (#4 P1.0a/P1.1 → #11 quick-wins). Phase 1 closed, Phase 2 6/7 shipped, Phase 3 9/11 + observability shipped, cross-cutting backlog 4/8 done + 2 partial. 5 Supabase migrations applied (P1.0a schema, P2.3 referral, P2.7 timezone, P3.10 squad seasons, BL-X4/X5 indexes). Founder admin remaining: £40 ICO registration; optional Sentry alert rule on tags.feature. NEXT GATING EVENT: F1 friend test (P1.8) — unblocks P2.1 (squad-tab IA), P2.5 (friction audit), P2.7 hard-deload council, P3.9 (nudge effectiveness baseline), P3.4/P3.7 (Stripe Connect work blocks Phase 4). All open code-only quick wins are now shipped. -->
@@ -89,20 +90,68 @@ Founder seeded a /forge on character gamification. 13-agent + shortlister output
 ### Still queued (post-this-PR)
 
 - **F4.1 cast cleanup (dedicated future PR):** drop the 9 `as never` casts. PR 18 attempt failed because supabase-js's overload resolution narrows the `.update()` parameter to `never` even with type widening on `user_plans.Update`. Solution: replace the hand-rolled `Database` interface with the auto-generated one (`src/types/database.generated.ts` already committed in #14), preserving literal-union enums (e.g. `coach_tier: 'split_leader' | 'professional' | null`) by deriving narrower types per-table. ~2-3h.
-- **Future-date logging guard** (called out by both QA-risk in /forge + the audit's daily-cap honesty bullet). Belt-and-suspenders: DB generated column + route-handler Zod parse on `/api/training-logs`. Lands with the character-gamification V1 PR or earlier.
-- **Track 5 (F1-gated):** `F4.2` (`: any` count), `F5.4` (Lighthouse cadence), `F6.3` (staging env). All wait on F1 friend-test signal.
 - **Track 6 (P4.1 pentest scope):** `F2.1` / `F2.4` / `F2.8` / `F2.10` / `F0.3` / `F2.2` + `S14` — pentest brief written when Track 6 scopes.
-- **Track 8 (founder-admin, RED):** **ICO registration** at ico.org.uk — £40, 30 min, DPA 2018 s.17. **Cannot accept new paying coaches or run external marketing until done.** Plus Sentry alert rules, Resend domain verification, Stripe Connect e2e test, T&Cs solicitor review.
+- **Track 8 (founder-admin, RED):** **ICO registration** at ico.org.uk — £40, 30 min, DPA 2018 s.17. **Cannot accept new paying coaches or run external marketing until done.** Plus Companies House registration (per devils-advocate personal-liability framing), Sentry alert rules, Resend domain verification, Stripe Connect e2e test, T&Cs solicitor review.
 - **Track 4 inline (F3.2a, F3.3):** still trigger-gated to "next squad PR" / "P3.4 Coach Revenue v2 PR".
-- **Character gamification V1**: blocked on framing gate decision (safety-net vs arena). Once unblocked, Option A from the forge is the path.
 
 ### Founder follow-ups before next dev block
 
-- **Verify PRs 17 → 21 deployed clean to Production.** Vercel auto-deploys on `main` push — should be green.
-- **Resolve the framing gate** in `docs/forge/character-gamification-v1.md` — squad as safety net, arena, or both? Decision gates V1 path.
+- **Verify PRs #22 → #26 deployed clean to Production.** Vercel auto-deploys on `main` push — should be green.
 - **Delete `VERCEL_DEPLOY_HOOK` GitHub repo secret** (still pending from F0.1).
-- **F1 friend test (P1.6/P1.8)** — still the next gating event for everything in Tracks 2-5.
-- **ICO registration** — still RED priority, in parallel with F1.
+- **ICO registration** — still RED priority. Now genuinely the only legal blocker on user acquisition.
+- **Companies House** — devils-advocate flagged personal-liability framing if Gambling Commission scrutiny lands pre-incorporation.
+
+---
+
+## ✅ Late-evening sprint — 5 more PRs CLOSED (8 May 2026, after v9.11)
+
+Same evening as v9.10/v9.11 + character-gamification /forge + /council. Five PRs merged on top of the v9.11 close-out:
+
+| PR | What landed |
+|---|---|
+| **#22** | Future-date logging guard. DB CHECK constraint `training_logs_logged_at_not_future` (`logged_at <= now() + 18h`, IANA TZ tolerance). Migration applied as `20260508225349_phase_future_date_guard_v1`. Defensive client throw in `useTrainingLog` + reusable `loggedAt` Zod schema in `src/lib/schemas.ts`. |
+| **#23** | Character-gamification V2 spec proposal + 19-lens /council verdict (HOLD, Conf 5). Founder seed ran through /forge v1 → V2 spec → /council pass with 19 active lenses + ns-synthesizer. Saved at `docs/forge/character-gamification-v2-proposal.md` + `docs/council/character-gamification-v2-verdict.md`. |
+| **#24** | Council-blocker close-out (RLS + 4 live bugs + Pro pricing). Migration `phase-rls-community-entries-hardening-v1.sql` applied as `20260508231830` — drops `Public reads entries` USING(true) on `challenge_entries` + `virtual_race_entries`, recreates `Authenticated reads ...` TO authenticated. Plus 4 live bug fixes: `PlanPathSVG.tsx` lazy `useReducedMotion` initialiser; `BottomNav.tsx` focus-visible WCAG 2.4.11 outline; `LevelUpScreen.tsx` 6000ms→3500ms with reduced-motion gate; `globals.css` `.shimmer-gold` infinite→4-iteration cap. Plus `MissedSessionFlow.tsx` Pro→Elite £4.99→£7.99 founding (£9.99 standard) copy fix. |
+| **#25** | Passive Race V0. New `/leaderboard` route hosting existing `SquadLeaderboard` component as first-class page; squadless empty state; global rankings teaser locked behind "character launch"; privacy footer pointing to `share_logs_with_squad`. Squad header link (`🏆 Leaderboard`) added. No new schema, RPCs, or migrations. |
+| **#26** | Council blocker #3 close-out — deleted `rng_jitter` from gamification V2 spec §3.3. Race sim now fully deterministic from `(character_snapshot, boost_loadout, class_fit, race_format)` only. Addresses UK Gambling Commission concern under Gambling Act 2005 ss.6-9 + DCMS 2023 White Paper. `rng_seed` column retained as inert field with explicit comment that simulator does NOT consume it. |
+
+### Founder strategic pivots this session
+
+- **F1 friend testing BACKLOGGED.** Founder direction: "build app to fully usable state before we let any test users in. I don't want to keep stopping key dev work or making significant steps forward because we're waiting to test." This overrides several /council recommendations that were F1-gated. Track 5 items (F4.2 / F5.4 / F6.3) collapse from "F1-gated" to "Phase 4 entry gated" or longer.
+- **"Push richer" overrule.** Founder overruled the synthesizer's recommended V0 sliver (character select + class display + daily 5K only) in favour of building richer mechanics. PR #25 is the first piece of that — passive leaderboard surface as Race V0.
+- **Full Vision committed for character gamification.** Phase 3+ workstream: 5th bottom-nav Race tab, completion-based race outcomes (no VDOT-anchoring, no RNG), squad/race surface split + ekiden bridge, all 5 race formats, Habitica-grade pixel art, coach identity avatars. Engagement-pro-rata XP rate ratios + class system mechanic still deferred to founder framing on next session.
+
+### Council pre-ship blockers — final state
+
+| # | Blocker | Status |
+|---|---|---|
+| 1 | ICO registration | 🔴 still open — founder admin (£40, ico.org.uk) |
+| 2 | Live RLS vulns | ✅ closed in #24 |
+| 3 | Delete `rng_jitter` from spec | ✅ closed in #26 |
+| 4 | MissedSessionFlow Pro pricing | ✅ closed in #24 |
+| 5 | 8 pre-alpha gates open (Stripe/Resend/UAT/F1) | 🟡 founder explicitly backlogged F1; Stripe/Resend/UAT remain founder admin |
+
+### Concurrent live bugs found during /council R2 — all closed
+
+| # | Bug | Closed in |
+|---|---|---|
+| 1 | `PlanPathSVG.tsx:18-28` useReducedMotion hydration flash | #24 |
+| 2 | `community-migration.sql:126/162` USING(true) RLS vulns | #24 |
+| 3 | `BottomNav.tsx:144` focus-visible:outline-none WCAG 2.4.11 | #24 |
+| 4 | `MissedSessionFlow.tsx:188` stale Pro/£4.99 pricing | #24 |
+| 5 | `LevelUpScreen.tsx:28` 6000ms auto-dismiss not reduced-motion | #24 |
+| 6 | `globals.css:302` `.shimmer-gold` infinite loop | #24 |
+
+### Next dev block — character system build (Phase 3+ Race tab)
+
+The audit + council work is now CLOSED for everything code-side. The next surface to build is the actual character gamification per `docs/forge/character-gamification-v2-proposal.md`. Open design questions for the next session before code starts:
+
+1. **Class system mechanic** (cosmetic only / session-type-weighted XP edge / hard class lock) — /council deferred to founder.
+2. **Engagement-pro-rata XP rate ratios** (modest 1.0/1.3/1.6/1.8× vs punchy 1.0/1.5/2.0/2.5×) — /council split.
+3. **Schema drop order** — `user_characters` first (lightest table) or full `characters/character_inventory/races/race_entries/race_results/leagues` migration in one shot?
+4. **Asset pipeline trigger** — founder direction is "build first, test later" so the Aseprite art commission doesn't have an F1 gate. When does the £400-800/class commission fire? Suggest: after V0 character select + class picker UI lands, before any race UI.
+
+`/leaderboard` (PR #25) is the placeholder Race V0 surface until the full Race tab ships.
 
 ---
 
