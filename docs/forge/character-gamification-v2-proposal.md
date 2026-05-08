@@ -111,20 +111,32 @@ league_members
 ### 3.2 RPCs (SECURITY DEFINER + auth.uid() body checks, audit-pattern-compliant)
 
 - `enter_race(p_race_id, p_boost_loadout)` — validates ownership of boosts, race not yet started, user not already entered. Inserts race_entries row.
-- `simulate_race(p_race_id)` — service-role-only via `REVOKE EXECUTE FROM authenticated`. Triggered by cron at race.resolves_at. Computes deterministic result_timeline + finishing_order from rng_seed + entries.
+- `simulate_race(p_race_id)` — service-role-only via `REVOKE EXECUTE FROM authenticated`. Triggered by cron at race.resolves_at. Computes fully deterministic result_timeline + finishing_order from entries (character_snapshot + boost_loadout) only — no RNG. See §3.3.
 - `claim_race_rewards(p_race_id)` — caller-owns. Grants race-reward inventory rows for the caller's finishing position.
 - `grant_milestone_boost(p_milestone_id)` — service-role-only. Triggered by training-log writes that cross milestone thresholds. Inserts character_inventory with source='training_milestone'.
 - `recompute_xp_rate_multiplier(p_user_id)` — service-role-only. Triggered by subscription-state change. Reads is_pro / has_coach / has_marketplace_plan, writes profiles.xp_rate_multiplier.
 - All 5 RPCs add `SET search_path = public, pg_temp` per the F2.4 hardening pattern.
 
-### 3.3 Race simulation algorithm (deterministic)
+### 3.3 Race simulation algorithm (deterministic, no RNG)
 
 For each runner in race_entries:
 - `base_speed = character.speed_stat * (1 + class_fit_modifier(character.class, race.format))`
 - `endurance_factor = character.endurance_stat / race_distance_kth_percentile` (capped 0.5..1.5)
 - `boost_stack_modifier = sum(boost_loadout.effects)` (e.g. caffeine gel +3% for 30s, electrolyte +1% sustained)
-- `rng_jitter = seeded(rng_seed, runner.user_id)` — small ±2% per-runner noise so results don't feel deterministic-flat
-- `finish_secs = race_distance_m / (base_speed * endurance_factor * (1 + boost_stack_modifier) * rng_jitter)`
+- `finish_secs = race_distance_m / (base_speed * endurance_factor * (1 + boost_stack_modifier))`
+
+**No RNG / no jitter.** Council /council R2 (legal-compliance + product-strategist
++ devils-advocate + security-privacy concurring): randomised outcome variance on
+a paid-tier ecosystem with cash-purchasable cosmetics moves the product toward
+the UK Gambling Commission "gaming" construct under Gambling Act 2005 ss.6-9 +
+DCMS 2023 White Paper review framework. Outcomes must be fully deterministic
+from `(character_snapshot, boost_loadout, class_fit, race_format)`. Tied
+finishes resolve by entry timestamp. The "feels deterministic-flat" UX problem
+is solved by varying class_fit + boost_stack mechanics, not RNG.
+
+`rng_seed` column on `races` table is retained for future replay-determinism
+but not consumed by the simulator — kept so post-launch replay scripts can
+reconstruct timelines from input snapshots without storing the timeline blob.
 
 Result timeline stored as 100m-bucket positions for replay animation.
 
