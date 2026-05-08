@@ -1,4 +1,27 @@
 <!--
+  v0.7 — 2026-05-08 — Track 2 partial + Track 3 partial + character-gamification
+                       /forge close-out (same evening as v0.6). PRs 17-21 merged:
+                       F2.5 anon-key fallback dropped, F0.6 .gitignore tighter,
+                       F0.4 CI tests blocking, F0.2 cron consolidation +
+                       zero-send Sentry alert, S9 planValidator.ts shipped,
+                       F2.4 SECDEF body hardening on 8 RPCs (migration
+                       20260508222328_phase_rpc_hardening_v1), F6.1 unit tests
+                       across vdot/streak/referral (48 new cases, 100/100
+                       passing). PR 18-attempt (F4.1 narrow as-never cleanup)
+                       abandoned: supabase-js overload resolution overrides
+                       the type widening; full F4.1 needs database.generated.ts
+                       adoption with literal-union enum preservation pass —
+                       tracked as dedicated future PR. Forge ran on character
+                       gamification (docs/forge/character-gamification-v1.md):
+                       devils-advocate raised thesis-level concern that
+                       squad-as-safety-net and squad-as-arena are opposing
+                       social contracts; SHORTLIST recommends Option A
+                       (XP Ceremony + Token SVG) over Option B (Race Room).
+                       Founder must resolve framing gate before V1 ships.
+                       NEXT GATING EVENT: F1 friend test + framing-gate
+                       decision. ICO registration still RED (founder admin).
+                       Track 4 (F3.2a, F3.3) still trigger-gated to next
+                       squad/P3.4 PR.
   v0.6 — 2026-05-08 — Audit Tracks 1 + 1.5 CLOSED on main (PR #13 + #14 +
                        v9.10 close-out PR). Track 1: F0.1 deploy.yml deleted,
                        F0.3 admin gate via ADMIN_EMAILS on /admin/retention,
@@ -61,14 +84,17 @@
                        10 threads + cadence + opening ideation framing.
 -->
 # NextSplit Roadmap & Operating Manual
-**Status:** v0.6 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
+**Status:** v0.7 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
 
-> **2026-05-08 audit overlay:** Tracks 1 + 1.5 closed on main. See
-> `docs/audit/audit-report-v1.md` (Phase 8 council synthesis) and
-> `docs/audit/roadmap-integration-v1.md` (8-track plan). Next dev block
-> is **Track 2 foundation sprint** (~4 days, 6 items), gated on F1
-> friend-test (P1.6/P1.8). Track 8 founder-admin (ICO registration) is
-> RED priority and parallel to F1.
+> **2026-05-08 audit overlay:** Tracks 1 + 1.5 + 2 (partial) + 3 (partial)
+> closed on main across PRs 13-21. See `docs/audit/audit-report-v1.md`
+> (Phase 8 council synthesis), `docs/audit/roadmap-integration-v1.md`
+> (8-track plan), and `docs/forge/character-gamification-v1.md` (forge
+> output, framing-gate decision pending). Remaining audit work:
+> F4.1 full cast cleanup (own PR), Track 5 (F1-gated), Track 6 (pentest
+> brief when scoped), Track 8 (founder-admin, ICO RED). Track 4 (F3.2a,
+> F3.3) still trigger-gated to next squad/P3.4 PR. **Next gating event:
+> F1 friend-test + character-gamification framing-gate decision.**
 
 > **READ ORDER for every session:** `CLAUDE.md` → `HANDOFF.md` (state) → **this doc (direction)**.
 > If a piece of work is not in here with a thread and a phase, it is **not a commitment**.
