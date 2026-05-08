@@ -65,12 +65,18 @@ export default function SquadPageClient({ userId }: Props) {
           <h1 className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>
             My Squad
           </h1>
-          {role === 'leader' && (
-            <Link href="/squad/settings" className="text-xs font-bold px-3 py-1.5 rounded-lg"
+          <div className="flex items-center gap-2">
+            <Link href="/leaderboard" className="text-xs font-bold px-3 py-1.5 rounded-lg"
               style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
-              ⚙ Settings
+              🏆 Leaderboard
             </Link>
-          )}
+            {role === 'leader' && (
+              <Link href="/squad/settings" className="text-xs font-bold px-3 py-1.5 rounded-lg"
+                style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+                ⚙ Settings
+              </Link>
+            )}
+          </div>
         </div>
       </div>
 
