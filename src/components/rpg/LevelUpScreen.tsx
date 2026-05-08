@@ -1,12 +1,24 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   RPG_CHARS, RPG_BADGES, RPG_LEVELS, RARITY_CONFIG, SESSION_XP,
   computeRPGStats, getLevelForXP, getXPProgress, getXPToNext,
   checkNewBadges, renderCharSVG,
   type RPGStats, type RPGBadge,
 } from '@/lib/rpg'
+
+// Council /council R2 animation-motion: prefers-reduced-motion read once at
+// mount via lazy initialiser. Used to gate the auto-dismiss timer (which was
+// 6000ms = 4× over the 1500ms motion-system ceiling and not reduced-motion-
+// aware). Reduced-motion users get no auto-dismiss; they tap to close.
+function useReducedMotion(): boolean {
+  const [reduced] = useState<boolean>(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return false
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  })
+  return reduced
+}
 
 function LevelUpScreen({
   level, charId, onDismiss
@@ -24,10 +36,16 @@ function LevelUpScreen({
   if (level === 9)  unlocks.push('Race bib unlocked')
   if (level === 4)  unlocks.push('Light stride animation')
 
+  const reducedMotion = useReducedMotion()
+
   useEffect(() => {
-    const t = setTimeout(onDismiss, 6000)
+    // Auto-dismiss disabled for prefers-reduced-motion users; they tap.
+    if (reducedMotion) return
+    // Capped at 3500ms: long enough to read the level + unlocks, short enough
+    // not to feel stuck. 6000ms previously was outside the motion ceiling.
+    const t = setTimeout(onDismiss, 3500)
     return () => clearTimeout(t)
-  }, [onDismiss])
+  }, [onDismiss, reducedMotion])
 
   // 8 star particles evenly spaced around the centre
   const stars = Array.from({ length: 8 }, (_, i) => ({

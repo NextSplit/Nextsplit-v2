@@ -305,7 +305,14 @@ button.no-tap-scale:active { transform: none; }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: track-shimmer 2.5s linear infinite;
+  /* Council /council R2 animation-motion: previously animation was infinite;
+     idle CPU drain on persistent text where the class is left on heading
+     elements. Cap at 4 iterations then settle on the static gold gradient. */
+  animation: track-shimmer 2.5s linear 4;
+  animation-fill-mode: forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-gold { animation: none; }
 }
 
 @keyframes shimmer-sweep {

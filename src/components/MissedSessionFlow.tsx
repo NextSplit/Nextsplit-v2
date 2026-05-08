@@ -177,21 +177,21 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
                 )}
                 {/* Blur overlay — the paywall moment */}
                 <div className="absolute inset-0 backdrop-blur-sm bg-white/60 flex items-center justify-center rounded-2xl">
-                  <span className="text-xs font-bold text-[var(--color-text-secondary)]">Unlock with Pro →</span>
+                  <span className="text-xs font-bold text-[var(--color-text-secondary)]">Unlock with Elite →</span>
                 </div>
               </div>
 
               <div className="bg-[var(--ns-ember-light)] rounded-2xl p-4 mb-4">
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-ember)' }}>
-                  <span className="font-bold">NextSplit Pro</span> adapts your plan every time life intervenes —
-                  through missed weeks, illness, and busy periods. £4.99/month.
+                  <span className="font-bold">NextSplit Elite</span> adapts your plan every time life intervenes —
+                  through missed weeks, illness, and busy periods. £7.99/month founding (£9.99 standard).
                 </p>
               </div>
 
               <button onClick={() => window.location.href = '/profile?upgrade=1'}
                 className="w-full py-4 rounded-2xl text-sm font-bold text-white mb-3"
                 style={{ background: 'var(--ns-ember)' }}>
-                Unlock Pro — £4.99/month →
+                Unlock Elite — £7.99/month →
               </button>
               <button onClick={onMarkMissed} className="w-full py-2 text-xs text-[var(--color-text-tertiary)]">
                 Just mark as missed
