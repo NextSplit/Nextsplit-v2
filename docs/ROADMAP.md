@@ -1,4 +1,17 @@
 <!--
+  v0.4 — 2026-05-07 — Marathon execution session: Phase 1 closed (with L2/A1
+                       minimal splits; full structural splits deferred as
+                       cosmetic). Phase 2 6/7 shipped (P2.1 + P2.5 gated on
+                       F1; soft-deload shipped, hard-deload deferred to
+                       council). Phase 3 9/11 shipped + P3.12 observability
+                       polished (P3.4 + P3.7 stripe-blocked; P3.9 F1-gated).
+                       Cross-cutting backlog: BL-X4, X5, X7, X8 done; X1/X2/X3
+                       partial; X6 partial (timezone shipped, unit_pref +
+                       week_start open). 11 PRs merged across the session
+                       (#4-#11). Founder admin remaining: £40 ICO
+                       registration; Sentry alert rule on feature tags. NEXT
+                       GATING EVENT: F1 friend test (P1.8). Full §9 entry
+                       below; HANDOFF v9.8 captures runtime state.
   v0.3.1 — 2026-05-07 — P1.0a schema PR landed (migration + RPC). One scope
                        correction logged: per-day UNIQUE on training_logs
                        (council prereq sub-item 1) descoped — would block
@@ -27,7 +40,7 @@
                        10 threads + cadence + opening ideation framing.
 -->
 # NextSplit Roadmap & Operating Manual
-**Status:** v0.3.1 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
+**Status:** v0.4 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
 
 > **READ ORDER for every session:** `CLAUDE.md` → `HANDOFF.md` (state) → **this doc (direction)**.
 > If a piece of work is not in here with a thread and a phase, it is **not a commitment**.
@@ -335,14 +348,24 @@ This is the source of truth. It changes via PR like any code.
 - **2026-05-07 · v0.3 · Cron path resolved** — Founder decision: squad-nudge dispatch is absorbed into existing smart-notify cron; no new route, no Vercel Pro upgrade. Single 14:00 UTC dispatch accepted for F1. Per-timezone delivery deferred until paywall flip. HANDOFF Open Q #5 partially resolved.
 - **2026-05-07 · v0.3.1 · P1.0a schema PR — scope correction** — Council prereq sub-item 1 listed `UNIQUE (user_id, (logged_at::date))` on `training_logs`. Descoped during implementation: the existing composite UNIQUE on `(user_id, plan_id, week_n, day_i, session_i)` (relied on by the `useTrainingLog.ts:106` upsert with `onConflict`) already handles plan-prescribed double-tap. A per-day UNIQUE would falsely reject legitimate two-a-day runs (AM run + PM gym, double-day plans). Ad-hoc-session dedup is moved to the P1.1 server action via an idempotency key. Migration `phase-p1-0a-schema.sql` ships the remaining 7 sub-items: CHECK update, `training_log_id` FK + partial UNIQUE on `(squad_id, training_log_id)`, `share_logs_with_squad` column, drop of overly-permissive `"System inserts feed posts"` policy, REVOKE direct INSERT, SECURITY DEFINER `insert_squad_feed_on_log` RPC fanning out to active squads, GRANT EXECUTE to `authenticated`.
 
+- **2026-05-07 · v0.4 · Marathon execution session — Phase 1 closed, Phase 2 6/7, Phase 3 9/11+** — Eleven PRs merged in sequence (#4 P1.0a/P1.1 → #11 quick-wins). Cumulative state on nextsplit.app:
+  - **Phase 1 — closed.** All 9 items shipped. P1.0 decomposition: useUndoCountdown + useSessionLogging + useLogFormState hooks landed; full BasicEntry/AdvancedEntry/SaveControls structural splits (L2) and AthleteDetailClient 4-section split (A1) deferred as pure JSX cosmetics with no bug-fix value. Council surgical fixes S1+S2+S3 shipped (planDay capture, effectivePace propagation, react-hooks/exhaustive-deps bumped warn→error). P1.1 social loop end-to-end live (squad-feed RPC + recipient view + reactions + reaction notifications). P1.2 PECR fix: posthog.init waits for cookie consent. P1.3 server-side paywall (PREMIUM_ENFORCED env-only). P1.4 6 missing CSS tokens. P1.5 Splity animation discipline. P1.6 PostHog taxonomy + timezone enrichment.
+  - **Phase 2 — 6/7 shipped.** P2.2 lean YouClient. P2.3 referral 5-log reward RPC. P2.4 already-built. P2.6 motion audit + docs/motion.md. P2.7 in-app: Week3Reanchor + acwr_chart pro→free + per-user timezone gate on smart-notify. P2.7 soft-deload (AcwrAdvisoryBanner + GapRecoveryBanner) shipped instead of waiting for the hard-override council. **Deferred:** P2.1 (squad-tab IA decision — gated on F1 engagement signal); P2.5 (daily-log friction audit — gated on F1 friction reports); P2.7 hard-deload (gated on council pass on AI-prompt design).
+  - **Phase 3 — 9/11 shipped.** P3.1 dashboard v2 (streak + days_since_message tiles + amber flags). P3.2 plan-assign API + bottom-sheet picker. P3.3 push on coach↔athlete message. P3.5 athlete filter chips with localStorage persistence. P3.6 review submission form. P3.8 /admin/retention dashboard with cohort math + funnel + daily table. P3.10 squad seasons snapshot RPC + smart-notify month-1 piggyback + SquadSeasonCard. P3.11 PlanPath animateMotion runner trace + race/deload glyphs. P3.12 OAuth scaffold polished with full Sentry observability on callback + sync. **Deferred:** P3.4 (Stripe Connect webhooks); P3.7 (Stripe Connect UX); P3.9 (F1 baseline).
+  - **Cross-cutting backlog:** BL-X4 + BL-X5 indexes shipped (`squad_nudges_recipient_recent`, `training_logs_user_logged_at`). BL-X7 anonymous→authenticated PostHog stitching shipped (useProfile.ts:64). BL-X8 Sentry coverage gap audit complete; admin/retention + Strava OAuth/sync now feature-tagged. BL-X1/X2/X3 partial — minimal file splits done (log-modal/inputs.tsx, charts.tsx); full structural splits deferred. BL-X6 partial — `profiles.timezone` shipped (P2.7); `unit_preference` + `week_start` open.
+  - **Migration log (apply-order):** phase-p1-0a-schema.sql → phase-p2-3-referral-reward.sql → phase-p2-7-timezone.sql → phase-p3-10-squad-seasons.sql → phase-bl-x4-x5-indexes.sql. All applied + verified live.
+  - **Founder admin remaining:** £40 ICO registration (privacy.tsx:25 placeholder waiting); Sentry alert rule on `tags.feature` for cross-feature observability (BL-X8 follow-up).
+  - **Lessons logged:** local typecheck blocked in this dev env (no node_modules), so prop-shape mismatches across multiple component boundaries take >1 Vercel-build round-trip per refactor. 5 typecheck round-trips in this session. Pattern adopted: cross-check every consumed component prop signature in the same file before pushing prop-heavy changes; copy patterns verbatim from neighbour routes rather than improvising.
+
 ### Open questions awaiting decision
 
-1. **Retention bar values.** P3.8 / P4.0. D7 ≥ 30%, D30 ≥ 15% are illustrative. Final values need running-app benchmark research before Phase 3 close.
+1. **Retention bar values.** P3.8 / P4.0. D7 ≥ 30%, D30 ≥ 15% are illustrative. Final values need running-app benchmark research before Phase 3 close. **Status (v0.4):** /admin/retention dashboard live and ready to populate from F1 cohort data; bar values still pending council T5 + benchmark research.
 2. **Coach-Pro tier feature split.** Phase 3 gates which features sit behind the £29/month platform fee vs free for Split Leaders. Council T5 needed.
 3. **Pricing experiments.** Founding tier expires after 500 spots; what happens at 501? Council T5 needed pre-Phase 4.
-4. **`session_annotations` migration timing.** Backend-data flagged the table is missing from `/supabase/migrations/*.sql`. The coach-react route at `/api/coach/annotate` will throw `relation does not exist` in prod the moment a coach annotates. Decide: ship migration in Phase 1 P1.0 cleanup, or defer until Phase 3 Coach Suite build?
-5. **Vercel Hobby → Pro upgrade timing.** ~~Decide: pre-F1, post-F1, or at paywall flip?~~ **Resolved 2026-05-07 (v0.3, /council):** deferred to paywall flip. Squad-nudge dispatch consolidated into smart-notify cron. Single 14:00 UTC dispatch accepted for F1; per-timezone delivery returns to the table at P4.0 retention-bar checkpoint, not before.
-6. **Stripe verification gate.** HANDOFF resume-checklist #2-3 still open. Block Phase 1 close on a real test charge end-to-end? (Recommend yes.)
+4. **`session_annotations` migration timing.** Backend-data flagged the table is missing from `/supabase/migrations/*.sql`. The coach-react route at `/api/coach/annotate` will throw `relation does not exist` in prod the moment a coach annotates. Decide: ship migration in Phase 1 P1.0 cleanup, or defer until Phase 3 Coach Suite build? **Status (v0.4):** still open; not blocking any of the shipped Phase 3 items but will block first coach-reaction interaction in F1 if a coach uses /api/coach/annotate.
+5. **Vercel Hobby → Pro upgrade timing.** ~~Decide: pre-F1, post-F1, or at paywall flip?~~ **Resolved 2026-05-07 (v0.3, /council):** deferred to paywall flip. Squad-nudge dispatch consolidated into smart-notify cron. Single 14:00 UTC dispatch accepted for F1; per-timezone delivery returns to the table at P4.0 retention-bar checkpoint, not before. **Followup shipped (v0.4):** per-user timezone gate on smart-notify (skip outside 09:00–21:00 local) so APAC users don't get pinged at midnight even on the single daily fire.
+6. **Stripe verification gate.** HANDOFF resume-checklist #2-3 still open. Block Phase 1 close on a real test charge end-to-end? (Recommend yes.) **Status (v0.4):** still open. P3.4 + P3.7 + P4.x all blocked downstream until this clears.
+7. **P2.7 hard-deload design.** *(New, v0.4)* Soft-deload (advisory banner) shipped. Hard-override (auto-replace prescribed tempo/interval/long when ACWR > 1.3) needs a council pass on what "downgrade" concretely means: hide the tempo, show both with recommendation, auto-re-plan via AI, or advisory-only? Each has UX + plan-trust tradeoffs. Council T7 + content-copy needed.
 
 ### Kill list (with reason and thread)
 
