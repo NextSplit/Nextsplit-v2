@@ -82,6 +82,17 @@ export function useTrainingLog(planId: string | null): UseTrainingLogReturn {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
 
+    const loggedAt = new Date().toISOString()
+
+    // Defensive: the DB has a CHECK constraint blocking future-dated logs
+    // (training_logs_logged_at_not_future, +18h tolerance for max IANA TZ).
+    // logged_at here is always now(), so this throw is a safety net for
+    // future code paths that might add backdating UI — surface a friendly
+    // error before the DB rejects the insert.
+    if (new Date(loggedAt).getTime() > Date.now() + 18 * 3600 * 1000) {
+      throw new Error('Cannot log future sessions')
+    }
+
     const row = {
       user_id: user.id,
       plan_id: params.plan_id,
@@ -97,7 +108,7 @@ export function useTrainingLog(planId: string | null): UseTrainingLogReturn {
       notes: params.notes ?? null,
       splits: params.splits ?? null,
       strava_id: params.strava_id ?? null,
-      logged_at: new Date().toISOString(),
+      logged_at: loggedAt,
     }
 
     // Upsert — idempotent on (user_id, plan_id, week_n, day_i, session_i)
