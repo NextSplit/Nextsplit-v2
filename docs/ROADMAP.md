@@ -1,4 +1,25 @@
 <!--
+  v0.6 — 2026-05-08 — Audit Tracks 1 + 1.5 CLOSED on main (PR #13 + #14 +
+                       v9.10 close-out PR). Track 1: F0.1 deploy.yml deleted,
+                       F0.3 admin gate via ADMIN_EMAILS on /admin/retention,
+                       F2.1 plan_templates RLS canonical record, F2.2
+                       nps_responses leak fixed (TO service_role), S3
+                       can_nudge guard verified live, S12 manifest bg
+                       #0a0e1a. Migration applied as
+                       20260508195726_phase_track1_hotfix_v1. Track 1.5:
+                       S5 gen-types.sh path fixed, F4.1 partial
+                       (database.generated.ts saved + retention/plan-review/
+                       adapt-test admin gates rewritten to use user.email —
+                       discovered the prior profiles.is_admin/email query
+                       was a runtime dead-end), S6 checkAndIncrementAIUsage
+                       on 5 AI routes, S10 onboarding events.ts wired across
+                       main flow + 4 sub-route Client files. PR #15 (legacy
+                       claude/review-project-status-lGBPu, opened in error)
+                       closed as not_planned. Open: Track 2 foundation
+                       sprint (~4 days post-F1), F4.1 full cast cleanup
+                       (dedicated PR), Track 5 F1-gated items, Track 6
+                       pentest brief, Track 8 founder-admin (ICO RED).
+                       NEXT GATING EVENT: F1 friend test (P1.6/P1.8).
   v0.4 — 2026-05-07 — Marathon execution session: Phase 1 closed (with L2/A1
                        minimal splits; full structural splits deferred as
                        cosmetic). Phase 2 6/7 shipped (P2.1 + P2.5 gated on
@@ -40,7 +61,14 @@
                        10 threads + cadence + opening ideation framing.
 -->
 # NextSplit Roadmap & Operating Manual
-**Status:** v0.4 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
+**Status:** v0.6 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
+
+> **2026-05-08 audit overlay:** Tracks 1 + 1.5 closed on main. See
+> `docs/audit/audit-report-v1.md` (Phase 8 council synthesis) and
+> `docs/audit/roadmap-integration-v1.md` (8-track plan). Next dev block
+> is **Track 2 foundation sprint** (~4 days, 6 items), gated on F1
+> friend-test (P1.6/P1.8). Track 8 founder-admin (ICO registration) is
+> RED priority and parallel to F1.
 
 > **READ ORDER for every session:** `CLAUDE.md` → `HANDOFF.md` (state) → **this doc (direction)**.
 > If a piece of work is not in here with a thread and a phase, it is **not a commitment**.

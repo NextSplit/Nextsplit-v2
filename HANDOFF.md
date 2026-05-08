@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.8 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 9.10 | **8 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.10: Audit Tracks 1 + 1.5 CLOSED on main. PR #13 (Track 1 hotfix) and PR #14 (Track 1.5 follow-on) merged 2026-05-08. PR #15 (legacy claude/review-project-status-lGBPu branch with 2 stale commits) closed as not_planned — fully superseded. Migration phase-track1-hotfix-v1.sql applied live to Supabase project wlrmeiczqgmharvfmalq before PR #13 (recorded as 20260508195726_phase_track1_hotfix_v1); pre-flight RLS sweep confirmed all 52 public tables had RLS=true going in (the audit's worst-case "table without RLS" scenario didn't materialise). nps_responses SELECT policy now scoped TO service_role (was {-} = leak). plan_templates RLS canonical version-controlled record committed (live state was already correct — the migration is the audit trail). can_nudge SECURITY DEFINER auth.uid() guard verified live. F0.1 deploy.yml deleted, F0.3 admin gate via ADMIN_EMAILS env shipped on /admin/retention, S12 manifest.json bg #0a0e1a. Track 1.5 shipped: S5 gen-types.sh path fixed (writes to src/types/database.ts now), F4.1 partial (database.generated.ts saved as future-tool reference; full as-never cast cleanup deferred to dedicated PR), S6 checkAndIncrementAIUsage on 5 unguarded AI routes (generate-plan + adapt-plan + coach-digest + recommend + weekly-summary), S10 onboarding events.ts + onboardingStarted/onboardingCompleted wired across main flow + 4 sub-route Client files. **Discovery in PR #14:** the admin-gate pattern was broken on three pages (/admin/retention, /admin/plan-review, /admin/adapt-test) — profiles has neither is_admin nor email columns live, so the prior is_admin-OR-email check redirected every user including the founder. Retention fixed in #14; plan-review + adapt-test fixed in this v9.10 close-out PR. Bag-on-side: .claude/settings.local.json added to .gitignore defensively. NEXT GATING EVENT: F1 friend test (P1.6 / P1.8). Founder admin RED: ICO registration (£40, ico.org.uk — DPA 2018 s.17). Foundation sprint (Track 2, ~4 days, 6 items) is the next dev block after F1. -->
 <!-- 9.8: Marathon execution session COMPLETE. 11 PRs merged into main (#4 P1.0a/P1.1 → #11 quick-wins). Phase 1 closed, Phase 2 6/7 shipped, Phase 3 9/11 + observability shipped, cross-cutting backlog 4/8 done + 2 partial. 5 Supabase migrations applied (P1.0a schema, P2.3 referral, P2.7 timezone, P3.10 squad seasons, BL-X4/X5 indexes). Founder admin remaining: £40 ICO registration; optional Sentry alert rule on tags.feature. NEXT GATING EVENT: F1 friend test (P1.8) — unblocks P2.1 (squad-tab IA), P2.5 (friction audit), P2.7 hard-deload council, P3.9 (nudge effectiveness baseline), P3.4/P3.7 (Stripe Connect work blocks Phase 4). All open code-only quick wins are now shipped. -->
 <!-- 9.7: Marathon dev session shipped Phase 1 + Phase 2 code-feasible items across PR #5 (merged), PR #6 (merged), PR #7 (open: P1.2 PECR fix + reaction notifications + 6 follow-ups), PR #8 (open: P2.2 + P2.3 + P2.6 + P2.7 partial). Two open PRs need founder action: (a) Vercel env var rename NEXT_PUBLIC_PREMIUM_ENFORCED → PREMIUM_ENFORCED for PR #7's P1.3; (b) 2 Supabase migrations for PR #8 (phase-p2-3-referral-reward.sql + phase-p2-7-timezone.sql). Phase 1 done; Phase 2 6/7 done (P2.1 squad-tab IA promotion + P2.5 friction audit + P2.7 deload suppression deferred — all gated on F1 friend-test signal or council). Phase 3 (Coach Suite + retention proof) deliberately not started — it's roadmap week 7-14, dependent on F1 retention data. NEXT GATING EVENT: F1 friend test (P1.8). -->
 <!-- 9.6: P1.0 partial decomposition landed on claude/review-project-status-lGBPu (5 commits 29d7307..cdf8fd5). Council /council 2026-05-07 verdict HOLD on full P1.0; founder picked Path B (surgical fixes + decomposition). Pre-ship blockers all resolved: S1+S2 capture session+effectivePace before await (kills stale-closure planDay → wrong squad_feed metadata bug + propagates derived pace into milestone payload); S3 react-hooks/exhaustive-deps bumped warn→error so future stale-closure regressions fail CI. T1 useUndoCountdown hook + T2 useSessionLogging hook extracted from TodayClient (870→759 lines, 15→10 useState). L1 useLogFormState lift in LogModal closes the silent km/duration discard-warning gap (12→3 useState). Remaining: L2 LogModal split into BasicEntry/AdvancedEntry/SaveControls and A1 AthleteDetailClient split into 4 sections — both pure JSX surgery, no bug-fix value, deferred pending live smoke-test on nextsplit.app. -->
@@ -33,7 +34,55 @@ If you later upgrade to Vercel Pro and want to restore split morning/midday/even
 
 **Cleanup outstanding:**
 - Close the Vercel support ticket — webhooks were never broken, no action needed from their side.
-- The Session 9 diagnostic commits (`f4f6ff8`, `7e65a4c`, `8bcff06`, `e7a8bba`, `0ee3757`, `1f2e448`) are no-op chore commits and the GitHub Actions deploy-hook workflow they introduced is now redundant. Safe to leave for history; can be tidied up later.
+- The Session 9 diagnostic commits (`f4f6ff8`, `7e65a4c`, `8bcff06`, `e7a8bba`, `0ee3757`, `1f2e448`) are no-op chore commits and the GitHub Actions deploy-hook workflow they introduced is now redundant. **F0.1 in PR #13 deleted the deploy.yml workflow itself**; founder still needs to delete the `VERCEL_DEPLOY_HOOK` GitHub repo secret (Settings → Secrets and variables → Actions).
+
+---
+
+## ✅ Audit Tracks 1 + 1.5 — CLOSED (8 May 2026)
+
+The 11-agent /council pass on `docs/audit/audit-report-v1.md` Phase 8 produced a 5-item Track 1 (hotfix) + 4-item Track 1.5 (follow-on). Both shipped via PR #13 + PR #14, merged into `main` on 8 May.
+
+### Track 1 (PR #13) — what landed
+
+| ID | Acceptance | Evidence |
+|---|---|---|
+| F0.1 | `.github/workflows/deploy.yml` deleted | file removed on `main` |
+| F0.3 | `/admin/retention` admin gate via `ADMIN_EMAILS` allow-list against `user.email` | redirects non-admins to `/home`; founder set `ADMIN_EMAILS` on Vercel Production + Preview |
+| F2.1 | `plan_templates` RLS version-controlled | `phase-track1-hotfix-v1.sql` Block A (idempotent CREATE POLICY) — pre-flight confirmed live state already RLS=true on all 52 public tables, so this is now an audit trail, not a fix |
+| F2.2 | `nps_responses` SELECT scoped to `service_role` | same migration Block C — `polroles` went from `{-}` (all roles) to `{service_role}` |
+| S3 | `can_nudge` `auth.uid()` guard | already-live in DB, verified via `pg_get_functiondef` (`IF auth.uid() IS NULL OR auth.uid() <> p_from THEN RAISE EXCEPTION '42501'`); migration intentionally skipped Block B |
+| S12 | `manifest.json` `background_color` `#0a0e1a` | string change on disk + live |
+
+Migration applied to project `wlrmeiczqgmharvfmalq` recorded as `20260508195726_phase_track1_hotfix_v1`.
+
+### Track 1.5 (PR #14 + this v9.10 PR) — what landed
+
+| ID | Acceptance | Evidence |
+|---|---|---|
+| S5 | `scripts/gen-types.sh` writes to `src/types/database.ts` | path corrected + `set -euo pipefail` added |
+| F4.1 (partial) | live schema saved | `src/types/database.generated.ts` (52 public tables) committed as reference snapshot — full `as never` cast cleanup is its own dedicated follow-up PR |
+| F4.1 (admin gate fix) | `/admin/retention` no longer dead-ends every user | switched from broken `profiles.is_admin/email` query (those columns don't exist live, verified via `information_schema`) to `user.email` from `auth.getUser()` |
+| **F4.1 (admin gate fix, sister pages)** | **same fix applied to `/admin/plan-review` + `/admin/adapt-test`** | this PR (v9.10) — `db()` + `eslint-disable any` workaround dropped on both |
+| S6 | rate-limit guard added to 5 unguarded AI routes | `await checkAndIncrementAIUsage(user.id, 'free')` in `generate-plan` (replaces fire-and-forget upsert), `adapt-plan`, `coach-digest`, `recommend`, `weekly-summary`; returns 429 with `rateLimited: true` over-limit |
+| S10 | unified onboarding event taxonomy | `src/app/onboarding/events.ts` exports `ONBOARDING_STARTED` + `ONBOARDING_COMPLETED` + `ONBOARDING_PATH` constants; wired into `OnboardingContext` (start) + `PlanGenerationScreen` + 4 sub-route Client files (complete) |
+
+### What's NOT in scope of v9.10
+
+These remain open and queued — see `docs/audit/roadmap-integration-v1.md` for the full list:
+
+- **Track 2 — FOUNDATION SPRINT (~4 days, post-F1, pre-Phase 4):** F2.1 RLS verification doc, F2.4 SECURITY DEFINER body audit (9 RPCs total — original 5 + S4 council additions), F0.4 staged CI unblock, F0.2 cron consolidation + dead-route delete + zero-send Sentry alert, F6.1 unit tests on `statsUtils.calcACWR` / `vdot` / `streak` / `referral`, S9 `src/lib/planValidator.ts` (taper + long-run guard).
+- **F4.1 cast cleanup (dedicated PR):** drop the 9 `as never` casts at the documented sites by replacing the hand-rolled `Database` interface in `src/types/database.ts` with the auto-generated one (carefully — generated types are looser on enums; needs literal-union preservation pass).
+- **Track 5 (F1-gated):** F4.2 (`: any` count), F5.4 (Lighthouse cadence), F6.3 (staging env). All wait on F1 friend-test signal.
+- **Track 6 (P4.1 pentest scope):** F2.1 / F2.4 / F2.8 / F2.10 / F0.3 / F2.2 + S14 — pentest brief written when Track 6 scopes.
+- **Track 8 (founder-admin, RED):** ICO registration at ico.org.uk — £40, 30 min, DPA 2018 s.17 obligation. **Cannot accept new paying coaches or run external marketing until done.** Plus other founder-admin items (Sentry alert rules, Resend domain verification, Stripe Connect e2e test, T&Cs solicitor review).
+
+### Founder follow-ups before next dev block
+
+- **Verify both PR #13 + PR #14 deployed clean to Production.** Vercel auto-deploys on `main` push — should be green; if anything looks off check the Production deployment logs.
+- **Delete `VERCEL_DEPLOY_HOOK` GitHub repo secret** (post-F0.1).
+- **Confirm `ADMIN_EMAILS` matches your login email** on Vercel Production + Preview. Without it, all three admin pages redirect every user.
+- **F1 friend test (P1.6/P1.8)** — non-code, founder-led; this is the next gating event for everything in Tracks 2-5.
+- **ICO registration** — RED priority, in parallel with F1.
 
 ---
 
