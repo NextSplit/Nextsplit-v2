@@ -1074,3 +1074,295 @@ and Phase 4. Info-track shows the marathon session's discipline:
 service-role usage, cron-auth coverage, motion guards,
 dangerouslySetInnerHTML, kill-list dependencies, premium gating,
 character-continuity, server-action pattern — all clean.
+
+---
+
+## Phase 8 — Council synthesis (post-audit review)
+
+11 council agents reviewed the audit + integration draft.
+
+### Aggregate verdict
+
+**HOLD-WITH-IMMEDIATE-HOTFIX.**
+
+Council leans toward SHIP-WITH-FOLLOWUP for the F1 friend-test
+window only, with a **hard HOLD before any external traffic beyond
+F1** until:
+
+1. The Track 1 hotfix lands (now expanded — see below).
+2. The F2.1 RLS verification SQL has actually been run live, not
+   just scheduled.
+3. ICO registration completes (legal RED — see below).
+
+Devil's-advocate, QA-risk, and security-privacy independently
+flagged the same single most acute issue: **F2.1 status is unknown,
+not unverified — the SQL audit must run before the foundation
+sprint, not during.** Run the check immediately; treat any table
+returning `rls_enabled = false` as ESCALATE.
+
+### Material findings the council added
+
+#### S1 [HIGH → CRITICAL on legal lens] · ICO unregistered while commercial processing live
+
+**Source:** `ns-legal-compliance` review.
+**Material change:** F2.10 was rated INFO. Legal lens reclassifies
+it to **HIGH legal exposure**. Operating an unregistered data
+controller while commercially processing personal data (coach
+subscriptions, biometric training logs, NPS free-text, Stripe
+data) is a criminal offence under DPA 2018 s.17 + Schedule 1.
+Phase 3 has shipped — the obligation already arose.
+
+**Action:** founder registers at ico.org.uk **before any further
+user acquisition**. £40, 30 minutes. Then paste the registration
+number into `src/app/privacy/page.tsx:25` (replaces
+`[UPDATE AFTER REGISTRATION]` placeholder).
+
+#### S2 [HIGH] · F2.2 nps_responses leak is an Art 33 reportable breach, not just a data leak
+
+**Source:** `ns-legal-compliance`.
+**Material change:** Free-text NPS responses are personal data
+under UK GDPR Art 4(1). The over-broad `USING (true)` policy means
+any authenticated user can SELECT every response. If the breach is
+discovered or disclosed, the controller must assess Art 33
+"risk to rights and freedoms" — likely reportable to ICO within
+72h of awareness.
+
+**Action:** F2.2 stays in Track 1; founder runs the SQL drop
+within 24h. Verify no PostHog / Sentry breadcrumb captured the
+free-text comments before the policy is dropped (low likelihood,
+but a 5-minute check).
+
+#### S3 [HIGH] · `can_nudge` SECURITY DEFINER → escalate Track 2 → Track 1
+
+**Source:** `ns-product-strategist`, `ns-security-privacy`,
+independently.
+**Material change:** F2.4 grouped `can_nudge` with the rest of the
+SECURITY DEFINER body audit (Track 2). Council says no:
+`can_nudge(p_from, p_to)` without `auth.uid() = p_from` is a
+**timing side-channel oracle on social behaviour**: any
+authenticated user can poll whether a target user has nudged
+recently. The squad nudge is the mechanical core of the founding
+thesis — a broken trust layer here is thesis-eroding.
+
+**Action:** lift the `can_nudge` body fix into Track 1. Single
+line: `IF auth.uid() <> p_from THEN RAISE EXCEPTION 'unauthorized'
+USING ERRCODE = '42501'; END IF;`. ~10 minutes including migration.
+
+#### S4 [HIGH] · Backend uncovered 4 additional unguarded SECURITY DEFINER RPCs the audit missed
+
+**Source:** `ns-backend-data-engineer`.
+**Files cited:**
+- `supabase/migrations/alpha-readiness.sql:125-142` —
+  `increment_season_xp(p_user_id)` and
+  `increment_profile_xp(p_user_id)` — no `auth.uid()` check, no
+  `GRANT EXECUTE` scoping. Any authenticated caller can increment
+  XP for any user.
+- `supabase/migrations/alpha-readiness.sql:145` —
+  `decrement_club_members(p_club_id)` — no auth check.
+- `supabase/migrations/phase-sl1-squads.sql:344` —
+  `apply_split_leader_reward(p_leader_id)` — no caller-ownership
+  check, no `GRANT EXECUTE`. Any user can credit any other user's
+  split-leader reward counter.
+
+**Action:** add to F2.4 scope. All 4 functions need either an
+`auth.uid()` body check or a tighter `GRANT EXECUTE TO service_role
+ONLY`. Track 2 (foundation sprint).
+
+#### S5 [HIGH] · `scripts/gen-types.sh` writes to wrong path — F4.1 fix is broken
+
+**Source:** `ns-backend-data-engineer`.
+**Material change:** F4.1 told the founder to run `gen-types.sh`
+to regenerate `src/types/database.ts`. The script as committed
+writes to `src/types/supabase-generated.ts` — a different file
+the codebase does not import. Running the script gives a false
+sense of completion: types are still stale.
+
+**Action:** fix the script's output path **before** F4.1 is
+attempted. ~2 minutes. Then run the regen.
+
+#### S6 [HIGH] · 5 of 9 AI routes have no `aiRateLimit` guard — exploitable today
+
+**Source:** `ns-frontend-engineer`.
+**Routes confirmed unguarded:** `/api/ai/generate-plan`,
+`/api/ai/adapt-plan`, `/api/ai/coach-digest`, `/api/ai/recommend`,
+`/api/ai/weekly-summary`.
+
+**Material change:** F3.3 deferred the central wrapper to ship
+inline with P3.4. Council says: rate-limit is exploitable today;
+any authenticated user can drain Anthropic quota. The wrapper can
+land later but the rate-limit guard cannot.
+
+**Action:** before the central wrapper ships, add a 1-line
+`await aiRateLimit(...)` call to all 5 unguarded routes. Track 1.5
+(post-hotfix, pre-foundation-sprint). ~30 minutes.
+
+#### S7 [HIGH] · F4.1 lifts to Track 1 (15-min fix, compounds daily)
+
+**Source:** `ns-pm-tech-lead`, `ns-frontend-engineer`.
+**Material change:** F4.1 was Track 2. PM and frontend agree it's
+S-effort (15 minutes), unblocks F0.4 (CI tsc-blocking), and the
+`as never` debt is actively compounding on the coach-paying-users
+surface. No reason to defer.
+
+**Action:** add F4.1 (with S5 path-fix prerequisite) to Track 1.
+
+#### S8 [MEDIUM] · F0.4 reclassify MEDIUM → HIGH
+
+**Source:** `ns-frontend-engineer`.
+**Material change:** with 5 unguarded AI routes in production and
+CI silent on regressions, the next PR adding an AI route also
+won't be caught by CI. Reclassify F0.4 to HIGH severity (no
+behaviour change in the integration plan; the staged unblock is
+correct, just bumped severity).
+
+#### S9 [MEDIUM] · Sport-science gaps the test plan misses
+
+**Source:** `ns-coach-domain-expert`.
+**Material changes:**
+- `acwr.ts` does not exist — ACWR logic is `calcACWR()` inside
+  `statsUtils.ts`. The F6.1 test priority list should read
+  `statsUtils/calcACWR`, `vdot.ts`, `streak.ts`, `referral.ts`.
+- Two untested sport-science items the audit missed:
+  1. **Distance-specific taper enforcement.** Generate-plan
+     prompt says "taper if applicable" with no enforcement. AI can
+     omit a taper. Marathon = 2-3 weeks; 10k = 7-10 days; 5k = 5
+     days.
+  2. **Long-run ceiling.** No post-generation validation that
+     long-run km ≤ 30% of weekly total.
+
+**Action:** Track 2 — add a pure-TS post-generation validator
+(`src/lib/planValidator.ts`) that flags missing taper weeks for
+marathon/half plans and long-run > 30% of weekly. Plus update
+F6.1 test paths.
+
+#### S10 [MEDIUM] · UX: onboarding event taxonomy must unify before F1
+
+**Source:** `ns-ux-designer`.
+**Material change:** F3.6 deferred until P2.1. Council says no:
+F1 friend-test users may path-switch (start AI, bail, restart
+manual). Without a unified `onboarding_started` /
+`onboarding_completed` / `onboarding_path` event contract, F1
+funnel data is unreadable.
+
+**Action:** before F1 device-test runs, ship a single
+`src/app/onboarding/events.ts` with shared event constants
+across all 3 paths. ~1 hour. Track 1.5.
+
+#### S11 [LOW] · UX: Squad-tab promotion needs first-visit affordance
+
+**Source:** `ns-ux-designer`.
+**Material change:** P2.1 promotes Squad to top-level tab.
+Without a first-visit tooltip, users whose mental model is
+"Squad lives in Explore" will not find it. Risk: dead tab at
+launch.
+
+**Action:** P2.1 PR must include a one-shot bottom-sheet
+tooltip on first render of Squad tab, dismissed to localStorage.
+Block tab-flip until this is in.
+
+#### S12 [LOW] · Mobile-PWA: manifest background_color flashes white on iOS launch
+
+**Source:** `ns-mobile-pwa`.
+**File:** `public/manifest.json`.
+**Material change:** `background_color` is `#f8f8f6` (near-white)
+against the app's `#0a0e1a` dark shell. iOS standalone splash
+screen flashes white on cold launch.
+
+**Action:** change `background_color` to `#0a0e1a`. ~2 minutes.
+Track 1 (cosmetic but cheap).
+
+#### S13 [LOW] · Mobile-PWA: service worker has no update-notification path
+
+**Source:** `ns-mobile-pwa`.
+**File:** `public/sw.js`.
+**Material change:** `CACHE_NAME = 'nextsplit-v2-shell-v1'` is a
+hardcoded string with no build-hash bump and no `waiting` state
+message to the user. Stale shells persist.
+
+**Action:** add SW update notification (Track 5 / post-F1
+backlog with explicit trigger: "first reported case of users on
+old version after a deploy").
+
+#### S14 [LOW] · Pentest-brief additions for Track 6
+
+**Source:** `ns-security-privacy`.
+**Material additions:**
+- Stripe webhook replay — verify `stripe.webhooks.constructEvent`
+  uses raw body (not parsed JSON) and event IDs are deduplicated
+  before fulfilling.
+- OAuth state parameter entropy on Strava — confirm `state` is a
+  cryptographic nonce stored in HttpOnly cookie, not localStorage.
+- Push subscription endpoint origin whitelist — validate against
+  FCM/APNs/Mozilla origins before send (SSRF prevention).
+
+**Action:** fold into `docs/audit/pentest-brief-v1.md` when
+written.
+
+### Council deltas — what changes in `roadmap-integration-v1.md`
+
+The integration doc's tracks expand:
+
+**Track 1 (HOTFIX) — expanded from 3 → 5 items** (still 24-48h):
+- F0.1 delete redundant deploy.yml
+- F0.3 admin gate
+- F2.2 NPS leak drop
+- **+ S3 `can_nudge` auth.uid() body fix**
+- **+ S12 manifest.json `background_color` → `#0a0e1a`**
+
+**Track 1.5 (NEW — between hotfix and foundation sprint, ~2h):**
+- S6 — add `aiRateLimit()` to 5 unguarded AI routes
+- S5 — fix `gen-types.sh` output path
+- S7 — F4.1 regen `database.ts` (depends on S5)
+- S10 — unified onboarding event taxonomy
+
+**Track 2 (FOUNDATION SPRINT) — was 7 items / 2-3 days, now ~12
+items / 4 days realistic:**
+- F2.1 RLS verification (treat as L not M; **run the check now**
+  before sprint)
+- F2.4 SECURITY DEFINER body audit — expanded scope per S4
+- F0.4 staged CI unblock (S5/S7 prerequisite met)
+- F0.2 cron consolidation + dead-route delete + zero-send alert
+  (per QA-risk recommendation)
+- F6.1 test surface — paths corrected per S9; bar raised per QA
+  to require zero-input + boundary cases per lib
+- **+ S9 plan validator (`src/lib/planValidator.ts`)** for taper +
+  long-run
+
+**Track 8 (FOUNDER-ADMIN) — promoted by legal lens:**
+- S1 — **ICO registration before any new user acquisition**
+  (RED, not INFO).
+- S14 — pentest brief additions when Track 6 is scoped.
+
+### Acceptance for synthesis
+
+This synthesis is **not** approval to ship. It is approval of the
+audit + integration plan's *direction* with the deltas above
+applied. The actual ship event is a sequence:
+
+1. Founder runs F2.1 RLS SQL audit (next 30 min).
+2. If clean: ship Track 1 (5 items, 24-48h).
+3. Ship Track 1.5 (4 items, ~2h).
+4. F1 friend-test (P1.6 — non-code).
+5. Founder ICO registration in parallel with F1.
+6. Track 2 foundation sprint (4 days, post-F1).
+7. Phase 4 entry only after retention-bar pass + pentest +
+   foundation-sprint complete.
+
+### Confidence + open questions
+
+**Confidence:** 4 (high). 11 reviews, strong consensus on the
+material findings, no contradictions on the critical-track items.
+The one gap is that none of the council can confirm F2.1 status
+without live SQL — that uncertainty is correctly escalated.
+
+**Open questions for next pass:**
+1. Does S6's "add `aiRateLimit` to 5 routes" land before or after
+   the central wrapper (F3.3)? Council says before. Forge a
+   2-option proposal in the Track 1.5 PR.
+2. Is the Track 2 4-day estimate realistic for a solo founder, or
+   does it need to split into two 2-day mini-sprints? PM-tech-lead
+   says decide at kickoff.
+3. F0.3 admin-gate: does the `ADMIN_EMAILS` env-var check ship
+   first, or do we go straight to `is_admin` profile flag?
+   Security-privacy says straight to flag pre-Phase-4. That's a
+   council decision before P3.4 / P3.7 ship.
