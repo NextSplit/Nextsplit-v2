@@ -1,4 +1,35 @@
 <!--
+  v0.8 — 2026-05-08 — Late-evening sprint after v0.7. Five more PRs merged
+                       (#22 future-date guard with DB CHECK + Zod; #23
+                       gamification V2 spec + 19-lens /council HOLD verdict;
+                       #24 council blocker close-out — RLS hardening on
+                       challenge_entries + virtual_race_entries via
+                       phase-rls-community-entries-hardening-v1.sql migration
+                       (20260508231830) + 4 live bug fixes + Pro→Elite
+                       pricing; #25 passive Race V0 — new /leaderboard route
+                       hosting SquadLeaderboard with squadless empty state +
+                       global rankings teaser; #26 spec edit deleting
+                       rng_jitter from gamification V2 §3.3, race sim now
+                       fully deterministic addressing UK Gambling Commission).
+                       FOUNDER STRATEGIC PIVOT: F1 friend testing
+                       BACKLOGGED — direction is "build app to fully usable
+                       state before any test users". Track 5 items
+                       collapse from F1-gated to Phase 4-gated or longer.
+                       Founder overruled synthesizer's V0 sliver in favour
+                       of "push richer" + Full Vision committed for
+                       character gamification (Phase 3+ Race tab build).
+                       Council pre-ship blockers: 3 closed in code/spec
+                       (#2, #3, #4); 2 still founder admin (#1 ICO, #5
+                       remaining pre-alpha gates excluding F1 which is
+                       backlogged). All audit + council code-side work is
+                       now CLOSED. NEXT WORK BLOCK: actual character system
+                       build per docs/forge/character-gamification-v2-
+                       proposal.md — schema (user_characters +
+                       character_inventory + races/race_entries/race_results
+                       + leagues), class picker UI extension to
+                       CharacterCreationScreen, basic XP from training_logs,
+                       eventually Aseprite art commission. Founder still
+                       owes ICO + Companies House.
   v0.7 — 2026-05-08 — Track 2 partial + Track 3 partial + character-gamification
                        /forge close-out (same evening as v0.6). PRs 17-21 merged:
                        F2.5 anon-key fallback dropped, F0.6 .gitignore tighter,
@@ -84,17 +115,25 @@
                        10 threads + cadence + opening ideation framing.
 -->
 # NextSplit Roadmap & Operating Manual
-**Status:** v0.7 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
+**Status:** v0.8 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
 
-> **2026-05-08 audit overlay:** Tracks 1 + 1.5 + 2 (partial) + 3 (partial)
-> closed on main across PRs 13-21. See `docs/audit/audit-report-v1.md`
-> (Phase 8 council synthesis), `docs/audit/roadmap-integration-v1.md`
-> (8-track plan), and `docs/forge/character-gamification-v1.md` (forge
-> output, framing-gate decision pending). Remaining audit work:
-> F4.1 full cast cleanup (own PR), Track 5 (F1-gated), Track 6 (pentest
-> brief when scoped), Track 8 (founder-admin, ICO RED). Track 4 (F3.2a,
-> F3.3) still trigger-gated to next squad/P3.4 PR. **Next gating event:
-> F1 friend-test + character-gamification framing-gate decision.**
+> **2026-05-08 audit overlay:** All audit + council code-side work CLOSED
+> across PRs 13-26. See `docs/audit/audit-report-v1.md` + `roadmap-
+> integration-v1.md` (the original audit), `docs/forge/character-
+> gamification-v1.md` + `v2-proposal.md` (gamification design pass), and
+> `docs/council/character-gamification-v2-verdict.md` (HOLD verdict with
+> 5 RED blockers — 3 now closed in code/spec). Remaining: F4.1 full cast
+> cleanup (own PR), Track 6 pentest brief (when paid pentest scopes),
+> Track 8 founder-admin (ICO RED + Companies House). Track 4 (F3.2a,
+> F3.3) still trigger-gated.
+>
+> **FOUNDER STRATEGIC PIVOT (8 May 2026 evening):** F1 friend testing
+> BACKLOGGED — direction is now "build app to fully usable state before
+> any test users". Track 5 items (F4.2/F5.4/F6.3) collapse from F1-gated
+> to Phase-4-gated. **Next dev block:** character system build per
+> `docs/forge/character-gamification-v2-proposal.md` (Phase 3+ Race tab,
+> Full Vision committed by founder). `/leaderboard` (PR #25) is the
+> placeholder Race V0 surface until the full tab ships.
 
 > **READ ORDER for every session:** `CLAUDE.md` → `HANDOFF.md` (state) → **this doc (direction)**.
 > If a piece of work is not in here with a thread and a phase, it is **not a commitment**.
