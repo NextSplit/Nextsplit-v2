@@ -11,9 +11,11 @@ import RetentionDashboard from './RetentionDashboard'
 // return cohorts.
 //
 // All queries run server-side via service-role client (auth.users isn't
-// reachable from the anon client). The page is auth-gated only — there's no
-// explicit "is_admin" flag yet, so any logged-in user reaching /admin/retention
-// can see the data. F1-stage acceptable; harden before public launch.
+// reachable from the anon client). Audit F0.3 (Track 1 hotfix): admin gate
+// added — only emails listed in process.env.ADMIN_EMAILS may view the
+// dashboard. Foundation-sprint follow-up: migrate to a profiles.is_admin
+// column with audit trail before Phase 4 entry (council ns-security-privacy
+// recommendation).
 
 export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Retention — NextSplit Admin' }
@@ -143,6 +145,18 @@ export default async function RetentionPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
+
+  // F0.3: admin email gate. ADMIN_EMAILS env var is a comma-separated list
+  // of authorised emails (e.g. "ash@nextsplit.app,founder@nextsplit.app").
+  // Anything else → bounce to /today. Set ADMIN_EMAILS in Vercel env.
+  const adminEmails = (process.env.ADMIN_EMAILS ?? '')
+    .split(',')
+    .map(s => s.trim().toLowerCase())
+    .filter(Boolean)
+  const userEmail = user.email?.toLowerCase()
+  if (!userEmail || !adminEmails.includes(userEmail)) {
+    redirect('/today')
+  }
 
   // BL-X8: wrap the cohort load in Sentry. If service-role queries throw
   // (RLS misconfig, network timeout, schema drift), the page rendering

@@ -1,4 +1,24 @@
 <!--
+  v0.5 — 2026-05-08 — End-to-end audit + 11-agent /council pass complete
+                       (Tier A 8 + Tier B 3: mobile-pwa, pm-tech-lead,
+                       legal-compliance). Two artefacts on main via PR #12:
+                       docs/audit/audit-report-v1.md (1368 lines, Phases 0-9
+                       + Phase 8 synthesis, 39 findings + 14 council additions
+                       S1-S14) and docs/audit/roadmap-integration-v1.md
+                       (8 tracks). Aggregate verdict: HOLD-WITH-IMMEDIATE-
+                       HOTFIX. F2.1 RLS pre-flight ran live: only
+                       plan_templates returned rls_enabled = false; everything
+                       else clean. Legal lens reclassified F2.10 (ICO) INFO →
+                       RED. Track 1 partially shipped: F0.1 deploy.yml deleted,
+                       F0.3 admin gate (ADMIN_EMAILS env), S12 manifest bg
+                       #0a0e1a, S3 can_nudge SECURITY DEFINER guard live.
+                       Track 1 SQL remaining: supabase/migrations/phase-
+                       track1-hotfix-v1.sql (plan_templates RLS + nps_responses
+                       leak), to apply via Supabase MCP. Roadmap deltas
+                       proposed in roadmap-integration-v1.md §"Roadmap delta":
+                       new P1.7 (audit hotfix track), append to P3.4 (AI
+                       wrapper + cost dashboard with Coach Revenue v2),
+                       new P4.1.5 (pentest brief preparation).
   v0.4 — 2026-05-07 — Marathon execution session: Phase 1 closed (with L2/A1
                        minimal splits; full structural splits deferred as
                        cosmetic). Phase 2 6/7 shipped (P2.1 + P2.5 gated on
@@ -40,7 +60,14 @@
                        10 threads + cadence + opening ideation framing.
 -->
 # NextSplit Roadmap & Operating Manual
-**Status:** v0.4 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
+**Status:** v0.5 | **Owner:** Ash | **Source of truth — all direction and delivery flows through this document**
+
+> **2026-05-08 audit overlay:** see `docs/audit/audit-report-v1.md` and
+> `docs/audit/roadmap-integration-v1.md`. Track 1 (audit hotfix) is the
+> active workstream; F2.1 plan_templates RLS + F2.2 nps_responses leak
+> live in `supabase/migrations/phase-track1-hotfix-v1.sql` awaiting
+> Supabase MCP apply. Phase 1 / 2 / 3 follow-up work continues, but
+> any new feature PR pauses until Track 1 closes (24-48h).
 
 > **READ ORDER for every session:** `CLAUDE.md` → `HANDOFF.md` (state) → **this doc (direction)**.
 > If a piece of work is not in here with a thread and a phase, it is **not a commitment**.

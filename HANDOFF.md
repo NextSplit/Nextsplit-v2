@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.8 | **7 May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 9.9 | **8 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.9: Audit + 11-agent /council pass complete on `claude/review-project-status-lGBPu`. Two deliverables on main via PR #12: docs/audit/audit-report-v1.md (1368 lines, Phases 0-9 + Phase 8 council synthesis, 39 findings + 14 council additions S1-S14) and docs/audit/roadmap-integration-v1.md (every finding → 8-track plan). Aggregate verdict: HOLD-WITH-IMMEDIATE-HOTFIX. F2.1 RLS pre-flight ran live: only `plan_templates` returned rls_enabled = false; everything else clean — that single-table escalation is patched in supabase/migrations/phase-track1-hotfix-v1.sql (pending MCP-apply). Track 1 hotfix code-side shipped this session: F0.1 (deploy.yml deleted), F0.3 (admin gate via ADMIN_EMAILS env var on src/app/admin/retention/page.tsx), S12 (manifest.json background_color #0a0e1a), S3 (can_nudge SECURITY DEFINER guard applied live to Supabase). Track 1 SQL remaining: phase-track1-hotfix-v1.sql via Supabase MCP (F2.1 plan_templates RLS + F2.2 nps_responses leak). Supabase MCP server wired in .claude/settings.local.json (gitignored). Project ref: wlrmeiczqgmharvfmalq. **PAT WAS PASTED IN CHAT — ROTATE IMMEDIATELY in next session: revoke at supabase.com/dashboard/account/tokens, create new, swap into .claude/settings.local.json before doing any DB work.** Founder admin still: ICO registration (£40, ico.org.uk) — legal council reclassified F2.10 INFO → RED. NEXT GATING EVENT: F1 friend test (P1.8). NEXT WORK: Track 1 SQL apply via MCP, then Track 1.5 (S6 aiRateLimit on 5 unguarded AI routes, S5 gen-types.sh path fix, F4.1 database.ts regen, S10 unified onboarding events). -->
 <!-- 9.8: Marathon execution session COMPLETE. 11 PRs merged into main (#4 P1.0a/P1.1 → #11 quick-wins). Phase 1 closed, Phase 2 6/7 shipped, Phase 3 9/11 + observability shipped, cross-cutting backlog 4/8 done + 2 partial. 5 Supabase migrations applied (P1.0a schema, P2.3 referral, P2.7 timezone, P3.10 squad seasons, BL-X4/X5 indexes). Founder admin remaining: £40 ICO registration; optional Sentry alert rule on tags.feature. NEXT GATING EVENT: F1 friend test (P1.8) — unblocks P2.1 (squad-tab IA), P2.5 (friction audit), P2.7 hard-deload council, P3.9 (nudge effectiveness baseline), P3.4/P3.7 (Stripe Connect work blocks Phase 4). All open code-only quick wins are now shipped. -->
 <!-- 9.7: Marathon dev session shipped Phase 1 + Phase 2 code-feasible items across PR #5 (merged), PR #6 (merged), PR #7 (open: P1.2 PECR fix + reaction notifications + 6 follow-ups), PR #8 (open: P2.2 + P2.3 + P2.6 + P2.7 partial). Two open PRs need founder action: (a) Vercel env var rename NEXT_PUBLIC_PREMIUM_ENFORCED → PREMIUM_ENFORCED for PR #7's P1.3; (b) 2 Supabase migrations for PR #8 (phase-p2-3-referral-reward.sql + phase-p2-7-timezone.sql). Phase 1 done; Phase 2 6/7 done (P2.1 squad-tab IA promotion + P2.5 friction audit + P2.7 deload suppression deferred — all gated on F1 friend-test signal or council). Phase 3 (Coach Suite + retention proof) deliberately not started — it's roadmap week 7-14, dependent on F1 retention data. NEXT GATING EVENT: F1 friend test (P1.8). -->
 <!-- 9.6: P1.0 partial decomposition landed on claude/review-project-status-lGBPu (5 commits 29d7307..cdf8fd5). Council /council 2026-05-07 verdict HOLD on full P1.0; founder picked Path B (surgical fixes + decomposition). Pre-ship blockers all resolved: S1+S2 capture session+effectivePace before await (kills stale-closure planDay → wrong squad_feed metadata bug + propagates derived pace into milestone payload); S3 react-hooks/exhaustive-deps bumped warn→error so future stale-closure regressions fail CI. T1 useUndoCountdown hook + T2 useSessionLogging hook extracted from TodayClient (870→759 lines, 15→10 useState). L1 useLogFormState lift in LogModal closes the silent km/duration discard-warning gap (12→3 useState). Remaining: L2 LogModal split into BasicEntry/AdvancedEntry/SaveControls and A1 AthleteDetailClient split into 4 sections — both pure JSX surgery, no bug-fix value, deferred pending live smoke-test on nextsplit.app. -->
@@ -37,9 +38,44 @@ If you later upgrade to Vercel Pro and want to restore split morning/midday/even
 
 ---
 
+## ⚠️ Audit hotfix in flight (Track 1) — first thing in next session
+
+The audit (PR #12, merged into main) ran 11-agent /council. Outcome:
+**HOLD-WITH-IMMEDIATE-HOTFIX**. Track 1 (5 items) is partially done.
+
+**Code-side already shipped on `claude/review-project-status-lGBPu` (this session):**
+- ✅ F0.1 `.github/workflows/deploy.yml` deleted
+- ✅ F0.3 admin gate on `src/app/admin/retention/page.tsx` (reads `ADMIN_EMAILS` env var, redirects non-admins to `/today`)
+- ✅ S12 `public/manifest.json` `background_color` → `#0a0e1a`
+- ✅ S3 `can_nudge` SECURITY DEFINER `auth.uid()` body guard — applied live to Supabase via SQL Editor
+
+**SQL pending — apply via Supabase MCP next session:**
+- 📋 `supabase/migrations/phase-track1-hotfix-v1.sql` — F2.1 plan_templates RLS + F2.2 nps_responses leak
+
+**Founder env action before merge:**
+- Set `ADMIN_EMAILS` in Vercel env (Production + Preview) — comma-separated list of authorised admin emails. Without this, **even the founder hits the redirect**. Set it now or admin/retention will appear broken.
+
+**Founder admin RED (legal council):**
+- ICO registration at ico.org.uk (£40, 30 min). Legal lens reclassified F2.10 INFO → RED — operating an unregistered controller while commercially processing personal data is a DPA 2018 s.17 offence. Do this before any new user acquisition.
+
+---
+
+## ⚠️ Supabase MCP server wired — rotate the PAT
+
+`.claude/settings.local.json` (gitignored) contains the Supabase MCP server config with project ref `wlrmeiczqgmharvfmalq`. The PAT was pasted in chat in this session — **rotate it first thing in the next session:**
+
+1. <https://supabase.com/dashboard/account/tokens> → revoke current token (look for the most recent one).
+2. Create a new project-scoped token. Copy it once.
+3. Open `.claude/settings.local.json` and replace the `SUPABASE_ACCESS_TOKEN` value.
+4. Restart Claude Code so the MCP server reloads.
+
+Once reloaded, Claude has tools `mcp__supabase__list_tables`, `mcp__supabase__execute_sql`, `mcp__supabase__apply_migration`, `mcp__supabase__list_migrations`, `mcp__supabase__generate_typescript_types`, etc. — read+write scoped to the NextSplit project.
+
+---
+
 ## How to Start a New Session
 
-**Read order:** `CLAUDE.md` → **this file (state)** → `docs/ROADMAP.md` (direction).
+**Read order:** `CLAUDE.md` → **this file (state)** → `docs/ROADMAP.md` (direction) → `docs/audit/audit-report-v1.md` Phase 8 synthesis → `docs/audit/roadmap-integration-v1.md` Track 1 / 1.5 / 2.
 
 Then run:
 ```bash
