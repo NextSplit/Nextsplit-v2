@@ -19,7 +19,9 @@ describe('buildNotification', () => {
     expect(n.title).toContain('Sam')
     expect(n.body.toLowerCase()).not.toContain('missed')
     expect(n.body.toLowerCase()).not.toContain('failed')
-    expect(n.body.toLowerCase()).toContain('plan')
+    // Body picks one of 3 messages by day-of-week; require either
+    // 'plan' or 'training' so the test isn't brittle on different days.
+    expect(n.body.toLowerCase()).toMatch(/plan|training/)
   })
 
   it('race_countdown includes days context', () => {

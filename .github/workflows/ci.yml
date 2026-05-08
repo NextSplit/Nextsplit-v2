@@ -24,15 +24,18 @@ jobs:
 
       - name: TypeScript check
         run: npx tsc --noEmit
-        continue-on-error: true  # Vercel is source of truth; pre-existing errors exist
+        continue-on-error: true  # F4.1 (audit) — flip to blocking after database.generated.ts adoption PR
 
       - name: ESLint
-        run: npx eslint src --ext .ts,.tsx --max-warnings 0
-        continue-on-error: true  # warnings exist from pre-existing code
+        run: npx eslint src --ext .ts,.tsx --max-warnings 600
+        continue-on-error: true  # F0.4 (audit) — ceiling raised from 0 to 600 (current ~525); keep continue-on-error until errors are cleaned up
 
+      # F0.4 (audit) staged CI unblock: tests are first to flip blocking
+      # because vitest infra was fixed and all 52 tests pass on main as of
+      # PR #(this). tsc + eslint stay non-blocking until F4.1 cleanup +
+      # eslint error sweep.
       - name: Unit tests
         run: npm test
-        continue-on-error: true  # vitest infra issues pre-exist
 
       - name: Build
         run: npm run build

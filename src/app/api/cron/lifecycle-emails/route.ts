@@ -77,6 +77,11 @@ export async function GET(req: NextRequest) {
     }
 
     let sent = 0
+    // F0.2 (audit): eligible counts users matched a lifecycle slot (so we
+    // attempted send) vs sent counts successful resend.send() calls. If
+    // eligible > 0 && sent === 0 we'll fire a Sentry alert below — every
+    // user-bound send failing silently is the smell that motivated F0.2.
+    let eligible = 0
 
     for (const profile of profiles) {
       const uid       = profile.id as string
@@ -150,6 +155,7 @@ export async function GET(req: NextRequest) {
       }
 
       if (!emailToSend) continue
+      eligible++
 
       const emailDef = LIFECYCLE_EMAILS[emailToSend]
       const html     = buildLifecycleEmailHtml(emailToSend, {
@@ -186,7 +192,20 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ ok: true, sent })
+    // F0.2 (audit) zero-send alert. If we matched ≥1 user to a lifecycle
+    // slot but every resend.send() call failed silently, that's the
+    // signature of an outage we won't otherwise see (the per-user catch
+    // swallows each error). Send-rate falls off a cliff before anyone
+    // notices via inbox traffic.
+    if (eligible > 0 && sent === 0) {
+      Sentry.captureMessage('cron-zero-send: lifecycle-emails matched eligible users but sent zero', {
+        level: 'error',
+        tags: { feature: 'cron-zero-send', route: 'lifecycle-emails' },
+        extra: { eligible, sent, profileCount: profiles.length },
+      })
+    }
+
+    return NextResponse.json({ ok: true, sent, eligible })
   } catch (err) {
     Sentry.captureException(err, { extra: { context: '[cron/lifecycle-emails]' } })
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
