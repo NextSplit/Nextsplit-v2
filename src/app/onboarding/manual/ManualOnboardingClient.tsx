@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import OnboardingProgress from '@/components/OnboardingProgress'
+import { Analytics } from '@/lib/analytics'
+import { ONBOARDING_PATH } from '@/app/onboarding/events'
 
 const DISTANCES = [
   { slug: '5k_couch_to_5k',    label: 'C25K / 5K',     weeks: '9 weeks',  desc: 'Couch to 5K base structure', emoji: '🏃' },
@@ -45,6 +47,7 @@ export default function ManualOnboardingClient() {
         const detail = data.details ? ` (${data.details.join(', ')})` : ''
         throw new Error((data.error ?? 'Failed to activate plan') + detail)
       }
+      Analytics.onboardingCompleted(ONBOARDING_PATH.MANUAL)
       router.push(data.raceTooSoon ? '/home?notice=race_soon' : '/home')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')

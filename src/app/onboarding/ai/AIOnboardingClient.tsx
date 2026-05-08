@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOnboarding } from '../context/OnboardingContext'
+import { Analytics } from '@/lib/analytics'
+import { ONBOARDING_PATH } from '@/app/onboarding/events'
 
 // ── Plan lookup ───────────────────────────────────────────────────────────────
 
@@ -192,6 +194,7 @@ export default function AIOnboardingClient() {
         const detail = data.details ? ` (${data.details.join(', ')})` : ''
         throw new Error((data.error ?? 'Failed to activate plan') + detail)
       }
+      Analytics.onboardingCompleted(ONBOARDING_PATH.AI_BESPOKE)
       router.push(data.raceTooSoon ? '/home?notice=race_soon' : '/home')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')

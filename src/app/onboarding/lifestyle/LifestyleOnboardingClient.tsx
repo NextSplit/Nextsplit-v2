@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import OnboardingProgress from '@/components/OnboardingProgress'
+import { Analytics } from '@/lib/analytics'
+import { ONBOARDING_PATH } from '@/app/onboarding/events'
 
 const FOCUSES = [
   { id: 'easy',      label: 'Stay healthy & active', emoji: '🌿', desc: 'Low pressure, feel good running', slug: '5k_couch_to_5k' },
@@ -51,6 +53,7 @@ export default function LifestyleOnboardingClient() {
         const detail = data.details ? ` (${data.details.join(', ')})` : ''
         throw new Error((data.error ?? 'Failed to activate plan') + detail)
       }
+      Analytics.onboardingCompleted(ONBOARDING_PATH.LIFESTYLE)
       router.push(data.raceTooSoon ? '/home?notice=race_soon' : '/home')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
