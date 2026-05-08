@@ -15,12 +15,19 @@ interface Props {
 }
 
 // ── Reduced-motion detection ──────────────────────────────────────────────────
+// Lazy initialiser reads matchMedia synchronously on the client during the
+// first render, eliminating the hydration flash that briefly played motion
+// for users with prefers-reduced-motion before the useEffect ran (council
+// /council R2 frontend-engineer LIVE BUG — PlanPathSVG.tsx hydration flash).
+// SSR-safe: typeof window guarded.
 function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false)
+  const [reduced, setReduced] = useState<boolean>(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return false
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  })
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReduced(mq.matches)
     const onChange = (e: MediaQueryListEvent) => setReduced(e.matches)
     mq.addEventListener('change', onChange)
     return () => mq.removeEventListener('change', onChange)

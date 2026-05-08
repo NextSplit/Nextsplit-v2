@@ -141,7 +141,7 @@ export default function BottomNav() {
               href={tab.href}
               aria-label={tab.label}
               aria-current={active ? 'page' : undefined}
-              className="flex-1 flex flex-col items-center justify-center py-3 relative transition-all focus-visible:outline-none"
+              className="flex-1 flex flex-col items-center justify-center py-3 relative transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ns-amber)] focus-visible:rounded-md"
               style={{ minHeight: 60 }}
             >
               {/* Active indicator — thick top bar like Duolingo */}
