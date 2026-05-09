@@ -48,6 +48,31 @@ const ATHLETE_TABS = [
     ),
   },
   {
+    href: '/race',
+    label: 'Race',
+    colour: '#ff3d8b',
+    icon: (active: boolean, colour: string) => (
+      <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+        {/* Trophy / podium icon — 1st-place plinth + flag */}
+        <path d="M5 21H19" stroke={active ? colour : 'rgba(240,244,255,0.35)'} strokeWidth={2} strokeLinecap="round" />
+        <rect x={9} y={14} width={6} height={7} rx={1}
+          fill={active ? colour : 'none'}
+          stroke={active ? colour : 'rgba(240,244,255,0.35)'}
+          strokeWidth={active ? 0 : 2} />
+        <path d="M7 4H17V8C17 10.7614 14.7614 13 12 13C9.23858 13 7 10.7614 7 8V4Z"
+          fill={active ? colour : 'none'}
+          stroke={active ? colour : 'rgba(240,244,255,0.35)'}
+          strokeWidth={active ? 0 : 2} strokeLinejoin="round" />
+        <path d="M7 6H4C4 8 5 9 7 9M17 6H20C20 8 19 9 17 9"
+          stroke={active ? colour : 'rgba(240,244,255,0.35)'}
+          strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        {active && (
+          <circle cx={12} cy={8} r={1.5} fill="white" opacity={0.85} />
+        )}
+      </svg>
+    ),
+  },
+  {
     href: '/squad',
     label: 'Squad',
     colour: '#7fff4d',
@@ -112,7 +137,9 @@ const COACH_TABS = [
       </svg>
     ),
   },
-  ATHLETE_TABS[3],
+  // /you tab — index shifted from 3 → 4 when /race was inserted at 2.
+  // Coach mode intentionally omits /race (athlete-only feature for V1).
+  ATHLETE_TABS[4],
 ]
 
 export default function BottomNav() {
