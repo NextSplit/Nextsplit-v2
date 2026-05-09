@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { BUILD_CLASS_META, type BuildClass } from '@/lib/character'
+import { useActiveCosmetics, activeAura } from '@/hooks/useActiveCosmetics'
 
 // Renders the per-runner lane animation from result_timeline waypoints
 // (11 splits per runner, 0% → 100% of distance). Drives a CSS transition on
@@ -34,6 +35,8 @@ export function RaceResultReplay({ runners, distanceM, selfUserId, displayName }
   const [step, setStep]   = useState(0)
   const [done, setDone]   = useState(false)
   const timerRef          = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { active }        = useActiveCosmetics()
+  const aura              = activeAura(active)
 
   // Drive the step counter 0 → 10 over ANIMATION_TOTAL_MS.
   useEffect(() => {
@@ -107,6 +110,15 @@ export function RaceResultReplay({ runners, distanceM, selfUserId, displayName }
               style={{
                 background: 'var(--color-surface-2)',
                 border: isSelf ? '1px solid var(--ns-magenta)' : '1px solid var(--color-border)',
+                // Active aura cosmetic — only on self lane. Renders as a
+                // box-shadow pulse around the lane track. Pulse vs supernova
+                // vary the intensity per the aura asset.kind.
+                boxShadow: isSelf && aura
+                  ? aura.effect === 'supernova'
+                    ? `0 0 16px 4px ${aura.colour ?? 'var(--ns-amber)'}88, 0 0 32px 8px ${aura.colour ?? 'var(--ns-amber)'}44`
+                    : `0 0 12px 2px ${aura.colour ?? 'var(--ns-magenta)'}66`
+                  : undefined,
+                animation: isSelf && aura?.kind === 'pulse' ? 'pulse 2s ease-in-out infinite' : undefined,
               }}
             >
               {/* Track lines */}
