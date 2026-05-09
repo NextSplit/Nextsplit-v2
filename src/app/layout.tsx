@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import BottomNavWrapper from '@/components/BottomNavWrapper'
 import { CharacterStatToast } from '@/components/rpg/CharacterStatToast'
+import { CharacterLootToast } from '@/components/rpg/CharacterLootToast'
 import { ToastProvider } from '@/components/Toast'
 import ThemeWrapper from '@/components/ThemeWrapper'
 import PWAInstallPrompt from '@/components/PWAInstallPrompt'
@@ -64,6 +65,7 @@ export default function RootLayout({
             {children}
             <BottomNavWrapper />
             <CharacterStatToast />
+            <CharacterLootToast />
             <PWAInstallPrompt />
             <ServiceWorkerRegistrar />
             <Analytics />
