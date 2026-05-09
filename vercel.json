@@ -4,6 +4,10 @@
     {
       "path": "/api/cron/smart-notify",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/race-tick",
+      "schedule": "5 22 * * *"
     }
   ],
   "headers": [
