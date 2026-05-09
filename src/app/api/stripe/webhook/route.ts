@@ -175,6 +175,44 @@ export async function POST(req: NextRequest) {
           break
         }
 
+        // ── Character inventory purchase (PR #36+) ─────────────────────
+        // mode='payment' (one-time). Idempotent under duplicate webhook
+        // deliveries via record_purchase_grant which keys claims by
+        // stripe_session_id.
+        if (source === 'character_inventory') {
+          const buyerId   = session.metadata?.supabase_user_id as string | undefined
+          const itemKind  = session.metadata?.item_kind         as string | undefined
+          const itemId    = session.metadata?.item_id           as string | undefined
+          const sessionId = session.id                          as string | undefined
+
+          if (buyerId && itemKind && itemId && sessionId
+              && (itemKind === 'boost' || itemKind === 'cosmetic')) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data: granted, error: grantErr } = await (supabase as any).rpc(
+              'record_purchase_grant',
+              {
+                p_user_id:           buyerId,
+                p_stripe_session_id: sessionId,
+                p_item_kind:         itemKind,
+                p_item_id:           itemId,
+              },
+            )
+            if (grantErr) {
+              Sentry.captureException(grantErr, {
+                extra: { context: '[stripe/webhook] character_inventory grant', buyerId, itemKind, itemId, sessionId },
+              })
+            }
+            // granted=false means already-claimed (duplicate webhook); no-op.
+            void granted
+          } else {
+            Sentry.captureMessage('character_inventory checkout completed with missing metadata', {
+              level: 'warning',
+              extra: { sessionId, metadata: session.metadata },
+            })
+          }
+          break
+        }
+
         // Fall through to original NextSplit Premium handler
         if (session.mode !== 'subscription') break
         const userId     = session.metadata?.supabase_user_id
