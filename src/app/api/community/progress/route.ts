@@ -99,7 +99,37 @@ export async function POST(req: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await db(supabase).rpc('increment_season_xp', { p_user_id: user.id, p_xp: sessionXP })
 
-    return NextResponse.json({ success: true, xp_awarded: sessionXP })
+    // 4. Character system V1 — class-weighted stat XP if user has picked a
+    // build_class. Returns zero deltas silently when the user hasn't created
+    // a character yet, so safe to call unconditionally. Per-class × per-
+    // session-type weights live in src/lib/character.ts and mirror the CASE
+    // inside award_session_xp's RPC body (phase-character-system-v1.sql).
+    // Multiplier is applied server-side from profiles.xp_rate_multiplier.
+    type AwardSessionXPRow = {
+      xp_awarded:         number
+      speed_delta:        number
+      endurance_delta:    number
+      resilience_delta:   number
+      build_class:        string | null
+      multiplier_applied: number
+      new_level:          number
+      new_xp:             number
+    }
+    let characterXP: AwardSessionXPRow | null = null
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: charXP } = await (db(supabase) as any).rpc('award_session_xp', {
+        p_user_id:      user.id,
+        p_session_type: session_type ?? 'easy',
+        p_base_xp:      50,
+      })
+      const row = Array.isArray(charXP) ? charXP[0] : charXP
+      if (row) characterXP = row as AwardSessionXPRow
+    } catch {
+      // Non-fatal — character system is additive. Base XP still awards.
+    }
+
+    return NextResponse.json({ success: true, xp_awarded: sessionXP, character: characterXP })
 
   } catch (err) {
     Sentry.captureException(err, { extra: { context: 'Community progress error:' } })
