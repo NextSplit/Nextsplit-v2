@@ -14,6 +14,7 @@ import { getLevelForXP, getXPProgress } from '@/lib/rpg'
 import type { PlanSession, PlanWeek, TrainingLog } from '@/types/database'
 import Splity from '@/components/Splity'
 import DailyQuests from '@/components/DailyQuests'
+import { RaceCard } from '@/components/race/RaceCard'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -630,6 +631,9 @@ export default function HomeClient() {
 
         {/* Notification strip */}
         <NotifStrip notifications={notifications} markRead={markRead} />
+
+        {/* Today's character race — compact teaser linking to /race */}
+        <RaceCard variant="compact" />
 
         {/* Race countdown */}
         {plan?.race_date && daysToRace !== null && daysToRace >= 0 && (
