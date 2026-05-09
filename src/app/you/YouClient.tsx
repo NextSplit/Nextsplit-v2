@@ -35,6 +35,7 @@ import { computeRPGStats, RPG_BADGES } from '@/lib/rpg'
 // (intentional — badges are derived, not stored).
 import HeroCard from '@/components/rpg/HeroCard'
 import { BuildClassCard } from '@/components/rpg/BuildClassCard'
+import { useActiveCosmetics, activeKitColour } from '@/hooks/useActiveCosmetics'
 import WeeklyXPChart from '@/components/rpg/WeeklyXPChart'
 import XPFeed from '@/components/rpg/XPFeed'
 import BadgeGrid from '@/components/rpg/BadgeGrid'
@@ -68,7 +69,12 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
   const { byDate: mealsByDate } = useMealPlan(mealWeekStart, mealWeekEnd)
 
   const [charId, setCharId]                 = useState('m1')
-  const [kitColour, setKitColour]           = useState('var(--ns-cyan)')
+  const [baseKitColour, setKitColour]       = useState('var(--ns-cyan)')
+  const { active: activeCosmetics }         = useActiveCosmetics()
+  // Active kit_colour cosmetic overrides the localStorage default — drives
+  // the runner's SVG accent inside HeroCard. Falls through to baseKitColour
+  // when no cosmetic is active.
+  const kitColour = activeKitColour(activeCosmetics) ?? baseKitColour
   const [levelUpShow, setLevelUpShow]       = useState(false)
   const [levelUpLevel, setLevelUpLevel]     = useState(0)
   const [prevLevel, setPrevLevel]           = useState<number | null>(null)
