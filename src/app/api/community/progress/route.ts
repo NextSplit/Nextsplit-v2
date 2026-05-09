@@ -129,7 +129,28 @@ export async function POST(req: NextRequest) {
       // Non-fatal — character system is additive. Base XP still awards.
     }
 
-    return NextResponse.json({ success: true, xp_awarded: sessionXP, character: characterXP })
+    // 5. Character system V4 — random loot drop. Service-role RPC scaled
+    // by rarity (~2% chance overall, mostly common). Returns the granted
+    // item or empty if nothing dropped. Wrapped in service-client because
+    // roll_random_drop is REVOKE'd from authenticated.
+    type RandomDropRow = {
+      kind:    'boost' | 'cosmetic'
+      item_id: string
+      rarity:  'common' | 'rare' | 'epic' | 'legendary'
+    }
+    let drop: RandomDropRow | null = null
+    try {
+      const { createServiceClient } = await import('@/lib/supabase/server')
+      const svc = createServiceClient()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: dropRows } = await (svc as any).rpc('roll_random_drop', { p_user_id: user.id })
+      const row = Array.isArray(dropRows) ? dropRows[0] : dropRows
+      if (row?.item_id) drop = row as RandomDropRow
+    } catch {
+      // Non-fatal — drops are decorative. Session log still succeeds.
+    }
+
+    return NextResponse.json({ success: true, xp_awarded: sessionXP, character: characterXP, drop })
 
   } catch (err) {
     Sentry.captureException(err, { extra: { context: 'Community progress error:' } })
