@@ -113,6 +113,9 @@ export function useSessionLogging(deps: Deps) {
     }
 
     if (params.done) {
+      // Capture the response so we can dispatch the +N stat toast for the
+      // character system (PR #5). Falls back silently if the response shape
+      // is unexpected; non-character users get no toast.
       fetch('/api/community/progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -125,7 +128,15 @@ export function useSessionLogging(deps: Deps) {
           pace:         effectivePace,
           effort:       params.effort,
         }),
-      }).catch(() => {})
+      })
+        .then(r => r.ok ? r.json() : null)
+        .then(async (json) => {
+          if (json?.character) {
+            const { dispatchCharacterXP } = await import('@/lib/character-events')
+            dispatchCharacterXP(json.character)
+          }
+        })
+        .catch(() => {})
 
       fetch('/api/community/milestone', {
         method: 'POST',
