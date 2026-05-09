@@ -28,6 +28,7 @@ export interface TodayRaceData {
       endurance_stat:  number
       resilience_stat: number
     }
+    boost_loadout?:     string[]
   } | null
   result: {
     finishing_order: Array<{ user_id: string; build_class: string; finish_secs: number; rank: number }>
@@ -41,7 +42,7 @@ interface UseTodayRaceReturn {
   loading: boolean
   error:   string | null
   refresh: () => void
-  enter:   () => Promise<void>
+  enter:   (boostLoadout?: string[]) => Promise<void>
 }
 
 export function useTodayRace(): UseTodayRaceReturn {
@@ -67,9 +68,13 @@ export function useTodayRace(): UseTodayRaceReturn {
     return () => { cancelled = true }
   }, [tick])
 
-  const enter = useCallback(async () => {
+  const enter = useCallback(async (boostLoadout: string[] = []) => {
     if (!data?.race) throw new Error('no race loaded')
-    const res = await fetch(`/api/race/${data.race.id}/enter`, { method: 'POST' })
+    const res = await fetch(`/api/race/${data.race.id}/enter`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ boost_loadout: boostLoadout }),
+    })
     const body = await res.json() as { error?: string; hint?: string; entry?: unknown }
     if (!res.ok) {
       throw new Error(body.hint ?? body.error ?? `enter failed (${res.status})`)

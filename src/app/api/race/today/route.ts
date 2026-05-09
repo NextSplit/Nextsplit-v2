@@ -28,6 +28,7 @@ interface TodayRaceResponse {
     id:                 string
     entered_at:         string
     character_snapshot: Record<string, unknown>
+    boost_loadout?:     string[]
   } | null
   result: {
     finishing_order:   Array<{ user_id: string; build_class: string; finish_secs: number; rank: number }>
@@ -68,7 +69,7 @@ export async function GET() {
         .select('id', { count: 'exact', head: true })
         .eq('race_id', raceId),
       s.from('character_race_entries')
-        .select('id, entered_at, character_snapshot')
+        .select('id, entered_at, character_snapshot, boost_loadout')
         .eq('race_id', raceId).eq('user_id', user.id).maybeSingle(),
       s.from('character_race_results')
         .select('finishing_order, result_timeline, computed_at')

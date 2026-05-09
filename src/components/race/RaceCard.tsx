@@ -4,7 +4,9 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useTodayRace } from '@/hooks/useTodayRace'
 import { useCharacter } from '@/hooks/useCharacter'
+import { useOwnedBoosts } from '@/hooks/useOwnedBoosts'
 import { BUILD_CLASS_META, type BuildClass } from '@/lib/character'
+import { RARITY_COLOURS, EFFECT_STAT_META } from '@/lib/character-inventory'
 
 // Today's race surface. Three states:
 //   1. No character yet            → CTA to /you to pick a build class
@@ -23,8 +25,10 @@ interface Props {
 export function RaceCard({ variant = 'full' }: Props) {
   const { data, loading, enter } = useTodayRace()
   const { character }            = useCharacter()
+  const { boosts: ownedBoosts }  = useOwnedBoosts()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError]           = useState<string | null>(null)
+  const [selectedBoosts, setSelectedBoosts] = useState<string[]>([])
 
   if (loading || !data) {
     return (
@@ -77,12 +81,22 @@ export function RaceCard({ variant = 'full' }: Props) {
     setSubmitting(true)
     setError(null)
     try {
-      await enter()
+      await enter(selectedBoosts)
+      // Reset picker on success — entry has consumed the chosen boosts.
+      setSelectedBoosts([])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to enter')
     } finally {
       setSubmitting(false)
     }
+  }
+
+  const toggleBoost = (boostId: string) => {
+    setSelectedBoosts(prev => {
+      if (prev.includes(boostId)) return prev.filter(b => b !== boostId)
+      if (prev.length >= 2) return prev
+      return [...prev, boostId]
+    })
   }
 
   if (variant === 'compact') {
@@ -190,19 +204,82 @@ export function RaceCard({ variant = 'full' }: Props) {
             <p className="text-[10px] mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
               Snapshot frozen at {data.my_entry?.character_snapshot.speed_stat ?? 0}/{data.my_entry?.character_snapshot.endurance_stat ?? 0}/{data.my_entry?.character_snapshot.resilience_stat ?? 0}
             </p>
+            {data.my_entry?.boost_loadout && data.my_entry.boost_loadout.length > 0 && (
+              <p className="text-[10px] mt-1" style={{ color: 'var(--ns-magenta)' }}>
+                {data.my_entry.boost_loadout.length} boost{data.my_entry.boost_loadout.length > 1 ? 's' : ''} loaded ⚡
+              </p>
+            )}
           </div>
         )}
 
         {/* Has character + not entered + entries open */}
         {character && !isFinalized && !isEntered && entriesOpen && (
           <div>
+            {/* Boost picker — only render if user owns any. Max 2 selected. */}
+            {ownedBoosts.length > 0 && (
+              <div className="mb-3">
+                <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-text-tertiary)' }}>
+                  Boosts ({selectedBoosts.length}/2)
+                </p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {ownedBoosts.map(({ catalog: b, quantity }) => {
+                    const isSelected = selectedBoosts.includes(b.id)
+                    const stat = EFFECT_STAT_META[b.effect_stat]
+                    const rarityColour = RARITY_COLOURS[b.rarity]
+                    return (
+                      <button
+                        key={b.id}
+                        onClick={() => toggleBoost(b.id)}
+                        disabled={!isSelected && selectedBoosts.length >= 2}
+                        className="rounded-lg px-2 py-2 text-left transition-all active:scale-95 disabled:opacity-40"
+                        style={{
+                          background: isSelected ? rarityColour : 'var(--color-surface-2)',
+                          border: `1.5px solid ${isSelected ? rarityColour : 'var(--color-border)'}`,
+                          boxShadow: isSelected ? `0 0 8px ${rarityColour}55` : 'none',
+                        }}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-base" aria-hidden>{b.emoji}</span>
+                          <span
+                            className="text-[10px] font-black truncate"
+                            style={{ color: isSelected ? 'white' : 'var(--color-text-primary)' }}
+                          >
+                            {b.name}
+                          </span>
+                          {quantity > 1 && (
+                            <span className="text-[9px] font-bold ml-auto"
+                              style={{ color: isSelected ? 'white' : 'var(--color-text-tertiary)' }}>
+                              ×{quantity}
+                            </span>
+                          )}
+                        </div>
+                        <p
+                          className="text-[9px] mt-0.5"
+                          style={{ color: isSelected ? 'white' : 'var(--color-text-tertiary)', opacity: isSelected ? 0.9 : 1 }}
+                        >
+                          {stat.emoji} +{Math.round(b.effect_pct * 100)}%
+                        </p>
+                      </button>
+                    )
+                  })}
+                </div>
+                <p className="text-[9px] mt-1.5" style={{ color: 'var(--color-text-tertiary)' }}>
+                  Boosts are consumed on entry. Max 2.
+                </p>
+              </div>
+            )}
+
             <button
               onClick={handleEnter}
               disabled={submitting}
               className="w-full py-3 rounded-lg text-sm font-black text-white disabled:opacity-50"
               style={{ background: 'var(--ns-magenta)' }}
             >
-              {submitting ? 'Entering…' : `Enter as ${BUILD_CLASS_META[character.build_class as BuildClass]?.name ?? character.build_class}`}
+              {submitting
+                ? 'Entering…'
+                : selectedBoosts.length > 0
+                  ? `Enter with ${selectedBoosts.length} boost${selectedBoosts.length > 1 ? 's' : ''}`
+                  : `Enter as ${BUILD_CLASS_META[character.build_class as BuildClass]?.name ?? character.build_class}`}
             </button>
             <p className="text-[10px] text-center mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
               Entries close in {formatDelta(closesInMs)}
