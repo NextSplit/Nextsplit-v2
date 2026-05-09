@@ -150,7 +150,47 @@ export async function POST(req: NextRequest) {
       // Non-fatal — drops are decorative. Session log still succeeds.
     }
 
-    return NextResponse.json({ success: true, xp_awarded: sessionXP, character: characterXP, drop })
+    // 6. Streak milestone reward (PR #36+). Idempotent per (user, milestone).
+    // Reads the user's CURRENT streak from training_logs and grants the next
+    // unclaimed milestone reward (7/30/60/90/180/365 days). The RPC short-
+    // circuits if the user hasn't crossed any milestone yet or has already
+    // claimed for the current highest milestone.
+    type StreakRewardRow = { item_kind: string; item_id: string; milestone: number }
+    let streakReward: StreakRewardRow | null = null
+    try {
+      const { computeStreak } = await import('@/lib/streak')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const s = db(supabase) as any
+      const { data: allLogs } = await s
+        .from('training_logs')
+        .select('done, logged_at')
+        .eq('user_id', user.id)
+        .eq('done', true)
+        .limit(400)
+      const streakData = computeStreak((allLogs ?? []) as Array<{ logged_at: string; done: boolean }>)
+      const streakDays = streakData.current
+      if (streakDays >= 7) {
+        const { createServiceClient } = await import('@/lib/supabase/server')
+        const svc = createServiceClient()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: rewardRows } = await (svc as any).rpc('claim_streak_reward', {
+          p_user_id:     user.id,
+          p_streak_days: streakDays,
+        })
+        const row = Array.isArray(rewardRows) ? rewardRows[0] : rewardRows
+        if (row?.item_id) streakReward = row as StreakRewardRow
+      }
+    } catch {
+      // Non-fatal — milestone rewards are additive.
+    }
+
+    return NextResponse.json({
+      success:        true,
+      xp_awarded:     sessionXP,
+      character:      characterXP,
+      drop,
+      streak_reward:  streakReward,
+    })
 
   } catch (err) {
     Sentry.captureException(err, { extra: { context: 'Community progress error:' } })
