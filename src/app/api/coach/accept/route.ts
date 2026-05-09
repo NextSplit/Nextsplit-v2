@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { CoachAcceptSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
+import { recomputeXpRateMultiplier } from '@/lib/character-server'
 
 export async function POST(req: NextRequest) {
   try {
@@ -77,6 +78,11 @@ export async function POST(req: NextRequest) {
       .from('coach_invites')
       .update({ used_at: new Date().toISOString(), used_by: user.id })
       .eq('id', invite.id)
+
+    // Character system V1+ — caller now has an active coach; recompute
+    // xp_rate_multiplier (1.3 → 1.6 step if they're already Pro, else
+    // stays 1.0 free-tier-pinned). Non-throwing per character-server.ts.
+    await recomputeXpRateMultiplier(user.id)
 
     // Get coach info for confirmation
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

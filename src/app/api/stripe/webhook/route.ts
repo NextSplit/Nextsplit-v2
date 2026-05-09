@@ -5,6 +5,7 @@ import { getStripe, incrementFoundingCount, PRICES } from '@/lib/stripe'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
 import { config, serverConfig } from '@/lib/config'
+import { recomputeXpRateMultiplier } from '@/lib/character-server'
 
 // Use service role for webhook — bypasses RLS (only place in the codebase that uses service role)
 function getServiceClient() {
@@ -68,6 +69,10 @@ export async function POST(req: NextRequest) {
           pro_expires_at:       new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
         }).eq('id', uid)
 
+        // Character system V1+ — re-evaluate xp_rate_multiplier whenever
+        // is_pro flips. (PR #28 introduced the multiplier; PR #4 wires it.)
+        await recomputeXpRateMultiplier(uid)
+
         break
       }
 
@@ -87,6 +92,9 @@ export async function POST(req: NextRequest) {
             subscription_status: 'canceled',
             pro_expires_at:      new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
           }).eq('id', data.id)
+
+          // Character system — recompute multiplier (drops to 1.0 free tier).
+          await recomputeXpRateMultiplier(data.id)
         }
         break
       }
@@ -159,6 +167,10 @@ export async function POST(req: NextRequest) {
               .update({ total_athletes: athleteCount ?? 0 })
               .eq('user_id', coachId)
 
+            // Character system — athlete now has an active coach;
+            // recompute their xp_rate_multiplier (1.3 → 1.6 step).
+            await recomputeXpRateMultiplier(athleteId)
+
           }
           break
         }
@@ -177,6 +189,9 @@ export async function POST(req: NextRequest) {
           subscription_status:     isFounding ? 'founding' : sub.status,
           pro_expires_at:          new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
         }).eq('id', userId)
+
+        // Character system — caller just upgraded to Pro (1.0 → 1.3 step).
+        await recomputeXpRateMultiplier(userId)
 
         if (isFounding) {
           const serverSupabase = await (await import('@/lib/supabase/server')).createClient()

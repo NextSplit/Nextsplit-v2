@@ -5,6 +5,7 @@ import type { PlanTemplate } from '@/types/database'
 import { z } from 'zod'
 import { zodError } from '@/lib/schemas'
 import { raceToPaces, personaliseSessionPace } from '@/lib/vdot'
+import { recomputeXpRateMultiplier } from '@/lib/character-server'
 
 const ActivateSchema = z.object({
   template_id:  z.string().uuid().optional(),
@@ -156,6 +157,12 @@ export async function POST(req: NextRequest) {
   if (insertErr) {
     return NextResponse.json({ error: insertErr.message }, { status: 500 })
   }
+
+  // Character system V1+ — recompute xp_rate_multiplier when caller activates
+  // a templated plan. Bumps to 1.8 if they're already Pro + has-active-coach;
+  // otherwise no-ops (RPC reads template_id presence + plan_type filter and
+  // returns the same multiplier for free / Pro-only tiers).
+  await recomputeXpRateMultiplier(user.id)
 
   return NextResponse.json({ plan: newPlan, raceTooSoon }, { status: 201 })
 }
