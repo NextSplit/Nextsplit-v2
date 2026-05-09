@@ -45,14 +45,17 @@ export async function GET(req: Request) {
   try {
     const supabase = createServiceClient()
 
-    // 1. Ensure today's daily 5K race exists.
+    // 1. Ensure today's daily 5K + this week's marquee + this month's major
+    // race rows all exist. All 3 seeders are idempotent (return existing
+    // race id if one already exists for the current period). Calling them
+    // unconditionally each daily tick is the cheapest reliable way to keep
+    // the schedule full.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: seedId, error: seedErr } = await (supabase as any).rpc('seed_daily_race')
     if (seedErr) {
       Sentry.captureException(seedErr, { extra: { context: '[cron/race-tick] seed_daily_race' } })
     } else {
       summary.seeded_today_race_id = seedId as string
-      // Detect new vs existing: if created_at is within last 60s, treat as new.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: row } = await (supabase as any)
         .from('character_races')
@@ -63,6 +66,20 @@ export async function GET(req: Request) {
         const ageMs = Date.now() - new Date(row.created_at).getTime()
         summary.seeded_was_new = ageMs < 60_000
       }
+    }
+
+    // weekly_marquee — Mon→Sun 10K
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: weeklyErr } = await (supabase as any).rpc('seed_weekly_marquee')
+    if (weeklyErr) {
+      Sentry.captureException(weeklyErr, { extra: { context: '[cron/race-tick] seed_weekly_marquee' } })
+    }
+
+    // monthly_major — full-month half marathon
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: monthlyErr } = await (supabase as any).rpc('seed_monthly_major')
+    if (monthlyErr) {
+      Sentry.captureException(monthlyErr, { extra: { context: '[cron/race-tick] seed_monthly_major' } })
     }
 
     // 2. Resolve any unfinalized race whose resolves_at has passed.
