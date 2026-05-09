@@ -184,6 +184,26 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
         {/* Build class picker / stat card (Phase 3+ Race tab foundation) */}
         <BuildClassCard />
 
+        {/* Inventory link — Phase 3+ boost + cosmetic surface */}
+        <Link
+          href="/you/inventory"
+          className="flex items-center justify-between rounded-2xl px-4 py-3"
+          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl" aria-hidden>🎁</span>
+            <div>
+              <p className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>
+                Inventory
+              </p>
+              <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
+                Boosts, kits, and unlocked drops
+              </p>
+            </div>
+          </div>
+          <span className="text-xl" style={{ color: 'var(--color-text-tertiary)' }} aria-hidden>→</span>
+        </Link>
+
         {/* Weekly XP chart */}
         <WeeklyXPChart logs={logs} weeks={weeks} />
 

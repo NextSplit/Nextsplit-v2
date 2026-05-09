@@ -131,9 +131,10 @@ export function useSessionLogging(deps: Deps) {
       })
         .then(r => r.ok ? r.json() : null)
         .then(async (json) => {
-          if (json?.character) {
-            const { dispatchCharacterXP } = await import('@/lib/character-events')
-            dispatchCharacterXP(json.character)
+          if (json?.character || json?.drop) {
+            const events = await import('@/lib/character-events')
+            if (json.character) events.dispatchCharacterXP(json.character)
+            if (json.drop)      events.dispatchCharacterLoot(json.drop)
           }
         })
         .catch(() => {})
