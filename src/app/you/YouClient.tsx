@@ -34,6 +34,7 @@ import { computeRPGStats, RPG_BADGES } from '@/lib/rpg'
 // predicate decides unlock. RPGStats itself doesn't carry a badges field
 // (intentional — badges are derived, not stored).
 import HeroCard from '@/components/rpg/HeroCard'
+import { BuildClassCard } from '@/components/rpg/BuildClassCard'
 import WeeklyXPChart from '@/components/rpg/WeeklyXPChart'
 import XPFeed from '@/components/rpg/XPFeed'
 import BadgeGrid from '@/components/rpg/BadgeGrid'
@@ -179,6 +180,9 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
             onCustomise={() => { /* deferred — tap settings to customise */ }}
           />
         )}
+
+        {/* Build class picker / stat card (Phase 3+ Race tab foundation) */}
+        <BuildClassCard />
 
         {/* Weekly XP chart */}
         <WeeklyXPChart logs={logs} weeks={weeks} />
