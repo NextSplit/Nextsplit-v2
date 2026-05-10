@@ -508,9 +508,9 @@ Each item: ID — Title (R1 source) — Thread / Persona / Status / Target phase
 - BL-D4 — Lime-on-navy contrast + alt-text on card — T2 / all / ✅ SHIPPED — server card uses `#7fff4d` lime headlines on `#0a0e1a` navy background (13.5:1, AAA). `MilestoneShareCard` requires an `alt` prop (no default) so consumers must consciously describe the milestone for screen readers; modal carries `role="dialog"` + `aria-modal` + `aria-label`.
 
 **Cross-cutting backlog**
-- BL-X1 — Decompose `TodayClient.tsx` (860 lines) — T1 / all / NEXT / P1.0
-- BL-X2 — Decompose `LogModal.tsx` (534 lines) — T1 / all / NEXT / P1.0
-- BL-X3 — Decompose `AthleteDetailClient.tsx` (581 lines) — T1 / D,F / NEXT / P1.0
+- BL-X1 — Decompose `TodayClient.tsx` (860 → 741 lines) — T1 / all / ✅ SHIPPED — P1 split out useUndoCountdown + useSessionLogging hooks; PR S extracted `useTouchSwipe` for the date-swipe gesture. Further surgery deferred per founder "cosmetic, low pre-F1 value" note.
+- BL-X2 — Decompose `LogModal.tsx` (534 → 405 lines) — T1 / all / ✅ SHIPPED — P1 extracted EffortSlider/KmPicker/DurationPicker/PaceInput/NotesInput/DiscardWarning to `log-modal/inputs.tsx` + useLogFormState hook. Remainder is orchestration; further split deferred (cosmetic).
+- BL-X3 — Decompose `AthleteDetailClient.tsx` (581 → 536 lines) — T1 / D,F / ✅ SHIPPED — P1 extracted Sparkline/WeeklyACWRBar to `charts.tsx`; PR S extracted `WellnessSparklines.tsx`. Further surgery deferred (cosmetic).
 - BL-X4 — `squad_nudges` index `(to_user, sent_at DESC)` — T1 / B,C / TRIAGE / P2
 - BL-X5 — `training_logs(user_id, logged_at)` index — T1 / all / TRIAGE / P2
 - BL-X6 — `profiles.timezone` + `profiles.unit_preference` + `profiles.week_start` columns — T1, T8 / all / TRIAGE / P2
