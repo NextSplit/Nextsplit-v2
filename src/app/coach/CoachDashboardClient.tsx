@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { CoachProfile } from '@/types/database'
 import { RUNNER_CLASSES } from '@/lib/rpg'
 import type { RunnerClassId } from '@/lib/rpg'
+import { MondayDigestCard } from '@/components/coach/MondayDigestCard'
 
 interface AthleteStatus {
   athlete_id:          string
@@ -551,6 +552,12 @@ export default function CoachDashboardClient({ coachProfile }: { coachProfile: C
             })}
           </div>
         )}
+
+        {/* PR G — BL-C4 Monday digest card. Renders nothing until the
+            cron has fired at least once for this coach. Sits above the
+            athlete tiles so the headline + 7-day per-athlete summary is
+            the first thing a coach sees on Monday morning. */}
+        {!loading && athletes.length > 0 && <MondayDigestCard />}
 
         {/* NEEDS ATTENTION — top priority, always first */}
         {!loading && needsAttention.length > 0 && (
