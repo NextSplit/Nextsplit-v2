@@ -188,6 +188,12 @@ export default function PlanBuilderClient({
   const [coachAthletes, setCoachAthletes]     = useState<Array<{ athlete_id: string; display_name: string | null }>>([])
   const [assigning, setAssigning]             = useState<string | null>(null)
   const [assignError, setAssignError]         = useState<string | null>(null)
+  // BL-C3 — coach must justify any plan change before it lands on the
+  // athlete. Reason flows through to user_plans.meta.assigned_reason and
+  // becomes the body of the lock-screen push, so a copy-pasted "ok" gets
+  // the athlete's coach replaced for nothing. Min 10 chars matches API.
+  const [pendingAthleteId, setPendingAthleteId] = useState<string | null>(null)
+  const [assignReason, setAssignReason]         = useState('')
 
   async function loadCoachAthletes() {
     try {
@@ -203,21 +209,30 @@ export default function PlanBuilderClient({
 
   async function assignToAthlete(athlete_id: string) {
     if (!savedTemplateId) return
+    if (!assignReason || assignReason.trim().length < 10) {
+      setAssignError('Add a short reason (10+ characters) so your athlete knows why.')
+      return
+    }
     setAssigning(athlete_id)
     setAssignError(null)
     try {
       const res = await fetch('/api/coach/plans/assign', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ template_id: savedTemplateId, athlete_id }),
+        body:    JSON.stringify({
+          template_id: savedTemplateId,
+          athlete_id,
+          reason:      assignReason.trim(),
+        }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
         setAssignError(data.error ?? 'Failed to assign')
         return
       }
-      // Success — close sheet, show toast-ish confirmation, redirect.
       setShowAssignSheet(false)
+      setPendingAthleteId(null)
+      setAssignReason('')
       setTimeout(() => router.push('/coach/squad'), 800)
     } catch {
       setAssignError('Network error — try again')
@@ -337,13 +352,14 @@ export default function PlanBuilderClient({
                 style={{ color: 'var(--color-text-tertiary)' }}>
                 No active athletes yet. Invite one from /coach/squad.
               </p>
-            ) : (
+            ) : pendingAthleteId === null ? (
+              // Step 1 — pick an athlete. Selection moves to the reason step.
               <div className="space-y-2 max-h-72 overflow-y-auto">
                 {coachAthletes.map(a => (
                   <button
                     key={a.athlete_id}
                     type="button"
-                    onClick={() => assignToAthlete(a.athlete_id)}
+                    onClick={() => { setPendingAthleteId(a.athlete_id); setAssignError(null) }}
                     disabled={assigning !== null}
                     className="w-full rounded-xl px-4 py-3 text-left flex items-center justify-between disabled:opacity-50"
                     style={{
@@ -356,10 +372,57 @@ export default function PlanBuilderClient({
                     </span>
                     <span className="text-xs"
                       style={{ color: 'var(--color-text-tertiary)' }}>
-                      {assigning === a.athlete_id ? 'Assigning…' : 'Assign →'}
+                      Next →
                     </span>
                   </button>
                 ))}
+              </div>
+            ) : (
+              // Step 2 — BL-C3 mandatory reason. The athlete reads this on
+              // their lock-screen as the push body, so concrete is better
+              // than vague. We hint at that to nudge coach copy quality.
+              <div className="space-y-3">
+                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+                  Assigning to{' '}
+                  <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                    {coachAthletes.find(a => a.athlete_id === pendingAthleteId)?.display_name ?? 'Athlete'}
+                  </span>
+                  . Add a short reason — this is what they’ll see on their phone.
+                </p>
+                <textarea
+                  value={assignReason}
+                  onChange={e => setAssignReason(e.target.value)}
+                  rows={3}
+                  maxLength={500}
+                  placeholder="e.g. ACWR ran high last week — switching you to the recovery block."
+                  className="w-full rounded-xl px-3 py-2.5 text-sm outline-none"
+                  style={{
+                    background: 'var(--color-surface-2)',
+                    border: '1px solid var(--color-border)',
+                    color: 'var(--color-text-primary)',
+                  }}
+                />
+                <div className="flex justify-between text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
+                  <span>{assignReason.trim().length} / 10 min · 500 max</span>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setPendingAthleteId(null); setAssignReason(''); setAssignError(null) }}
+                    disabled={assigning !== null}
+                    className="flex-1 py-2.5 rounded-xl text-xs font-bold disabled:opacity-50"
+                    style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => pendingAthleteId && assignToAthlete(pendingAthleteId)}
+                    disabled={assigning !== null || assignReason.trim().length < 10}
+                    className="flex-1 py-2.5 rounded-xl text-xs font-black text-white disabled:opacity-50"
+                    style={{ background: '#8b5cf6' }}>
+                    {assigning ? 'Assigning…' : 'Assign + send'}
+                  </button>
+                </div>
               </div>
             )}
             {assignError && (
