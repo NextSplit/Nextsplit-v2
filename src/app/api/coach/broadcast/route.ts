@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 import { z } from 'zod'
 import { zodError } from '@/lib/schemas'
+import { requireCoachPro } from '@/lib/server/requireCoachPro'
 
 const BroadcastSchema = z.object({
   body:        z.string().min(1).max(2000),
@@ -14,12 +15,22 @@ const BroadcastSchema = z.object({
  * POST /api/coach/broadcast
  * Sends a message to all active athletes (or a subset).
  * Creates one coach_messages row per athlete.
+ *
+ * OQ#2 = C — bulk_broadcast is Coach-Pro only. Free Split Leaders can
+ * still 1-on-1 message via /api/coach/message; this route is the bulk
+ * sender that goes behind the £29/mo paywall.
  */
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
+    // OQ#2 — Coach-Pro gate. Returns 403 with `upgrade: true` when the
+    // coach isn't Pro; client-side BroadcastModal hides itself for non-Pro
+    // coaches but server enforcement is the canonical guard.
+    const gate = await requireCoachPro(supabase, user.id, 'bulk_broadcast')
+    if (gate) return gate
 
     const parsed = BroadcastSchema.safeParse(await req.json())
     if (!parsed.success) return zodError(parsed.error)

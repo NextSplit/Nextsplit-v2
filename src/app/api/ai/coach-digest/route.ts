@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
+import { requireCoachPro } from '@/lib/server/requireCoachPro'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -14,6 +15,11 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
+    // OQ#2 = C — AI digest is Coach-Pro only. Free Split Leaders see the
+    // upgrade prompt instead of the digest button on /coach/athlete/[id].
+    const gate = await requireCoachPro(supabase, user.id, 'ai_digest')
+    if (gate) return gate
 
     // S6: rate-limit guard — was unguarded; any authenticated user could drain Anthropic quota.
     const rateCheck = await checkAndIncrementAIUsage(user.id)

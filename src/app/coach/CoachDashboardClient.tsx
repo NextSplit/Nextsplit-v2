@@ -326,6 +326,13 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
 type AthleteFilter = 'all' | 'red' | 'amber' | 'green' | 'inactive' | 'silent'
 
 export default function CoachDashboardClient({ coachProfile }: { coachProfile: CoachProfile }) {
+  // OQ#2 = C — Coach-Pro gate. Server-side enforcement lives on each
+  // gated API route; this is the cosmetic UI gate that hides the bulk
+  // broadcast button for free Split Leaders so they don't tap into a 403.
+  const cp = coachProfile as { is_coach_pro?: boolean | null; coach_pro_expires_at?: string | null }
+  const isCoachPro = !!cp.is_coach_pro
+    && (!cp.coach_pro_expires_at || new Date(cp.coach_pro_expires_at).getTime() > Date.now())
+
   const [athletes, setAthletes]       = useState<AthleteStatus[]>([])
   const [loading, setLoading]         = useState(true)
   const [showInvite, setShowInvite]   = useState(false)
@@ -402,13 +409,23 @@ export default function CoachDashboardClient({ coachProfile }: { coachProfile: C
             </div>
             <div className="flex items-center gap-2">
               <button onClick={fetchStatus} className="text-[var(--color-text-tertiary)] text-lg px-1.5">↻</button>
-              {athletes.length > 0 && (
+              {athletes.length > 0 && isCoachPro && (
                 <button
                   onClick={() => setShowBroadcast(true)}
                   className="text-[var(--color-text-secondary)] text-sm font-bold px-3 py-2 rounded-xl border border-[var(--color-border-2)] active:bg-gray-50"
+                  title="Bulk broadcast (Coach-Pro)"
                 >
                   📢
                 </button>
+              )}
+              {athletes.length > 0 && !isCoachPro && (
+                <a
+                  href="/coach/settings#coach-pro"
+                  className="text-[var(--color-text-tertiary)] text-sm font-bold px-3 py-2 rounded-xl border border-[var(--color-border-2)] active:bg-gray-50"
+                  title="Bulk broadcast — upgrade to Coach-Pro"
+                >
+                  📢⭐
+                </a>
               )}
               <button
                 onClick={() => setShowInvite(true)}
