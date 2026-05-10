@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { UserPlan, TrainingLog } from '@/types/database'
-import RaceResultShareCard from '@/components/RaceResultShareCard'
+import MilestoneShareCard from '@/components/MilestoneShareCard'
 
 interface Props {
   plan: UserPlan
@@ -190,19 +190,26 @@ export default function PlanCompletionCeremony({ plan, logs, onClose }: Props) {
         </button>
       </div>
 
-      {/* Race result share card */}
-      {showShare && (
-        <RaceResultShareCard
-          planName={plan.name}
-          totalWeeks={plan.total_weeks}
-          raceDate={plan.race_date ?? undefined}
-          totalKm={stats.totalKm}
-          sessionsDone={stats.totalSessions}
-          longestRun={Math.max(0, ...Object.values(logs).filter(l => l.done).map(l => l.km ?? 0))}
-          displayName="Runner"
-          onClose={() => setShowShare(false)}
-        />
-      )}
+      {/* Race result share card — server-side pipeline (BL-D1).
+          Replaces the legacy RaceResultShareCard client canvas. */}
+      {showShare && (() => {
+        const longestRun = Math.max(0, ...Object.values(logs).filter(l => l.done).map(l => l.km ?? 0))
+        return (
+          <MilestoneShareCard
+            variant="race-result"
+            headline="Plan complete"
+            sub={plan.name}
+            alt={`${plan.name} complete: ${plan.total_weeks} weeks done, ${Math.round(stats.totalKm)}km total, ${stats.totalSessions} sessions, longest run ${longestRun}km`}
+            accent="ember"
+            km={stats.totalKm}
+            sessionsDone={stats.totalSessions}
+            weekN={plan.total_weeks}
+            totalWeeks={plan.total_weeks}
+            shareText={`Just completed ${plan.name} — ${plan.total_weeks} weeks · ${Math.round(stats.totalKm)}km 🏁 #NextSplit`}
+            onClose={() => setShowShare(false)}
+          />
+        )
+      })()}
     </div>
   )
 }
