@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 import { zodError } from '@/lib/schemas'
 
-import { NUDGE_MESSAGES } from '@/lib/squad-nudges'
+import { nudgeMessage, pickNudgeVariant } from '@/lib/squad-nudges'
 
 const NudgeSchema = z.object({
   to_user:     z.string().uuid(),
@@ -12,7 +12,12 @@ const NudgeSchema = z.object({
 })
 
 /**
- * POST /api/squad/nudge — send a nudge to a squad member
+ * POST /api/squad/nudge — send a nudge to a squad member.
+ *
+ * P3.9 effectiveness pipeline: picks a deterministic A/B variant per
+ * (sender, recipient) pair, persists template_variant + nudge_id breadcrumb
+ * onto the resulting notifications row so /api/squad/nudge/track can flip
+ * opened_at / dismissed_at on recipient interaction.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -27,7 +32,6 @@ export async function POST(req: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const s = supabase as any
 
-    // Verify sender is a squad leader
     const { data: squad } = await s
       .from('squads')
       .select('id, name')
@@ -37,7 +41,6 @@ export async function POST(req: NextRequest) {
 
     if (!squad) return NextResponse.json({ error: 'Not a squad leader' }, { status: 403 })
 
-    // Verify target is an active member
     const { data: member } = await s
       .from('squad_members')
       .select('id')
@@ -48,21 +51,26 @@ export async function POST(req: NextRequest) {
 
     if (!member) return NextResponse.json({ error: 'Not a squad member' }, { status: 404 })
 
-    // Rate limit: 1 nudge per member per day
     const { data: canNudge } = await s.rpc('can_nudge', { p_from: user.id, p_to: to_user })
     if (!canNudge) {
       return NextResponse.json({ error: 'Already nudged this member today' }, { status: 429 })
     }
 
-    // Record nudge
-    await s.from('squad_nudges').insert({
-      squad_id:    squad.id,
-      from_user:   user.id,
-      to_user,
-      message_key,
-    })
+    const variant     = pickNudgeVariant(user.id, to_user)
+    const messageText = nudgeMessage(message_key, variant)
 
-    // Fetch sender profile for notification
+    const { data: nudgeRow } = await s
+      .from('squad_nudges')
+      .insert({
+        squad_id:         squad.id,
+        from_user:        user.id,
+        to_user,
+        message_key,
+        template_variant: variant,
+      })
+      .select('id')
+      .single()
+
     const { data: senderProfile } = await s
       .from('profiles')
       .select('display_name, handle')
@@ -70,18 +78,33 @@ export async function POST(req: NextRequest) {
       .single()
 
     const senderName = senderProfile?.display_name ?? senderProfile?.handle ?? 'Your squad leader'
-    const messageText = NUDGE_MESSAGES[message_key]
 
-    // Send in-app notification
+    // notifications.data carries nudge_id + template_variant + message_key so
+    // the recipient-side dismiss/open path can flip squad_nudges tracking
+    // without a join, and fire matching PostHog `nudge_opened`/`nudge_dismissed`
+    // events with the same template_id the leader's `nudge_sent` event used.
     await s.from('notifications').insert({
       user_id: to_user,
       type:    'squad_nudge',
       title:   `${senderName} sent you a nudge`,
       body:    messageText,
-      data:    { squad_id: squad.id, squad_name: squad.name, from_user: user.id },
-    }).catch(() => {}) // non-blocking
+      data:    {
+        squad_id:         squad.id,
+        squad_name:       squad.name,
+        from_user:        user.id,
+        nudge_id:         nudgeRow?.id ?? null,
+        message_key,
+        template_variant: variant,
+      },
+    }).catch(() => {})
 
-    return NextResponse.json({ sent: true, message: messageText })
+    return NextResponse.json({
+      sent:     true,
+      message:  messageText,
+      variant,
+      nudge_id: nudgeRow?.id ?? null,
+      squad_id: squad.id,
+    })
   } catch (err) {
     Sentry.captureException(err, { extra: { context: 'Nudge error:' } })
     return NextResponse.json({ error: 'Failed to send nudge' }, { status: 500 })

@@ -181,16 +181,25 @@ export const Analytics = {
   }) => track('squad_feed_card_shown', props),
 
   nudgeSent: (props: {
-    template_id: string  // e.g. 'streak_v2' — see squad-nudges.ts:nudgeTemplateId
+    template_id: string  // e.g. 'streak_v2_a' — see squad-nudges.ts:nudgeTemplateId
+    template_variant: 'a' | 'b'
     is_leader_nudge: boolean
     squad_id: string
   }) => track('nudge_sent', props),
 
   nudgeOpened: (props: {
     template_id: string
+    template_variant: 'a' | 'b'
     is_leader_nudge: boolean
     squad_id: string
   }) => track('nudge_opened', props),
+
+  nudgeDismissed: (props: {
+    template_id: string
+    template_variant: 'a' | 'b'
+    is_leader_nudge: boolean
+    squad_id: string
+  }) => track('nudge_dismissed', props),
 
   // ── Celebration + share funnel (P1.6) ─────────────────────────────────────
   // celebration_screen_shown fires once per SessionCelebration mount; pairs

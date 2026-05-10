@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Analytics } from '@/lib/analytics'
+import { nudgeTemplateId } from '@/lib/squad-nudges'
 
 const NUDGE_OPTIONS = [
   { key: 'missing',    emoji: '👋', label: "Where are you?" },
@@ -42,6 +44,13 @@ function NudgePanel({ userId, colour }: { userId: string; colour: string }) {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed')
+      const variant = data?.variant === 'b' ? 'b' : 'a'
+      Analytics.nudgeSent({
+        template_id:      nudgeTemplateId(key, variant),
+        template_variant: variant,
+        is_leader_nudge:  true,
+        squad_id:         data?.squad_id ?? '',
+      })
       setSent(data.message); setOpen(false)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to send')
