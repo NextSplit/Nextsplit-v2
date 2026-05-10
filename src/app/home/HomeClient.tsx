@@ -20,6 +20,7 @@ import { EliteTriggerBanner } from '@/components/EliteTriggerBanner'
 import { MotivationDipBanner } from '@/components/MotivationDipBanner'
 import FoundingCountdown from '@/components/FoundingCountdown'
 import { TrialBanner } from '@/components/TrialBanner'
+import { TrialLapsedBanner } from '@/components/TrialLapsedBanner'
 import { TrialWelcomeModal, shouldShowTrialWelcome } from '@/components/TrialWelcomeModal'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -576,7 +577,7 @@ export default function HomeClient() {
   const { profile }       = useProfile()
   const { squad, role }   = useSquad()
   const { coach, hasCoach } = useMyCoach()
-  const { isPro, isTrialing, trialDaysLeft, subscription } = useSubscription()
+  const { isPro, isTrialing, trialDaysLeft, isTrialLapsed, trialLapsedDaysAgo, subscription } = useSubscription()
   const { notifications, markRead, markOpened } = useNotifications()
   const [showStreakShare, setShowStreakShare] = useState(false)
   // PR K — trial welcome modal. Fires on first mount where the user is
@@ -693,6 +694,18 @@ export default function HomeClient() {
         <TrialBanner
           show={isTrialing}
           trialDaysLeft={trialDaysLeft}
+          trialSource={subscription.trialSource}
+        />
+
+        {/* PR N — trial-lapsed winback. Mirrors the day-14 expiry push
+            for users who landed in-app without tapping the notification.
+            Only renders for 7 days after trial_ended_at, then disappears
+            so the founding widget below takes over. Dismissible per-user
+            via localStorage. */}
+        <TrialLapsedBanner
+          show={isTrialLapsed}
+          userId={profileId}
+          trialLapsedDaysAgo={trialLapsedDaysAgo}
           trialSource={subscription.trialSource}
         />
 
