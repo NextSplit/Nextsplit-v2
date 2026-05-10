@@ -16,6 +16,7 @@ import Splity from '@/components/Splity'
 import DailyQuests from '@/components/DailyQuests'
 import { RaceCard } from '@/components/race/RaceCard'
 import { EliteTriggerBanner } from '@/components/EliteTriggerBanner'
+import { MotivationDipBanner } from '@/components/MotivationDipBanner'
 import FoundingCountdown from '@/components/FoundingCountdown'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -568,6 +569,15 @@ export default function HomeClient() {
     l.done && l.created_at.startsWith(new Date().toISOString().slice(0, 10)))
   const streakAtRisk = streak > 0 && hour >= 19 && !hasLoggedToday
 
+  // P4.4 motivation-dip trigger — no done log in last 3 days. Combined
+  // with !hasCoach + active plan in the banner mount below. Cheap
+  // derivation off allLogs already in scope.
+  const noDoneLast3Days = useMemo(() => {
+    const cutoff = Date.now() - 3 * 24 * 3600 * 1000
+    return !allLogs.some((l: TrainingLog) =>
+      l.done && new Date(l.created_at).getTime() >= cutoff)
+  }, [allLogs])
+
   // Next day sessions for rest day preview
   const nextSessions = useMemo((): PlanSession[] => {
     if (!plan?.weeks_data) return []
@@ -649,6 +659,13 @@ export default function HomeClient() {
             see the streak-specific pitch as a second beat after the
             primary urgency CTA. */}
         <EliteTriggerBanner kind="seven_streak" show={streak >= 7} />
+
+        {/* P4.4 — coach motivation-dip banner. Routes to /coaches (the
+            coach economy, NOT the Pro paywall — no PREMIUM_ENFORCED gate).
+            Trigger conjunction: active plan + no done log in last 3 days
+            + no active coach already. Soft tone — these users are
+            drifting; aggressive copy worsens the dip. */}
+        <MotivationDipBanner show={!!plan && noDoneLast3Days && !hasCoach} />
 
         {/* Race countdown */}
         {plan?.race_date && daysToRace !== null && daysToRace >= 0 && (
