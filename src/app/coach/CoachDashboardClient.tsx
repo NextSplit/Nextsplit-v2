@@ -305,7 +305,7 @@ function AthleteCard({ athlete, onMessage }: { athlete: AthleteStatus; onMessage
 
 type AthleteFilter = 'all' | 'red' | 'amber' | 'green' | 'inactive' | 'silent'
 
-export default function SquadClient({ coachProfile }: { coachProfile: CoachProfile }) {
+export default function CoachDashboardClient({ coachProfile }: { coachProfile: CoachProfile }) {
   const [athletes, setAthletes]       = useState<AthleteStatus[]>([])
   const [loading, setLoading]         = useState(true)
   const [showInvite, setShowInvite]   = useState(false)
@@ -377,7 +377,7 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-1">
             <div>
-              <h1 className="text-lg font-black text-gray-900">Squad</h1>
+              <h1 className="text-lg font-black text-gray-900">Dashboard</h1>
               <p className="text-xs text-[var(--color-text-tertiary)]">{today}</p>
             </div>
             <div className="flex items-center gap-2">
@@ -418,6 +418,38 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
           )}
         </div>
       </div>
+
+      {/* P3.1 dashboard v2 — week-at-a-glance stats grid. Aggregates
+          across the coach's full athlete list so the coach can see their
+          collective output without drilling into each athlete card. */}
+      {!loading && athletes.length > 0 && (
+        <div className="max-w-lg mx-auto px-4 mt-3">
+          <div className="grid grid-cols-4 gap-2">
+            <DashStatTile
+              label="Total"
+              value={athletes.length}
+              tone="neutral"
+            />
+            <DashStatTile
+              label="Red"
+              value={athletes.filter(a => a.status === 'red').length}
+              tone="red"
+            />
+            <DashStatTile
+              label="Silent"
+              value={athletes.filter(a => a.days_since_message === null || (a.days_since_message ?? 0) >= 14).length}
+              tone="amber"
+              tip="No coach message in ≥14 days"
+            />
+            <DashStatTile
+              label="Sessions/wk"
+              value={athletes.reduce((s, a) => s + a.sessions_done_week, 0)}
+              tone="green"
+              tip="Done across all athletes this week"
+            />
+          </div>
+        </div>
+      )}
 
       <div className="max-w-lg mx-auto px-4 pt-4 space-y-4">
 
@@ -613,6 +645,37 @@ export default function SquadClient({ coachProfile }: { coachProfile: CoachProfi
 
       {showInvite && <InviteModal onClose={() => setShowInvite(false)} />}
       {showBroadcast && <BroadcastModal onClose={() => setShowBroadcast(false)} athleteCount={athletes.length} />}
+    </div>
+  )
+}
+
+// P3.1 dashboard v2 — small at-a-glance tile used in the stats grid.
+// Tone drives the colour treatment so red/amber alerts are obvious
+// without colour being the only signal (label + count are always shown).
+function DashStatTile({
+  label, value, tone, tip,
+}: {
+  label: string
+  value: number
+  tone:  'neutral' | 'red' | 'amber' | 'green'
+  tip?:  string
+}) {
+  const palette = {
+    neutral: { bg: 'white',                 border: 'var(--color-border)',           fg: '#1f2937' },
+    red:     { bg: 'rgba(239,68,68,0.08)',  border: 'rgba(239,68,68,0.35)',          fg: '#dc2626' },
+    amber:   { bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.35)',         fg: '#d97706' },
+    green:   { bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.35)',         fg: '#059669' },
+  }[tone]
+  return (
+    <div
+      className="rounded-xl px-2 py-2 text-center"
+      style={{ background: palette.bg, border: `1px solid ${palette.border}` }}
+      title={tip}
+    >
+      <p className="text-base font-black leading-none" style={{ color: palette.fg }}>{value}</p>
+      <p className="text-[9px] font-bold uppercase tracking-wider mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
+        {label}
+      </p>
     </div>
   )
 }

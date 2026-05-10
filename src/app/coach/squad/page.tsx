@@ -1,20 +1,11 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import SquadClient from './SquadClient'
 
-export default async function SquadPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
+// Back-compat redirect — /coach/squad was the previous home of the
+// dashboard. P3.1 promoted it to /coach so the BottomNav Coach tab
+// actually lands somewhere. Existing redirects from /coach/athlete and
+// /coach/setup that used to point here have been updated, but stray
+// bookmarks + the route name in user muscle-memory still resolve.
 
-  // Must be a coach
-  const { data: coachProfile } = await supabase
-    .from('coach_profiles')
-    .select('*')
-    .eq('user_id', user.id)
-    .maybeSingle()
-
-  if (!coachProfile) redirect('/coach/setup')
-
-  return <SquadClient coachProfile={coachProfile} />
+export default function CoachSquadRedirect() {
+  redirect('/coach')
 }
