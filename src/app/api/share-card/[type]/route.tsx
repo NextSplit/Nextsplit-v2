@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 
 // Option D — server-side milestone share-card pipeline.
 //
@@ -50,6 +51,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ type: string }> },
 ): Promise<Response> {
+  try {
   const { type } = await params
   const sp = req.nextUrl.searchParams
 
@@ -244,4 +246,15 @@ export async function GET(
       },
     },
   )
+  } catch (err) {
+    // BL-X8 — Satori (the JSX→PNG renderer behind ImageResponse) can throw on
+    // unsupported CSS or font fallback misses. Without this catch the user
+    // sees a generic 500 and we never learn which variant broke. Tag enables
+    // the cross-feature alert rule.
+    Sentry.captureException(err, {
+      tags:  { feature: 'option-d-share-card' },
+      extra: { context: '[share-card route]', url: req.url },
+    })
+    return NextResponse.json({ error: 'Failed to render card' }, { status: 500 })
+  }
 }

@@ -96,7 +96,10 @@ async function pushOnNewMessage(opts: {
       })
     })
   } catch (err) {
-    Sentry.captureException(err, { extra: { context: '[pushOnNewMessage]' } })
+    Sentry.captureException(err, {
+      tags:  { feature: 'p3.3-messaging' },
+      extra: { context: '[pushOnNewMessage]', recipientId: opts.recipientId },
+    })
   }
 }
 
@@ -193,7 +196,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, message: data })
 
   } catch (err) {
-    Sentry.captureException(err, { extra: { context: 'Message send error:' } })
+    Sentry.captureException(err, {
+      tags:  { feature: 'p3.3-messaging' },
+      extra: { context: 'Message send error:' },
+    })
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
   }
 }
@@ -234,7 +240,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ messages: data ?? [] })
 
   } catch (err) {
-    Sentry.captureException(err, { extra: { context: 'Message fetch error:' } })
+    Sentry.captureException(err, {
+      tags:  { feature: 'p3.3-messaging' },
+      extra: { context: 'Message fetch error:' },
+    })
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 })
   }
 }
