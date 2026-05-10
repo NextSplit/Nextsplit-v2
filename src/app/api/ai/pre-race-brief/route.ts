@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   const proBlock = requirePro(sub)
   if (proBlock) return proBlock
 
-  const rateCheck = await checkAndIncrementAIUsage(user.id, 'free')
+  const rateCheck = await checkAndIncrementAIUsage(user.id)
   if (!rateCheck.allowed) {
     return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
   }

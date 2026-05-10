@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
   // ── Rate limit check ────────────────────────────────────────────────────────
-  const rateCheck = await checkAndIncrementAIUsage(user.id, 'free')
+  const rateCheck = await checkAndIncrementAIUsage(user.id)
   if (!rateCheck.allowed) {
     return NextResponse.json(
       { error: rateCheck.reason, rateLimited: true, limit: rateCheck.limit },
