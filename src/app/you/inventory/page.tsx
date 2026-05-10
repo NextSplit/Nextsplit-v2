@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   description: 'Your boosts and cosmetic items.',
 }
 
+// useSearchParams in InventoryClient requires dynamic rendering — skip
+// static prerender. Page is auth-gated anyway, no SEO benefit to static.
+export const dynamic = 'force-dynamic'
+
 export default function InventoryPage() {
   return <InventoryClient />
 }

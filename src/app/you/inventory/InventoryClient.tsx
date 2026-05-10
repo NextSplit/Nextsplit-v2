@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useInventory } from '@/hooks/useInventory'
 import {
   RARITY_COLOURS, RARITY_LABELS,
@@ -24,9 +25,44 @@ import {
 // quest/purchase paths.
 
 export default function InventoryClient() {
-  const { data, loading, toggleCosmetic } = useInventory()
-  const [pending, setPending] = useState<string | null>(null)
-  const [error, setError]     = useState<string | null>(null)
+  const { data, loading, toggleCosmetic, refresh } = useInventory()
+  const [pending, setPending]   = useState<string | null>(null)
+  const [error, setError]       = useState<string | null>(null)
+  const [purchasing, setPurchasing] = useState<string | null>(null)
+  const [success, setSuccess]   = useState<string | null>(null)
+  const searchParams = useSearchParams()
+
+  // ?purchased=<item_id> handler — Stripe success_url returns here.
+  // Show a brief success banner, refresh inventory to reflect the new item.
+  useEffect(() => {
+    const purchased = searchParams.get('purchased')
+    if (!purchased) return
+    setSuccess(purchased)
+    refresh()
+    const t = setTimeout(() => setSuccess(null), 5000)
+    return () => clearTimeout(t)
+  }, [searchParams, refresh])
+
+  const handlePurchase = async (itemKind: 'boost' | 'cosmetic', itemId: string) => {
+    if (purchasing) return
+    setPurchasing(itemId)
+    setError(null)
+    try {
+      const res  = await fetch('/api/character/inventory/purchase', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ item_kind: itemKind, item_id: itemId }),
+      })
+      const body = await res.json() as { url?: string; error?: string; hint?: string }
+      if (!res.ok || !body.url) {
+        throw new Error(body.hint ?? body.error ?? `purchase failed (${res.status})`)
+      }
+      window.location.href = body.url  // Redirect to Stripe Checkout
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to start checkout')
+      setPurchasing(null)
+    }
+  }
 
   if (loading || !data) {
     return (
@@ -72,6 +108,28 @@ export default function InventoryClient() {
 
       <div className="max-w-lg mx-auto px-4 space-y-5">
 
+        {/* Stripe-success banner — shown after ?purchased=<id> redirect */}
+        {success && (
+          <div
+            className="rounded-2xl px-4 py-3 flex items-center gap-3"
+            style={{
+              background: 'linear-gradient(135deg, var(--ns-forest), var(--ns-magenta))',
+              color: 'white',
+              boxShadow: '0 8px 24px rgba(16,185,129,0.4)',
+            }}
+            role="status"
+            aria-live="polite"
+          >
+            <span className="text-2xl" aria-hidden>✓</span>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest opacity-90">
+                Purchase complete
+              </p>
+              <p className="text-sm font-black mt-0.5">Your new item is in your inventory.</p>
+            </div>
+          </div>
+        )}
+
         {/* Inventory summary */}
         <div className="grid grid-cols-2 gap-3">
           <SummaryTile label="Boosts" value={totalBoosts} emoji="🎁" />
@@ -87,7 +145,16 @@ export default function InventoryClient() {
             {data.boosts_catalog.map(boost => {
               const qty = ownedBoostQty.get(boost.id) ?? 0
               const owned = qty > 0
-              return <BoostTile key={boost.id} boost={boost} quantity={qty} owned={owned} />
+              return (
+                <BoostTile
+                  key={boost.id}
+                  boost={boost}
+                  quantity={qty}
+                  owned={owned}
+                  onBuy={() => handlePurchase('boost', boost.id)}
+                  buying={purchasing === boost.id}
+                />
+              )
             })}
           </div>
         </section>
@@ -118,6 +185,8 @@ export default function InventoryClient() {
                         isActive={isActive}
                         onToggle={() => handleToggle(cosmetic, isActive)}
                         loading={pending === cosmetic.id}
+                        onBuy={() => handlePurchase('cosmetic', cosmetic.id)}
+                        buying={purchasing === cosmetic.id}
                       />
                     )
                   })}
@@ -177,16 +246,26 @@ function SummaryTile({ label, value, emoji }: { label: string; value: string | n
   )
 }
 
-function BoostTile({ boost, quantity, owned }: { boost: BoostCatalogRow; quantity: number; owned: boolean }) {
+function BoostTile({
+  boost, quantity, owned, onBuy, buying,
+}: {
+  boost:    BoostCatalogRow
+  quantity: number
+  owned:    boolean
+  onBuy:    () => void
+  buying:   boolean
+}) {
   const stat = EFFECT_STAT_META[boost.effect_stat]
   const rarityColour = RARITY_COLOURS[boost.rarity]
+  // Boosts are stack-consumable so even owned ones can be purchased to top up.
+  const canBuy = boost.gbp_price !== null && boost.gbp_price !== undefined
   return (
     <div
       className="rounded-xl px-3 py-3 relative"
       style={{
         background: 'var(--color-surface)',
         border: `1.5px solid ${owned ? rarityColour : 'var(--color-border)'}`,
-        opacity: owned ? 1 : 0.45,
+        opacity: owned ? 1 : 0.65,
       }}
     >
       <div className="flex items-start justify-between mb-1">
@@ -209,32 +288,46 @@ function BoostTile({ boost, quantity, owned }: { boost: BoostCatalogRow; quantit
       <p className="text-[10px] mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
         {stat.emoji} +{Math.round(boost.effect_pct * 100)}% {stat.label.toLowerCase()}
       </p>
+      {canBuy && (
+        <button
+          onClick={onBuy}
+          disabled={buying}
+          className="w-full mt-2 py-1.5 rounded-md text-[10px] font-black text-white disabled:opacity-50"
+          style={{ background: rarityColour }}
+        >
+          {buying ? '…' : `Buy £${Number(boost.gbp_price).toFixed(2)}`}
+        </button>
+      )}
     </div>
   )
 }
 
 function CosmeticTile({
-  cosmetic, owned, isActive, onToggle, loading,
+  cosmetic, owned, isActive, onToggle, loading, onBuy, buying,
 }: {
   cosmetic: CosmeticCatalogRow
   owned:    boolean
   isActive: boolean
   onToggle: () => void
   loading:  boolean
+  onBuy:    () => void
+  buying:   boolean
 }) {
   const rarityColour = RARITY_COLOURS[cosmetic.rarity]
   const swatch = (cosmetic.asset as { colour?: string })?.colour
+  // Cosmetics are one-of: only purchasable when not owned AND has a price.
+  const canBuy = !owned && cosmetic.gbp_price !== null && cosmetic.gbp_price !== undefined
   return (
     <button
-      onClick={onToggle}
-      disabled={!owned || loading}
+      onClick={canBuy ? onBuy : onToggle}
+      disabled={(!owned && !canBuy) || loading || buying}
       className="rounded-xl px-3 py-3 text-left transition-all active:scale-95 disabled:active:scale-100"
       style={{
         background: isActive ? rarityColour : 'var(--color-surface)',
-        border: `1.5px solid ${owned ? rarityColour : 'var(--color-border)'}`,
+        border: `1.5px solid ${owned ? rarityColour : canBuy ? rarityColour : 'var(--color-border)'}`,
         boxShadow: isActive ? `0 0 12px ${rarityColour}55` : 'none',
-        opacity: owned ? 1 : 0.45,
-        cursor: owned ? 'pointer' : 'default',
+        opacity: owned ? 1 : canBuy ? 0.85 : 0.45,
+        cursor: owned || canBuy ? 'pointer' : 'default',
       }}
     >
       <div className="flex items-start justify-between mb-1">
@@ -259,9 +352,14 @@ function CosmeticTile({
       >
         {RARITY_LABELS[cosmetic.rarity]}{isActive ? ' · ACTIVE' : ''}
       </p>
-      {!owned && (
+      {!owned && canBuy && (
+        <p className="text-[10px] mt-1 font-black" style={{ color: rarityColour }}>
+          {buying ? '…' : `Buy £${Number(cosmetic.gbp_price).toFixed(2)}`}
+        </p>
+      )}
+      {!owned && !canBuy && (
         <p className="text-[10px] mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
-          🔒 Locked
+          🔒 Drops only
         </p>
       )}
     </button>
