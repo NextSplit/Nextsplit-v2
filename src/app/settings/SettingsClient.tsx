@@ -584,6 +584,18 @@ export default function SettingsClient({ email, initialProfile }: Props) {
     } catch { toastError('Failed to update text size') }
   }
 
+  // BL-X6 — week_start preference. Default 'monday' matches the implicit
+  // boundary in HomeClient.getWeeklyKm() and per-week aggregations across
+  // Train + Squad. US-conventional users can flip to 'sunday'. Consumers
+  // (charts, leaderboards, weekly km tiles) read profile.week_start.
+  async function saveWeekStart(val: 'monday' | 'sunday') {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await updateProfile({ week_start: val } as any)
+      success(`Week starts ${val === 'monday' ? 'Monday' : 'Sunday'}`)
+    } catch { toastError('Failed to update week start') }
+  }
+
 
   async function saveRunnerColour(val: string) {
     try {
@@ -816,6 +828,16 @@ export default function SettingsClient({ email, initialProfile }: Props) {
               { value: 'miles', label: 'Miles (mi)' },
             ]}
             onChange={saveUnits}
+          />
+          <SelectRow
+            label="Week starts on"
+            sublabel="Used for weekly km totals + leaderboards"
+            value={((p as { week_start?: 'monday' | 'sunday' })?.week_start ?? 'monday')}
+            options={[
+              { value: 'monday', label: 'Monday' },
+              { value: 'sunday', label: 'Sunday' },
+            ]}
+            onChange={saveWeekStart}
           />
         </Section>
 
