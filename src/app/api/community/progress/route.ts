@@ -125,8 +125,14 @@ export async function POST(req: NextRequest) {
       })
       const row = Array.isArray(charXP) ? charXP[0] : charXP
       if (row) characterXP = row as AwardSessionXPRow
-    } catch {
+    } catch (rpcErr) {
       // Non-fatal — character system is additive. Base XP still awards.
+      // BL-X8 — surface to the per-feature alert rule so silent failures
+      // don't accumulate (the `} catch {}` swallow used to hide schema drift).
+      Sentry.captureException(rpcErr, {
+        tags:  { feature: 'character-rpc' },
+        extra: { context: '[award_session_xp]', userId: user.id },
+      })
     }
 
     // 5. Character system V4 — random loot drop. Service-role RPC scaled
@@ -146,8 +152,12 @@ export async function POST(req: NextRequest) {
       const { data: dropRows } = await (svc as any).rpc('roll_random_drop', { p_user_id: user.id })
       const row = Array.isArray(dropRows) ? dropRows[0] : dropRows
       if (row?.item_id) drop = row as RandomDropRow
-    } catch {
+    } catch (rpcErr) {
       // Non-fatal — drops are decorative. Session log still succeeds.
+      Sentry.captureException(rpcErr, {
+        tags:  { feature: 'character-rpc' },
+        extra: { context: '[roll_random_drop]', userId: user.id },
+      })
     }
 
     // 6. Streak milestone reward (PR #36+). Idempotent per (user, milestone).
@@ -180,8 +190,14 @@ export async function POST(req: NextRequest) {
         const row = Array.isArray(rewardRows) ? rewardRows[0] : rewardRows
         if (row?.item_id) streakReward = row as StreakRewardRow
       }
-    } catch {
+    } catch (rpcErr) {
       // Non-fatal — milestone rewards are additive.
+      // BL-X8 — `claim_streak_reward` was one of three RPCs flagged as
+      // missing observability. Tag enables the cross-feature alert rule.
+      Sentry.captureException(rpcErr, {
+        tags:  { feature: 'streak-rpc' },
+        extra: { context: '[claim_streak_reward]', userId: user.id },
+      })
     }
 
     // 7. Daily-quest reward grants (PR #39+). Idempotent per (user, quest,
@@ -209,7 +225,13 @@ export async function POST(req: NextRequest) {
       const results = await Promise.all(ids.map(qid =>
         svcAny.rpc('claim_daily_quest', { p_user_id: user.id, p_quest_id: qid })
           .then((r: { data: QuestRewardRow[] | null }) => r.data)
-          .catch(() => null),
+          .catch((rpcErr: unknown) => {
+            Sentry.captureException(rpcErr, {
+              tags:  { feature: 'quest-rpc' },
+              extra: { context: '[claim_daily_quest]', userId: user.id, questId: qid },
+            })
+            return null
+          }),
       ))
       for (const rows of results) {
         if (Array.isArray(rows) && rows[0]?.item_id) {
@@ -230,7 +252,10 @@ export async function POST(req: NextRequest) {
     })
 
   } catch (err) {
-    Sentry.captureException(err, { extra: { context: 'Community progress error:' } })
+    Sentry.captureException(err, {
+      tags:  { feature: 'community-progress' },
+      extra: { context: 'Community progress error:' },
+    })
     return NextResponse.json({ error: 'Progress update failed' }, { status: 500 })
   }
 }
