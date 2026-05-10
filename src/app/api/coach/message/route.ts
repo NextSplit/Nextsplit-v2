@@ -6,6 +6,36 @@ import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { config, serverConfig } from '@/lib/config'
 import { db } from '@/lib/supabase/db'
 
+// BL-C6 — coach→athlete inbound message trial unlock. Runs in the route's
+// coach-auth context but writes to the *athlete* profile row, so RLS
+// rejects the regular client. We use the SERVICE ROLE admin client to
+// bypass RLS, and rely on the WHERE guard (trial_started_at IS NULL AND
+// is_pro = false) to make this idempotent — coaches messaging the same
+// athlete repeatedly never re-grants, and Pro athletes never get a
+// shadow trial.
+async function grantTrialForAthlete(athleteId: string): Promise<void> {
+  try {
+    const admin = createAdminClient(config.supabaseUrl, serverConfig.supabaseServiceRoleKey)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const a = admin as any
+    await a
+      .from('profiles')
+      .update({
+        trial_started_at:    new Date().toISOString(),
+        trial_source:        'first_coach_message',
+        subscription_status: 'trialing',
+      })
+      .eq('id', athleteId)
+      .is('trial_started_at', null)
+      .eq('is_pro', false)
+  } catch (err) {
+    Sentry.captureException(err, {
+      tags:  { feature: 'blc6-trial-unlock' },
+      extra: { context: '[coach-msg trial grant]', athleteId },
+    })
+  }
+}
+
 // P3.3 push helper — fired fire-and-forget after a message inserts. Looks
 // up the recipient's push_subscription via SERVICE ROLE (RLS otherwise
 // blocks cross-user reads) and sends a web-push. Subscription expiry
@@ -110,6 +140,13 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (error) throw error
+
+    // BL-C6 — coach→athlete messages trip the trial unlock (idempotent;
+    // re-messages never re-grant). Athlete→coach messages don't qualify
+    // (the spec is "first coach msg", meaning coach as sender).
+    if (isCoach) {
+      void grantTrialForAthlete(athlete_id)
+    }
 
     // P3.3 push notification on inbound message. Fire-and-forget — if push
     // fails, the message itself still saved fine and the recipient sees

@@ -9,7 +9,8 @@ export interface Subscription {
   tier:              Tier
   status:            'active' | 'trialing' | 'founding' | 'cancelled' | 'expired' | 'none' | 'free'
   currentPeriodEnd:  string | null
-  trialEnd:          string | null
+  trialEnd:          string | null    // BL-C6 — ISO date when 14-day trial expires
+  trialSource:       'squad_join' | 'first_coach_message' | null
   stripeCustomerId:  string | null
   isFounding:        boolean
   foundingLeft:      number   // spots remaining for founding pricing
@@ -20,15 +21,20 @@ const DEFAULT_SUB: Subscription = {
   status:           'none',
   currentPeriodEnd: null,
   trialEnd:         null,
+  trialSource:      null,
   stripeCustomerId: null,
   isFounding:       false,
   foundingLeft:     500,
 }
 
+const TRIAL_DAYS = 14
+
 export interface UseSubscriptionReturn {
   subscription:   Subscription
   loading:        boolean
   isPro:          boolean
+  isTrialing:     boolean
+  trialDaysLeft:  number | null
   isFounding:     boolean
   foundingLeft:   number
   isDevMode:      boolean
@@ -71,10 +77,10 @@ export function useSubscription(): UseSubscriptionReturn {
           return
         }
 
-        // Read from profiles (is_pro + subscription_status)
+        // BL-C6 — trial fields piggy-back on the same profiles row.
         const { data: profile } = await db(supabase)
           .from('profiles')
-          .select('is_pro, subscription_status, stripe_customer_id, pro_expires_at')
+          .select('is_pro, subscription_status, stripe_customer_id, pro_expires_at, trial_started_at, trial_ended_at, trial_source')
           .eq('id', user.id)
           .maybeSingle()
 
@@ -88,17 +94,52 @@ export function useSubscription(): UseSubscriptionReturn {
         const foundingCount = parseInt(config?.value ?? '0', 10)
         const foundingLeft  = Math.max(0, 500 - foundingCount)
 
+        // BL-C6 — derive trial window. If trial_started_at is set and
+        // trial_ended_at is NULL, compute trialEnd = start + 14d. If
+        // trialEnd has already passed, fire the lazy-expiry RPC (idempotent
+        // server-side via WHERE guards) and treat as expired locally.
+        const p = profile as {
+          is_pro?:              boolean | null
+          subscription_status?: string | null
+          stripe_customer_id?:  string | null
+          pro_expires_at?:      string | null
+          trial_started_at?:    string | null
+          trial_ended_at?:      string | null
+          trial_source?:        string | null
+        } | null
+        const startedAt = p?.trial_started_at ?? null
+        const endedAt   = p?.trial_ended_at   ?? null
+        let trialEnd: string | null = null
+        let trialActive = false
+        if (startedAt && !endedAt) {
+          const end = new Date(new Date(startedAt).getTime() + TRIAL_DAYS * 86400_000)
+          trialEnd = end.toISOString()
+          if (end.getTime() > Date.now()) {
+            trialActive = true
+          } else {
+            // Lazy-expire — fire and forget; the RPC is idempotent.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            void (supabase as any).rpc('expire_trial_if_due')
+          }
+        }
+
         if (!cancelled) {
-          const isPro      = profile?.is_pro ?? false
-          const status     = profile?.subscription_status ?? 'free'
-          const isFounding = status === 'founding'
+          const profileIsPro = p?.is_pro ?? false
+          const status       = (p?.subscription_status ?? 'free') as Subscription['status']
+          const isFounding   = status === 'founding'
+
+          // Pro-effective tier = profile.is_pro OR active trial. Trial
+          // grants every gated feature except billing-only flows (Stripe
+          // routes still see is_pro=false until the trial converts).
+          const effectivePro = profileIsPro || trialActive
 
           setSubscription({
-            tier:             isPro ? 'pro' : 'free',
-            status:           status as Subscription['status'],
-            currentPeriodEnd: profile?.pro_expires_at ?? null,
-            trialEnd:         null,
-            stripeCustomerId: profile?.stripe_customer_id ?? null,
+            tier:             effectivePro ? 'pro' : 'free',
+            status,
+            currentPeriodEnd: p?.pro_expires_at ?? null,
+            trialEnd,
+            trialSource:      (p?.trial_source as Subscription['trialSource']) ?? null,
+            stripeCustomerId: p?.stripe_customer_id ?? null,
             isFounding,
             foundingLeft,
           })
@@ -114,6 +155,14 @@ export function useSubscription(): UseSubscriptionReturn {
   }, [supabase, tick])
 
   const isPro = subscription.tier === 'pro' || subscription.tier === 'coach'
+  // BL-C6 — trialing iff a trialEnd is set, in the future, and we're not
+  // a paid Pro (paid Pro post-conversion keeps the field but isn't trialing).
+  const isTrialing = !!subscription.trialEnd
+    && new Date(subscription.trialEnd).getTime() > Date.now()
+    && subscription.status === 'trialing'
+  const trialDaysLeft = subscription.trialEnd
+    ? Math.max(0, Math.ceil((new Date(subscription.trialEnd).getTime() - Date.now()) / 86400_000))
+    : null
 
   const canUseFeature = useCallback(
     // canAccess takes `enforced` as a parameter — we pass !isDevMode.
@@ -126,6 +175,8 @@ export function useSubscription(): UseSubscriptionReturn {
     subscription,
     loading,
     isPro,
+    isTrialing,
+    trialDaysLeft,
     isFounding:   subscription.isFounding,
     foundingLeft: subscription.foundingLeft,
     isDevMode,
