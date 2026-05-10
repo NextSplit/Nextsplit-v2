@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useTouchSwipe } from './hooks/useTouchSwipe'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
@@ -188,37 +189,18 @@ export default function TodayClient() {
     ? computeWeeklyReport(allLogsArray, weeks, weekN)
     : null
 
-  // Swipe to navigate dates
-  const touchStartX = useRef<number | null>(null)
-  const touchStartY = useRef<number | null>(null)
-
-  function handleTouchStart(e: React.TouchEvent) {
-    touchStartX.current = e.touches[0].clientX
-    touchStartY.current = e.touches[0].clientY
-  }
-
-  function handleTouchEnd(e: React.TouchEvent) {
-    if (touchStartX.current === null || touchStartY.current === null) return
-    const dx = e.changedTouches[0].clientX - touchStartX.current
-    const dy = e.changedTouches[0].clientY - touchStartY.current
-    // Only trigger if horizontal swipe (dx > 40px and more horizontal than vertical)
-    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.5) return
-    if (dx < 0) {
-      // Swipe left → go forward (only to today)
-      setDateOffset(o => Math.min(o + 1, 0))
-    } else {
-      // Swipe right → go back in time
-      setDateOffset(o => o - 1)
-    }
-    touchStartX.current = null
-    touchStartY.current = null
-  }
+  // BL-X1 — swipe gesture extracted to useTouchSwipe hook. Same thresholds
+  // (40px horizontal, 1.5× horizontal-bias). Left → forward (capped at today);
+  // right → back in time.
+  const swipeBindings = useTouchSwipe({
+    onSwipeLeft:  () => setDateOffset(o => Math.min(o + 1, 0)),
+    onSwipeRight: () => setDateOffset(o => o - 1),
+  })
 
   return (
     <div
       className="min-h-screen pb-24" style={{ background: "var(--color-bg)" }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      {...swipeBindings}
     >
       <TodayHeader
         plan={plan}

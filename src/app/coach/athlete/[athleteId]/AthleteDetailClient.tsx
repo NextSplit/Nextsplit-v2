@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { RUNNER_CLASSES } from '@/lib/rpg'
 import type { RunnerClassId } from '@/lib/rpg'
 import { Sparkline, WeeklyACWRBar } from './charts'
+import { WellnessSparklines } from './WellnessSparklines'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -256,25 +257,13 @@ export default function AthleteDetailClient({
               </div>
             )}
 
-            {/* Wellness sparklines */}
-            {wellness.length > 3 && (
-              <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4">
-                <p className="text-xs font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider mb-3">Wellness trend (30 days)</p>
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    { label: 'Sleep', values: sleepVals,    colour: '#6366f1', avg: sleepVals.length ? (sleepVals.reduce((a,b) => a+b, 0) / sleepVals.length).toFixed(1) : '—' },
-                    { label: 'Soreness', values: sorenessVals, colour: '#f59e0b', avg: sorenessVals.length ? (sorenessVals.reduce((a,b) => a+b, 0) / sorenessVals.length).toFixed(1) : '—' },
-                    { label: 'Mood', values: moodVals,      colour: '#10b981', avg: moodVals.length ? (moodVals.reduce((a,b) => a+b, 0) / moodVals.length).toFixed(1) : '—' },
-                  ].map(w => (
-                    <div key={w.label} className="text-center">
-                      <p className="text-[10px] text-[var(--color-text-tertiary)] mb-1">{w.label}</p>
-                      <Sparkline values={w.values} colour={w.colour} />
-                      <p className="text-xs font-bold text-gray-700 mt-1">{w.avg}/5</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* BL-X3 — wellness sparklines extracted to WellnessSparklines.tsx */}
+            <WellnessSparklines
+              sleepVals={sleepVals}
+              sorenessVals={sorenessVals}
+              moodVals={moodVals}
+              wellnessCount={wellness.length}
+            />
 
             {/* This week sessions with quick reactions */}
             {thisWeekLogs.length > 0 && (
