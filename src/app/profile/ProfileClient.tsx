@@ -9,6 +9,7 @@ import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
 import { useProfile } from '@/hooks/useProfile'
+import { useActiveCosmetics, activeKitColour } from '@/hooks/useActiveCosmetics'
 import { useSubscription } from '@/hooks/useSubscription'
 import { UpgradeModal } from '@/components/UpgradeModal'
 import { useWellness } from '@/hooks/useWellness'
@@ -118,6 +119,12 @@ export default function ProfileClient({
   const [seenBadgeIds, setSeenBadgeIds] = useState<string[]>([])
   const [kitColour, setKitColour] = useState('var(--ns-cyan)')
   const [showCustomiser, setShowCustomiser] = useState(false)
+  // PR #41 follow-up — active kit_colour cosmetic overrides the localStorage
+  // default for the HeroCard render. Mirrors YouClient pattern. The
+  // user-chosen kitColour stays the source of truth for the swatch picker
+  // highlight at line 457; HeroCard receives displayKitColour instead.
+  const { active: activeCosmetics } = useActiveCosmetics()
+  const displayKitColour = activeKitColour(activeCosmetics) ?? kitColour
 
   // Runner class state
   const [runnerClass, setRunnerClass] = useState<RunnerClassId | null>(null)
@@ -426,7 +433,7 @@ export default function ProfileClient({
             charId={charId}
             stats={rpgStats}
             displayName={heroDisplayName}
-            kitColour={kitColour}
+            kitColour={displayKitColour}
             runnerColour={(profile as { runner_colour?: string })?.runner_colour ?? '#06b6d4'}
             charState={charState}
             medal={medal}
