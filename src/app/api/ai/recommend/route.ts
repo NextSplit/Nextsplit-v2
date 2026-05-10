@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
   // S6: rate-limit guard — was unguarded; any authenticated user could drain Anthropic quota.
-  const rateCheck = await checkAndIncrementAIUsage(user.id, 'free')
+  const rateCheck = await checkAndIncrementAIUsage(user.id)
   if (!rateCheck.allowed) {
     return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
   }

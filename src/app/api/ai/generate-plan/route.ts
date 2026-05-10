@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     // user could drain Anthropic quota. checkAndIncrementAIUsage upserts
     // on the same (user_id, date) row used elsewhere and returns 429 once
     // the daily cap is reached.
-    const rateCheck = await checkAndIncrementAIUsage(user.id, 'free')
+    const rateCheck = await checkAndIncrementAIUsage(user.id)
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
     }

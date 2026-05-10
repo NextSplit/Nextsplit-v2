@@ -15,6 +15,18 @@
  *   );
  *   ALTER TABLE ai_usage ENABLE ROW LEVEL SECURITY;
  *   CREATE POLICY "Users read own usage" ON ai_usage FOR SELECT USING (auth.uid() = user_id);
+ *
+ * PR M — bug fix: previous signature took a `tier` parameter that every
+ * caller hardcoded to 'free'. Once PREMIUM_ENFORCED=true flips, Pro and
+ * trialing users would hit the 3/day free limit instead of the 25/day
+ * Pro limit. Fixed by looking up the tier internally via the same
+ * service-role admin client we already use for the upsert. The `tier`
+ * param is removed; callers just pass `userId`.
+ *
+ * Trial-aware: BL-C6 trialing users get the 'pro' tier limit because the
+ * trial is meant to be the full Pro experience. serverSubscription.ts
+ * recognises 'trialing' status as isPro=true; this function inlines the
+ * same logic to avoid an extra round-trip.
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -38,33 +50,57 @@ function todayStr(): string {
   return new Date().toISOString().split('T')[0]
 }
 
+const PRO_STATUSES = new Set(['active', 'trialing', 'founding'])
+
 interface RateLimitResult {
   allowed: boolean
   callsToday: number
   limit: number
+  tier: Tier
   reason?: string
 }
 
 /**
  * Check if a user can make an AI call, and increment their counter if so.
- * @param userId  Supabase auth user ID
- * @param tier    User's subscription tier
+ * Tier is looked up server-side from profiles — callers don't pass it,
+ * which prevents the previous bug of every caller hardcoding 'free'.
  */
-export async function checkAndIncrementAIUsage(
-  userId: string,
-  tier: Tier = 'free'
-): Promise<RateLimitResult> {
-  // Determine limit (server-side; reads server-only env)
+export async function checkAndIncrementAIUsage(userId: string): Promise<RateLimitResult> {
+  let tier: Tier = 'free'
+  const supabase = getAdminClient()
+
+  // ── Tier lookup ───────────────────────────────────────────────────────────
+  // is_pro=true OR subscription_status in PRO_STATUSES ⇒ Pro tier limit.
+  // Trial users (status='trialing') get Pro limits — the trial is meant
+  // to be the full Pro experience.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: profile } = await (supabase as any)
+      .from('profiles')
+      .select('is_pro, subscription_status')
+      .eq('id', userId)
+      .single()
+    const status = profile?.subscription_status as string | null
+    const isPro  = !!profile?.is_pro || (!!status && PRO_STATUSES.has(status))
+    tier = isPro ? 'pro' : 'free'
+  } catch {
+    // Profile fetch failed — fall through with 'free' tier (safer default
+    // than 'pro' if profile is misconfigured).
+  }
+
+  // ── Limit selection ───────────────────────────────────────────────────────
+  // PREMIUM_ENFORCED=false → use the dev limit for everyone (test guard
+  // against runaway costs). PREMIUM_ENFORCED=true → use real per-tier limits.
   const limit = serverConfig.premiumEnforced
     ? AI_RATE_LIMITS[tier]
     : AI_RATE_LIMIT_DEV
 
   try {
-    const supabase = getAdminClient()
     const today = todayStr()
 
     // Upsert today's row, increment counter
-    const { data, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from('ai_usage')
       .upsert(
         { user_id: userId, date: today, call_count: 1 },
@@ -77,16 +113,16 @@ export async function checkAndIncrementAIUsage(
       .single()
 
     if (error) {
-      // Table doesn't exist yet — allow the call, log a warning
-      // ai_usage table not yet created — allow call (will be rate limited once table exists)
-      return { allowed: true, callsToday: 0, limit }
+      // Table doesn't exist yet — allow the call (will be rate limited once table exists)
+      return { allowed: true, callsToday: 0, limit, tier }
     }
 
     const callsToday = data?.call_count ?? 1
 
     if (callsToday > limit) {
       // Roll back the increment
-      await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
         .from('ai_usage')
         .update({ call_count: limit })
         .eq('user_id', userId)
@@ -96,15 +132,15 @@ export async function checkAndIncrementAIUsage(
         allowed: false,
         callsToday: limit,
         limit,
+        tier,
         reason: `Daily AI limit reached (${limit} calls/day). Resets at midnight.`,
       }
     }
 
-    return { allowed: true, callsToday, limit }
-  } catch (err) {
+    return { allowed: true, callsToday, limit, tier }
+  } catch {
     // Any unexpected error — fail open (allow call) so users aren't blocked by infra issues
-    // Fail open on unexpected errors — don't block users due to infra issues
-    return { allowed: true, callsToday: 0, limit }
+    return { allowed: true, callsToday: 0, limit, tier }
   }
 }
 
