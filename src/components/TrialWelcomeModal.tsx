@@ -23,7 +23,7 @@ interface Props {
   show:           boolean
   userId:         string | null
   trialDaysLeft:  number | null
-  trialSource:    'squad_join' | 'first_coach_message' | null
+  trialSource:    'squad_join' | 'first_coach_message' | 'day8_auto' | null
   onDismiss:      () => void
 }
 
@@ -35,6 +35,10 @@ const SOURCE_HEADER: Record<string, { kicker: string; lead: string }> = {
   first_coach_message: {
     kicker: 'YOUR COACH UNLOCKED PRO',
     lead:   "14 days of NextSplit Pro on us — make the most of it.",
+  },
+  day8_auto: {
+    kicker: 'WEEK 1 DONE — UNLOCKED',
+    lead:   "You're a week in. The next 14 days are on us — Pro fully unlocked.",
   },
 }
 

@@ -37,22 +37,63 @@ interface TrialRow {
 const SOURCE_FRIENDLY: Record<string, string> = {
   squad_join:           'your squad unlocked',
   first_coach_message:  'your coach unlocked',
+  day8_auto:            "you've been training a week — we've unlocked",
 }
+
+const SOURCE_TITLE: Record<string, string> = {
+  squad_join:           '⭐ Pro on us for 14 days',
+  first_coach_message:  '⭐ Pro on us for 14 days',
+  day8_auto:            '⭐ Week 1 done — Pro for 14 days, on us',
+}
+
+export type TrialSource = 'squad_join' | 'first_coach_message' | 'day8_auto'
 
 export async function sendTrialWelcomePush(
   athleteId: string,
-  source: 'squad_join' | 'first_coach_message',
+  source: TrialSource,
 ): Promise<void> {
   const friendly = SOURCE_FRIENDLY[source] ?? 'someone unlocked'
+  const title    = SOURCE_TITLE[source]    ?? '⭐ Pro on us for 14 days'
   await coachPush({
     recipientId:    athleteId,
-    title:          '⭐ Pro on us for 14 days',
+    title,
     body:           `${friendly.charAt(0).toUpperCase()}${friendly.slice(1)} adaptive plans, ACWR, and AI coaching. Tap to explore.`,
     destinationUrl: '/home',
     type:           TRIAL_WELCOME_TYPE,
     data:           { trial_source: source },
-    feature:        'blc6-trial-lifecycle',
+    feature:        source === 'day8_auto' ? 'blc5-day8-trial' : 'blc6-trial-lifecycle',
   })
+}
+
+// BL-C5 day-8 sweep — runs daily inside smart-notify. RPC returns the
+// user_ids that just had their trial flipped; we send each a welcome
+// push using the day8_auto copy variant.
+export async function runDay8AutoTrialSweep(): Promise<{ granted: number }> {
+  let granted = 0
+  try {
+    const admin = createAdminClient(config.supabaseUrl, serverConfig.supabaseServiceRoleKey)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const a = admin as any
+    const { data, error } = await a.rpc('grant_day8_auto_trials')
+    if (error) {
+      Sentry.captureException(error, {
+        tags:  { feature: 'blc5-day8-trial' },
+        extra: { context: '[grant_day8_auto_trials]' },
+      })
+      return { granted: 0 }
+    }
+    const rows = (data ?? []) as Array<{ user_id: string }>
+    for (const r of rows) {
+      await sendTrialWelcomePush(r.user_id, 'day8_auto')
+      granted++
+    }
+  } catch (err) {
+    Sentry.captureException(err, {
+      tags:  { feature: 'blc5-day8-trial' },
+      extra: { context: '[runDay8AutoTrialSweep top-level]' },
+    })
+  }
+  return { granted }
 }
 
 // runTrialLifecycleSweep — daily cron call. Runs the warning sweep first

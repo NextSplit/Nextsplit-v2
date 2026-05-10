@@ -34,7 +34,7 @@ export interface TrialRow {
 }
 
 export interface SourceMetrics {
-  source:           string  // 'squad_join' | 'first_coach_message'
+  source:           string  // 'squad_join' | 'first_coach_message' | 'day8_auto'
   granted:          number
   active:           number
   converted:        number
@@ -46,10 +46,10 @@ export interface FunnelData {
   totals:        { granted: number; active: number; converted: number; lapsed: number; conversion_rate: number }
   bySource:      SourceMetrics[]
   recent:        TrialRow[]    // last 30 trials, newest first
-  dailyGranted:  Array<{ date: string; squad_join: number; first_coach_message: number }>
+  dailyGranted:  Array<{ date: string; squad_join: number; first_coach_message: number; day8_auto: number }>
 }
 
-const SOURCES = ['squad_join', 'first_coach_message'] as const
+const SOURCES = ['squad_join', 'first_coach_message', 'day8_auto'] as const
 
 function dateOnly(iso: string): string {
   return iso.slice(0, 10)
@@ -147,15 +147,16 @@ async function loadFunnelData(): Promise<FunnelData> {
 
   // ── 30-day daily granted timeseries ───────────────────────────────────────
   const cutoff = Date.now() - 30 * 86400000
-  const dailyMap = new Map<string, { date: string; squad_join: number; first_coach_message: number }>()
+  const dailyMap = new Map<string, { date: string; squad_join: number; first_coach_message: number; day8_auto: number }>()
   for (const p of profileRows) {
     const ts = new Date(p.trial_started_at).getTime()
     if (!Number.isFinite(ts) || ts < cutoff) continue
     const d = dateOnly(p.trial_started_at)
-    if (!dailyMap.has(d)) dailyMap.set(d, { date: d, squad_join: 0, first_coach_message: 0 })
+    if (!dailyMap.has(d)) dailyMap.set(d, { date: d, squad_join: 0, first_coach_message: 0, day8_auto: 0 })
     const slot = dailyMap.get(d)!
-    if (p.trial_source === 'squad_join')          slot.squad_join++
-    else if (p.trial_source === 'first_coach_message') slot.first_coach_message++
+    if (p.trial_source === 'squad_join')                slot.squad_join++
+    else if (p.trial_source === 'first_coach_message')  slot.first_coach_message++
+    else if (p.trial_source === 'day8_auto')            slot.day8_auto++
   }
   const dailyGranted = [...dailyMap.values()].sort((a, b) => a.date.localeCompare(b.date))
 

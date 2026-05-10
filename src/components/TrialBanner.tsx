@@ -19,7 +19,7 @@ import { Analytics } from '@/lib/analytics'
 interface Props {
   show:           boolean
   trialDaysLeft:  number | null
-  trialSource:    'squad_join' | 'first_coach_message' | null
+  trialSource:    'squad_join' | 'first_coach_message' | 'day8_auto' | null
 }
 
 function tierFor(days: number): { bg: string; border: string; accent: string; lead: string } {
@@ -50,6 +50,7 @@ function tierFor(days: number): { bg: string; border: string; accent: string; le
 const SOURCE_LABEL: Record<string, string> = {
   squad_join:           'Welcome from the squad',
   first_coach_message:  'Your coach unlocked this',
+  day8_auto:            'Week 1 done — Pro on us',
 }
 
 export function TrialBanner({ show, trialDaysLeft, trialSource }: Props) {
