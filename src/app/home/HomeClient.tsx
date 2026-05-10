@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Link from 'next/link'
 import MilestoneShareCard from '@/components/MilestoneShareCard'
 import { useActivePlan } from '@/hooks/useActivePlan'
@@ -20,6 +20,7 @@ import { EliteTriggerBanner } from '@/components/EliteTriggerBanner'
 import { MotivationDipBanner } from '@/components/MotivationDipBanner'
 import FoundingCountdown from '@/components/FoundingCountdown'
 import { TrialBanner } from '@/components/TrialBanner'
+import { TrialWelcomeModal, shouldShowTrialWelcome } from '@/components/TrialWelcomeModal'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -578,6 +579,16 @@ export default function HomeClient() {
   const { isPro, isTrialing, trialDaysLeft, subscription } = useSubscription()
   const { notifications, markRead, markOpened } = useNotifications()
   const [showStreakShare, setShowStreakShare] = useState(false)
+  // PR K — trial welcome modal. Fires on first mount where the user is
+  // trialing AND the per-user localStorage flag isn't set. Once dismissed,
+  // never re-shows for this user on this device.
+  const [showTrialWelcome, setShowTrialWelcome] = useState(false)
+  const profileId = (profile as { id?: string } | null)?.id ?? null
+  useEffect(() => {
+    if (isTrialing && profileId && shouldShowTrialWelcome(profileId)) {
+      setShowTrialWelcome(true)
+    }
+  }, [isTrialing, profileId])
 
   const streak   = useMemo(() =>
     computeStreak(allLogs.map((l: TrainingLog) => ({ logged_at: l.created_at, done: l.done }))).current,
@@ -771,6 +782,17 @@ export default function HomeClient() {
           onClose={() => setShowStreakShare(false)}
         />
       )}
+
+      {/* PR K — trial welcome modal. Triggers once per (user, device)
+          when isTrialing transitions to true. Sits on top of the streak
+          share with z-[60] so an active trial welcome takes priority. */}
+      <TrialWelcomeModal
+        show={showTrialWelcome}
+        userId={profileId}
+        trialDaysLeft={trialDaysLeft}
+        trialSource={subscription.trialSource}
+        onDismiss={() => setShowTrialWelcome(false)}
+      />
     </div>
   )
 }
