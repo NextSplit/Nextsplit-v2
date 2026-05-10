@@ -9,7 +9,8 @@ export interface Subscription {
   tier:              Tier
   status:            'active' | 'trialing' | 'founding' | 'cancelled' | 'expired' | 'none' | 'free'
   currentPeriodEnd:  string | null
-  trialEnd:          string | null    // BL-C6 — ISO date when 14-day trial expires
+  trialEnd:          string | null    // BL-C6 — ISO date when 14-day trial expires (predicted; null after expiry)
+  trialEndedAt:      string | null    // BL-C6 — set by the cron sweep when trial lapsed without conversion
   trialSource:       'squad_join' | 'first_coach_message' | null
   stripeCustomerId:  string | null
   isFounding:        boolean
@@ -21,6 +22,7 @@ const DEFAULT_SUB: Subscription = {
   status:           'none',
   currentPeriodEnd: null,
   trialEnd:         null,
+  trialEndedAt:     null,
   trialSource:      null,
   stripeCustomerId: null,
   isFounding:       false,
@@ -28,18 +30,21 @@ const DEFAULT_SUB: Subscription = {
 }
 
 const TRIAL_DAYS = 14
+const WINBACK_WINDOW_DAYS = 7  // PR N — banner only renders while lapse is still recent
 
 export interface UseSubscriptionReturn {
-  subscription:   Subscription
-  loading:        boolean
-  isPro:          boolean
-  isTrialing:     boolean
-  trialDaysLeft:  number | null
-  isFounding:     boolean
-  foundingLeft:   number
-  isDevMode:      boolean
-  canUseFeature:  (feature: FeatureKey) => boolean
-  refresh:        () => void
+  subscription:        Subscription
+  loading:             boolean
+  isPro:               boolean
+  isTrialing:          boolean
+  trialDaysLeft:       number | null
+  isTrialLapsed:       boolean        // PR N — had trial, no longer Pro, ended in last 7 days
+  trialLapsedDaysAgo:  number | null
+  isFounding:          boolean
+  foundingLeft:        number
+  isDevMode:           boolean
+  canUseFeature:       (feature: FeatureKey) => boolean
+  refresh:             () => void
 }
 
 export function useSubscription(): UseSubscriptionReturn {
@@ -138,6 +143,7 @@ export function useSubscription(): UseSubscriptionReturn {
             status,
             currentPeriodEnd: p?.pro_expires_at ?? null,
             trialEnd,
+            trialEndedAt:     endedAt,
             trialSource:      (p?.trial_source as Subscription['trialSource']) ?? null,
             stripeCustomerId: p?.stripe_customer_id ?? null,
             isFounding,
@@ -164,6 +170,23 @@ export function useSubscription(): UseSubscriptionReturn {
     ? Math.max(0, Math.ceil((new Date(subscription.trialEnd).getTime() - Date.now()) / 86400_000))
     : null
 
+  // PR N — trial-lapsed detection for the in-app winback banner.
+  // Lapsed iff: trial_ended_at is set AND user did NOT convert to Pro AND
+  // the lapse is still within the 7-day winback window. Trial converters
+  // (is_pro=true post-trial) still have trial_ended_at set but are not lapsed.
+  let isTrialLapsed = false
+  let trialLapsedDaysAgo: number | null = null
+  if (subscription.trialEndedAt && !isPro) {
+    const lapsedMs = Date.now() - new Date(subscription.trialEndedAt).getTime()
+    if (lapsedMs >= 0) {
+      const daysAgo = Math.floor(lapsedMs / 86400_000)
+      if (daysAgo <= WINBACK_WINDOW_DAYS) {
+        isTrialLapsed = true
+        trialLapsedDaysAgo = daysAgo
+      }
+    }
+  }
+
   const canUseFeature = useCallback(
     // canAccess takes `enforced` as a parameter — we pass !isDevMode.
     // When dev-mode is true, every feature returns true regardless of tier.
@@ -177,6 +200,8 @@ export function useSubscription(): UseSubscriptionReturn {
     isPro,
     isTrialing,
     trialDaysLeft,
+    isTrialLapsed,
+    trialLapsedDaysAgo,
     isFounding:   subscription.isFounding,
     foundingLeft: subscription.foundingLeft,
     isDevMode,
