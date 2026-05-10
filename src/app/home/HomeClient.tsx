@@ -18,6 +18,7 @@ import { RaceCard } from '@/components/race/RaceCard'
 import { EliteTriggerBanner } from '@/components/EliteTriggerBanner'
 import { MotivationDipBanner } from '@/components/MotivationDipBanner'
 import FoundingCountdown from '@/components/FoundingCountdown'
+import { TrialBanner } from '@/components/TrialBanner'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -560,7 +561,7 @@ export default function HomeClient() {
   const { profile }       = useProfile()
   const { squad, role }   = useSquad()
   const { coach, hasCoach } = useMyCoach()
-  const { isPro }         = useSubscription()
+  const { isPro, isTrialing, trialDaysLeft, subscription } = useSubscription()
   const { notifications, markRead, markOpened } = useNotifications()
 
   const streak   = useMemo(() =>
@@ -657,6 +658,17 @@ export default function HomeClient() {
 
         {/* Today's character race — compact teaser linking to /race */}
         <RaceCard variant="compact" />
+
+        {/* BL-C6 — trial countdown. Sits above FoundingCountdown when
+            active because the immediate decision (lock in price before
+            trial expires) outranks the always-on founding pitch. Hidden
+            outside the trial window; the founding widget below covers
+            that case. */}
+        <TrialBanner
+          show={isTrialing}
+          trialDaysLeft={trialDaysLeft}
+          trialSource={subscription.trialSource}
+        />
 
         {/* P4.5 — founding-tier urgency widget. Inert in dev (gated on
             !isDevMode); for non-Pro users, shows countdown until 500

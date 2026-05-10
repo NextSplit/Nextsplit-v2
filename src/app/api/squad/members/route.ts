@@ -124,10 +124,25 @@ export async function POST(req: NextRequest) {
       milestone_type: 'joined_squad',
     }).catch(() => {})
 
+    // BL-C6 — squad-join trial unlock. Idempotent server-side: the RPC
+    // grants only when trial_started_at IS NULL AND is_pro = false, so
+    // re-joins / squad-hops never re-grant. Fire-and-forget — failures
+    // Sentry-log but don't block the join itself.
+    let trialGranted = false
+    try {
+      const { data } = await s.rpc('grant_trial_if_eligible', { p_source: 'squad_join' })
+      trialGranted = !!data
+    } catch (trialErr) {
+      Sentry.captureException(trialErr, {
+        tags:  { feature: 'blc6-trial-unlock' },
+        extra: { context: '[squad-join trial grant]', user_id: user.id },
+      })
+    }
+
     // Notify leader
     // (non-blocking — notification system handles delivery)
 
-    return NextResponse.json({ joined: true, squad_id: invite.squad_id })
+    return NextResponse.json({ joined: true, squad_id: invite.squad_id, trial_granted: trialGranted })
   } catch (err) {
     Sentry.captureException(err, { extra: { context: 'Squad join error:' } })
     return NextResponse.json({ error: 'Failed to join squad' }, { status: 500 })
