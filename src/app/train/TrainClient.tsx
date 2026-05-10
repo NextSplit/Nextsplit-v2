@@ -362,11 +362,20 @@ export default function TrainClient() {
           })
             .then(r => r.ok ? r.json() : null)
             .then(async (json) => {
-              if (json?.character || json?.drop || json?.streak_reward) {
+              if (json?.character || json?.drop || json?.streak_reward || json?.quest_rewards?.length) {
                 const events = await import('@/lib/character-events')
                 if (json.character)     events.dispatchCharacterXP(json.character)
                 if (json.drop)          events.dispatchCharacterLoot(json.drop)
                 if (json.streak_reward) events.dispatchStreakReward(json.streak_reward)
+                if (Array.isArray(json.quest_rewards)) {
+                  for (const q of json.quest_rewards) {
+                    events.dispatchCharacterLoot({
+                      kind:    q.item_kind,
+                      item_id: q.item_id,
+                      rarity:  'common',
+                    })
+                  }
+                }
               }
             })
             .catch(() => {}) // non-blocking, silent fail

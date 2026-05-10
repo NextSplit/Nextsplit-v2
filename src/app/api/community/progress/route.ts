@@ -184,12 +184,49 @@ export async function POST(req: NextRequest) {
       // Non-fatal — milestone rewards are additive.
     }
 
+    // 7. Daily-quest reward grants (PR #39+). Idempotent per (user, quest,
+    // period). Re-evaluates each predicate server-side via the RPC, grants
+    // a common boost on first-completion, no-ops thereafter. The 4 quests
+    // mirror src/components/DailyQuests.tsx exactly:
+    //   log_today  → speed_tonic    (period: today UTC)
+    //   streak_3   → endurance_brew (period: today UTC, predicate=3 consec days)
+    //   weekly_km  → grit_bar       (period: ISO week)
+    //   sessions_3 → speed_tonic    (period: ISO week)
+    type QuestRewardRow = {
+      item_kind:  string
+      item_id:    string
+      quest_id:   string
+      period_key: string
+    }
+    const questRewards: QuestRewardRow[] = []
+    try {
+      const { createServiceClient } = await import('@/lib/supabase/server')
+      const svc = createServiceClient()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const svcAny = svc as any
+      // Fire all 4 quest checks in parallel — each is idempotent.
+      const ids = ['log_today', 'streak_3', 'weekly_km', 'sessions_3']
+      const results = await Promise.all(ids.map(qid =>
+        svcAny.rpc('claim_daily_quest', { p_user_id: user.id, p_quest_id: qid })
+          .then((r: { data: QuestRewardRow[] | null }) => r.data)
+          .catch(() => null),
+      ))
+      for (const rows of results) {
+        if (Array.isArray(rows) && rows[0]?.item_id) {
+          questRewards.push(rows[0] as QuestRewardRow)
+        }
+      }
+    } catch {
+      // Non-fatal — quest rewards are additive.
+    }
+
     return NextResponse.json({
       success:        true,
       xp_awarded:     sessionXP,
       character:      characterXP,
       drop,
       streak_reward:  streakReward,
+      quest_rewards:  questRewards,
     })
 
   } catch (err) {
