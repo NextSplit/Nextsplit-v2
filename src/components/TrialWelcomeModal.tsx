@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Analytics } from '@/lib/analytics'
 
@@ -71,6 +71,11 @@ function storageKey(userId: string): string {
 
 export function TrialWelcomeModal({ show, userId, trialDaysLeft, trialSource, onDismiss }: Props) {
   const [mounted, setMounted] = useState(false)
+  // Council R1 (ACCESSIBILITY) — focus trap implementation. previousFocus
+  // captures the trigger element so we can return focus on dismiss.
+  // dialogRef bounds the focus-trap perimeter.
+  const dialogRef     = useRef<HTMLDivElement>(null)
+  const previousFocus = useRef<HTMLElement | null>(null)
 
   // Skip render on the first SSR pass — we read localStorage synchronously
   // in the parent gate, but the modal itself only mounts client-side
@@ -82,6 +87,51 @@ export function TrialWelcomeModal({ show, userId, trialDaysLeft, trialSource, on
       Analytics.upgradePromptShown('trial_welcome_modal', `home_trial_${trialDaysLeft ?? 14}d`)
     }
   }, [mounted, show, trialDaysLeft])
+
+  // Council R1 (ACCESSIBILITY) — focus trap + ESC + focus-on-open + return.
+  // Activates only when the modal is actually visible. Without this, a
+  // keyboard or VoiceOver user could tab past the modal into occluded
+  // content (WCAG 2.1.1 / 4.1.2 violation).
+  useEffect(() => {
+    if (!mounted || !show || !userId) return
+    previousFocus.current = (document.activeElement as HTMLElement) ?? null
+
+    // Focus the first interactive element inside the dialog.
+    const first = dialogRef.current?.querySelector<HTMLElement>(
+      'a, button, [tabindex]:not([tabindex="-1"]), input, select, textarea',
+    )
+    first?.focus()
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onDismiss()
+        return
+      }
+      if (e.key !== 'Tab' || !dialogRef.current) return
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(
+          'a, button, [tabindex]:not([tabindex="-1"]), input, select, textarea',
+        ),
+      ).filter(el => !el.hasAttribute('disabled'))
+      if (focusable.length === 0) return
+      const firstEl = focusable[0]
+      const lastEl  = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === firstEl) {
+        e.preventDefault()
+        lastEl.focus()
+      } else if (!e.shiftKey && document.activeElement === lastEl) {
+        e.preventDefault()
+        firstEl.focus()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      // Return focus to the trigger element on unmount/dismiss.
+      previousFocus.current?.focus()
+    }
+  }, [mounted, show, userId, onDismiss])
 
   if (!mounted || !show || !userId) return null
 
@@ -107,7 +157,8 @@ export function TrialWelcomeModal({ show, userId, trialDaysLeft, trialSource, on
       onClick={dismiss}
     >
       <div
-        className="rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+        ref={dialogRef}
+        className="rounded-3xl max-w-md w-full max-h-[90dvh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
         style={{
           background: 'linear-gradient(180deg, #0a0e1a 0%, #0d3d38 100%)',
