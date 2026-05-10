@@ -22,6 +22,7 @@ import SessionCelebration from '@/components/SessionCelebration'
 import Week3Reanchor from '@/components/Week3Reanchor'
 import AcwrAdvisoryBanner from '@/components/AcwrAdvisoryBanner'
 import GapRecoveryBanner from '@/components/GapRecoveryBanner'
+import { DeloadAlternativeCard } from '@/components/DeloadAlternativeCard'
 import { shareSessionWithSquadAction } from '@/app/today/actions'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import PreRunBrief from '@/components/PreRunBrief'
@@ -567,18 +568,59 @@ export default function TrainClient() {
               )}
             </div>
 
-            {/* Today sessions — full colour hero cards */}
+            {/* Today sessions — full colour hero cards.
+                P2.7 hard-deload (OQ#7=B "show both"): when ACWR > 1.3 AND
+                today's first session is high-volume AND chronic baseline is
+                meaningful, render a DeloadAlternativeCard right after the
+                primary card. Athlete picks. Logging the deload writes to the
+                same (week_n, day_i, session_i=0) slot as the original so the
+                done counter and streak treat it as completed. */}
             {todaySessions.length > 0 ? (
               <div className="space-y-2">
                 {todaySessions.map((session, i) => {
                   const TodayCard = TodaySessionCard as React.ComponentType<{ session: PlanSession; log: TrainingLog | null; onTap: () => void; onQuickLog: () => void }>
-                  return <TodayCard
-                    key={i}
-                    session={session}
-                    log={logs[`${weekN}_${todayDayIndex}_${i}`] as (typeof logs)[string] | null ?? null}
-                    onTap={(() => setModalSession({ session, dayI: todayDayIndex, sessI: i })) as () => void}
-                    onQuickLog={() => { handleLogSession({ week_n: weekN, day_i: todayDayIndex, session_i: i, done: true, effort: 5 }) }}
-                  />
+                  const log = logs[`${weekN}_${todayDayIndex}_${i}`] as (typeof logs)[string] | null ?? null
+                  const series          = calcACWR(allLogs, weeks)
+                  const latest          = series.length > 0 ? series[series.length - 1] : null
+                  const latestAcwr      = latest?.acwr ?? null
+                  const chronicBaseline = latest?.chronic ?? 0
+                  return (
+                    <div key={i} className="space-y-2">
+                      <TodayCard
+                        session={session}
+                        log={log}
+                        onTap={(() => setModalSession({ session, dayI: todayDayIndex, sessI: i })) as () => void}
+                        onQuickLog={() => { handleLogSession({ week_n: weekN, day_i: todayDayIndex, session_i: i, done: true, effort: 5 }) }}
+                      />
+                      {/* Show deload alternative only for the primary
+                          session (i=0) — multi-session days don't benefit
+                          from offering a deload swap on every slot. */}
+                      {i === 0 && latestAcwr !== null && (
+                        <DeloadAlternativeCard
+                          prescribed={{ c: session.c, km: session.km, n: session.n }}
+                          latestAcwr={latestAcwr}
+                          chronicBaselineKm={chronicBaseline}
+                          alreadyDone={!!log?.done}
+                          onSelectDeload={(deload) => {
+                            // Prefill the LogModal with the deload session so
+                            // the athlete can confirm + tweak before saving.
+                            // We pass a synthetic PlanSession so the modal's
+                            // existing flow handles km/effort/notes capture.
+                            setModalSession({
+                              session: {
+                                ...session,
+                                c:  deload.sessionType,
+                                km: deload.km,
+                                n:  deload.label,
+                              },
+                              dayI:  todayDayIndex,
+                              sessI: i,
+                            })
+                          }}
+                        />
+                      )}
+                    </div>
+                  )
                 })}
               </div>
             ) : (

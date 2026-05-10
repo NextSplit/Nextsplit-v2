@@ -250,4 +250,25 @@ export const Analytics = {
   // fresh gap re-fires the banner. gap_days lets retention funnels
   // segment re-engagement quality vs gap length.
   gapRecoveryShown: (props: { gap_days: number }) => track('gap_recovery_shown', props),
+
+  // P2.7 hard-deload (show-both UX, OQ#7=B). Two events per appearance:
+  //   · hardDeloadShown — fires when the deload alternative card mounts
+  //     (ACWR > 1.3 AND chronic ≥ 12 km/wk AND prescribed = high-volume)
+  //   · hardDeloadAccepted — fires when the user taps the deload card,
+  //     opening the LogModal pre-filled with the lighter session
+  // Conversion = accepted/shown lets the council see if athletes use the
+  // alternative when offered. If accepted_rate < 5%, the show-both UX
+  // adds noise without value and we should revisit OQ#7.
+  hardDeloadShown:    (props: {
+    acwr:                 number
+    chronic_baseline_km:  number
+    prescribed_type:      string
+    prescribed_km:        number
+    deload_km:            number
+  }) => track('hard_deload_shown', props),
+  hardDeloadAccepted: (props: {
+    acwr:           number
+    prescribed_km:  number
+    deload_km:      number
+  }) => track('hard_deload_accepted', props),
 }
