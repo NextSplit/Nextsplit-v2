@@ -15,6 +15,7 @@ import type { PlanSession, PlanWeek, TrainingLog } from '@/types/database'
 import Splity from '@/components/Splity'
 import DailyQuests from '@/components/DailyQuests'
 import { RaceCard } from '@/components/race/RaceCard'
+import { EliteTriggerBanner } from '@/components/EliteTriggerBanner'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -634,6 +635,11 @@ export default function HomeClient() {
 
         {/* Today's character race — compact teaser linking to /race */}
         <RaceCard variant="compact" />
+
+        {/* P4.3 — 7-day streak Elite trigger. Inert today (banner only
+            renders when paywall is enforced AND user is non-Pro). Tap
+            opens UpgradeModal with founding-tier urgency. */}
+        <EliteTriggerBanner kind="seven_streak" show={streak >= 7} />
 
         {/* Race countdown */}
         {plan?.race_date && daysToRace !== null && daysToRace >= 0 && (
