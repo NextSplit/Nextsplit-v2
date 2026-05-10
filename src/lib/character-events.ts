@@ -1,7 +1,7 @@
 // Custom-event bridge for the character system. Used to surface session-XP
-// deltas + random loot drops in global toasts (CharacterStatToast +
-// CharacterLootToast) without coupling the toast components to every call
-// site that logs a session.
+// deltas + random loot drops + streak milestone rewards in global toasts
+// (CharacterStatToast + CharacterLootToast + StreakRewardToast) without
+// coupling the toast components to every call site that logs a session.
 //
 // Why CustomEvent and not a context provider? Two call sites (TrainClient,
 // useSessionLogging) both POST /api/community/progress and would each need
@@ -29,8 +29,15 @@ export interface CharacterLootDrop {
   rarity:  BoostRarity
 }
 
-const XP_EVENT_NAME   = 'nextsplit:character-xp'
-const LOOT_EVENT_NAME = 'nextsplit:character-loot'
+export interface StreakReward {
+  item_kind: 'boost' | 'cosmetic'
+  item_id:   string
+  milestone: number
+}
+
+const XP_EVENT_NAME     = 'nextsplit:character-xp'
+const LOOT_EVENT_NAME   = 'nextsplit:character-loot'
+const STREAK_EVENT_NAME = 'nextsplit:character-streak-reward'
 
 export function dispatchCharacterXP(deltas: CharacterXPDeltas): void {
   if (typeof window === 'undefined') return
@@ -64,4 +71,18 @@ export function onCharacterLoot(handler: (drop: CharacterLootDrop) => void): () 
   window.addEventListener(LOOT_EVENT_NAME, wrapped)
   return () => window.removeEventListener(LOOT_EVENT_NAME, wrapped)
 }
+
+export function dispatchStreakReward(reward: StreakReward): void {
+  if (typeof window === 'undefined') return
+  if (!reward?.item_id) return
+  window.dispatchEvent(new CustomEvent<StreakReward>(STREAK_EVENT_NAME, { detail: reward }))
+}
+
+export function onStreakReward(handler: (reward: StreakReward) => void): () => void {
+  if (typeof window === 'undefined') return () => {}
+  const wrapped = (e: Event) => handler((e as CustomEvent<StreakReward>).detail)
+  window.addEventListener(STREAK_EVENT_NAME, wrapped)
+  return () => window.removeEventListener(STREAK_EVENT_NAME, wrapped)
+}
+
 

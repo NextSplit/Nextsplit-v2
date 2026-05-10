@@ -3,6 +3,7 @@ import './globals.css'
 import BottomNavWrapper from '@/components/BottomNavWrapper'
 import { CharacterStatToast } from '@/components/rpg/CharacterStatToast'
 import { CharacterLootToast } from '@/components/rpg/CharacterLootToast'
+import { StreakRewardToast } from '@/components/rpg/StreakRewardToast'
 import { ToastProvider } from '@/components/Toast'
 import ThemeWrapper from '@/components/ThemeWrapper'
 import PWAInstallPrompt from '@/components/PWAInstallPrompt'
@@ -66,6 +67,7 @@ export default function RootLayout({
             <BottomNavWrapper />
             <CharacterStatToast />
             <CharacterLootToast />
+            <StreakRewardToast />
             <PWAInstallPrompt />
             <ServiceWorkerRegistrar />
             <Analytics />
