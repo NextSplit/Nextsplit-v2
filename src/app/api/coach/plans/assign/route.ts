@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 import { z } from 'zod'
 import { zodError } from '@/lib/schemas'
+import { coachPush } from '@/lib/coach-push'
 
 // P3.2 — Assign a coach-authored plan template to one of the coach's
 // athletes. Creates a user_plans row for the athlete using the template's
@@ -11,6 +12,12 @@ import { zodError } from '@/lib/schemas'
 // Archives the athlete's existing active plan if any (one-active-plan rule
 // at the user_plans level — the predetermined / AI / coach paths all
 // converge on this constraint).
+//
+// BL-C3 — coach must supply a `reason` (10–500 chars) explaining why
+// they're assigning/replacing the plan. The reason persists in
+// `user_plans.meta.assigned_reason` so the athlete can audit history,
+// and feeds the push body so the athlete sees the rationale on their
+// lock-screen instead of a generic "your plan changed" alert.
 //
 // Auth: caller must be the coach who authored the template AND have an
 // active coach_athletes relationship with the target athlete. Both checks
@@ -20,6 +27,7 @@ import { zodError } from '@/lib/schemas'
 const AssignSchema = z.object({
   template_id: z.string().uuid(),
   athlete_id:  z.string().uuid(),
+  reason:      z.string().min(10).max(500),
 })
 
 export async function POST(req: NextRequest) {
@@ -30,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     const parsed = AssignSchema.safeParse(await req.json())
     if (!parsed.success) return zodError(parsed.error)
-    const { template_id, athlete_id } = parsed.data
+    const { template_id, athlete_id, reason } = parsed.data
 
     // 1. Template ownership check — caller must be the author. total_starts
     // is selected here so the bump in step 5 reads the actual value (not
@@ -72,7 +80,9 @@ export async function POST(req: NextRequest) {
       .eq('user_id', athlete_id)
       .eq('status', 'active')
 
-    // 4. Create the new active plan from the template.
+    // 4. Create the new active plan from the template. The reason persists
+    // in meta.assigned_reason so subsequent UI surfaces (audit log, athlete
+    // detail) can render the rationale without a separate join.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: newPlan, error: createErr } = await db(supabase)
       .from('user_plans')
@@ -86,7 +96,13 @@ export async function POST(req: NextRequest) {
         total_weeks:  tmpl.weeks_max ?? tmpl.weeks_min ?? 12,
         current_week: 1,
         weeks_data:   tmpl.weeks_data,
-        meta:         { source: 'coach_assigned', template_id, assigned_by: user.id },
+        meta: {
+          source:           'coach_assigned',
+          template_id,
+          assigned_by:      user.id,
+          assigned_reason:  reason,
+          assigned_at:      new Date().toISOString(),
+        },
       })
       .select()
       .single()
@@ -99,7 +115,6 @@ export async function POST(req: NextRequest) {
     // a cast. Wrapped in try/catch so a counter-bump failure doesn't
     // shadow the successful plan creation.
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const tmplStarts = (tmpl as { total_starts?: number | null }).total_starts ?? 0
       await db(supabase)
         .from('plan_templates')
@@ -107,10 +122,39 @@ export async function POST(req: NextRequest) {
         .eq('id', template_id)
     } catch { /* non-blocking — counter is decorative */ }
 
+    // 6. BL-C3 — push the rationale to the athlete. fire-and-forget; the
+    // in-app notification mirror inside coachPush ensures the athlete sees
+    // the change even if push delivery fails. The reason itself is the
+    // body so the athlete reads the *why* on their lock-screen.
+    const { data: coachProfile } = await db(supabase)
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .maybeSingle()
+    const coachName = (coachProfile as { display_name?: string } | null)?.display_name ?? 'Your coach'
+
+    const trimmedReason = reason.trim()
+    const reasonPreview = trimmedReason.length > 140 ? trimmedReason.slice(0, 137) + '…' : trimmedReason
+
+    void coachPush({
+      recipientId:    athlete_id,
+      title:          `${coachName} updated your plan`,
+      body:           `${tmpl.name} — ${reasonPreview}`,
+      destinationUrl: '/train',
+      type:           'plan_change',
+      data:           {
+        coach_id:    user.id,
+        template_id,
+        plan_name:   tmpl.name,
+        reason:      trimmedReason,
+      },
+      feature:        'blc3-plan-change',
+    })
+
     return NextResponse.json({ ok: true, plan: newPlan })
 
   } catch (err) {
-    Sentry.captureException(err, { extra: { context: '[coach/plans/assign]' } })
+    Sentry.captureException(err, { tags: { feature: 'blc3-plan-change' }, extra: { context: '[coach/plans/assign]' } })
     return NextResponse.json({ error: 'Failed to assign plan' }, { status: 500 })
   }
 }

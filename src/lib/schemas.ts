@@ -99,7 +99,13 @@ export const CoachAnnotateSchema = z.object({
   session_i:  sessionI,
   note:       z.string().max(1000).optional(),
   reaction:   z.enum(['fire', 'strong', 'easy', 'talk', 'great']).optional(),
-})
+}).refine(
+  // BL-C2 — 2-tap reaction path sends reaction-only; typed-note path sends
+  // note-only. At least one must be present (mirrors the DB CHECK in
+  // phase-blc2-annotation-reaction-only-v1.sql).
+  d => (d.note && d.note.trim().length > 0) || !!d.reaction,
+  { message: 'Provide a note or a reaction', path: ['note'] },
+)
 export type CoachAnnotateInput = z.infer<typeof CoachAnnotateSchema>
 
 export const CoachReviewSchema = z.object({

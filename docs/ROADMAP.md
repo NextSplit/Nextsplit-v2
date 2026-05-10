@@ -493,9 +493,9 @@ Each item: ID — Title (R1 source) — Thread / Persona / Status / Target phase
 - BL-B5 — Gap-recovery copy that doesn't shame interrupted streaks — T2 / all / TRIAGE / P2
 
 **OPTION C — Coach-React Loop + Delayed-Start Trial (Phase 3, BLOCKED on schema + ICO)**
-- BL-C1 — `session_annotations` migration (RLS, FK to `training_logs`, indices) — T1 / D,F / NEXT / P1 cleanup or P3 prereq
-- BL-C2 — Coach 2-tap reaction surface on athlete log — T4 / D,F / TRIAGE / P3
-- BL-C3 — Athlete plan-change push with reason field (mandatory, not optional) — T4 / D / TRIAGE / P3
+- BL-C1 — `session_annotations` migration (RLS, FK to `training_logs`, indices) — T1 / D,F / ✅ SHIPPED prior — table exists with RLS + 2 policies; verified live. (BL-C2 above adds the reaction-only nullable migration on top.)
+- BL-C2 — Coach 2-tap reaction surface on athlete log — T4 / D,F / ✅ SHIPPED — phase-blc2-annotation-reaction-only-v1.sql drops `session_annotations.note NOT NULL` + adds CHECK (note OR reaction); CoachAnnotateSchema refines to require one or the other; `/api/coach/annotate` allows reaction-only inserts and pushes the coach's reaction to the athlete via shared `coachPush` helper (mirrors notifications + web-push fan-out). Closes the silent-fail bug where reactions UI dispatched but DB rejected.
+- BL-C3 — Athlete plan-change push with reason field (mandatory, not optional) — T4 / D / ✅ SHIPPED — `/api/coach/plans/assign` adds required `reason: z.string().min(10).max(500)`; persists in `user_plans.meta.assigned_reason`; pushes athlete with reason as the body so they read the rationale on lock-screen. PlanBuilderClient assign sheet now two-step: pick athlete → reason textarea (10 min / 500 max) → "Assign + send".
 - BL-C4 — Coach-Pro Monday digest (cache layer + idempotency key + fan-out, not synchronous) — T4, T8 / F / TRIAGE / P3
 - BL-C5 — Delayed-start 14-day trial (begins day 8, overlaps churn window) — T5 / all / TRIAGE / P3 or P4
 - BL-C6 — Trial unlock on squad-join OR first coach msg (avoids hard Stripe dependency) — T5 / all / TRIAGE / P3
