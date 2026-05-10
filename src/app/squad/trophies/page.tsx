@@ -15,15 +15,20 @@ export default async function TrophyRoomPage() {
 
   // Find the user's squad (leader or member)
   let squadId: string | null = null
-  let isPremium = false
 
+  // P4.6 bug fix: this page previously queried profiles.subscription_tier
+  // which does not exist as a column (live schema uses is_pro boolean per
+  // useSubscription / Stripe webhook). isPremium was always false, blocking
+  // Pro users from the monthly + annual season sections of the Trophy Room
+  // (the gated "Premium" tiles below). Switching to is_pro restores the
+  // intended unlock for paying users.
   const { data: profile } = await s
     .from('profiles')
-    .select('subscription_tier')
+    .select('is_pro')
     .eq('id', user.id)
     .single()
 
-  isPremium = profile?.subscription_tier === 'premium'
+  const isPremium: boolean = !!profile?.is_pro
 
   const { data: ledSquad } = await s
     .from('squads')
