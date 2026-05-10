@@ -610,6 +610,12 @@ export default function CoachDashboardClient({ coachProfile }: { coachProfile: C
               <p className="text-sm font-bold text-gray-800">Plan Builder</p>
               <p className="text-xs text-[var(--color-text-tertiary)]">Build plans for athletes</p>
             </Link>
+            <Link href="/coach/marketplace"
+              className="bg-white rounded-2xl border border-[var(--color-border)] p-3.5 space-y-1 active:bg-gray-50">
+              <span className="text-xl">📚</span>
+              <p className="text-sm font-bold text-gray-800">My Plans</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">Edit + publish + assign</p>
+            </Link>
             <Link href="/coach/earnings"
               className="bg-white rounded-2xl border border-[var(--color-border)] p-3.5 space-y-1 active:bg-gray-50">
               <span className="text-xl">💰</span>
