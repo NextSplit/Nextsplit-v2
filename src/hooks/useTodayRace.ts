@@ -35,6 +35,7 @@ export interface TodayRaceData {
     result_timeline: Array<{ user_id: string; splits: number[] }>
     computed_at:     string
   } | null
+  runner_cosmetics?: Record<string, { kit_colour?: string }>
 }
 
 interface UseTodayRaceReturn {
