@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { Analytics } from '@/lib/analytics'
+import { useSubscription } from '@/hooks/useSubscription'
+import { getPricing } from '@/lib/pricing'
 
 // BL-C6 — trial countdown banner on Home.
 //
@@ -22,13 +24,16 @@ interface Props {
   trialSource:    'squad_join' | 'first_coach_message' | 'day8_auto' | null
 }
 
-function tierFor(days: number): { bg: string; border: string; accent: string; lead: string } {
+// OQ#3 = A — pricing label uses single source of truth so the trial CTA
+// matches what Stripe will actually charge (founding £7.99 vs standard £9.99).
+function tierFor(days: number, monthlyPrice: string, isFounding: boolean): { bg: string; border: string; accent: string; lead: string } {
+  const lockLine = isFounding ? `lock in founding ${monthlyPrice}/mo` : `lock in ${monthlyPrice}/mo`
   if (days <= 3) {
     return {
       bg:     'linear-gradient(135deg, rgba(255,61,110,0.18), rgba(255,61,110,0.08))',
       border: 'rgba(255,61,110,0.45)',
       accent: '#ff3d6e',
-      lead:   `${days === 0 ? 'Trial ends today' : `${days} day${days === 1 ? '' : 's'} left`} — lock in founding £7.99/mo`,
+      lead:   `${days === 0 ? 'Trial ends today' : `${days} day${days === 1 ? '' : 's'} left`} — ${lockLine}`,
     }
   }
   if (days <= 7) {
@@ -36,7 +41,7 @@ function tierFor(days: number): { bg: string; border: string; accent: string; le
       bg:     'linear-gradient(135deg, rgba(255,184,0,0.16), rgba(255,184,0,0.06))',
       border: 'rgba(255,184,0,0.45)',
       accent: '#ffb800',
-      lead:   `${days} days left — lock in founding price`,
+      lead:   `${days} days left — ${lockLine}`,
     }
   }
   return {
@@ -54,10 +59,12 @@ const SOURCE_LABEL: Record<string, string> = {
 }
 
 export function TrialBanner({ show, trialDaysLeft, trialSource }: Props) {
+  const { foundingLeft } = useSubscription()
   if (!show || trialDaysLeft === null) return null
 
-  const tier   = tierFor(trialDaysLeft)
-  const label  = trialSource ? SOURCE_LABEL[trialSource] ?? 'Trial active' : 'Trial active'
+  const pricing = getPricing(foundingLeft)
+  const tier    = tierFor(trialDaysLeft, pricing.monthly, pricing.isFounding)
+  const label   = trialSource ? SOURCE_LABEL[trialSource] ?? 'Trial active' : 'Trial active'
 
   return (
     <Link
