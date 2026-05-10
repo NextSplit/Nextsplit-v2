@@ -19,6 +19,7 @@
 import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { runMondayDigest } from '@/lib/monday-digest'
 
 // Returns the user's local hour (0-23) given an IANA timezone, or null
 // if Intl can't resolve it. Errors are swallowed to default-allow.
@@ -54,6 +55,28 @@ export async function GET(req: Request) {
     const now      = new Date()
     const isSunday = now.getUTCDay() === 0
     const todayStr = now.toISOString().slice(0, 10)
+
+    // BL-C4 Coach-Pro Monday digest: idempotent per (coach_id, ISO-week)
+    // via coach_digest_runs UNIQUE constraint. Runs on Mondays before the
+    // user-notify cycle so coaches see their digest near the start of
+    // their week. Fire-and-forget — fan-out failures Sentry-log
+    // (feature: 'blc4-monday-digest') but don't block notifications.
+    if (now.getUTCDay() === 1) {
+      try {
+        const result = await runMondayDigest()
+        Sentry.addBreadcrumb({
+          category: 'cron',
+          message:  '[smart-notify monday-digest]',
+          level:    'info',
+          data:     result,
+        })
+      } catch (digestErr) {
+        Sentry.captureException(digestErr, {
+          tags:  { feature: 'blc4-monday-digest' },
+          extra: { context: '[smart-notify monday-digest]' },
+        })
+      }
+    }
 
     // P3.10 Squad seasons (light): if this is the 1st of the month, snapshot
     // the previous month's squad season totals before the user-notify cycle.
