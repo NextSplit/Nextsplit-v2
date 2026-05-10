@@ -11,9 +11,13 @@
 //
 // Priority order, first match wins (one notification per user per fire):
 //   1. Sunday → weekly wrap (regardless of log state)
-//   2. TODO(P1.x): leader-queued squad nudge (from squad_nudges queue)
-//   3. TODO(P1.x): at-risk squad-member detection (no log in N+ days)
-//   4. Active plan + not logged today → keep-streak fallback
+//   2. Leader-queued squad nudge (squad_nudges.queued_for_date = today) — runs
+//      pre-loop via runCronSlot2QueuedNudges; not in the per-user cascade
+//      because each row already has a specific recipient.
+//   3. At-risk squad-member detection (no done log in last 3 days) — runs
+//      pre-loop via runCronSlot3AtRiskDetection; idempotent via 72h
+//      notifications-table check.
+//   4. Active plan + not logged today → keep-streak fallback (per-user loop below)
 //   5. No notification
 
 import * as Sentry from '@sentry/nextjs'
@@ -21,6 +25,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { runMondayDigest } from '@/lib/monday-digest'
 import { runTrialLifecycleSweep, runDay8AutoTrialSweep } from '@/lib/trial-lifecycle'
+import { runCronSlot2QueuedNudges, runCronSlot3AtRiskDetection } from '@/lib/cron-slots'
 
 // Returns the user's local hour (0-23) given an IANA timezone, or null
 // if Intl can't resolve it. Errors are swallowed to default-allow.
@@ -75,6 +80,43 @@ export async function GET(req: Request) {
       Sentry.captureException(day8Err, {
         tags:  { feature: 'blc5-day8-trial' },
         extra: { context: '[smart-notify day8-auto-trial]' },
+      })
+    }
+
+    // Slot 2 — leader-queued squad nudges. Reads squad_nudges.queued_for_date
+    // = today, fires push using the variant + clears the queue marker for
+    // idempotency. Fan-out failure tagged feature='cron-slot-2-queued-nudge'.
+    try {
+      const slot2 = await runCronSlot2QueuedNudges()
+      Sentry.addBreadcrumb({
+        category: 'cron',
+        message:  '[smart-notify slot-2-queued-nudge]',
+        level:    'info',
+        data:     slot2,
+      })
+    } catch (slot2Err) {
+      Sentry.captureException(slot2Err, {
+        tags:  { feature: 'cron-slot-2-queued-nudge' },
+        extra: { context: '[smart-notify slot-2]' },
+      })
+    }
+
+    // Slot 3 — at-risk squad-member detection. For each user in a squad
+    // with ≥ 2 members AND no done log in last 3d AND no `squad_at_risk`
+    // notification in last 72h → fire NUDGE_MESSAGES['missing'] push.
+    // Idempotency via notifications-table check, no new schema.
+    try {
+      const slot3 = await runCronSlot3AtRiskDetection()
+      Sentry.addBreadcrumb({
+        category: 'cron',
+        message:  '[smart-notify slot-3-at-risk]',
+        level:    'info',
+        data:     slot3,
+      })
+    } catch (slot3Err) {
+      Sentry.captureException(slot3Err, {
+        tags:  { feature: 'cron-slot-3-at-risk' },
+        extra: { context: '[smart-notify slot-3]' },
       })
     }
 
@@ -182,15 +224,10 @@ export async function GET(req: Request) {
         continue
       }
 
-      // Slot 2 — TODO(P1.x): leader-queued squad nudge.
-      // SELECT FROM squad_nudges WHERE to_user = user.id AND queued_for_date = todayStr
-      //   → push using NUDGE_MESSAGES[message_key] from @/lib/squad-nudges.
-      // Lands here when the leader-nudge Home pill (P1.1) starts queuing.
-
-      // Slot 3 — TODO(P1.x): at-risk squad-member detection.
-      // For each squad the user belongs to, if no training_logs in last
-      // 3 days AND squad has ≥ 2 active members, push "your squad's lacing
-      // up — want in?". Forward-looking only (see squad-nudges.ts header).
+      // Slot 2 + Slot 3 are dispatched pre-loop above (separate fan-out
+      // queries — they don't fit the per-user iteration model since each
+      // queued nudge already has a specific recipient and the at-risk
+      // sweep aggregates across squads).
 
       // Slot 4: keep-streak fallback (active plan + nothing logged today).
       if (hasPlan.has(user.id) && !loggedToday.has(user.id)) {
