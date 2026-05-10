@@ -36,6 +36,7 @@ import { computeRPGStats, RPG_BADGES } from '@/lib/rpg'
 import HeroCard from '@/components/rpg/HeroCard'
 import { BuildClassCard } from '@/components/rpg/BuildClassCard'
 import { useActiveCosmetics, activeKitColour } from '@/hooks/useActiveCosmetics'
+import { EliteTriggerBanner } from '@/components/EliteTriggerBanner'
 import WeeklyXPChart from '@/components/rpg/WeeklyXPChart'
 import XPFeed from '@/components/rpg/XPFeed'
 import BadgeGrid from '@/components/rpg/BadgeGrid'
@@ -186,6 +187,12 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
             onCustomise={() => { /* deferred — tap settings to customise */ }}
           />
         )}
+
+        {/* P4.3 — plan-completion Elite trigger. Inert today; lights up
+            when paywall enforced. Trigger: user's current plan has
+            status='completed' (most recent plan in useActivePlan returns
+            it briefly until they archive + start a new one). */}
+        <EliteTriggerBanner kind="plan_complete" show={planComplete} />
 
         {/* Build class picker / stat card (Phase 3+ Race tab foundation) */}
         <BuildClassCard />

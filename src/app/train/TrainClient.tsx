@@ -26,6 +26,7 @@ import { shareSessionWithSquadAction } from '@/app/today/actions'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import PreRunBrief from '@/components/PreRunBrief'
 import { MyCoachBanner } from '@/components/coach/MyCoachBanner'
+import { EliteTriggerBanner } from '@/components/EliteTriggerBanner'
 import MilestoneCard, { MILESTONES } from '@/components/MilestoneCard'
 import PlanPathSVG from '@/components/plan/PlanPathSVG'
 
@@ -229,6 +230,26 @@ export default function TrainClient() {
 
   // Streak
   const streak = computeStreak(allLogs.map((l: TrainingLog) => ({ logged_at: l.created_at, done: l.done }))).current
+
+  // P4.3 four_weeks trigger — distinct ISO weeks with at least one done
+  // log inside the last 28 days. Threshold ≥ 4 weeks. Cheap derivation
+  // off the existing allLogs array; no extra fetch.
+  const fourWeeksLogged = (() => {
+    const cutoff = Date.now() - 28 * 24 * 3600 * 1000
+    const weekKeys = new Set<string>()
+    for (const l of allLogs as TrainingLog[]) {
+      if (!l.done) continue
+      const ts = new Date(l.created_at).getTime()
+      if (ts < cutoff) continue
+      const d = new Date(l.created_at)
+      // ISO week key — year + week index
+      const yr = d.getUTCFullYear()
+      const start = Date.UTC(yr, 0, 1)
+      const wk = Math.floor((d.getTime() - start) / (7 * 24 * 3600 * 1000))
+      weekKeys.add(`${yr}-${wk}`)
+    }
+    return weekKeys.size >= 4
+  })()
 
   // ACWR from weeks data
   const acwr = (() => {
@@ -566,6 +587,11 @@ export default function TrainClient() {
 
           {/* ══ Coach banner — P3.3 ══ */}
           <MyCoachBanner />
+
+          {/* ══ P4.3 — 4+ weeks Elite trigger. Inert today; lights up
+                when paywall enforced. Trigger: ≥4 distinct ISO weeks
+                with at least one done log within the last 28 days. */}
+          <EliteTriggerBanner kind="four_weeks" show={fourWeeksLogged} />
 
           {/* ══ Stats strip ══ */}
           <StatsStrip weeklyKm={weeklyKm} acwr={acwr} streak={streak} />
