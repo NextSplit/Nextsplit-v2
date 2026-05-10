@@ -6,18 +6,32 @@ import { zodError } from '@/lib/schemas'
 
 import { nudgeMessage, pickNudgeVariant } from '@/lib/squad-nudges'
 
+// PR W — leader-queued nudge UI completion. queued_for_date optional,
+// must be a YYYY-MM-DD string within +14 days of today (cap to prevent
+// runaway-future schedules clogging the queue).
 const NudgeSchema = z.object({
-  to_user:     z.string().uuid(),
-  message_key: z.enum(['missing', 'week', 'ran', 'checkin', 'streak', 'champion', 'day', 'motivation']),
-})
+  to_user:         z.string().uuid(),
+  message_key:     z.enum(['missing', 'week', 'ran', 'checkin', 'streak', 'champion', 'day', 'motivation']),
+  queued_for_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+}).refine(d => {
+  if (!d.queued_for_date) return true
+  const ts    = new Date(d.queued_for_date + 'T12:00:00Z').getTime()
+  const today = new Date(); today.setUTCHours(0, 0, 0, 0)
+  const max   = today.getTime() + 14 * 86400_000
+  return Number.isFinite(ts) && ts >= today.getTime() && ts <= max
+}, { message: 'queued_for_date must be today or within 14 days', path: ['queued_for_date'] })
 
 /**
  * POST /api/squad/nudge — send a nudge to a squad member.
  *
- * P3.9 effectiveness pipeline: picks a deterministic A/B variant per
- * (sender, recipient) pair, persists template_variant + nudge_id breadcrumb
- * onto the resulting notifications row so /api/squad/nudge/track can flip
- * opened_at / dismissed_at on recipient interaction.
+ * Two paths:
+ *   · Immediate (no queued_for_date) — inserts squad_nudges row + fires
+ *     in-app notification immediately. P3.9 effectiveness pipeline picks
+ *     deterministic A/B variant per (sender, recipient) pair.
+ *   · Scheduled (queued_for_date set) — inserts squad_nudges row with
+ *     queued_for_date populated. Smart-notify cron slot 2 picks it up on
+ *     the matching UTC date, fires the push, clears queued_for_date.
+ *     Skips the immediate notification insert.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -27,7 +41,8 @@ export async function POST(req: NextRequest) {
 
     const parsed = NudgeSchema.safeParse(await req.json())
     if (!parsed.success) return zodError(parsed.error)
-    const { to_user, message_key } = parsed.data
+    const { to_user, message_key, queued_for_date } = parsed.data
+    const isQueued = !!queued_for_date
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const s = supabase as any
@@ -51,9 +66,15 @@ export async function POST(req: NextRequest) {
 
     if (!member) return NextResponse.json({ error: 'Not a squad member' }, { status: 404 })
 
-    const { data: canNudge } = await s.rpc('can_nudge', { p_from: user.id, p_to: to_user })
-    if (!canNudge) {
-      return NextResponse.json({ error: 'Already nudged this member today' }, { status: 429 })
+    // Per-day rate-limit check is for IMMEDIATE nudges only. Scheduled
+    // nudges queue on a future date and don't compete with today's quota
+    // for the (from_user, to_user) pair — the cron's queue-pop on the
+    // delivery date is the natural rate gate.
+    if (!isQueued) {
+      const { data: canNudge } = await s.rpc('can_nudge', { p_from: user.id, p_to: to_user })
+      if (!canNudge) {
+        return NextResponse.json({ error: 'Already nudged this member today' }, { status: 429 })
+      }
     }
 
     const variant     = pickNudgeVariant(user.id, to_user)
@@ -67,9 +88,24 @@ export async function POST(req: NextRequest) {
         to_user,
         message_key,
         template_variant: variant,
+        queued_for_date:  queued_for_date ?? null,
       })
       .select('id')
       .single()
+
+    // Scheduled nudge: skip the immediate notification — slot 2 cron will
+    // fire it on the matching date with the same metadata. Return early
+    // so the leader sees a "queued" confirmation in the UI.
+    if (isQueued) {
+      return NextResponse.json({
+        queued:           true,
+        queued_for_date,
+        message:          messageText,
+        variant,
+        nudge_id:         nudgeRow?.id ?? null,
+        squad_id:         squad.id,
+      })
+    }
 
     const { data: senderProfile } = await s
       .from('profiles')

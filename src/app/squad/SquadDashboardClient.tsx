@@ -184,6 +184,9 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
   const [showNudge, setShowNudge]       = useState(false)
   const [nudgeTarget, setNudgeTarget]   = useState<string | null>(null)
   const [nudgeKey, setNudgeKey]         = useState<string>('missing')
+  // PR W — leader-queued nudge: 'now' = immediate fire (existing path);
+  // 'tomorrow' / '+3d' / '+7d' = queue for that UTC date via cron slot 2.
+  const [nudgeWhen, setNudgeWhen]       = useState<'now' | 'tomorrow' | 'plus3' | 'plus7'>('now')
   const [nudgeSending, setNudgeSending] = useState(false)
   const [nudgeSent, setNudgeSent]       = useState<string | null>(null)
   const [showShare, setShowShare]       = useState(false)
@@ -209,10 +212,20 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
     if (!nudgeTarget) return
     setNudgeSending(true)
     try {
+      // PR W — translate the schedule chip into a UTC-date string. Cron slot 2
+      // matches against UTC date so the schedule maps to the next 14:00 UTC fire
+      // on that day (which is morning in EU/Americas, evening in APAC — quiet
+      // hours per smart-notify already handle timezone clamping).
+      let queued_for_date: string | undefined
+      if (nudgeWhen !== 'now') {
+        const offsetDays = nudgeWhen === 'tomorrow' ? 1 : nudgeWhen === 'plus3' ? 3 : 7
+        const target = new Date(Date.now() + offsetDays * 86400_000)
+        queued_for_date = target.toISOString().slice(0, 10)
+      }
       const res = await fetch('/api/squad/nudge', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ to_user: nudgeTarget, message_key: nudgeKey }),
+        body:    JSON.stringify({ to_user: nudgeTarget, message_key: nudgeKey, queued_for_date }),
       })
       if (res.ok) {
         const data = await res.json().catch(() => null)
@@ -225,6 +238,7 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
         })
         setNudgeSent(nudgeTarget)
         setShowNudge(false)
+        setNudgeWhen('now')  // reset for next open
         setTimeout(() => setNudgeSent(null), 3000)
       }
     } finally {
@@ -453,10 +467,48 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
                 )
               })}
             </div>
+
+            {/* PR W — schedule chips. Default 'Now' fires immediately
+                (existing behaviour). The other chips queue to a UTC
+                date that the smart-notify cron slot 2 picks up at the
+                next 14:00 UTC fire on that day. */}
+            <div className="mb-4">
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-2"
+                 style={{ color: 'var(--color-text-tertiary)' }}>
+                When to send
+              </p>
+              <div className="flex gap-1.5">
+                {([
+                  { id: 'now',      label: 'Now' },
+                  { id: 'tomorrow', label: 'Tomorrow' },
+                  { id: 'plus3',    label: '+3 days' },
+                  { id: 'plus7',    label: '+7 days' },
+                ] as const).map(opt => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setNudgeWhen(opt.id)}
+                    className="flex-1 py-2 rounded-xl text-xs font-bold transition-all"
+                    style={{
+                      background: nudgeWhen === opt.id ? `${colour}20` : 'var(--color-surface-2)',
+                      border:     nudgeWhen === opt.id ? `1px solid ${colour}40` : '1px solid transparent',
+                      color:      nudgeWhen === opt.id ? colour : 'var(--color-text-tertiary)',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button onClick={sendNudge} disabled={nudgeSending}
               className="w-full py-4 rounded-2xl font-bold text-white text-sm transition-all disabled:opacity-60"
               style={{ background: colour }}>
-              {nudgeSending ? 'Sending…' : 'Send nudge 👟'}
+              {nudgeSending
+                ? 'Sending…'
+                : nudgeWhen === 'now'
+                  ? 'Send nudge 👟'
+                  : `Queue nudge for ${nudgeWhen === 'tomorrow' ? 'tomorrow' : nudgeWhen === 'plus3' ? '+3 days' : '+7 days'} 👟`}
             </button>
           </div>
         </div>
