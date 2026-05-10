@@ -497,7 +497,13 @@ function CoachNudge({ showTrialUnlock }: { showTrialUnlock: boolean }) {
   )
 }
 
-function SquadNudge({ showTrialUnlock }: { showTrialUnlock: boolean }) {
+// Council R1 (STRATEGIST): squad nudge stays a pure social-accountability
+// signal. The trial-unlock teaser previously here reframed the squad as
+// a transactional gate ("join → get Pro") which dilutes the founding
+// thesis (someone notices when you don't show up, not someone who
+// unlocks Pro for you). Stripped — CoachNudge keeps the teaser because
+// coach↔athlete is already a commercial relationship by design.
+function SquadNudge() {
   return (
     <Link href="/squad" className="mx-4 block active:scale-[0.98] transition-all">
       <div className="rounded-2xl p-4 flex items-center gap-3"
@@ -508,11 +514,6 @@ function SquadNudge({ showTrialUnlock }: { showTrialUnlock: boolean }) {
           <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
             Train together · weekly leaderboard · nudges
           </p>
-          {showTrialUnlock && (
-            <p className="text-[10px] font-black mt-1" style={{ color: '#7fff4d' }}>
-              🎁 Joining a squad unlocks 14 days Pro free
-            </p>
-          )}
         </div>
         <span style={{ color: '#7fff4d', fontWeight: 900 }}>→</span>
       </div>
@@ -695,66 +696,19 @@ export default function HomeClient() {
       </div>
 
       {/* ── Content ── */}
+      {/* Council R1 (UX-DESIGNER) reorder — HeroTraining was 8th in document
+          order behind 7 conversion surfaces, pushing the primary "log
+          today's session" task below the fold on small phones. New order:
+          (1) NotifStrip · (2) Hero · (3) StatsStrip · (4) at most ONE
+          conversion banner — priority TrialLapsed > Trial > Founding >
+          EliteTrigger > MotivationDip · (5) RaceCountdown · (6) RaceCard ·
+          (7) DailyQuests · (8) SquadMini · (9) conversion nudges. */}
       <div className="max-w-lg mx-auto py-4 space-y-3">
 
-        {/* Notification strip */}
+        {/* Notification strip — sticky-priority for new pushes / squad nudges */}
         <NotifStrip notifications={notifications} markRead={markRead} markOpened={markOpened} />
 
-        {/* Today's character race — compact teaser linking to /race */}
-        <RaceCard variant="compact" />
-
-        {/* BL-C6 — trial countdown. Sits above FoundingCountdown when
-            active because the immediate decision (lock in price before
-            trial expires) outranks the always-on founding pitch. Hidden
-            outside the trial window; the founding widget below covers
-            that case. */}
-        <TrialBanner
-          show={isTrialing}
-          trialDaysLeft={trialDaysLeft}
-          trialSource={subscription.trialSource}
-        />
-
-        {/* PR N — trial-lapsed winback. Mirrors the day-14 expiry push
-            for users who landed in-app without tapping the notification.
-            Only renders for 7 days after trial_ended_at, then disappears
-            so the founding widget below takes over. Dismissible per-user
-            via localStorage. */}
-        <TrialLapsedBanner
-          show={isTrialLapsed}
-          userId={profileId}
-          trialLapsedDaysAgo={trialLapsedDaysAgo}
-          trialSource={subscription.trialSource}
-        />
-
-        {/* P4.5 — founding-tier urgency widget. Inert in dev (gated on
-            !isDevMode); for non-Pro users, shows countdown until 500
-            founding spots fill, then social-proof copy after. Always-on
-            (when conditions met) so it sits above the conditional trigger
-            banners as the primary upsell surface. */}
-        <FoundingCountdown />
-
-        {/* P4.3 — 7-day streak Elite trigger. Conditional (streak >= 7).
-            Sits below the always-on founding widget so frequent users
-            see the streak-specific pitch as a second beat after the
-            primary urgency CTA. */}
-        <EliteTriggerBanner kind="seven_streak" show={streak >= 7} />
-
-        {/* P4.4 — coach motivation-dip banner. Routes to /coaches (the
-            coach economy, NOT the Pro paywall — no PREMIUM_ENFORCED gate).
-            Trigger conjunction: active plan + no done log in last 3 days
-            + no active coach already. Soft tone — these users are
-            drifting; aggressive copy worsens the dip. */}
-        <MotivationDipBanner show={!!plan && noDoneLast3Days && !hasCoach} />
-
-        {/* Race countdown */}
-        {plan?.race_date && daysToRace !== null && daysToRace >= 0 && (
-          <RaceCountdown
-            raceDate={plan.race_date}
-            raceName={(plan as unknown as { goal?: string }).goal ?? null}
-          />
-        )}
-
-        {/* ── Hero (full-bleed, one dominant action) ── */}
+        {/* ── Hero (full-bleed, one dominant action) — moved to position 1 ── */}
         {heroState === 'no_plan'     && <HeroNoPlan />}
         {heroState === 'streak_risk' && <HeroStreakAtRisk streak={streak} />}
         {heroState === 'coach'       && coach && <HeroCoach coach={coach} />}
@@ -771,8 +725,58 @@ export default function HomeClient() {
           <HeroRest planName={plan.name} nextSessions={nextSessions} />
         )}
 
-        {/* ── Stats strip ── */}
+        {/* ── Stats strip — second so weekly km / streak / ACWR is the next
+            beat after Hero, before any conversion noise. ── */}
         {plan && <StatsStrip weeklyKm={weeklyKm} streak={streak} />}
+
+        {/* ── Single conversion banner — strict priority cascade. At most
+             one renders. TrialLapsed overrides everything else because the
+             7-day winback window is the highest-conversion micro-moment.
+             Trial-active overrides Founding because the deadline is closer.
+             Founding is the always-on default for non-Pro users.
+             EliteTrigger / MotivationDip are conditional and rank below
+             Founding so we don't stack 3 surfaces above the Hero. ── */}
+        {(() => {
+          if (isTrialLapsed) {
+            return (
+              <TrialLapsedBanner
+                show={true}
+                userId={profileId}
+                trialLapsedDaysAgo={trialLapsedDaysAgo}
+                trialSource={subscription.trialSource}
+              />
+            )
+          }
+          if (isTrialing) {
+            return (
+              <TrialBanner
+                show={true}
+                trialDaysLeft={trialDaysLeft}
+                trialSource={subscription.trialSource}
+              />
+            )
+          }
+          // Founding is the always-on widget — internally gates on !isPro
+          // && !isDevMode. Other secondaries (EliteTrigger, MotivationDip)
+          // render below the line as supplementary, not in the primary slot.
+          return <FoundingCountdown />
+        })()}
+
+        {/* Race countdown — sub-30-day race only, factual not promotional */}
+        {plan?.race_date && daysToRace !== null && daysToRace >= 0 && (
+          <RaceCountdown
+            raceDate={plan.race_date}
+            raceName={(plan as unknown as { goal?: string }).goal ?? null}
+          />
+        )}
+
+        {/* Today's character race — compact teaser */}
+        <RaceCard variant="compact" />
+
+        {/* Secondary triggers — render below Hero/Stats/primary banner.
+            Each self-gates so the row is empty when conditions miss. */}
+        <EliteTriggerBanner kind="seven_streak" show={streak >= 7} />
+        <MotivationDipBanner show={!!plan && noDoneLast3Days && !hasCoach} />
 
         {/* ── Daily quests ── */}
         {plan && (
@@ -800,7 +804,7 @@ export default function HomeClient() {
           return (
             <>
               {!hasCoach && plan && <CoachNudge showTrialUnlock={showTrialUnlock} />}
-              {!squad   && plan && <SquadNudge showTrialUnlock={showTrialUnlock} />}
+              {!squad   && plan && <SquadNudge />}
             </>
           )
         })()}

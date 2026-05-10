@@ -24,6 +24,38 @@ const TODAY_ISO = (): string => new Date().toISOString().slice(0, 10)
 const THREE_DAYS_AGO_ISO = (): string =>
   new Date(Date.now() - 3 * 86400000).toISOString()
 
+// Council R1 (MOBILE-PWA + COACH-DOMAIN) — quiet-hours gate. The smart-
+// notify cron's per-user loop applies localHourFor(timezone) at 09:00–21:00
+// local; the slot 2 / slot 3 sweeps run pre-loop and bypassed it. This
+// brings them into alignment so an APAC user doesn't get pushes at 03:00.
+// Sleep disruption is a duty-of-care issue, not just UX.
+const QUIET_START_HOUR = 9
+const QUIET_END_HOUR   = 21
+
+function localHourFor(timezone: string | null): number | null {
+  if (!timezone) return null
+  try {
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: timezone, hour: '2-digit', hour12: false,
+    })
+    const parts = fmt.formatToParts(new Date())
+    const hourStr = parts.find(p => p.type === 'hour')?.value
+    if (!hourStr) return null
+    const h = parseInt(hourStr, 10)
+    return Number.isFinite(h) ? h : null
+  } catch {
+    return null
+  }
+}
+
+function isInQuietHours(timezone: string | null): boolean {
+  // Default-allow if timezone unknown — matches the smart-notify cron
+  // convention so accounts pre-timezone-column don't silently miss pushes.
+  const h = localHourFor(timezone)
+  if (h === null) return false
+  return h < QUIET_START_HOUR || h >= QUIET_END_HOUR
+}
+
 interface QueuedRow {
   id:               string
   squad_id:         string
@@ -49,6 +81,22 @@ export async function runCronSlot2QueuedNudges(): Promise<{ sent: number }> {
     for (const r of (rows ?? []) as QueuedRow[]) {
       const variant = (r.template_variant === 'b' ? 'b' : 'a') as NudgeVariant
       const body    = nudgeMessage(r.message_key, variant)
+
+      // Council R1 — recipient quiet-hours gate. Read recipient's timezone
+      // and skip if outside 09:00-21:00 local. The queued nudge stays in
+      // the queue (queued_for_date NOT cleared) so the next day's cron fire
+      // picks it up if the local hour aligns then. NOTE: this means a queued
+      // nudge can land 1 day later than the leader requested for some users
+      // — acceptable trade-off vs a 03:00 push.
+      const { data: recipientProfile } = await a
+        .from('profiles')
+        .select('timezone')
+        .eq('id', r.to_user)
+        .maybeSingle()
+      const recipientTz = (recipientProfile as { timezone?: string | null } | null)?.timezone ?? null
+      if (isInQuietHours(recipientTz)) {
+        continue  // leave queued_for_date intact; tomorrow's cron retries
+      }
 
       // Look up sender name for the push title.
       const { data: senderProfile } = await a
@@ -138,6 +186,17 @@ export async function runCronSlot3AtRiskDetection(): Promise<{ sent: number; ski
 
     const userIds = eligibleMembers.map(m => m.user_id)
 
+    // Council R1 — pull recipient timezones for quiet-hours gate. Default-
+    // allow when timezone is null (legacy accounts pre-P2.7 column).
+    const { data: tzRows } = await a
+      .from('profiles')
+      .select('id, timezone')
+      .in('id', userIds)
+    const tzByUser = new Map<string, string | null>()
+    for (const row of (tzRows ?? []) as Array<{ id: string; timezone: string | null }>) {
+      tzByUser.set(row.id, row.timezone)
+    }
+
     // 3. Pull last-3d done logs in one query — set membership tells us
     //    which users have logged recently.
     const { data: recentLogs } = await a
@@ -165,6 +224,10 @@ export async function runCronSlot3AtRiskDetection(): Promise<{ sent: number; ski
     for (const m of eligibleMembers) {
       if (loggedRecently.has(m.user_id)) { continue }
       if (recentlyNudged.has(m.user_id)) { skipped++; continue }
+      // Council R1 — quiet-hours gate per recipient. Skip silently if
+      // local time is 22:00-08:59 — tomorrow's cron fire retries when
+      // they hit the daytime window. Counts as skipped, not sent.
+      if (isInQuietHours(tzByUser.get(m.user_id) ?? null)) { skipped++; continue }
 
       await coachPush({
         recipientId:    m.user_id,

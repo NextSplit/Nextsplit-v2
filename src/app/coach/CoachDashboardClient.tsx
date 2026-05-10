@@ -401,10 +401,15 @@ export default function CoachDashboardClient({ coachProfile }: { coachProfile: C
               <p className="text-xs text-[var(--color-text-tertiary)]">{today}</p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={fetchStatus} className="text-[var(--color-text-tertiary)] text-lg px-1.5">↻</button>
+              <button
+                onClick={fetchStatus}
+                aria-label="Refresh athlete status"
+                className="text-[var(--color-text-tertiary)] text-lg px-1.5"
+              >↻</button>
               {athletes.length > 0 && (
                 <button
                   onClick={() => setShowBroadcast(true)}
+                  aria-label="Broadcast message to all athletes"
                   className="text-[var(--color-text-secondary)] text-sm font-bold px-3 py-2 rounded-xl border border-[var(--color-border-2)] active:bg-gray-50"
                 >
                   📢
