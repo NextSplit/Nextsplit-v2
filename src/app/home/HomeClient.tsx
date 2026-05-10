@@ -16,6 +16,7 @@ import Splity from '@/components/Splity'
 import DailyQuests from '@/components/DailyQuests'
 import { RaceCard } from '@/components/race/RaceCard'
 import { EliteTriggerBanner } from '@/components/EliteTriggerBanner'
+import FoundingCountdown from '@/components/FoundingCountdown'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -636,9 +637,17 @@ export default function HomeClient() {
         {/* Today's character race — compact teaser linking to /race */}
         <RaceCard variant="compact" />
 
-        {/* P4.3 — 7-day streak Elite trigger. Inert today (banner only
-            renders when paywall is enforced AND user is non-Pro). Tap
-            opens UpgradeModal with founding-tier urgency. */}
+        {/* P4.5 — founding-tier urgency widget. Inert in dev (gated on
+            !isDevMode); for non-Pro users, shows countdown until 500
+            founding spots fill, then social-proof copy after. Always-on
+            (when conditions met) so it sits above the conditional trigger
+            banners as the primary upsell surface. */}
+        <FoundingCountdown />
+
+        {/* P4.3 — 7-day streak Elite trigger. Conditional (streak >= 7).
+            Sits below the always-on founding widget so frequent users
+            see the streak-specific pitch as a second beat after the
+            primary urgency CTA. */}
         <EliteTriggerBanner kind="seven_streak" show={streak >= 7} />
 
         {/* Race countdown */}
