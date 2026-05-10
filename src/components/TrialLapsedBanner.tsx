@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Analytics } from '@/lib/analytics'
+import { useSubscription } from '@/hooks/useSubscription'
+import { getPricing } from '@/lib/pricing'
 
 // PR N — Trial-lapsed in-app winback.
 //
@@ -40,6 +42,8 @@ const SOURCE_KICKER: Record<string, string> = {
 }
 
 export function TrialLapsedBanner({ show, userId, trialLapsedDaysAgo, trialSource }: Props) {
+  const { foundingLeft } = useSubscription()
+  const pricing = getPricing(foundingLeft)
   const [dismissed, setDismissed] = useState<boolean | null>(null)
 
   // Read dismissed state once on mount. The null sentinel prevents a
@@ -102,7 +106,7 @@ export function TrialLapsedBanner({ show, userId, trialLapsedDaysAgo, trialSourc
             Trial ended {daysAgoCopy}
           </p>
           <p className="text-sm font-black mt-0.5" style={{ color: 'var(--color-text-primary)' }}>
-            {kicker} · £7.99/mo
+            {kicker} · {pricing.monthlyWithUnit}
           </p>
           <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
             Founding pricing still available. Adaptive plans, ACWR, AI coaching — all back.

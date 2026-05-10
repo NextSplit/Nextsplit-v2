@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Analytics } from '@/lib/analytics'
+import { useSubscription } from '@/hooks/useSubscription'
+import { getPricing } from '@/lib/pricing'
 
 // PR K — One-shot welcome modal that fires the first time a user lands
 // on Home with isTrialing=true. Closes the BL-C6 onboarding gap: the
@@ -70,6 +72,8 @@ function storageKey(userId: string): string {
 }
 
 export function TrialWelcomeModal({ show, userId, trialDaysLeft, trialSource, onDismiss }: Props) {
+  const { foundingLeft } = useSubscription()
+  const pricing = getPricing(foundingLeft)
   const [mounted, setMounted] = useState(false)
 
   // Skip render on the first SSR pass — we read localStorage synchronously
@@ -168,7 +172,7 @@ export function TrialWelcomeModal({ show, userId, trialDaysLeft, trialSource, on
               className="w-full py-3 rounded-2xl text-center font-bold text-xs"
               style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.85)' }}
             >
-              Lock in founding £7.99/mo →
+              Lock in {pricing.isFounding ? 'founding ' : ''}{pricing.monthlyWithUnit} →
             </Link>
           </div>
         </div>

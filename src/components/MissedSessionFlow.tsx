@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useSubscription } from '@/hooks/useSubscription'
+import { getPricing } from '@/lib/pricing'
 import type { PlanSession } from '@/types/database'
 
 interface Props {
@@ -28,7 +29,8 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
   const [adaptation, setAdaptation] = useState<AdaptationResult | null>(null)
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState('')
-  const { isPro }               = useSubscription()
+  const { isPro, foundingLeft } = useSubscription()
+  const pricing                 = getPricing(foundingLeft)
 
   async function handleAdapt() {
     setLoading(true)
@@ -184,14 +186,14 @@ export default function MissedSessionFlow({ session, weekN, planId, onMarkMissed
               <div className="bg-[var(--ns-ember-light)] rounded-2xl p-4 mb-4">
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--ns-ember)' }}>
                   <span className="font-bold">NextSplit Elite</span> adapts your plan every time life intervenes —
-                  through missed weeks, illness, and busy periods. £7.99/month founding (£9.99 standard).
+                  through missed weeks, illness, and busy periods. {pricing.isFounding ? `${pricing.monthly}/month founding (£9.99 standard)` : `${pricing.monthly}/month`}.
                 </p>
               </div>
 
               <button onClick={() => window.location.href = '/profile?upgrade=1'}
                 className="w-full py-4 rounded-2xl text-sm font-bold text-white mb-3"
                 style={{ background: 'var(--ns-ember)' }}>
-                Unlock Elite — £7.99/month →
+                Unlock Elite — {pricing.monthly}/month →
               </button>
               <button onClick={onMarkMissed} className="w-full py-2 text-xs text-[var(--color-text-tertiary)]">
                 Just mark as missed

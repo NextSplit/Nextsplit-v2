@@ -2,37 +2,50 @@
 
 import { useState, useEffect } from 'react'
 import { Analytics } from '@/lib/analytics'
+import { getPricing } from '@/lib/pricing'
 
 interface Props {
   onClose:      () => void
   foundingLeft?: number  // spots remaining, null = standard pricing
 }
 
-const FOUNDING_FEATURES = [
-  { emoji: '🔒', text: 'Locked in at £7.99/mo forever — price never rises' },
-  { emoji: '⚡', text: 'Unlimited AI coaching calls' },
-  { emoji: '📊', text: 'Full analytics — ACWR, pace zones, trends' },
-  { emoji: '🏋️', text: 'Gym + strength sessions in every plan' },
-  { emoji: '🎯', text: 'Multiple goals and race targets' },
-  { emoji: '🏆', text: 'Full RPG character + all badges' },
-  { emoji: '👥', text: 'Coach marketplace access' },
-  { emoji: '⭐', text: 'Founding Member badge on your profile' },
-]
+// OQ#3 = A — hard step £7.99 → £9.99 at spot 501. The single source of
+// truth for the price label is `getPricing(foundingLeft)` so we never
+// drift from what the Stripe checkout actually charges (server picks
+// PRICES.founding_monthly vs standard_monthly via isFoundingAvailable()).
 
 export function UpgradeModal({ onClose, foundingLeft }: Props) {
   const [interval, setInterval]   = useState<'monthly' | 'annual'>('monthly')
   const [loading, setLoading]     = useState(false)
   const [error, setError]         = useState('')
-  const isFounding                = (foundingLeft ?? 1) > 0
+  const pricing                   = getPricing(foundingLeft)
+  const isFounding                = pricing.isFounding
 
   useEffect(() => {
     Analytics.upgradePromptShown('pro', 'upgrade_modal')
   }, [])
 
-  const monthlyPrice = isFounding ? '£7.99' : '£13.99'
-  const annualPrice  = isFounding ? '£79.99' : '£99.99'
-  const annualMonthly = isFounding ? '£6.67' : '£8.33'
-  const saving        = isFounding ? '17%' : '41%'
+  // Annual pricing tracks the monthly hard step at the same conversion factor
+  // (~10× monthly = annual; ~17%/41% saving vs monthly billing).
+  const monthlyPrice  = pricing.monthly                    // '£7.99' or '£9.99'
+  const annualPrice   = isFounding ? '£79.99' : '£99.99'   // ~10× monthly
+  const annualMonthly = isFounding ? '£6.67'  : '£8.33'    // annual / 12
+  const saving        = isFounding ? '17%'    : '17%'      // same % saving across tiers
+
+  const FOUNDING_LOCK_LINE = isFounding
+    ? `Locked in at ${monthlyPrice}/mo forever — price never rises`
+    : `${monthlyPrice}/mo standard pricing — locked in for life of subscription`
+
+  const features = [
+    { emoji: '🔒', text: FOUNDING_LOCK_LINE },
+    { emoji: '⚡', text: 'Unlimited AI coaching calls' },
+    { emoji: '📊', text: 'Full analytics — ACWR, pace zones, trends' },
+    { emoji: '🏋️', text: 'Gym + strength sessions in every plan' },
+    { emoji: '🎯', text: 'Multiple goals and race targets' },
+    { emoji: '🏆', text: 'Full RPG character + all badges' },
+    { emoji: '👥', text: 'Coach marketplace access' },
+    ...(isFounding ? [{ emoji: '⭐', text: 'Founding Member badge on your profile' }] : []),
+  ]
 
   const handleUpgrade = async () => {
     setLoading(true)
@@ -74,7 +87,7 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
                 <p className="text-xs font-black text-amber-800">
                   Founding Member — {foundingLeft} spots left
                 </p>
-                <p className="text-xs text-amber-600">Lock in £7.99/mo forever. Price rises after {foundingLeft} more.</p>
+                <p className="text-xs text-amber-600">Lock in {monthlyPrice}/mo forever. Price rises to £9.99/mo after {foundingLeft} more.</p>
               </div>
             </div>
           )}
@@ -130,7 +143,7 @@ export function UpgradeModal({ onClose, foundingLeft }: Props) {
 
           {/* Features */}
           <div className="bg-[#f8f8f6] rounded-2xl p-4 mb-5 space-y-2.5">
-            {FOUNDING_FEATURES.map(f => (
+            {features.map(f => (
               <div key={f.text} className="flex items-center gap-3 text-sm text-gray-700">
                 <span className="text-base shrink-0">{f.emoji}</span>
                 <span>{f.text}</span>
