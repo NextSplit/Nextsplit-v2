@@ -81,7 +81,17 @@ function InviteModal({ onClose }: { onClose: () => void }) {
   )
 }
 
-function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athleteCount: number }) {
+function BroadcastModal({
+  onClose, athleteCount, athleteIds, filterLabel,
+}: {
+  onClose:      () => void
+  athleteCount: number
+  /** P3.5 — when present, broadcast targets only this subset (filtered
+   * view) rather than all active athletes. Empty / undefined = all. */
+  athleteIds?:  string[]
+  /** Display label for the filter context, e.g. "amber" or "silent". */
+  filterLabel?: string
+}) {
   const [body, setBody]     = useState('')
   const [sending, setSending] = useState(false)
   const [sent, setSent]     = useState(false)
@@ -101,12 +111,19 @@ function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athlet
       await fetch('/api/coach/broadcast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ body }),
+        body: JSON.stringify({
+          body,
+          ...(athleteIds?.length ? { athlete_ids: athleteIds } : {}),
+        }),
       })
       setSent(true)
       setTimeout(() => { setSent(false); onClose() }, 2000)
     } finally { setSending(false) }
   }
+
+  const targetLabel = filterLabel
+    ? `${athleteCount} ${filterLabel} athlete${athleteCount !== 1 ? 's' : ''}`
+    : `${athleteCount} active athlete${athleteCount !== 1 ? 's' : ''}`
 
   return (
     <>
@@ -114,14 +131,16 @@ function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athlet
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 space-y-4 max-w-lg mx-auto">
         <div className="w-10 h-1 bg-[var(--color-surface-3)] rounded-full mx-auto" />
         <div>
-          <h2 className="text-base font-black text-gray-900">Message all athletes</h2>
-          <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Sends to all {athleteCount} active athlete{athleteCount !== 1 ? 's' : ''}</p>
+          <h2 className="text-base font-black text-gray-900">
+            {filterLabel ? `Message ${filterLabel} athletes` : 'Message all athletes'}
+          </h2>
+          <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Sends to {targetLabel}</p>
         </div>
 
         {sent ? (
           <div className="py-6 text-center">
             <p className="text-2xl mb-2">✓</p>
-            <p className="text-sm font-bold text-emerald-700">Sent to {athleteCount} athlete{athleteCount !== 1 ? 's' : ''}</p>
+            <p className="text-sm font-bold text-emerald-700">Sent to {targetLabel}</p>
           </div>
         ) : (
           <>
@@ -145,7 +164,7 @@ function BroadcastModal({ onClose, athleteCount }: { onClose: () => void; athlet
             <button onClick={send} disabled={sending || !body.trim()}
               className="w-full py-3 rounded-2xl text-white text-sm font-bold disabled:opacity-40"
               style={{ background: 'var(--ns-violet)' }}>
-              {sending ? 'Sending…' : `Send to ${athleteCount} athlete${athleteCount !== 1 ? 's' : ''}`}
+              {sending ? 'Sending…' : `Send to ${targetLabel}`}
             </button>
           </>
         )}
@@ -462,21 +481,44 @@ export default function CoachDashboardClient({ coachProfile }: { coachProfile: C
           </div>
         )}
 
-        {/* Empty state */}
-        {!loading && athletes.length === 0 && (
-          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-8 text-center">
-            <div className="text-4xl mb-3">👥</div>
-            <h3 className="text-sm font-bold text-gray-900 mb-1">No athletes yet</h3>
-            <p className="text-xs text-[var(--color-text-tertiary)] mb-4">Invite runners to your squad to start coaching.</p>
-            <button
-              onClick={() => setShowInvite(true)}
-              className="text-xs font-bold px-4 py-2 rounded-xl text-white"
-              style={{ background: 'var(--ns-violet)' }}
-            >
-              Generate invite link →
-            </button>
-          </div>
-        )}
+        {/* Empty state — P3.7 first-athlete-by-day-7 milestone tracker.
+            Shows days since coach signup. Tone progresses: warm copy 0-7d,
+            urgent copy 8-14d, gentle reminder 15+d. coach.created_at is
+            available via the coachProfile prop passed from /coach/page.tsx
+            server. */}
+        {!loading && athletes.length === 0 && (() => {
+          const createdAt = (coachProfile as { created_at?: string | null }).created_at
+          const daysSince = createdAt
+            ? Math.floor((Date.now() - new Date(createdAt).getTime()) / (24 * 3600 * 1000))
+            : null
+          const goalCopy =
+            daysSince === null            ? 'Start coaching'
+            : daysSince <= 7              ? `Day ${daysSince + 1} · invite your first athlete this week`
+            : daysSince <= 14             ? `${daysSince} days in — your first athlete is the hardest`
+            :                               `${daysSince} days as a coach — first invite goes a long way`
+          return (
+            <div className="bg-white rounded-2xl border border-[var(--color-border)] p-8 text-center">
+              <div className="text-4xl mb-3">👥</div>
+              <p
+                className="text-[10px] font-black uppercase tracking-widest mb-2"
+                style={{ color: daysSince !== null && daysSince > 7 ? '#d97706' : 'var(--ns-violet)' }}
+              >
+                {goalCopy}
+              </p>
+              <h3 className="text-sm font-bold text-gray-900 mb-1">No athletes yet</h3>
+              <p className="text-xs text-[var(--color-text-tertiary)] mb-4">
+                Each invite link is single-use and expires in 7 days. Generate one to share.
+              </p>
+              <button
+                onClick={() => setShowInvite(true)}
+                className="text-xs font-bold px-4 py-2 rounded-xl text-white"
+                style={{ background: 'var(--ns-violet)' }}
+              >
+                Generate invite link →
+              </button>
+            </div>
+          )
+        })()}
 
         {/* P3.5 Filter chips — applied to the rendered athlete lists.
             Selection persists across sessions via localStorage. */}
@@ -650,7 +692,16 @@ export default function CoachDashboardClient({ coachProfile }: { coachProfile: C
       </div>
 
       {showInvite && <InviteModal onClose={() => setShowInvite(false)} />}
-      {showBroadcast && <BroadcastModal onClose={() => setShowBroadcast(false)} athleteCount={athletes.length} />}
+      {showBroadcast && (
+        <BroadcastModal
+          onClose={() => setShowBroadcast(false)}
+          athleteCount={filter === 'all' ? athletes.length : filteredAthletes.length}
+          // P3.5 — when a filter is active, target only the filtered subset.
+          // Backend /api/coach/broadcast accepts athlete_ids array (max 50).
+          athleteIds={filter === 'all' ? undefined : filteredAthletes.map(a => a.athlete_id)}
+          filterLabel={filter === 'all' ? undefined : filter}
+        />
+      )}
     </div>
   )
 }
