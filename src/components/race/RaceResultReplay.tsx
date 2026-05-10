@@ -27,11 +27,14 @@ interface Props {
   selfUserId?:  string
   /** Display name lookup (user_id → @handle or fallback "Runner #N"). */
   displayName?: (userId: string) => string
+  /** PR #14 — squad-mate cosmetic kit colours, keyed by user_id. RLS
+      gates which runners surface; absent = default lane styling. */
+  runnerCosmetics?: Record<string, { kit_colour?: string }>
 }
 
 const ANIMATION_TOTAL_MS = 6000   // total replay length, slowest finisher
 
-export function RaceResultReplay({ runners, distanceM, selfUserId, displayName }: Props) {
+export function RaceResultReplay({ runners, distanceM, selfUserId, displayName, runnerCosmetics }: Props) {
   const [step, setStep]   = useState(0)
   const [done, setDone]   = useState(false)
   const timerRef          = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -125,17 +128,27 @@ export function RaceResultReplay({ runners, distanceM, selfUserId, displayName }
               <div className="absolute inset-y-0 left-1/4 w-px opacity-20"  style={{ background: 'var(--color-text-tertiary)' }} />
               <div className="absolute inset-y-0 left-1/2 w-px opacity-20"  style={{ background: 'var(--color-text-tertiary)' }} />
               <div className="absolute inset-y-0 left-3/4 w-px opacity-20"  style={{ background: 'var(--color-text-tertiary)' }} />
-              {/* Runner position dot */}
+              {/* Runner position dot — colour driven by squad-mate kit
+                  cosmetic when present (PR #14), else default lane palette. */}
+              {(() => {
+                const runnerKit = runnerCosmetics?.[runner.user_id]?.kit_colour
+                const fallback  = isSelf
+                  ? 'linear-gradient(90deg, transparent 0%, var(--ns-magenta-light) 70%, var(--ns-magenta) 100%)'
+                  : 'linear-gradient(90deg, transparent 0%, var(--color-surface-3) 70%, var(--ns-cyan) 100%)'
+                const kitGradient = runnerKit
+                  ? `linear-gradient(90deg, transparent 0%, ${runnerKit}66 70%, ${runnerKit} 100%)`
+                  : fallback
+                return (
               <div
                 className="absolute top-0 bottom-0 rounded-full transition-all ease-linear"
                 style={{
                   width: `${Math.max(2, pct)}%`,
-                  background: isSelf
-                    ? 'linear-gradient(90deg, transparent 0%, var(--ns-magenta-light) 70%, var(--ns-magenta) 100%)'
-                    : 'linear-gradient(90deg, transparent 0%, var(--color-surface-3) 70%, var(--ns-cyan) 100%)',
+                  background: kitGradient,
                   transitionDuration: `${ANIMATION_TOTAL_MS / 10}ms`,
                 }}
               />
+                )
+              })()}
             </div>
           </div>
         )

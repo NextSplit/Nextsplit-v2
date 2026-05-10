@@ -48,6 +48,7 @@ export default function RaceClient() {
               runners={mergeForReplay(data.result.finishing_order, data.result.result_timeline)}
               distanceM={data.race.distance_m}
               selfUserId={data.me_user_id ?? undefined}
+              runnerCosmetics={data.runner_cosmetics ?? {}}
             />
           </div>
         )}

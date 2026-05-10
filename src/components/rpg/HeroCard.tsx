@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import StatBar from '@/components/rpg/StatBar'
+import { CharacterAccessoryOverlay } from './CharacterAccessoryOverlay'
 import {
   RPG_CHARS, RPG_LEVELS, RARITY_CONFIG,
   getLevelForXP, getXPProgress, getXPToNext,
@@ -45,13 +46,16 @@ function HeroCard({
 
       <div className="p-5">
         <div className="flex items-start gap-4">
-          {/* Character avatar */}
+          {/* Character avatar — wrapped in CharacterAccessoryOverlay so
+              active banner / shoes / accessory cosmetics layer in. */}
           <div className="relative flex-shrink-0">
-            <button onClick={onEditChar}
-              className={`block ${charState === 'celebrating' ? 'animate-bounce' : ''}`}
-              title="Change character">
-              <div dangerouslySetInnerHTML={{ __html: renderCharSVG(charWithKit.id, stats.level.level, 80, 100, kitColour) }} />
-            </button>
+            <CharacterAccessoryOverlay>
+              <button onClick={onEditChar}
+                className={`block ${charState === 'celebrating' ? 'animate-bounce' : ''}`}
+                title="Change character">
+                <div dangerouslySetInnerHTML={{ __html: renderCharSVG(charWithKit.id, stats.level.level, 80, 100, kitColour) }} />
+              </button>
+            </CharacterAccessoryOverlay>
             {/* Level badge */}
             <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 text-white text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap"
               style={{ background: 'var(--ns-ember)' }}>
