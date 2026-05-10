@@ -14,7 +14,7 @@ export default function PrivacyPage() {
         <div className="mb-10">
           <Link href="/" className="text-[var(--ns-ember)] text-sm font-semibold hover:underline">← NextSplit</Link>
           <h1 className="text-3xl font-black text-gray-900 mt-4">Privacy Policy</h1>
-          <p className="text-[var(--color-text-tertiary)] text-sm mt-2">Last updated: April 2026</p>
+          <p className="text-[var(--color-text-tertiary)] text-sm mt-2">Last updated: May 2026</p>
         </div>
 
         <div className="prose prose-slate max-w-none space-y-8 text-sm leading-relaxed text-gray-700">
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">Who we are</h2>
             <p>NextSplit (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) is a training platform for runners and endurance athletes. We are the data controller for personal data collected through nextsplit.app and associated mobile applications.</p>
-            <p className="mt-2">Registered in England and Wales. ICO registration number: <strong>[UPDATE AFTER REGISTRATION]</strong>.</p>
+            <p className="mt-2">NextSplit is currently in pre-launch development. Once we begin processing personal data for paying users, we will register with the UK Information Commissioner&rsquo;s Office (ICO) as a data controller and update this policy with our registration number. Until then, all data is test data from internal builds and friend testers who have explicitly consented.</p>
             <p className="mt-2">Contact: <a href="mailto:privacy@nextsplit.com" className="text-[var(--ns-ember)] hover:underline">privacy@nextsplit.com</a></p>
           </section>
 
@@ -76,24 +76,33 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-gray-900 mb-3">Who we share data with</h2>
-            <div className="space-y-2">
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Sub-processors (Article 28 GDPR)</h2>
+            <p>We engage the following data processors under written contracts that meet the UK GDPR Article 28 requirements. Each link below points to that processor&rsquo;s data processing agreement (DPA) and privacy policy.</p>
+            <div className="mt-3 space-y-2">
               {[
-                { name: 'Supabase', purpose: 'Database and authentication (EU region)', link: 'https://supabase.com/privacy' },
-                { name: 'Anthropic', purpose: 'AI coaching and plan generation', link: 'https://www.anthropic.com/privacy' },
-                { name: 'Vercel', purpose: 'Hosting and edge network', link: 'https://vercel.com/legal/privacy-policy' },
-                { name: 'PostHog', purpose: 'Product analytics (EU-hosted)', link: 'https://posthog.com/privacy' },
-                { name: 'Sentry', purpose: 'Error monitoring', link: 'https://sentry.io/privacy/' },
-                { name: 'Strava', purpose: 'Activity import (only if you connect)', link: 'https://www.strava.com/legal/privacy' },
-                { name: 'Stripe', purpose: 'Payment processing (if you subscribe)', link: 'https://stripe.com/gb/privacy' },
+                { name: 'Supabase',  purpose: 'Database, authentication, file storage', region: 'EU (Frankfurt)',     link: 'https://supabase.com/privacy', dpa: 'https://supabase.com/legal/dpa' },
+                { name: 'Anthropic', purpose: 'AI coaching + plan generation (Claude API)', region: 'US — UK SCCs in place', link: 'https://www.anthropic.com/privacy', dpa: 'https://www.anthropic.com/legal/dpa' },
+                { name: 'Vercel',    purpose: 'Hosting and edge network (CDN)',         region: 'Global edge — UK SCCs in place', link: 'https://vercel.com/legal/privacy-policy', dpa: 'https://vercel.com/legal/dpa' },
+                { name: 'PostHog',   purpose: 'Product analytics (event-level)',         region: 'EU (Frankfurt)',     link: 'https://posthog.com/privacy', dpa: 'https://posthog.com/dpa' },
+                { name: 'Sentry',    purpose: 'Error and performance monitoring',        region: 'US — UK SCCs in place', link: 'https://sentry.io/privacy/', dpa: 'https://sentry.io/legal/dpa/' },
+                { name: 'Strava',    purpose: 'Activity import (only if you connect)',   region: 'US — UK SCCs in place', link: 'https://www.strava.com/legal/privacy', dpa: 'https://www.strava.com/legal/api' },
+                { name: 'Stripe',    purpose: 'Payment processing (if you subscribe)',  region: 'US/IE — UK SCCs in place', link: 'https://stripe.com/gb/privacy', dpa: 'https://stripe.com/gb/legal/dpa' },
+                { name: 'Resend',    purpose: 'Transactional email delivery',           region: 'US — UK SCCs in place', link: 'https://resend.com/privacy', dpa: 'https://resend.com/legal/dpa' },
               ].map(s => (
                 <div key={s.name} className="flex gap-3">
                   <span className="text-[var(--ns-ember)] font-bold shrink-0">→</span>
-                  <div><span className="font-semibold text-gray-800">{s.name}:</span> {s.purpose}. <a href={s.link} target="_blank" rel="noopener noreferrer" className="text-[var(--ns-ember)] hover:underline">Privacy policy</a></div>
+                  <div>
+                    <span className="font-semibold text-gray-800">{s.name}:</span> {s.purpose}.
+                    <span className="text-[var(--color-text-tertiary)]"> Region: {s.region}.</span>
+                    {' '}
+                    <a href={s.link} target="_blank" rel="noopener noreferrer" className="text-[var(--ns-ember)] hover:underline">Privacy</a>
+                    {' · '}
+                    <a href={s.dpa}  target="_blank" rel="noopener noreferrer" className="text-[var(--ns-ember)] hover:underline">DPA</a>
+                  </div>
                 </div>
               ))}
             </div>
-            <p className="mt-3">We do not sell your data. We do not share your data with advertisers.</p>
+            <p className="mt-3">We do not sell your data. We do not share your data with advertisers. We will update this list before adding any new sub-processor; existing users will be notified by email if a change is material.</p>
           </section>
 
           <section>
