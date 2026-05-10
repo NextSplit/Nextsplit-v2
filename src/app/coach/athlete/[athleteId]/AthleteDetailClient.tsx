@@ -160,13 +160,26 @@ export default function AthleteDetailClient({
                 </p>
               )}
             </div>
-            <button
-              onClick={fetchDigest}
-              disabled={digestLoading}
-              className="text-xs font-bold px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-[var(--color-text-secondary)] disabled:opacity-50 flex-shrink-0"
-            >
-              {digestLoading ? '…' : '🧠 AI digest'}
-            </button>
+            {/* OQ#2 = C — AI digest gated to Coach-Pro. Free Split Leaders
+                see the upgrade pill linking to /coach/settings instead of
+                tapping into a 403 from /api/ai/coach-digest. */}
+            {isCoachPro ? (
+              <button
+                onClick={fetchDigest}
+                disabled={digestLoading}
+                className="text-xs font-bold px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-[var(--color-text-secondary)] disabled:opacity-50 flex-shrink-0"
+              >
+                {digestLoading ? '…' : '🧠 AI digest'}
+              </button>
+            ) : (
+              <a
+                href="/coach/settings#coach-pro"
+                title="AI digest — upgrade to Coach-Pro"
+                className="text-xs font-bold px-3 py-2 rounded-xl border border-[var(--color-border-2)] text-[var(--color-text-tertiary)] flex-shrink-0"
+              >
+                🧠⭐
+              </a>
+            )}
           </div>
 
           {/* Tabs */}

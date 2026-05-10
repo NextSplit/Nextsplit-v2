@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { CoachSavePlanSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
+import { requireCoachPro } from '@/lib/server/requireCoachPro'
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,6 +30,17 @@ export async function POST(req: NextRequest) {
 
     if (!name || !distance || !level || !weeks_data) {
       return NextResponse.json({ error: 'name, distance, level and weeks_data are required' }, { status: 400 })
+    }
+
+    // OQ#2 = C — only Coach-Pro can publish plans publicly OR sell them.
+    // Free Split Leaders can save private plans for assigning to their own
+    // athletes (the assign flow uses /api/coach/plans/assign, no gate),
+    // but `is_public = true` (marketplace listing) and `price_gbp > 0`
+    // (plan sales) both go behind the £29/mo paywall.
+    if (is_public || (price_gbp ?? 0) > 0) {
+      const featureKey = (price_gbp ?? 0) > 0 ? 'plan_sales' : 'marketplace_listing'
+      const gate = await requireCoachPro(supabase, user.id, featureKey)
+      if (gate) return gate
     }
 
     const weeksArr  = Array.isArray(weeks_data) ? weeks_data : []
