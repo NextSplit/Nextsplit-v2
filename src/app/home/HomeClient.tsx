@@ -467,7 +467,14 @@ function SquadMini({ squad }: { squad: { name: string; colour?: string; squad_me
 
 // ── Conversion cards ──────────────────────────────────────────────────────────
 
-function CoachNudge() {
+// PR X — onboarding trial-eligible CTA. Both nudges pick up `showTrialUnlock`
+// from the parent, which is true for users who:
+//   · Haven't had a prior trial (trialEndedAt + trial_started_at both null)
+//   · Aren't already Pro
+// The "+ 14 days Pro free" line surfaces the BL-C6 trial onramp at the
+// exact moment users would convert (taking the squad / coach action).
+
+function CoachNudge({ showTrialUnlock }: { showTrialUnlock: boolean }) {
   return (
     <Link href="/coaches" className="mx-4 block active:scale-[0.98] transition-all">
       <div className="rounded-2xl p-4 flex items-center gap-3"
@@ -478,6 +485,11 @@ function CoachNudge() {
           <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
             They see your logs, ACWR and pace trends · from £30/mo
           </p>
+          {showTrialUnlock && (
+            <p className="text-[10px] font-black mt-1" style={{ color: '#7fff4d' }}>
+              🎁 First coach message unlocks 14 days Pro free
+            </p>
+          )}
         </div>
         <span style={{ color: '#a855f7', fontWeight: 900 }}>→</span>
       </div>
@@ -485,7 +497,7 @@ function CoachNudge() {
   )
 }
 
-function SquadNudge() {
+function SquadNudge({ showTrialUnlock }: { showTrialUnlock: boolean }) {
   return (
     <Link href="/squad" className="mx-4 block active:scale-[0.98] transition-all">
       <div className="rounded-2xl p-4 flex items-center gap-3"
@@ -496,6 +508,11 @@ function SquadNudge() {
           <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
             Train together · weekly leaderboard · nudges
           </p>
+          {showTrialUnlock && (
+            <p className="text-[10px] font-black mt-1" style={{ color: '#7fff4d' }}>
+              🎁 Joining a squad unlocks 14 days Pro free
+            </p>
+          )}
         </div>
         <span style={{ color: '#7fff4d', fontWeight: 900 }}>→</span>
       </div>
@@ -771,8 +788,22 @@ export default function HomeClient() {
         {squad && <SquadMini squad={squad} />}
 
         {/* ── Conversion nudges (contextual) ── */}
-        {!hasCoach && plan && <CoachNudge />}
-        {!squad   && plan && <SquadNudge />}
+        {/* PR X — onboarding trial-eligible CTA. Shows "+14 days Pro free"
+            line on the squad/coach nudges only for users who haven't yet
+            had a trial AND aren't already Pro. trialEnd doubles as the
+            "currently trialing" indicator (set during the window, null
+            after expiry); trialEndedAt indicates a lapsed trial. Either
+            being set means the user has used their one-shot. */}
+        {(() => {
+          const hasNeverHadTrial = !subscription.trialEnd && !subscription.trialEndedAt
+          const showTrialUnlock  = hasNeverHadTrial && !isPro
+          return (
+            <>
+              {!hasCoach && plan && <CoachNudge showTrialUnlock={showTrialUnlock} />}
+              {!squad   && plan && <SquadNudge showTrialUnlock={showTrialUnlock} />}
+            </>
+          )
+        })()}
         {!isPro   && plan && <EliteNudge />}
 
       </div>
