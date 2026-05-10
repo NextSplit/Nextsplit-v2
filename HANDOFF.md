@@ -1,5 +1,6 @@
 # NextSplit — Master Handoff
-**Version:** 9.12 | **8 May 2026** | **Canonical — replaces all previous HANDOFF files**
+**Version:** 9.13 | **10 May 2026** | **Canonical — replaces all previous HANDOFF files**
+<!-- 9.13: Character system V1 ENTIRE BUILD landed in 14 PRs (#28→#41) merged 2026-05-09 to 2026-05-10 across two contiguous sprints. Founder direction at v9.12 close: "build first, test later" + "push richer" + framing-gate locked: two-layer class system (existing 7 RUNNER_CLASSES auto-derived archetypes + 3 selectable build classes track_star/trail_champion/marathon_monster). Engagement-pro-rata XP rate ratios picked: modest 1.0/1.3/1.6/1.8× (free/Elite/+coach/+marketplace plan). Boost mechanic locked: stat-buff only, single-race consumable, max 2 per entry. Acquisition: ALL FOUR PATHS — random drop on session log (~2% per log) + streak milestones (7/30/60/90/180/365d) + daily quest grants + Stripe purchase. Cosmetics: BOTH visual flair AND functional buffs (kit_colour drives HeroCard runner SVG accent + race-replay lane gradient; aura renders box-shadow on self lane; banner renders animated CSS flame plume behind avatar). 7 Supabase migrations applied live to project wlrmeiczqgmharvfmalq: phase-character-system-v1.sql (#28: characters table + award_session_xp + recompute_xp_rate_multiplier RPCs), phase-character-system-races-v2.sql (#29: character_races/_entries/_results + enter_race + simulate_race + seed_daily_race RPCs; deterministic finish_secs from base_speed × class_fit × endurance_factor; rng_seed retained as inert per Gambling Act 2005 ss.6-9 compliance), phase-character-system-extra-formats-v3.sql (#33: seed_weekly_marquee 10K + seed_monthly_major 21097m), phase-character-system-inventory-v4.sql (#34: catalogs + inventory tables + grant_boost/grant_cosmetic/consume_boost/set_active_cosmetic/roll_random_drop RPCs + 11 boosts + 10 cosmetics seeded), phase-character-system-boost-loadout-v5.sql (#36: enter_race extended to accept p_boost_loadout text[] DEFAULT '{}' max 2; simulate_race aggregates per-stat multipliers via EXP(SUM(LN(...))) overflow-safe with resilience-halved-into-endurance until trail/squad formats use it directly), phase-character-system-rewards-v6.sql (#37: character_reward_claims tracking table for streak/quest/purchase idempotency + claim_streak_reward + record_purchase_grant), phase-character-system-quest-rewards-v7.sql (#40: claim_daily_quest re-evaluating 4 quest predicates server-side with day/week period keys). All 14 RPCs follow F2.4 hardening pattern: SECURITY DEFINER + SET search_path = public, pg_temp + appropriate REVOKE/GRANT. New routes shipped: /race (5th bottom-nav tab, magenta accent #ff3d8b, athlete-only — coach mode keeps 4-tab Home/Train/Coach/You), /you/inventory, /api/race/today, /api/race/[id]/enter, /api/race/active, /api/character (CRUD), /api/character/inventory + /cosmetic-toggle + /purchase, /api/cron/race-tick at 22:05 UTC daily (Vercel Hobby cron cap now FULL: smart-notify 14:00 + race-tick 22:05). 5 new toast surfaces mounted in app/layout.tsx: CharacterStatToast (PR #32), CharacterLootToast (PR #35), StreakRewardToast (PR #39), CharacterAccessoryOverlay (PR #41 wraps HeroCard avatar with banner flame + shoes chip + accessory icon). Stripe webhook (src/app/api/stripe/webhook/route.ts) extended with character_inventory branch handling checkout.session.completed for one-time payments routed via record_purchase_grant. recomputeXpRateMultiplier wired into 5 sites: 3 in stripe webhook (subscription.updated, subscription.deleted, coach checkout.session.completed) + /api/coach/accept + /api/plans/activate. NEXT WORK BLOCK per founder direction: Phase 3 Coach Suite — P3.1 coach dashboard v2 (athlete-roster overview), then P3.2 plan authoring tool. Founder admin still: ICO registration £40 (gates paying coaches + marketing), Companies House, delete VERCEL_DEPLOY_HOOK GitHub repo secret. -->
 <!-- 9.12: Late-evening sprint after v9.11 — 5 more PRs merged (#22, #23, #24, #25, #26 + this v9.12 close-out PR). Sequence: PR #22 future-date logging guard (DB CHECK + client + Zod schema; migration phase-future-date-guard-v1.sql applied as 20260508225349). PR #23 character-gamification V2 spec proposal + 19-lens /council verdict (HOLD with 5 RED pre-ship blockers + 4 concurrent live bugs found during review). FOUNDER OVERRULE: F1 friend testing BACKLOGGED — direction is now "build app to fully usable state before we let any test users in". This overrides several council recommendations that were F1-gated. Founder also overruled the council's recommended V0 sliver (character select + class display + daily 5K only) in favour of "push richer". PR #24 closed council blockers #2 (live RLS vulns: dropped Public-reads-entries USING(true) on challenge_entries + virtual_race_entries, recreated TO authenticated; migration 20260508231830) + #4 (MissedSessionFlow Pro→Elite £4.99→£7.99 pricing) + 4 live bugs (PlanPathSVG hydration flash via lazy useReducedMotion initialiser; BottomNav focus-visible WCAG 2.4.11 outline restoration; LevelUpScreen 6000ms→3500ms with prefers-reduced-motion gate; globals.css shimmer-gold infinite→4-iteration cap with reduced-motion override). PR #25 shipped passive Race V0: new /leaderboard route hosting existing SquadLeaderboard component as first-class page + global rankings teaser + privacy footer + Squad header link. PR #26 closed council blocker #3 (deleted rng_jitter from gamification V2 spec §3.3 — race sim now fully deterministic from character_snapshot + boost_loadout, addressing UK Gambling Commission concern under Gambling Act 2005 ss.6-9). Council blockers post-merge: 2 closed in code (#2, #4), 1 closed in spec (#3); 2 still open and founder-only (#1 ICO registration £40, #5 8 pre-alpha gates — but #5 is now explicitly backlogged per founder direction). NEXT WORK BLOCK: gamification character system build (Phase 3+ Race tab) — schema for user_characters + character_inventory + races/race_entries/race_results, class picker UI extension, basic XP from training_logs, completion-based race outcomes (no RNG, no VDOT-anchoring). Founder still owes ICO registration + Companies House (per devils-advocate personal-liability framing). All audit work that doesn't depend on F1 signal is now closed; Track 5 (F4.2/F5.4/F6.3) was F1-gated and is now backlog under the new "build first, test later" direction. -->
 <!-- 9.11: Track 2 partial + Track 3 partial + character-gamification /forge close-out. PRs 17-21 merged 2026-05-08 same evening as v9.10. F2.5 anon-key fallback dropped (aiRateLimit + seed-plans now throw if SUPABASE_SERVICE_ROLE_KEY missing instead of silently fail-open via anon-key). F0.6 tightened .gitignore (.env*, *.log, coverage/). F0.4 CI tests now BLOCKING (52→100 vitest cases all green; tsc + eslint stay continue-on-error until F4.1 cleanup PR + eslint error sweep). F0.2 cron consolidation: deleted dead /api/cron/notify route, removed lifecycle-emails from vercel.json (notify.yml is sole source of truth, frees a Hobby cron slot), added zero-send Sentry alert (eligible>0 && sent===0 fires) on lifecycle-emails + smart-notify. S9 src/lib/planValidator.ts shipped — pure-TS post-generation plan validator wired into /api/ai/generate-plan as advisory Sentry breadcrumb (flags missing taper for marathon/half/10mi/ultra; flags long-run > 30% of weekly km). 12 unit tests for planValidator. F2.4 SECURITY DEFINER body audit — 8 RPCs hardened in phase-rpc-hardening-v1.sql (recorded as 20260508222328): coach_earnings_summary/ytd, get_commission_rate, increment_profile_xp, increment_season_xp now check auth.uid()=p_*_id; refresh_coach_rating + decrement_club_members check auth.uid() IS NOT NULL; apply_split_leader_reward (zero src/ callers) revoked from authenticated/anon, granted only to service_role. All 8 also got SET search_path = public, pg_temp for schema-injection hygiene. F6.1 unit tests on core libs: 48 new cases across vdot.test.ts (13), streak.test.ts (11), referral.test.ts (11) + planValidator.test.ts (12 in PR 18) — meets audit ≥5 cases + zero-input + boundary acceptance bar per file. **Forge ran on character gamification idea**: docs/forge/character-gamification-v1.md captures 13-agent + shortlister output. SHORTLIST recommends Option A (XP Ceremony + Token SVG, conv 5) over Option B (Race Room) due to thesis-level concern raised by devil's-advocate that no other agent named — squad-as-safety-net (accountability) and squad-as-arena (competition) are opposing social contracts. Founder must resolve framing gate before any V1 ships. **PR 18 attempt was abandoned**: F4.1 narrow as-never cast cleanup hit a supabase-js typing wall (Update parameter still resolves to never even with type widening). Full F4.1 cleanup needs database.generated.ts adoption with literal-union enum preservation pass — tracked as a dedicated future PR. NEXT GATING EVENT: F1 friend test (P1.6/P1.8) + framing-gate decision on character gamification. Founder admin RED still: ICO registration. Track 4 (coach inline items F3.2a/F3.3) intentionally still deferred to trigger PRs. -->
 <!-- 9.10: Audit Tracks 1 + 1.5 CLOSED on main. PR #13 (Track 1 hotfix) and PR #14 (Track 1.5 follow-on) merged 2026-05-08. PR #15 (legacy claude/review-project-status-lGBPu branch with 2 stale commits) closed as not_planned — fully superseded. Migration phase-track1-hotfix-v1.sql applied live to Supabase project wlrmeiczqgmharvfmalq before PR #13 (recorded as 20260508195726_phase_track1_hotfix_v1); pre-flight RLS sweep confirmed all 52 public tables had RLS=true going in (the audit's worst-case "table without RLS" scenario didn't materialise). nps_responses SELECT policy now scoped TO service_role (was {-} = leak). plan_templates RLS canonical version-controlled record committed (live state was already correct — the migration is the audit trail). can_nudge SECURITY DEFINER auth.uid() guard verified live. F0.1 deploy.yml deleted, F0.3 admin gate via ADMIN_EMAILS env shipped on /admin/retention, S12 manifest.json bg #0a0e1a. Track 1.5 shipped: S5 gen-types.sh path fixed (writes to src/types/database.ts now), F4.1 partial (database.generated.ts saved as future-tool reference; full as-never cast cleanup deferred to dedicated PR), S6 checkAndIncrementAIUsage on 5 unguarded AI routes (generate-plan + adapt-plan + coach-digest + recommend + weekly-summary), S10 onboarding events.ts + onboardingStarted/onboardingCompleted wired across main flow + 4 sub-route Client files. **Discovery in PR #14:** the admin-gate pattern was broken on three pages (/admin/retention, /admin/plan-review, /admin/adapt-test) — profiles has neither is_admin nor email columns live, so the prior is_admin-OR-email check redirected every user including the founder. Retention fixed in #14; plan-review + adapt-test fixed in this v9.10 close-out PR. Bag-on-side: .claude/settings.local.json added to .gitignore defensively. NEXT GATING EVENT: F1 friend test (P1.6 / P1.8). Founder admin RED: ICO registration (£40, ico.org.uk — DPA 2018 s.17). Foundation sprint (Track 2, ~4 days, 6 items) is the next dev block after F1. -->
@@ -144,14 +145,76 @@ Same evening as v9.10/v9.11 + character-gamification /forge + /council. Five PRs
 
 ### Next dev block — character system build (Phase 3+ Race tab)
 
-The audit + council work is now CLOSED for everything code-side. The next surface to build is the actual character gamification per `docs/forge/character-gamification-v2-proposal.md`. Open design questions for the next session before code starts:
+~~The audit + council work is now CLOSED for everything code-side. The next surface to build is the actual character gamification...~~
 
-1. **Class system mechanic** (cosmetic only / session-type-weighted XP edge / hard class lock) — /council deferred to founder.
-2. **Engagement-pro-rata XP rate ratios** (modest 1.0/1.3/1.6/1.8× vs punchy 1.0/1.5/2.0/2.5×) — /council split.
-3. **Schema drop order** — `user_characters` first (lightest table) or full `characters/character_inventory/races/race_entries/race_results/leagues` migration in one shot?
-4. **Asset pipeline trigger** — founder direction is "build first, test later" so the Aseprite art commission doesn't have an F1 gate. When does the £400-800/class commission fire? Suggest: after V0 character select + class picker UI lands, before any race UI.
+**SHIPPED — see "Character system V1 — CLOSED" below for the full 14-PR roll-up.**
 
-`/leaderboard` (PR #25) is the placeholder Race V0 surface until the full Race tab ships.
+---
+
+## ✅ Character system V1 — CLOSED (10 May 2026)
+
+14 PRs (#28→#41) merged across two contiguous sprints. Phase 3+ Race tab feature-complete end-to-end: pick a build class on `/you` → train daily (sessions yield class-weighted stat XP + ~2% loot drop + streak/quest grants) → equip cosmetics + boosts on `/you/inventory` → enter daily 5K / weekly 10K / monthly half on `/race` → cron at 22:05 UTC resolves deterministically with class fit × boost multipliers → 11-waypoint replay animation with squad-mate kit colours on each lane.
+
+### Founder framing decisions (resolved)
+
+| Question | Answer |
+|---|---|
+| **Class system mechanic** | Two-layer: 7 existing RUNNER_CLASSES auto-derived archetypes (`profiles.runner_class`, kept) + 3 selectable build classes (`characters.build_class` enum: `track_star` / `trail_champion` / `marathon_monster`) |
+| **Engagement-pro-rata XP rate ratios** | Modest 1.0 / 1.3 / 1.6 / 1.8× — free / Elite / +active coach / +marketplace plan |
+| **Schema drop order** | Phased — 7 migrations (v1 → v7) shipping schema with corresponding RPCs in each PR |
+| **Asset pipeline trigger** | Aseprite commission still gated on founder; current cosmetic visuals are CSS/emoji placeholders that the future SVG assets can replace per-slot |
+| **Boost mechanic** | Stat-buff only, single-race consumable, max 2 per entry |
+| **Acquisition paths** | All four — random drop on session log + streak milestones + daily quest grants + Stripe one-time purchase |
+| **Cosmetic vs functional** | Both — visual flair AND gameplay buffs |
+
+### What landed (PRs #28 → #41)
+
+| PR | Migration | Summary |
+|---|---|---|
+| **#28** | `phase-character-system-v1.sql` | `characters` table (1:1 profiles, RLS) + `award_session_xp` + `recompute_xp_rate_multiplier` RPCs. BuildClassCard picker on `/you`. Live wiring into `/api/community/progress`. |
+| **#29** | `phase-character-system-races-v2.sql` | `character_races` + `_entries` + `_results` tables. `enter_race` (caller-owns) + `simulate_race` (service-role, deterministic) + `seed_daily_race`. `/api/cron/race-tick` at 22:05 UTC. |
+| **#30** | — | `/race` 5th bottom-nav tab (magenta `#ff3d8b`). RaceCard 5 visual states. RaceResultReplay 11-waypoint animation. Coach-mode keeps 4-tab. |
+| **#31** | — | `recomputeXpRateMultiplier` server helper wired into 5 sites: stripe webhook (sub.updated/sub.deleted/coach checkout) + coach/accept + plans/activate. |
+| **#32** | — | `<CharacterStatToast>` mounted in layout. CustomEvent bridge `dispatchCharacterXP`. +N stat toast on session log. |
+| **#33** | `phase-character-system-extra-formats-v3.sql` | `seed_weekly_marquee` (10K Mon→Sun) + `seed_monthly_major` (21097m full month). Cron tick fires all 3 seeders. `/api/race/active`. |
+| **#34** | `phase-character-system-inventory-v4.sql` | `character_boosts_catalog` (11 items) + `_cosmetics_catalog` (10 items) + `_boost_inventory` + `_cosmetic_inventory`. 5 RPCs: `grant_boost`, `grant_cosmetic`, `consume_boost`, `set_active_cosmetic`, `roll_random_drop`. Random drop wired into `/api/community/progress` (~2% per log). |
+| **#35** | — | `<CharacterLootToast>` mounted. `/you/inventory` page (boosts grid + cosmetics by slot, tap-to-activate). `/api/character/inventory` + `/cosmetic-toggle` routes. |
+| **#36** | `phase-character-system-boost-loadout-v5.sql` | `enter_race(p_race_id, p_boost_loadout text[] DEFAULT '{}')` extended (max 2, no dupes, inventory ≥ 1). `simulate_race` aggregates per-stat multipliers via `EXP(SUM(LN(...)))`. Resilience halved-into-endurance. RaceCard pre-entry boost picker (2-col, rarity-coloured). |
+| **#37** | `phase-character-system-rewards-v6.sql` | `character_reward_claims` tracking table. `claim_streak_reward` (7/30/60/90/180/365-day milestones → speed_tonic / banner_streak / marathon_focus / blitz_protocol / kit_chrome / aura_supernova). `record_purchase_grant` (idempotent per stripe_session_id). `/api/character/inventory/purchase` Stripe Checkout. Webhook `character_inventory` branch. |
+| **#38** | — | `useActiveCosmetics` hook. YouClient overrides HeroCard `kitColour` from active kit_colour cosmetic. RaceResultReplay self lane gets aura `box-shadow` (pulse + supernova variants). |
+| **#39** | — | `<StreakRewardToast>` (6s, rarity-coloured + amber gradient). `dispatchStreakReward`. `/you/inventory` Buy buttons + `?purchased=<id>` Stripe-success banner. force-dynamic page export. |
+| **#40** | `phase-character-system-quest-rewards-v7.sql` | `claim_daily_quest` RPC re-evaluates 4 predicates server-side (log_today / streak_3 / weekly_km / sessions_3) with day/week period keys. Wired into `/api/community/progress` — 4 parallel claims, idempotent per period. |
+| **#41** | — | `<CharacterAccessoryOverlay>` wraps HeroCard avatar (banner flame_trail CSS plume + accessory icon overlay + shoes chip). Squad-mate `runner_cosmetics` map on `/api/race/today` → RaceResultReplay lane gradients use kit_colour per RLS-readable runner. `@keyframes ns-flame-flicker` with `prefers-reduced-motion` gate. |
+
+### DB inventory now contains
+
+**12 character-system tables:** `characters`, `character_races`, `character_race_entries`, `character_race_results`, `character_boosts_catalog`, `character_cosmetics_catalog`, `character_boost_inventory`, `character_cosmetic_inventory`, `character_reward_claims` + new column `profiles.xp_rate_multiplier`.
+
+**14 character-system RPCs:** `award_session_xp`, `recompute_xp_rate_multiplier`, `enter_race`, `simulate_race`, `seed_daily_race`, `seed_weekly_marquee`, `seed_monthly_major`, `grant_boost`, `grant_cosmetic`, `consume_boost`, `set_active_cosmetic`, `roll_random_drop`, `claim_streak_reward`, `record_purchase_grant`, `claim_daily_quest`. All follow F2.4 hardening.
+
+### Catalog content (seeded live)
+
+**11 boosts** — Common (Speed Tonic / Endurance Brew / Grit Bar @ +5%) · Rare (Lightning Serum / Marathon Focus / Iron Will @ +12%) · Epic (Class Amplifier / Blitz Protocol / Iron Lung) · Legendary (Apex Form / Class Overcharge).
+
+**10 cosmetics** — Common (Cyan/Amber/Forest kits) · Rare (Neon Pink Kit / Volt Shoes / Race Visor) · Epic (Streak Banner / Pulse Aura) · Legendary (Chrome Kit / Supernova Aura). `gbp_price=null` items are drops/streak-only and excluded from the purchase API (422).
+
+### Compliance notes
+
+- **No RNG at race resolution.** Outcomes are pure function of `(character_snapshot, boost_loadout, class_fit, race_format)`. Gambling Act 2005 ss.6-9 + DCMS 2023 White Paper compliance maintained. `rng_seed` retained as inert column.
+- **All RPCs follow F2.4 hardening** (PR #19): `SECURITY DEFINER` + `SET search_path = public, pg_temp` + `REVOKE` from PUBLIC/anon/authenticated where service-role-only, body `auth.uid()` checks where caller-owns.
+- **Vercel Hobby cron cap now FULL** at 2/2: `smart-notify` 14:00 UTC + `race-tick` 22:05 UTC. Adding more crons requires Pro tier or pg_cron.
+
+### Known small follow-ups (not gating)
+
+- ProfileClient HeroCard cosmetic wiring (trivial — same `useActiveCosmetics` + `CharacterAccessoryOverlay` pattern as YouClient, ~3 line add).
+- Aseprite pixel-art SVG asset commission (founder-gated; current cosmetics are CSS/emoji placeholders).
+- DailyQuests UI tile claim-status badge ("Claimed today" pill).
+- on_demand_1v1 + squad_ekiden race format seeders (need additional schema for invitations/teams).
+- `recomputeXpRateMultiplier` on coach-disconnection (no app surface for ending an active coach yet).
+
+### Next dev block — Phase 3 Coach Suite
+
+Per founder direction post-character-system: P3.1 Coach dashboard v2 (athlete-roster overview), then P3.2 plan authoring tool. Track 4 inline items (F3.2a, F3.3) ride alongside.
 
 ---
 
@@ -199,13 +262,18 @@ If you ever add a cron to `vercel.json`, it must fire **once per day or less** w
 
 ## Current App State (May 2026)
 
-### Navigation
+### Navigation (5-tab athlete · 4-tab coach)
+
+**Athlete mode (default):**
 | Tab | Colour | Content |
 |-----|--------|---------|
-| 🏠 Home | `#00d4ff` cyan | Smart dashboard — 6 hero states, daily quests, streak widget |
+| 🏠 Home | `#00d4ff` cyan | Smart dashboard — 6 hero states, daily quests, streak widget, today's race teaser |
 | 📅 Train | `#ff3d6e` coral | SVG illustrated plan path + today sessions + week tap sheet |
-| 🔍 Explore | `#7fff4d` lime | Coaches / Squads / Plans / AI — squad orbit if already in squad |
-| ⭐ You | `#ffb800` amber | Achievements / Character / Stats / Account |
+| 🏁 Race | `#ff3d8b` magenta | Daily 5K + weekly 10K + monthly half. Boost picker + replay animation. (PR #30) |
+| 👥 Squad | `#7fff4d` lime | Squad orbit + leaderboard + nudge — see squad-mate kit colours on race results |
+| ⭐ You | `#ffb800` amber | HeroCard + BuildClassCard + WeeklyXPChart + Inventory link |
+
+**Coach mode (athlete tabs minus Race + plus Coach):** Home / Train / Coach / You. Race intentionally omitted (athlete-only feature for V1).
 
 ### Features Built ✅
 | Feature | State | Notes |
@@ -238,6 +306,13 @@ If you ever add a cron to `vercel.json`, it must fire **once per day or less** w
 | UAT test suite | ✅ Built | Playwright + DB verify + 105 manual cases |
 | Back buttons | ✅ Fixed | Coaches, squad create, settings |
 | Re-onboarding | ✅ Fixed | Archive plan → skips to step 7 (Goals), not step 1 |
+| **Character system V1** | ✅ **Live** | Build-class picker on `/you` (PR #28). 14-PR roll-up — see "Character system V1 — CLOSED" above. |
+| **Race tab** | ✅ **Live** | 5th bottom-nav tab. Daily 5K + weekly 10K + monthly half. Boost picker + 11-waypoint replay (#29/#30/#33/#36/#41). |
+| **Class-weighted XP + race outcomes** | ✅ **Live** | `award_session_xp` + deterministic `simulate_race`. Engagement-pro-rata multiplier 1.0/1.3/1.6/1.8× wired into 5 sites (#28/#29/#31/#36). |
+| **Random loot drops** | ✅ **Live** | ~2% per session log via `roll_random_drop` RPC. Loot toast deep-links to inventory (#34/#35). |
+| **Inventory + cosmetic activation** | ✅ **Live** | `/you/inventory` boosts grid + cosmetics by slot. Active kit_colour drives HeroCard runner SVG; aura on race-replay; banner flame trail behind avatar (#35/#38/#41). |
+| **Stripe checkout for boosts/cosmetics** | ✅ **Live** | One-time payment via `/api/character/inventory/purchase`. Webhook `character_inventory` branch idempotent per stripe_session_id (#37/#39). |
+| **Streak + daily quest reward grants** | ✅ **Live** | 7/30/60/90/180/365-day milestones + 4 daily-quest predicates re-evaluated server-side (#37/#40). |
 
 ### Features Pending / Partial
 | Feature | State | Notes |
