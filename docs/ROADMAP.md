@@ -486,11 +486,11 @@ Each item: ID — Title (R1 source) — Thread / Persona / Status / Target phase
 - BL-A5 — Nudge dispatch cron + message bank ("Alex is waiting" copy shape) — T1, T3 / B,C / NEXT / P1
 
 **OPTION B — Third-Week Hold-the-Line (Phase 2 headline, P2.7)**
-- BL-B1 — Day 14-21 full-screen re-anchor — T2, T3 / all / TRIAGE / P2
-- BL-B2 — ACWR visible free on Train tab (`acwr_chart`: pro → free in features.ts) — T1, T7 / A,D / TRIAGE / P2
-- BL-B3 — ACWR-baseline-aware deload suppression — T7 / all / TRIAGE / P2
-- BL-B4 — Per-user timezone for day-17 fire (requires `profiles.timezone` column) — T1, T3 / all / TRIAGE / P2
-- BL-B5 — Gap-recovery copy that doesn't shame interrupted streaks — T2 / all / TRIAGE / P2
+- BL-B1 — Day 14-21 full-screen re-anchor — T2, T3 / all / ✅ SHIPPED prior — `Week3Reanchor.tsx` mounted in `TrainClient` fires once per plan when `current_week === 3` AND user has ≥ 1 done log; localStorage gates re-show via `nextsplit_reanchor_seen_<plan_id>`; Splity-supportive copy ("you're still here", "the next run is the only one that matters") + ACWR-band gated stats card; Analytics.week3ReanchorShown event.
+- BL-B2 — ACWR visible free on Train tab (`acwr_chart`: pro → free in features.ts) — T1, T7 / A,D / ✅ SHIPPED prior — `features.ts:FEATURE_TIERS.acwr_chart = 'free'` (P2.7 Third-Week Hold-the-Line); ACWR is a safety/injury-prevention feature, not a revenue lever.
+- BL-B3 — ACWR-baseline-aware deload suppression — T7 / all / ✅ SHIPPED — `AcwrAdvisoryBanner` now requires `chronicBaselineKm` prop; suppresses the danger advisory when `chronic < 12 km/week` (the threshold below which ACWR ratio isn't a meaningful injury signal — couch-to-5k users would otherwise see warnings every time they ran intentionally). `Analytics.acwrAdvisoryShown` carries `chronic_baseline_km` so cohort analysis can verify the suppression rule.
+- BL-B4 — Per-user timezone for day-17 fire (requires `profiles.timezone` column) — T1, T3 / all / ✅ SHIPPED prior — smart-notify cron applies `localHourFor(profile.timezone)` gate (09:00-21:00 local quiet hours), shipped P2.7 follow-up; Day-17 fire mechanic is the smart-notify keep-streak cascade which now respects per-user timezone.
+- BL-B5 — Gap-recovery copy that doesn't shame interrupted streaks — T2 / all / ✅ SHIPPED prior — `GapRecoveryBanner.tsx` mounted in TrainClient fires when last done log was 7+ days ago; copy "Welcome back. N days since your last run. Don't catch up — pick up where you are. The plan adapts to today, not the day you signed up." Per-gap dismiss via localStorage keyed to last-log timestamp; Analytics.gapRecoveryShown event.
 
 **OPTION C — Coach-React Loop + Delayed-Start Trial (Phase 3, BLOCKED on schema + ICO)**
 - BL-C1 — `session_annotations` migration (RLS, FK to `training_logs`, indices) — T1 / D,F / ✅ SHIPPED prior — table exists with RLS + 2 policies; verified live. (BL-C2 above adds the reaction-only nullable migration on top.)

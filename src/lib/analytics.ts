@@ -240,8 +240,9 @@ export const Analytics = {
   // tells the council which prescribed sessions trigger the warning most
   // often — informs the eventual hard-override design.
   acwrAdvisoryShown: (props: {
-    acwr:          number
-    session_type?: string
+    acwr:                number
+    chronic_baseline_km: number  // BL-B3 — surfaced so cohort analysis can verify suppression
+    session_type?:       string
   }) => track('acwr_advisory_shown', props),
 
   // P2.7 soft-deload: gap-recovery banner fires when the user returns

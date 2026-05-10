@@ -527,20 +527,26 @@ export default function TrainClient() {
             log-once-per-day (advisory) / log-once-per-gap (gap-recovery)
             via localStorage. */}
         {(() => {
-          const series       = calcACWR(allLogs, weeks)
-          const latestAcwr   = series.length > 0 ? series[series.length - 1].acwr : null
-          const todayCode    = todaySessions[0]?.c
-          const lastDoneLog  = allLogs
+          const series          = calcACWR(allLogs, weeks)
+          const latest          = series.length > 0 ? series[series.length - 1] : null
+          const latestAcwr      = latest?.acwr ?? null
+          // BL-B3 — chronic baseline (km/week, 4-week average) needed by
+          // AcwrAdvisoryBanner to suppress noisy warnings for low-volume
+          // users where the ratio isn't a meaningful injury signal.
+          const chronicBaseline = latest?.chronic ?? 0
+          const todayCode       = todaySessions[0]?.c
+          const lastDoneLog     = allLogs
             .filter((l: TrainingLog) => l.done)
             .sort((a: TrainingLog, b: TrainingLog) =>
               new Date(b.logged_at).getTime() - new Date(a.logged_at).getTime())[0]
-          const lastLoggedAt = (lastDoneLog?.logged_at as string | undefined) ?? null
+          const lastLoggedAt    = (lastDoneLog?.logged_at as string | undefined) ?? null
           return (
             <div className="space-y-2 mb-3">
               <GapRecoveryBanner lastLoggedAt={lastLoggedAt} />
               {latestAcwr !== null && (
                 <AcwrAdvisoryBanner
                   latestAcwr={latestAcwr}
+                  chronicBaselineKm={chronicBaseline}
                   todaySessionType={todayCode}
                 />
               )}
