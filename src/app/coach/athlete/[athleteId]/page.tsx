@@ -20,7 +20,7 @@ export default async function AthleteDetailPage({
     .eq('status', 'active')
     .maybeSingle()
 
-  if (!rel) redirect('/coach/squad')
+  if (!rel) redirect('/coach')
 
   const { data: profile } = await supabase
     .from('profiles')

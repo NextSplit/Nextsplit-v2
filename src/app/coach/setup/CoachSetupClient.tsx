@@ -53,7 +53,7 @@ export default function CoachSetupClient({ defaultName, defaultSlug }: Props) {
       })
       const data = await res.json()
       if (data.error) { setError(data.error); return }
-      router.push('/coach/squad?setup=complete')
+      router.push('/coach?setup=complete')
     } catch {
       setError('Something went wrong — please try again')
     } finally {
