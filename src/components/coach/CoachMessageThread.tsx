@@ -34,9 +34,14 @@ interface Props {
   coachName: string
   onClose:   () => void
   isCoach?:  boolean
+  /** P3.3 — when true, render inline (no fixed/backdrop) so the thread
+   * can host on a dedicated page like /coach/messages instead of as a
+   * bottom-sheet modal. The "×" close button is hidden in embedded mode
+   * (the page provides its own back affordance). */
+  embedded?: boolean
 }
 
-export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isCoach = false }: Props) {
+export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isCoach = false, embedded = false }: Props) {
   const [items, setItems]         = useState<ThreadItem[]>([])
   const [body, setBody]           = useState('')
   const [sending, setSending]     = useState(false)
@@ -114,9 +119,16 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl flex flex-col max-h-[88dvh] max-w-lg mx-auto">
-        {/* Header */}
+      {!embedded && <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />}
+      <div
+        className={
+          embedded
+            ? 'bg-white rounded-2xl flex flex-col max-h-[calc(100dvh-9rem)] border border-[var(--color-border)]'
+            : 'fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl flex flex-col max-h-[88dvh] max-w-lg mx-auto'
+        }
+      >
+        {/* Header — hidden in embedded mode (page provides its own) */}
+        {!embedded && (
         <div className="px-4 pt-4 pb-3 border-b border-[var(--color-border)] flex items-center gap-3 flex-shrink-0">
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'var(--ns-violet-light)' }}>🏃</div>
           <div className="flex-1">
@@ -128,6 +140,7 @@ export function CoachMessageThread({ coachId, athleteId, coachName, onClose, isC
           </div>
           <button aria-label="Close" onClick={onClose} className="text-[var(--color-text-tertiary)] text-xl leading-none">×</button>
         </div>
+        )}
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 min-h-0">

@@ -25,6 +25,7 @@ import GapRecoveryBanner from '@/components/GapRecoveryBanner'
 import { shareSessionWithSquadAction } from '@/app/today/actions'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
 import PreRunBrief from '@/components/PreRunBrief'
+import { MyCoachBanner } from '@/components/coach/MyCoachBanner'
 import MilestoneCard, { MILESTONES } from '@/components/MilestoneCard'
 import PlanPathSVG from '@/components/plan/PlanPathSVG'
 
@@ -562,6 +563,9 @@ export default function TrainClient() {
               </div>
             )}
           </div>
+
+          {/* ══ Coach banner — P3.3 ══ */}
+          <MyCoachBanner />
 
           {/* ══ Stats strip ══ */}
           <StatsStrip weeklyKm={weeklyKm} acwr={acwr} streak={streak} />

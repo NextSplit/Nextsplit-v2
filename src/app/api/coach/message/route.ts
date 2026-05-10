@@ -133,9 +133,15 @@ export async function POST(req: NextRequest) {
         recipientId,
         senderName,
         bodyPreview,
-        // Coach inbound to athlete → /coach surfaces the thread.
-        // Athlete inbound to coach → /coach/squad surfaces the roster + thread.
-        destinationUrl: isCoach ? '/coach' : '/coach/squad',
+        // P3.3 — destination URL routing per recipient role:
+        //   isCoach=true  → sender is the coach, recipient is athlete →
+        //                   /coach/messages (athlete's dedicated inbox)
+        //                   Previously routed to /coach which redirects
+        //                   non-coaches to /coach/setup. Broken UX.
+        //   isCoach=false → sender is the athlete, recipient is coach →
+        //                   /coach (coach dashboard, after PR #43 URL
+        //                   promotion; was /coach/squad).
+        destinationUrl: isCoach ? '/coach/messages' : '/coach',
       })
     }
 
