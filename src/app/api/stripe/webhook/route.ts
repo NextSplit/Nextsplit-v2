@@ -1,7 +1,7 @@
 import { db } from '@/lib/supabase/db'
 import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
-import { getStripe, incrementFoundingCount, PRICES } from '@/lib/stripe'
+import { getStripe, claimFoundingSpot, PRICES } from '@/lib/stripe'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
 import { config, serverConfig } from '@/lib/config'
@@ -232,8 +232,24 @@ export async function POST(req: NextRequest) {
         await recomputeXpRateMultiplier(userId)
 
         if (isFounding) {
+          // Council R1 (BACKEND/QA-RISK) — atomic claim instead of
+          // read-then-write. claim_founding_spot() RPC uses FOR UPDATE
+          // to serialise concurrent webhook fires. If the claim returns
+          // -1, the founding tier was already full when this webhook
+          // landed — but the user already paid the founding price
+          // (metadata.is_founding=true was set at checkout creation
+          // time, before the previous webhook flipped the count to
+          // FOUNDING_LIMIT). We honour the payment (no surprise refund)
+          // and Sentry-log the over-sell so the founder can reconcile.
           const serverSupabase = await (await import('@/lib/supabase/server')).createClient()
-          await incrementFoundingCount(serverSupabase)
+          const claim = await claimFoundingSpot(serverSupabase)
+          if (!claim.claimed) {
+            Sentry.captureMessage('Founding-tier over-sell detected', {
+              level: 'warning',
+              tags:  { feature: 'p4.5-founding-counter' },
+              extra: { userId, count: claim.count, sessionId: session.id },
+            })
+          }
         }
         break
       }
