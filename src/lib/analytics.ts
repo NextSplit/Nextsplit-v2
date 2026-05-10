@@ -212,7 +212,7 @@ export const Analytics = {
   // expressed. Cancellations don't fire.
   shareCardGenerated: (props: { session_type?: string; km?: number }) =>
     track('share_card_generated', props),
-  shareCardShared:    (props: { session_type?: string; km?: number; method: 'web_share' | 'clipboard' }) =>
+  shareCardShared:    (props: { session_type?: string; km?: number; method: 'web_share' | 'clipboard' | 'native' | 'download' }) =>
     track('share_card_shared', props),
 
   // P2.7 Third-Week Hold-the-Line: fires once per Week3Reanchor mount.

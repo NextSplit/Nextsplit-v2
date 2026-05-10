@@ -501,10 +501,10 @@ Each item: ID — Title (R1 source) — Thread / Persona / Status / Target phase
 - BL-C6 — Trial unlock on squad-join OR first coach msg (avoids hard Stripe dependency) — T5 / all / TRIAGE / P3
 
 **OPTION D — Milestone Share Cards (plug into A's celebration)**
-- BL-D1 — `@vercel/og` server-side card pipeline — T1, T2 / all / TRIAGE / P1 or P2
-- BL-D2 — Persona/squad-aware card variants — T2 / B,C / TRIAGE / P2
-- BL-D3 — In-app browser fallback (Instagram/Gmail WKWebView) — T1 / all / TRIAGE / P2
-- BL-D4 — Lime-on-navy contrast + alt-text on card — T2 / all / TRIAGE / P2
+- BL-D1 — `@vercel/og` server-side card pipeline — T1, T2 / all / ✅ SHIPPED — `/api/share-card/[type]/route.tsx` runs on edge, returns 1080×1080 PNG via `next/og` ImageResponse. Variants: `weekly | session | milestone | race-result`. Cached `s-maxage=3600`. Replaces the broken `WeeklyShareCard` client canvas (it referenced `var(--ns-*)` in `ctx.fillStyle` which silently no-op'd).
+- BL-D2 — Persona/squad-aware card variants — T2 / B,C / ✅ SHIPPED — `?accent=cyan|ember|lime|amber|violet|cobalt|magenta|forest` switches the brand accent (squad colour, runner-class, etc.); `?squad=<name>` adds a squad chip in the corner; `?class_emoji=<emoji>` adds the runner-class glyph above the headline.
+- BL-D3 — In-app browser fallback (Instagram/Gmail WKWebView) — T1 / all / ✅ SHIPPED — `src/lib/in-app-browser.ts` UA-sniffs Instagram, Facebook, Snapchat, TikTok, Gmail, Twitter, LinkedIn, generic WKWebView. `MilestoneShareCard` swaps the CTA to "Download image" + an "Open in browser" escape link when detected; renders a long-press hint banner.
+- BL-D4 — Lime-on-navy contrast + alt-text on card — T2 / all / ✅ SHIPPED — server card uses `#7fff4d` lime headlines on `#0a0e1a` navy background (13.5:1, AAA). `MilestoneShareCard` requires an `alt` prop (no default) so consumers must consciously describe the milestone for screen readers; modal carries `role="dialog"` + `aria-modal` + `aria-label`.
 
 **Cross-cutting backlog**
 - BL-X1 — Decompose `TodayClient.tsx` (860 lines) — T1 / all / NEXT / P1.0
