@@ -26,7 +26,7 @@ interface Props {
   show:                boolean
   userId:              string | null
   trialLapsedDaysAgo:  number | null
-  trialSource:         'squad_join' | 'first_coach_message' | null
+  trialSource:         'squad_join' | 'first_coach_message' | 'day8_auto' | null
 }
 
 function storageKey(userId: string): string {
@@ -36,6 +36,7 @@ function storageKey(userId: string): string {
 const SOURCE_KICKER: Record<string, string> = {
   squad_join:           'Keep your squad onboarding momentum',
   first_coach_message:  'Keep your coaching channel open',
+  day8_auto:            'Keep the momentum from your first week',
 }
 
 export function TrialLapsedBanner({ show, userId, trialLapsedDaysAgo, trialSource }: Props) {

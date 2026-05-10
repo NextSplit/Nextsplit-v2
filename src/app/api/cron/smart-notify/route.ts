@@ -20,7 +20,7 @@ import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { runMondayDigest } from '@/lib/monday-digest'
-import { runTrialLifecycleSweep } from '@/lib/trial-lifecycle'
+import { runTrialLifecycleSweep, runDay8AutoTrialSweep } from '@/lib/trial-lifecycle'
 
 // Returns the user's local hour (0-23) given an IANA timezone, or null
 // if Intl can't resolve it. Errors are swallowed to default-allow.
@@ -56,6 +56,27 @@ export async function GET(req: Request) {
     const now      = new Date()
     const isSunday = now.getUTCDay() === 0
     const todayStr = now.toISOString().slice(0, 10)
+
+    // BL-C5 day-8 auto-trial sweep — daily fire. RPC selects users at
+    // signup_age ∈ [7d, 30d] who haven't received a trial yet, grants it,
+    // and returns user_ids for welcome-push fan-out. Idempotent via the
+    // same trial_started_at IS NULL guard. Bounded backfill (30d window)
+    // prevents the first deploy from retroactively granting trials to
+    // every dormant account.
+    try {
+      const day8Result = await runDay8AutoTrialSweep()
+      Sentry.addBreadcrumb({
+        category: 'cron',
+        message:  '[smart-notify day8-auto-trial]',
+        level:    'info',
+        data:     day8Result,
+      })
+    } catch (day8Err) {
+      Sentry.captureException(day8Err, {
+        tags:  { feature: 'blc5-day8-trial' },
+        extra: { context: '[smart-notify day8-auto-trial]' },
+      })
+    }
 
     // BL-C6 lifecycle sweep — runs every fire (not Monday-only). Idempotent
     // server-side via warn_overdue_trials() / expire_overdue_trials() RPCs:

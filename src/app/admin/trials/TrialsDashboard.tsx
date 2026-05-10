@@ -23,6 +23,7 @@ const STATUS_STYLE: Record<TrialRow['status'], { dot: string; label: string; ton
 const SOURCE_LABEL: Record<string, string> = {
   squad_join:          'Squad join',
   first_coach_message: 'Coach message',
+  day8_auto:           'Day-8 auto',
 }
 
 function fmtPct(n: number): string {
@@ -49,7 +50,7 @@ function rateColour(pct: number): string {
 export default function TrialsDashboard({ data }: Props) {
   const { totals, bySource, recent, dailyGranted } = data
 
-  const peak = Math.max(1, ...dailyGranted.map(d => d.squad_join + d.first_coach_message))
+  const peak = Math.max(1, ...dailyGranted.map(d => d.squad_join + d.first_coach_message + d.day8_auto))
 
   return (
     <main className="min-h-screen pb-20" style={{ background: 'var(--color-bg)' }}>
@@ -149,25 +150,29 @@ export default function TrialsDashboard({ data }: Props) {
               Daily granted (30d)
             </p>
             <p className="text-[10px] mb-3" style={{ color: 'var(--color-text-tertiary)' }}>
-              Cyan = squad-join · violet = coach-message · stacked
+              Cyan = squad-join · violet = coach-message · amber = day-8 auto · stacked
             </p>
             <div className="flex items-end gap-1" style={{ height: 80 }}>
               {dailyGranted.map(d => {
-                const total = d.squad_join + d.first_coach_message
+                const total = d.squad_join + d.first_coach_message + d.day8_auto
                 const sjPct = (d.squad_join / peak) * 100
                 const cmPct = (d.first_coach_message / peak) * 100
+                const d8Pct = (d.day8_auto / peak) * 100
                 return (
                   <div
                     key={d.date}
                     className="flex-1 flex flex-col-reverse"
                     style={{ minWidth: 4 }}
-                    title={`${d.date}: ${d.squad_join} squad / ${d.first_coach_message} coach (${total} total)`}
+                    title={`${d.date}: ${d.squad_join} squad / ${d.first_coach_message} coach / ${d.day8_auto} day-8 (${total} total)`}
                   >
                     {d.squad_join > 0 && (
                       <div style={{ height: `${sjPct}%`, background: '#00d4ff' }} />
                     )}
                     {d.first_coach_message > 0 && (
                       <div style={{ height: `${cmPct}%`, background: '#a855f7' }} />
+                    )}
+                    {d.day8_auto > 0 && (
+                      <div style={{ height: `${d8Pct}%`, background: '#ffb800' }} />
                     )}
                   </div>
                 )

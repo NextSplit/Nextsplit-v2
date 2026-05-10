@@ -11,7 +11,7 @@ export interface Subscription {
   currentPeriodEnd:  string | null
   trialEnd:          string | null    // BL-C6 — ISO date when 14-day trial expires (predicted; null after expiry)
   trialEndedAt:      string | null    // BL-C6 — set by the cron sweep when trial lapsed without conversion
-  trialSource:       'squad_join' | 'first_coach_message' | null
+  trialSource:       'squad_join' | 'first_coach_message' | 'day8_auto' | null
   stripeCustomerId:  string | null
   isFounding:        boolean
   foundingLeft:      number   // spots remaining for founding pricing
