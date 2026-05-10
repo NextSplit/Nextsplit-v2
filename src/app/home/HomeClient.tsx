@@ -1,7 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
+import MilestoneShareCard from '@/components/MilestoneShareCard'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
 import { useProfile } from '@/hooks/useProfile'
@@ -59,16 +60,26 @@ function getSessionColour(code: string | null | undefined) {
 
 // ── XP Header Bar ─────────────────────────────────────────────────────────────
 
-function XPHeaderBar({ xp, streak }: { xp: number; streak: number }) {
+function XPHeaderBar({ xp, streak, onShareStreak }: { xp: number; streak: number; onShareStreak?: () => void }) {
   const level = getLevelForXP(xp)
   const pct   = getXPProgress(xp)
   const hour  = new Date().getHours()
   const atRisk = streak > 0 && hour >= 19
+  // Streak-milestone share affordance — surfaces at 7/30/100/365 day
+  // milestones. Tap routes to MilestoneShareCard via parent's onShareStreak
+  // handler. No localStorage gating; the surface stays visible while the
+  // streak holds so users can re-share if they want.
+  const showShare = streak >= 7 && !!onShareStreak
+  const Wrapper: React.ElementType = showShare ? 'button' : 'div'
 
   return (
     <div className="flex items-center gap-2 px-4 py-2">
       {/* Streak */}
-      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full flex-shrink-0"
+      <Wrapper
+        type={showShare ? 'button' : undefined}
+        onClick={showShare ? onShareStreak : undefined}
+        aria-label={showShare ? `Share ${streak}-day streak` : undefined}
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full flex-shrink-0 active:scale-95 transition-transform"
         style={{
           background: streak > 0 ? (atRisk ? 'rgba(255,61,110,0.15)' : 'rgba(255,184,0,0.12)') : 'var(--color-surface-2)',
           border: `2px solid ${streak > 0 ? (atRisk ? 'rgba(255,61,110,0.5)' : 'rgba(255,184,0,0.5)') : 'var(--color-border)'}`,
@@ -79,7 +90,10 @@ function XPHeaderBar({ xp, streak }: { xp: number; streak: number }) {
           style={{ color: streak > 0 ? (atRisk ? '#ff3d6e' : '#ffb800') : 'var(--color-text-tertiary)' }}>
           {streak > 0 ? streak : '0'}
         </span>
-      </div>
+        {showShare && (
+          <span className="text-[10px] ml-0.5" aria-hidden style={{ color: '#ffb800', opacity: 0.7 }}>↗</span>
+        )}
+      </Wrapper>
 
       {/* XP bar */}
       <div className="flex-1 h-2 rounded-full overflow-hidden"
@@ -563,6 +577,7 @@ export default function HomeClient() {
   const { coach, hasCoach } = useMyCoach()
   const { isPro, isTrialing, trialDaysLeft, subscription } = useSubscription()
   const { notifications, markRead, markOpened } = useNotifications()
+  const [showStreakShare, setShowStreakShare] = useState(false)
 
   const streak   = useMemo(() =>
     computeStreak(allLogs.map((l: TrainingLog) => ({ logged_at: l.created_at, done: l.done }))).current,
@@ -647,7 +662,7 @@ export default function HomeClient() {
             </Link>
           </div>
         </div>
-        <XPHeaderBar xp={xp} streak={streak} />
+        <XPHeaderBar xp={xp} streak={streak} onShareStreak={() => setShowStreakShare(true)} />
       </div>
 
       {/* ── Content ── */}
@@ -737,6 +752,25 @@ export default function HomeClient() {
         {!isPro   && plan && <EliteNudge />}
 
       </div>
+
+      {/* Streak-milestone share — triggered from XPHeaderBar streak chip
+          when streak >= 7. Uses MilestoneShareCard server-side pipeline
+          with the milestone variant + amber accent (matches the streak
+          visual identity). */}
+      {showStreakShare && (
+        <MilestoneShareCard
+          variant="milestone"
+          headline={`${streak}-day streak`}
+          sub={profile?.display_name as string | null ?? undefined}
+          alt={`${streak}-day running streak on NextSplit. ${Math.round(weeklyKm)}km this week, ${xp} XP earned.`}
+          accent="amber"
+          km={weeklyKm}
+          streak={streak}
+          xp={xp}
+          shareText={`${streak}-day streak going on NextSplit 🔥 #NextSplit`}
+          onClose={() => setShowStreakShare(false)}
+        />
+      )}
     </div>
   )
 }

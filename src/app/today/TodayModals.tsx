@@ -2,7 +2,7 @@
 
 import FocusMode from '@/components/FocusMode'
 import LogModal from '@/components/LogModal'
-import WeeklyShareCard from '@/components/WeeklyShareCard'
+import MilestoneShareCard from '@/components/MilestoneShareCard'
 import ShareSessionCard from '@/components/ShareSessionCard'
 import AdHocSessionModal from '@/components/AdHocSessionModal'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
@@ -149,24 +149,36 @@ export function TodayModals({
         />
       )}
 
-      {/* Weekly share card modal */}
-      {showWeeklyShare && plan && (
-        <WeeklyShareCard
-          weekN={weekN}
-          totalWeeks={plan.total_weeks}
-          sessionsDone={doneTodayCount}
-          sessionsPlanned={todaySessions.length}
-          kmLogged={Object.values(logs).filter(l => l.done && l.week_n === weekN).reduce((a, l) => a + (l.km ?? 0), 0)}
-          streak={computeStreak(Object.values(logs)).current}
-          xpEarned={Object.values(logs).filter(l => l.done && l.week_n === weekN).reduce((a, l) => {
-            const w = weeks.find(wk => wk.n === l.week_n)
-            const s = w?.days[l.day_i]?.sessions[l.session_i]
-            return a + getSessionXP(s?.c ?? 'run-easy')
-          }, 0)}
-          planName={plan.name}
-          onClose={() => setShowWeeklyShare(false)}
-        />
-      )}
+      {/* Weekly share card modal — server-side @vercel/og pipeline (BL-D1).
+          Replaces the legacy client-canvas WeeklyShareCard which silently
+          no-op'd CSS-var fillStyles. */}
+      {showWeeklyShare && plan && (() => {
+        const kmLogged = Object.values(logs).filter(l => l.done && l.week_n === weekN).reduce((a, l) => a + (l.km ?? 0), 0)
+        const streak   = computeStreak(Object.values(logs)).current
+        const xpEarned = Object.values(logs).filter(l => l.done && l.week_n === weekN).reduce((a, l) => {
+          const w = weeks.find(wk => wk.n === l.week_n)
+          const s = w?.days[l.day_i]?.sessions[l.session_i]
+          return a + getSessionXP(s?.c ?? 'run-easy')
+        }, 0)
+        return (
+          <MilestoneShareCard
+            variant="weekly"
+            headline={`Week ${weekN}`}
+            sub={plan.name}
+            alt={`Week ${weekN} of ${plan.total_weeks}: ${doneTodayCount} of ${todaySessions.length} sessions done, ${Math.round(kmLogged)}km logged, ${streak}-day streak`}
+            accent="cyan"
+            sessionsDone={doneTodayCount}
+            sessionsPlanned={todaySessions.length}
+            km={kmLogged}
+            streak={streak}
+            xp={xpEarned}
+            weekN={weekN}
+            totalWeeks={plan.total_weeks}
+            shareText={`Week ${weekN} done — ${doneTodayCount}/${todaySessions.length} sessions · ${Math.round(kmLogged)}km 🏃 #NextSplit`}
+            onClose={() => setShowWeeklyShare(false)}
+          />
+        )
+      })()}
 
       {/* Share session card modal */}
       {shareSession && (
