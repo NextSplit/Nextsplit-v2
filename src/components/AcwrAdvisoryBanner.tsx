@@ -22,17 +22,28 @@ import { useEffect, useState } from 'react'
 import { Analytics } from '@/lib/analytics'
 
 interface Props {
-  latestAcwr:   number
+  latestAcwr:        number
+  chronicBaselineKm: number  // BL-B3 — 4-week chronic average (km/week)
   todaySessionType?: string
 }
 
 const DANGER_THRESHOLD = 1.3
+// BL-B3 — Chronic-baseline suppression. ACWR is a *ratio*; if a runner's
+// chronic baseline is very low (e.g. averaging 5km/week), a single 8km
+// long run spikes the ratio to 1.6 — but the absolute volume is still
+// safe. Suppress the warning when chronic < 12 km/week to avoid spam-ing
+// every couch-to-5k user who logs anything intentional.
+//
+// 12km/week is roughly the threshold below which most sport-science
+// literature considers chronic load "deconditioned" — ratio-based load
+// metrics aren't validated in that range.
+const CHRONIC_BASELINE_KM = 12
 
 function todayKey() {
   return new Date().toISOString().slice(0, 10)
 }
 
-export default function AcwrAdvisoryBanner({ latestAcwr, todaySessionType }: Props) {
+export default function AcwrAdvisoryBanner({ latestAcwr, chronicBaselineKm, todaySessionType }: Props) {
   const [dismissed, setDismissed] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -45,16 +56,21 @@ export default function AcwrAdvisoryBanner({ latestAcwr, todaySessionType }: Pro
   }, [])
 
   useEffect(() => {
-    if (dismissed === false) {
+    if (dismissed === false && latestAcwr > DANGER_THRESHOLD && chronicBaselineKm >= CHRONIC_BASELINE_KM) {
       Analytics.acwrAdvisoryShown({
-        acwr: latestAcwr,
-        session_type: todaySessionType,
+        acwr:                latestAcwr,
+        chronic_baseline_km: Math.round(chronicBaselineKm * 10) / 10,
+        session_type:        todaySessionType,
       })
     }
-    // Fire-once per mount. eslint-disable not needed since dismissed/latestAcwr are deps
-  }, [dismissed, latestAcwr, todaySessionType])
+    // Fire-once per mount when actually surfaced (not on suppress).
+  }, [dismissed, latestAcwr, chronicBaselineKm, todaySessionType])
 
   if (latestAcwr <= DANGER_THRESHOLD) return null
+  // BL-B3 suppression: ratio is meaningless when chronic baseline is too
+  // low. A new runner doing a single intentional session looks dangerous
+  // by ACWR but isn't.
+  if (chronicBaselineKm < CHRONIC_BASELINE_KM) return null
   if (dismissed !== false) return null  // hide while loading or already dismissed
 
   function dismiss() {
