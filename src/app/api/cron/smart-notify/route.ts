@@ -20,6 +20,7 @@ import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { runMondayDigest } from '@/lib/monday-digest'
+import { runTrialLifecycleSweep } from '@/lib/trial-lifecycle'
 
 // Returns the user's local hour (0-23) given an IANA timezone, or null
 // if Intl can't resolve it. Errors are swallowed to default-allow.
@@ -55,6 +56,27 @@ export async function GET(req: Request) {
     const now      = new Date()
     const isSunday = now.getUTCDay() === 0
     const todayStr = now.toISOString().slice(0, 10)
+
+    // BL-C6 lifecycle sweep — runs every fire (not Monday-only). Idempotent
+    // server-side via warn_overdue_trials() / expire_overdue_trials() RPCs:
+    //   · day-13 warning push fires once per user (trial_warned_at gate)
+    //   · day-14 expiry push fires once per user (trial_ended_at gate)
+    // Fire-and-forget — failures Sentry-log under feature='blc6-trial-lifecycle'
+    // but don't block the user-notify cycle.
+    try {
+      const result = await runTrialLifecycleSweep()
+      Sentry.addBreadcrumb({
+        category: 'cron',
+        message:  '[smart-notify trial-lifecycle]',
+        level:    'info',
+        data:     result,
+      })
+    } catch (lifeErr) {
+      Sentry.captureException(lifeErr, {
+        tags:  { feature: 'blc6-trial-lifecycle' },
+        extra: { context: '[smart-notify trial-lifecycle]' },
+      })
+    }
 
     // BL-C4 Coach-Pro Monday digest: idempotent per (coach_id, ISO-week)
     // via coach_digest_runs UNIQUE constraint. Runs on Mondays before the
