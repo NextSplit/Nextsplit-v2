@@ -514,29 +514,40 @@ function EliteNudge() {
 
 // ── Notification strip ────────────────────────────────────────────────────────
 
-function NotifStrip({ notifications, markRead }: {
+function NotifStrip({ notifications, markRead, markOpened }: {
   notifications: Array<{ id: string; type: string; title: string; body: string }>
-  markRead: (id: string) => void
+  markRead:   (id: string) => void
+  markOpened: (id: string) => void
 }) {
   if (!notifications.length) return null
   return (
     <div className="mx-4 space-y-2">
-      {notifications.map(n => (
-        <div key={n.id} className="flex items-start gap-3 rounded-2xl px-4 py-3"
-          style={{
-            background: n.type === 'squad_nudge' ? 'rgba(127,255,77,0.08)' : 'rgba(77,138,255,0.08)',
-            border: `2px solid ${n.type === 'squad_nudge' ? 'rgba(127,255,77,0.3)' : 'rgba(77,138,255,0.25)'}`,
-          }}>
-          <span className="text-lg flex-shrink-0">{n.type === 'squad_nudge' ? '👋' : '🔔'}</span>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-black" style={{ color: 'var(--color-text-primary)' }}>{n.title}</p>
-            <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>{n.body}</p>
-          </div>
-          <button onClick={() => markRead(n.id)} aria-label="Dismiss"
-            className="flex-shrink-0 text-base leading-none"
-            style={{ color: 'var(--color-text-tertiary)' }}>×</button>
-        </div>
-      ))}
+      {notifications.map(n => {
+        const isNudge = n.type === 'squad_nudge'
+        // P3.9 — squad nudges tap-through to /squad and fire opened tracking;
+        // other notification types stay non-interactive (just X to dismiss).
+        const Wrapper: React.ElementType = isNudge ? Link : 'div'
+        const wrapperProps = isNudge
+          ? { href: '/squad', onClick: () => markOpened(n.id) }
+          : {}
+        return (
+          <Wrapper key={n.id} {...wrapperProps}
+            className="flex items-start gap-3 rounded-2xl px-4 py-3 active:scale-[0.99] transition-transform"
+            style={{
+              background: isNudge ? 'rgba(127,255,77,0.08)' : 'rgba(77,138,255,0.08)',
+              border: `2px solid ${isNudge ? 'rgba(127,255,77,0.3)' : 'rgba(77,138,255,0.25)'}`,
+            }}>
+            <span className="text-lg flex-shrink-0">{isNudge ? '👋' : '🔔'}</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-black" style={{ color: 'var(--color-text-primary)' }}>{n.title}</p>
+              <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>{n.body}</p>
+            </div>
+            <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); markRead(n.id) }} aria-label="Dismiss"
+              className="flex-shrink-0 text-base leading-none"
+              style={{ color: 'var(--color-text-tertiary)' }}>×</button>
+          </Wrapper>
+        )
+      })}
     </div>
   )
 }
@@ -550,7 +561,7 @@ export default function HomeClient() {
   const { squad, role }   = useSquad()
   const { coach, hasCoach } = useMyCoach()
   const { isPro }         = useSubscription()
-  const { notifications, markRead } = useNotifications()
+  const { notifications, markRead, markOpened } = useNotifications()
 
   const streak   = useMemo(() =>
     computeStreak(allLogs.map((l: TrainingLog) => ({ logged_at: l.created_at, done: l.done }))).current,
@@ -642,7 +653,7 @@ export default function HomeClient() {
       <div className="max-w-lg mx-auto py-4 space-y-3">
 
         {/* Notification strip */}
-        <NotifStrip notifications={notifications} markRead={markRead} />
+        <NotifStrip notifications={notifications} markRead={markRead} markOpened={markOpened} />
 
         {/* Today's character race — compact teaser linking to /race */}
         <RaceCard variant="compact" />

@@ -4,7 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { RUNNER_CLASSES } from '@/lib/rpg'
 import type { Squad, SquadMember } from '@/hooks/useSquad'
-import { NUDGE_MESSAGES, NUDGE_KEYS } from '@/lib/squad-nudges'
+import { NUDGE_KEYS, nudgeMessage, nudgeTemplateId, pickNudgeVariant } from '@/lib/squad-nudges'
+import { Analytics } from '@/lib/analytics'
 
 
 interface Props {
@@ -214,6 +215,14 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
         body:    JSON.stringify({ to_user: nudgeTarget, message_key: nudgeKey }),
       })
       if (res.ok) {
+        const data = await res.json().catch(() => null)
+        const variant = data?.variant === 'b' ? 'b' : 'a'
+        Analytics.nudgeSent({
+          template_id:      nudgeTemplateId(nudgeKey, variant),
+          template_variant: variant,
+          is_leader_nudge:  true,
+          squad_id:         squad.id,
+        })
         setNudgeSent(nudgeTarget)
         setShowNudge(false)
         setTimeout(() => setNudgeSent(null), 3000)
@@ -424,17 +433,25 @@ export default function SquadDashboardClient({ squad, role, monthlyKm, userId }:
               👟 Choose your nudge
             </p>
             <div className="space-y-2 mb-4 max-h-60 overflow-y-auto">
-              {NUDGE_KEYS.map(key => (
-                <button key={key} onClick={() => setNudgeKey(key)}
-                  className="w-full text-left px-4 py-3 rounded-xl text-sm transition-all"
-                  style={{
-                    background: nudgeKey === key ? `${colour}20` : 'var(--color-surface-2)',
-                    border: nudgeKey === key ? `1px solid ${colour}40` : '1px solid transparent',
-                    color: 'var(--color-text-secondary)',
-                  }}>
-                  {NUDGE_MESSAGES[key]}
-                </button>
-              ))}
+              {NUDGE_KEYS.map(key => {
+                // P3.9 — preview the exact variant that will land. Variant
+                // is deterministic per (sender, recipient) pair so the
+                // picker can render the recipient-bound copy upfront.
+                const previewVariant = nudgeTarget
+                  ? pickNudgeVariant(userId, nudgeTarget)
+                  : 'a'
+                return (
+                  <button key={key} onClick={() => setNudgeKey(key)}
+                    className="w-full text-left px-4 py-3 rounded-xl text-sm transition-all"
+                    style={{
+                      background: nudgeKey === key ? `${colour}20` : 'var(--color-surface-2)',
+                      border: nudgeKey === key ? `1px solid ${colour}40` : '1px solid transparent',
+                      color: 'var(--color-text-secondary)',
+                    }}>
+                    {nudgeMessage(key, previewVariant)}
+                  </button>
+                )
+              })}
             </div>
             <button onClick={sendNudge} disabled={nudgeSending}
               className="w-full py-4 rounded-2xl font-bold text-white text-sm transition-all disabled:opacity-60"

@@ -376,7 +376,7 @@ Phases sequence threads. Items inside each phase are tagged with their thread (T
 
 #### Retention proof (T3, T8)
 - **P3.8 [T8] all** Retention dashboards live. D1 / D7 / D30 cohort curves. Funnel: signup → onboarding → first log → D7 return → D30 return.
-- **P3.9 [T3, T8] B,C** Squad nudge effectiveness measurement. Tag per template; drop dead messages; A/B over alternates.
+- **P3.9 [T3, T8] B,C** Squad nudge effectiveness measurement. Tag per template; drop dead messages; A/B over alternates. ✅ FRAMEWORK SHIPPED — `phase-p3-9-nudge-ab-v1.sql` adds `template_variant`/`opened_at`/`dismissed_at` + `nudge_effectiveness_summary()` RPC; `/api/squad/nudge` picks deterministic A/B variant per (sender, recipient) pair from two-bank `NUDGE_MESSAGES`; `/api/squad/nudge/track` flips recipient timestamps; PostHog `nudge_sent`/`nudge_opened`/`nudge_dismissed` carry `template_variant` for client-side funnel parity. Effectiveness data accumulates as users engage; founder reads via `SELECT * FROM nudge_effectiveness_summary()`.
 - **P3.10 [T3] B,C** Squad seasons (light): monthly leaderboard reset, per-season trophy.
 - **P3.11 [T1, T2] all** Plan-path animateMotion runner + periodisation glyphs (Session 10 council follow-ups).
 - **P3.12 [T1] A** Strava OAuth live (HANDOFF #21). Power-user feature; gated to Elite at paywall flip.
