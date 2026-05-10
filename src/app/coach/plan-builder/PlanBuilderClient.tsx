@@ -110,16 +110,41 @@ function SessionEditor({ session, onSave, onCancel }: { session: Session; onSave
   )
 }
 
-export default function PlanBuilderClient({ coachName }: { coachName: string }) {
+// P3.2 — initialTemplate prop wires the edit flow. PlanBuilderPage loads
+// the template by ?edit=<uuid> and passes it here so the form pre-fills
+// instead of opening blank. When set, savePlan() sends template_id which
+// makes /api/coach/save-plan UPDATE rather than INSERT.
+interface InitialTemplate {
+  id:           string
+  name:         string
+  distance:     string
+  level:        string
+  description:  string | null
+  price_gbp:    number | null
+  is_public:    boolean
+  weeks_data:   Week[] | null
+}
+
+export default function PlanBuilderClient({
+  coachName, initialTemplate,
+}: {
+  coachName:        string
+  initialTemplate?: InitialTemplate
+}) {
   const router = useRouter()
-  const [name, setName]         = useState('')
-  const [distance, setDistance] = useState('Marathon')
-  const [level, setLevel]       = useState('Intermediate')
-  const [description, setDesc]  = useState('')
-  const [price, setPrice]       = useState('')
-  const [isPublic, setIsPublic] = useState(true)
+  const editingTemplateId = initialTemplate?.id ?? null
+  const [name, setName]         = useState(initialTemplate?.name ?? '')
+  const [distance, setDistance] = useState(initialTemplate?.distance ?? 'Marathon')
+  const [level, setLevel]       = useState(initialTemplate?.level ?? 'Intermediate')
+  const [description, setDesc]  = useState(initialTemplate?.description ?? '')
+  const [price, setPrice]       = useState(initialTemplate?.price_gbp != null ? String(initialTemplate.price_gbp) : '')
+  const [isPublic, setIsPublic] = useState(initialTemplate?.is_public ?? true)
   const [isTemplate, setIsTemplate] = useState(false)
-  const [weeks, setWeeks]           = useState<Week[]>([emptyWeek(1)])
+  const [weeks, setWeeks]           = useState<Week[]>(
+    Array.isArray(initialTemplate?.weeks_data) && initialTemplate!.weeks_data!.length > 0
+      ? initialTemplate!.weeks_data!
+      : [emptyWeek(1)],
+  )
   const [activeWeek, setActiveWeek] = useState(0)
   const [activeDay, setActiveDay]   = useState(0)
   const [editingSession, setEditingSession] = useState<{ weekIdx: number; dayIdx: number; sessIdx: number | null } | null>(null)
@@ -205,19 +230,42 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
     if (!name) return
     setSaving(true)
     try {
-      const res = await fetch('/api/coach/plans', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, distance, level, description, price_gbp: price ? parseFloat(price) : null, is_public: isPublic, is_template: isTemplate, weeks_data: weeks, weeks_min: weeks.length, weeks_max: weeks.length }) })
+      // P3.2: POST to /api/coach/save-plan — this endpoint exists and
+      // handles both INSERT (no template_id) and UPDATE (template_id
+      // present, with author_id safety check). Previous implementation
+      // POSTed to /api/coach/plans which has no route handler (404'd).
+      // template_id is sent ONLY when editing an existing plan; new
+      // plans get inserted server-side.
+      const body = {
+        ...(editingTemplateId ? { template_id: editingTemplateId } : {}),
+        name,
+        distance,
+        level,
+        description,
+        price_gbp:    price ? parseFloat(price) : null,
+        is_public:    isPublic,
+        weeks_data:   weeks,
+        runs_per_week: weeks[0]?.days.reduce((s, d) => s + d.sessions.filter(ss => ss.c.startsWith('run')).length, 0) ?? 4,
+        peak_km_week:  Math.max(...weeks.map(w => w.targetKm ?? 0), 0) || null,
+        longest_run_km: Math.max(...weeks.flatMap(w => w.days.flatMap(d => d.sessions.map(s => s.km ?? 0))), 0) || null,
+      }
+      const res = await fetch('/api/coach/save-plan', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(body),
+      })
       if (res.ok) {
         const data = await res.json().catch(() => ({}))
         setSaved(true)
-        // P3.2: capture the new template id so assign-to-athlete can target it.
-        const tmplId = (data?.plan?.id ?? data?.id) as string | undefined
+        // Capture the template id (existing or new) so assign-to-athlete
+        // can target it without an extra round-trip.
+        const tmplId = (data?.plan?.id ?? editingTemplateId) as string | undefined
         if (tmplId) {
           setSavedTemplateId(tmplId)
-          // Pre-load athletes so the sheet is instant when opened.
           loadCoachAthletes()
         } else {
-          // Fallback to original redirect if the API didn't surface the id.
-          setTimeout(() => router.push('/coach/squad'), 1500)
+          // Fallback for unexpected response shape — bounce to dashboard.
+          setTimeout(() => router.push('/coach'), 1500)
         }
       }
     } finally { setSaving(false) }
@@ -245,8 +293,20 @@ export default function PlanBuilderClient({ coachName }: { coachName: string }) 
                 Assign →
               </button>
             )}
-            <button onClick={savePlan} disabled={saving || !name} className="px-4 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 active:scale-95" style={{ background: saved ? '#059669' : '#8b5cf6' }}>
-              {saved ? '✓ Saved!' : saving ? 'Saving…' : 'Save plan'}
+            <button
+              onClick={savePlan}
+              disabled={saving || !name}
+              className="px-4 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 active:scale-95"
+              style={{ background: saved ? '#059669' : '#8b5cf6' }}
+              title={isPublic ? 'Will publish to the marketplace' : 'Saved privately — assign to athletes only'}
+            >
+              {saved
+                ? '✓ Saved!'
+                : saving
+                  ? 'Saving…'
+                  : editingTemplateId
+                    ? (isPublic ? 'Update + publish' : 'Update plan')
+                    : (isPublic ? 'Publish plan' : 'Save private')}
             </button>
           </div>
         </div>
