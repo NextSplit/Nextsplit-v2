@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { config, serverConfig } from '@/lib/config'
 import { db } from '@/lib/supabase/db'
+import { sendTrialWelcomePush } from '@/lib/trial-lifecycle'
 
 // BL-C6 — coach→athlete inbound message trial unlock. Runs in the route's
 // coach-auth context but writes to the *athlete* profile row, so RLS
@@ -12,13 +13,14 @@ import { db } from '@/lib/supabase/db'
 // bypass RLS, and rely on the WHERE guard (trial_started_at IS NULL AND
 // is_pro = false) to make this idempotent — coaches messaging the same
 // athlete repeatedly never re-grants, and Pro athletes never get a
-// shadow trial.
-async function grantTrialForAthlete(athleteId: string): Promise<void> {
+// shadow trial. Returns true if a row actually flipped, so the caller
+// can fire the welcome push exactly once per grant.
+async function grantTrialForAthlete(athleteId: string): Promise<boolean> {
   try {
     const admin = createAdminClient(config.supabaseUrl, serverConfig.supabaseServiceRoleKey)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const a = admin as any
-    await a
+    const { data } = await a
       .from('profiles')
       .update({
         trial_started_at:    new Date().toISOString(),
@@ -28,11 +30,14 @@ async function grantTrialForAthlete(athleteId: string): Promise<void> {
       .eq('id', athleteId)
       .is('trial_started_at', null)
       .eq('is_pro', false)
+      .select('id')
+    return Array.isArray(data) && data.length > 0
   } catch (err) {
     Sentry.captureException(err, {
       tags:  { feature: 'blc6-trial-unlock' },
       extra: { context: '[coach-msg trial grant]', athleteId },
     })
+    return false
   }
 }
 
@@ -143,9 +148,12 @@ export async function POST(req: NextRequest) {
 
     // BL-C6 — coach→athlete messages trip the trial unlock (idempotent;
     // re-messages never re-grant). Athlete→coach messages don't qualify
-    // (the spec is "first coach msg", meaning coach as sender).
+    // (the spec is "first coach msg", meaning coach as sender). On a real
+    // grant, fire the welcome push so the athlete knows what unlocked.
     if (isCoach) {
-      void grantTrialForAthlete(athlete_id)
+      void grantTrialForAthlete(athlete_id).then(granted => {
+        if (granted) void sendTrialWelcomePush(athlete_id, 'first_coach_message')
+      })
     }
 
     // P3.3 push notification on inbound message. Fire-and-forget — if push

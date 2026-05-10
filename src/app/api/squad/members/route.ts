@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 import { zodError } from '@/lib/schemas'
+import { sendTrialWelcomePush } from '@/lib/trial-lifecycle'
 
 const JoinSchema = z.object({
   invite_code: z.string().min(1),
@@ -127,11 +128,13 @@ export async function POST(req: NextRequest) {
     // BL-C6 — squad-join trial unlock. Idempotent server-side: the RPC
     // grants only when trial_started_at IS NULL AND is_pro = false, so
     // re-joins / squad-hops never re-grant. Fire-and-forget — failures
-    // Sentry-log but don't block the join itself.
+    // Sentry-log but don't block the join itself. On a real grant, fire
+    // the welcome push (BL-C6 lifecycle) so the user knows what unlocked.
     let trialGranted = false
     try {
       const { data } = await s.rpc('grant_trial_if_eligible', { p_source: 'squad_join' })
       trialGranted = !!data
+      if (trialGranted) void sendTrialWelcomePush(user.id, 'squad_join')
     } catch (trialErr) {
       Sentry.captureException(trialErr, {
         tags:  { feature: 'blc6-trial-unlock' },
