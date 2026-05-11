@@ -17,8 +17,6 @@ import { TodayModals } from '../today/TodayModals'
 import type { PlanSession, TrainingLog, PlanWeek } from '@/types/database'
 import SessionCelebration from '@/components/SessionCelebration'
 import Week3Reanchor from '@/components/Week3Reanchor'
-import AcwrAdvisoryBanner from '@/components/AcwrAdvisoryBanner'
-import GapRecoveryBanner from '@/components/GapRecoveryBanner'
 import { DeloadAlternativeCard } from '@/components/DeloadAlternativeCard'
 import { shareSessionWithSquadAction } from '@/app/today/actions'
 import PlanCompletionCeremony from '@/components/PlanCompletionCeremony'
@@ -33,6 +31,7 @@ import { TrainHeader } from './TrainHeader'
 import { TrainNoPlanState } from './TrainNoPlanState'
 import { WeekDetailSheet } from './WeekDetailSheet'
 import { TrainFuelTab } from './TrainFuelTab'
+import { TrainBanners } from './TrainBanners'
 
 export default function TrainClient() {
   const router = useRouter()
@@ -315,17 +314,13 @@ export default function TrainClient() {
             </div>
           </div>
 
-          {/* P2.7 soft-deload: ACWR advisory + gap-recovery banners. Both
-              render above today's session block; both are dismissible and
-              log-once-per-day (advisory) / log-once-per-gap (gap-recovery)
-              via localStorage. */}
+          {/* A2 — 1-banner priority cascade. Caps the top-of-page alert
+              stack at one (ACWR > Gap). BL-B3 chronic baseline + per-banner
+              dismissal handled inside TrainBanners. */}
           {(() => {
             const series          = calcACWR(allLogs, weeks)
             const latest          = series.length > 0 ? series[series.length - 1] : null
             const latestAcwr      = latest?.acwr ?? null
-            // BL-B3 — chronic baseline (km/week, 4-week average) needed by
-            // AcwrAdvisoryBanner to suppress noisy warnings for low-volume
-            // users where the ratio isn't a meaningful injury signal.
             const chronicBaseline = latest?.chronic ?? 0
             const todayCode       = todaySessions[0]?.c
             const lastDoneLog     = allLogs
@@ -334,16 +329,12 @@ export default function TrainClient() {
                 new Date(b.logged_at).getTime() - new Date(a.logged_at).getTime())[0]
             const lastLoggedAt    = (lastDoneLog?.logged_at as string | undefined) ?? null
             return (
-              <div className="space-y-2 mb-3">
-                <GapRecoveryBanner lastLoggedAt={lastLoggedAt} />
-                {latestAcwr !== null && (
-                  <AcwrAdvisoryBanner
-                    latestAcwr={latestAcwr}
-                    chronicBaselineKm={chronicBaseline}
-                    todaySessionType={todayCode}
-                  />
-                )}
-              </div>
+              <TrainBanners
+                latestAcwr={latestAcwr}
+                chronicBaselineKm={chronicBaseline}
+                todaySessionType={todayCode}
+                lastLoggedAt={lastLoggedAt}
+              />
             )
           })()}
 
