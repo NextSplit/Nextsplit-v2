@@ -6,7 +6,7 @@ import BottomNav from './BottomNav'
 const APP_PATHS = [
   '/home', '/train', '/explore', '/you',
   '/coach', '/plan', '/today', '/profile', '/community',
-  '/squad', '/nutrition', '/dashboard', '/marketplace', '/history',
+  '/squad', '/dashboard', '/marketplace', '/history',
   '/races', '/gym', '/settings',
 ]
 
