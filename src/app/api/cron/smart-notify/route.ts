@@ -10,15 +10,18 @@
 // for accounts created before the column existed.
 //
 // Priority order, first match wins (one notification per user per fire):
-//   1. Sunday → weekly wrap (regardless of log state)
-//   2. Leader-queued squad nudge (squad_nudges.queued_for_date = today) — runs
+//   1. Active plan + tomorrow's session is hard (long/tempo/int/mp/race) →
+//      Pre-Load fuel nudge (per-user loop below) — highest because it's
+//      narrowly targeted, time-sensitive, and actionable tonight.
+//   2. Sunday → weekly wrap (regardless of log state)
+//   3. Leader-queued squad nudge (squad_nudges.queued_for_date = today) — runs
 //      pre-loop via runCronSlot2QueuedNudges; not in the per-user cascade
 //      because each row already has a specific recipient.
-//   3. At-risk squad-member detection (no done log in last 3 days) — runs
+//   4. At-risk squad-member detection (no done log in last 3 days) — runs
 //      pre-loop via runCronSlot3AtRiskDetection; idempotent via 72h
 //      notifications-table check.
-//   4. Active plan + not logged today → keep-streak fallback (per-user loop below)
-//   5. No notification
+//   5. Active plan + not logged today → keep-streak fallback (per-user loop below)
+//   6. No notification
 
 import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
@@ -26,6 +29,7 @@ import { createClient } from '@/lib/supabase/server'
 import { runMondayDigest } from '@/lib/monday-digest'
 import { runTrialLifecycleSweep, runDay8AutoTrialSweep } from '@/lib/trial-lifecycle'
 import { runCronSlot2QueuedNudges, runCronSlot3AtRiskDetection } from '@/lib/cron-slots'
+import type { PlanWeek } from '@/types/database'
 
 // Returns the user's local hour (0-23) given an IANA timezone, or null
 // if Intl can't resolve it. Errors are swallowed to default-allow.
@@ -47,6 +51,19 @@ function localHourFor(timezone: string | null): number | null {
 
 const QUIET_START_HOUR = 9   // 09:00 local
 const QUIET_END_HOUR   = 21  // 21:00 local — last fire window starts at 20:59
+
+// Pre-Load Nudge targets. Fires evening-of-day-before for glycogen-depleting
+// sessions where dinner carbs materially affect tomorrow's performance.
+// Easy runs + gym + rest are deliberately excluded — pre-loading doesn't
+// matter and would devalue the signal. Title prefix 🥗 lets analytics filter
+// without a new notifications.type enum value.
+const PRELOAD_TARGETS: Record<string, { title: string; body: string }> = {
+  'run-long':  { title: '🥗 Pre-load tonight',  body: "Long run tomorrow. Carb-rich dinner tonight (rice, pasta, potatoes) sets you up." },
+  'run-tempo': { title: '🥗 Pre-load tonight',  body: "Threshold session tomorrow. Extra carbs at dinner — keep fat + fibre light." },
+  'run-int':   { title: '🥗 Pre-load tonight',  body: "Intervals tomorrow. Fuel up tonight with easy-digest carbs." },
+  'run-mp':    { title: '🥗 Pre-load tonight',  body: "Marathon-pace session tomorrow. Carb-rich dinner — familiar foods only." },
+  'run-race':  { title: '🏁 Race tomorrow',     body: "Pre-race meal tonight: familiar carbs + light protein. Hydrate. No new foods." },
+}
 
 export async function GET(req: Request) {
   const authHeader = req.headers.get('authorization')
@@ -195,10 +212,40 @@ export async function GET(req: Request) {
     const loggedToday = new Set((todayLogs ?? []).map((l: { user_id: string }) => l.user_id))
 
     const { data: plans } = await s
-      .from('user_plans').select('user_id')
+      .from('user_plans').select('user_id, weeks_data')
       .in('user_id', userIds).eq('status', 'active')
 
     const hasPlan = new Set((plans ?? []).map((p: { user_id: string }) => p.user_id))
+
+    // Pre-Load Nudge lookup: userId → push payload. Walks the active plan's
+    // weeks_data for the day whose `dt` matches UTC tomorrow. First matching
+    // hard-session code wins. Bad/missing data Sentry-logs and skips the user
+    // — never throws (cron must keep dispatching other slots).
+    const tomorrowStr = new Date(now.getTime() + 86_400_000).toISOString().slice(0, 10)
+    const preloadByUser = new Map<string, { title: string; body: string }>()
+    type PlanRow = { user_id: string; weeks_data: unknown }
+    for (const p of (plans ?? []) as PlanRow[]) {
+      try {
+        const weeks = p.weeks_data as PlanWeek[] | null
+        if (!Array.isArray(weeks)) continue
+        for (const week of weeks) {
+          if (!Array.isArray(week?.days)) continue
+          const day = week.days.find(d => d?.dt === tomorrowStr)
+          if (!day) continue
+          if (!Array.isArray(day.sessions)) break
+          for (const sess of day.sessions) {
+            const payload = PRELOAD_TARGETS[sess?.c]
+            if (payload) { preloadByUser.set(p.user_id, payload); break }
+          }
+          break  // matched tomorrow's day in this week — stop scanning weeks
+        }
+      } catch (preloadErr) {
+        Sentry.captureException(preloadErr, {
+          tags: { feature: 'cron-preload-nudge' },
+          extra: { userId: p.user_id, tomorrowStr },
+        })
+      }
+    }
 
     // Priority cascade — slots map to the ordered list in the file header.
     // First match wins; any user gets at most ONE notification per fire.
@@ -214,7 +261,14 @@ export async function GET(req: Request) {
         continue
       }
 
-      // Slot 1: Sunday weekly wrap.
+      // Slot 1: Pre-Load Nudge — tomorrow is a hard session.
+      const preload = preloadByUser.get(user.id)
+      if (preload) {
+        toNotify.push({ userId: user.id, title: preload.title, body: preload.body })
+        continue
+      }
+
+      // Slot 2: Sunday weekly wrap.
       if (isSunday) {
         toNotify.push({
           userId: user.id,
@@ -224,12 +278,12 @@ export async function GET(req: Request) {
         continue
       }
 
-      // Slot 2 + Slot 3 are dispatched pre-loop above (separate fan-out
+      // Slot 3 + Slot 4 are dispatched pre-loop above (separate fan-out
       // queries — they don't fit the per-user iteration model since each
       // queued nudge already has a specific recipient and the at-risk
       // sweep aggregates across squads).
 
-      // Slot 4: keep-streak fallback (active plan + nothing logged today).
+      // Slot 5: keep-streak fallback (active plan + nothing logged today).
       if (hasPlan.has(user.id) && !loggedToday.has(user.id)) {
         toNotify.push({
           userId: user.id,
