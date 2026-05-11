@@ -16,6 +16,7 @@ import type { PlanWeek, PlanDay, PlanSession, TrainingLog } from '@/types/databa
 import LogModal from '@/components/LogModal'
 import DayRow from '@/components/plan/DayRow'
 import WeekRow from '@/components/plan/WeekRow'
+import RaceWeekFuelCard from '@/components/plan/RaceWeekFuelCard'
 
 const PHASE_LABELS: Record<string, { label: string; bg: string; text: string }> = {
   p1: { label: 'Phase 1', bg: 'bg-[var(--color-surface-2)]',   text: 'text-teal-800'   },
@@ -252,19 +253,7 @@ export default function PlanClient() {
         {/* ── FUEL TAB ── */}
         {planTab === 'fuel' && (
           <div className="space-y-4">
-            <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)' }}>
-              <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--ns-cobalt)' }}>
-                🥗 Fuel & Nutrition
-              </p>
-              <p className="text-xs mb-4" style={{ color: 'var(--color-text-secondary)' }}>
-                Your nutrition plan is tailored to this week's training load.
-              </p>
-              <a href="/nutrition"
-                className="block w-full py-3 rounded-2xl text-center text-sm font-bold text-white"
-                style={{ background: 'var(--ns-cobalt)' }}>
-                Open full nutrition dashboard →
-              </a>
-            </div>
+            <RaceWeekFuelCard raceDate={plan?.race_date ?? null} />
 
             {/* Quick fuel summary for today */}
             <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)' }}>

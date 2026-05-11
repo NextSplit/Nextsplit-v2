@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import SquadPageClient from './SquadPageClient'
 
 export const dynamic = 'force-dynamic'
@@ -10,6 +11,9 @@ export default async function SquadPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Minimal server component - just auth check, client handles data fetching
-  return <SquadPageClient userId={user.id} />
+  return (
+    <Suspense fallback={null}>
+      <SquadPageClient userId={user.id} />
+    </Suspense>
+  )
 }
