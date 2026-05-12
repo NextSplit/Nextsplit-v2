@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import FuelPlanCard from '@/components/FuelPlanCard'
 import { TDEESetupCard } from '@/components/nutrition/TDEESetupCard'
 import { FuelDailyView } from '@/components/nutrition/FuelDailyView'
+import { AIFuelCoach } from '@/components/nutrition/AIFuelCoach'
 import { useNutritionSettings } from '@/hooks/useNutritionSettings'
 import type { PlanWeek, PlanSession } from '@/types/database'
 
@@ -51,11 +53,34 @@ export function TrainFuelTab({ today }: Props) {
           onCancel={editing ? () => setEditing(false) : undefined}
         />
       ) : (
-        <FuelDailyView
-          settings={settings}
-          todaySessions={todaySessions}
-          onEditSettings={() => setEditing(true)}
-        />
+        <>
+          <FuelDailyView
+            settings={settings}
+            todaySessions={todaySessions}
+            onEditSettings={() => setEditing(true)}
+          />
+
+          {/* PR C2 — AI fuel coach for "what should I eat?" style asks */}
+          <AIFuelCoach settings={settings} todaySessions={todaySessions} />
+
+          {/* Recipe library link */}
+          <Link href="/train/fuel/recipes"
+            className="flex items-center justify-between rounded-2xl px-4 py-3 active:scale-[0.99] transition-transform"
+            style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl" aria-hidden>📖</span>
+              <div>
+                <p className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>
+                  Recipe library
+                </p>
+                <p className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>
+                  Search recipes by macros, save your own
+                </p>
+              </div>
+            </div>
+            <span className="text-xl" style={{ color: 'var(--color-text-tertiary)' }} aria-hidden>→</span>
+          </Link>
+        </>
       )}
     </div>
   )

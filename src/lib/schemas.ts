@@ -200,6 +200,33 @@ export const AiSuggestionsSchema = z.object({
   analysisData: z.record(z.string(), z.unknown()),
 })
 
+// PR C2 — Nutrition AI Coach. Inputs: user nutrition settings (TDEE +
+// goal) + today's planned session + recent training context + the
+// question being asked. Output: a single paragraph plan-aware fuel
+// recommendation.
+export const AiFuelCoachSchema = z.object({
+  question: z.string().min(3).max(500),
+  settings: z.object({
+    weight_kg:      z.number().min(30).max(250),
+    height_cm:      z.number().min(120).max(230),
+    age:            z.number().int().min(13).max(99),
+    sex:            z.enum(['male', 'female', 'other']),
+    activity_level: z.enum(['sedentary', 'light', 'moderate', 'active', 'very_active']),
+    goal:           z.enum(['cut', 'maintain', 'build']),
+  }),
+  targets: z.object({
+    calories:  z.number().int().min(800).max(8000),
+    protein_g: z.number().int().min(0).max(500),
+    carbs_g:   z.number().int().min(0).max(1000),
+    fat_g:     z.number().int().min(0).max(400),
+  }),
+  todaySession: z.object({
+    code: z.string().max(60).nullable(),
+    name: z.string().max(120).nullable(),
+    km:   z.number().min(0).max(500).nullable(),
+  }).optional(),
+})
+
 export const CoachAcceptSchema = z.object({
   token:               z.string().min(10).max(200),
   share_nutrition:     z.boolean().default(false),
