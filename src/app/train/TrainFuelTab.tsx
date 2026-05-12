@@ -1,25 +1,61 @@
 'use client'
 
+import { useState } from 'react'
 import FuelPlanCard from '@/components/FuelPlanCard'
-import type { PlanWeek } from '@/types/database'
+import { TDEESetupCard } from '@/components/nutrition/TDEESetupCard'
+import { FuelDailyView } from '@/components/nutrition/FuelDailyView'
+import { useNutritionSettings } from '@/hooks/useNutritionSettings'
+import type { PlanWeek, PlanSession } from '@/types/database'
 
-export function TrainFuelTab({ today }: { today: PlanWeek['days'][number] | undefined }) {
-  const hasFuelData = !!today && Array.isArray(today.nut) && today.nut.length > 0
+// PR C1 Nutrition Planner v2 — Fuel tab home.
+// Three rendering modes:
+//   1. Pre-setup: TDEESetupCard prompts for weight/height/age/sex/
+//      activity/goal. Settings persist via useNutritionSettings.
+//   2. Editing: TDEESetupCard pre-filled with current settings.
+//   3. Set: FuelDailyView shows calorie + macro target, session-aware
+//      fuel hints, and meal slots.
+//
+// The existing race-week pivot card (FuelPlanCard, mounted when
+// planDay.nut events exist) renders ABOVE the daily view so race-day
+// specific cues stay surfaced when relevant.
+
+interface Props {
+  today: PlanWeek['days'][number] | undefined
+}
+
+export function TrainFuelTab({ today }: Props) {
+  const { settings, loaded, save } = useNutritionSettings()
+  const [editing, setEditing] = useState(false)
+  const hasRaceWeekFuel = !!today && Array.isArray(today.nut) && today.nut.length > 0
+  const todaySessions: PlanSession[] = today?.sessions?.filter(s => s.c && s.c !== 'rest') ?? []
+
+  if (!loaded) {
+    return (
+      <div className="max-w-lg mx-auto px-4 pt-4 pb-32">
+        <div className="rounded-2xl animate-pulse h-48"
+          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }} />
+      </div>
+    )
+  }
+
   return (
-    <div className="max-w-lg mx-auto px-4 pt-4 pb-32">
-      {hasFuelData ? (
-        <FuelPlanCard planDay={today} />
+    <div className="max-w-lg mx-auto px-4 pt-4 pb-32 space-y-4">
+
+      {/* Race-week fuel pivot — keeps PR #80 surface for users in race week */}
+      {hasRaceWeekFuel && today && <FuelPlanCard planDay={today} />}
+
+      {(!settings || editing) ? (
+        <TDEESetupCard
+          initial={settings}
+          onSave={(s) => { save(s); setEditing(false) }}
+          onCancel={editing ? () => setEditing(false) : undefined}
+        />
       ) : (
-        <div className="rounded-2xl p-8 text-center"
-          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-          <div className="text-4xl mb-3">🥗</div>
-          <p className="text-sm font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>
-            Fuel plan coming soon
-          </p>
-          <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-tertiary)' }}>
-            Personalised hydration, pre-run snacks and post-run recovery guidance will appear here once your plan template includes nutrition timings — or after you generate a bespoke AI plan with fuel guidance.
-          </p>
-        </div>
+        <FuelDailyView
+          settings={settings}
+          todaySessions={todaySessions}
+          onEditSettings={() => setEditing(true)}
+        />
       )}
     </div>
   )
