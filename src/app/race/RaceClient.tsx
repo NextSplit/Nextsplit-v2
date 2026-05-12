@@ -133,18 +133,26 @@ export default function RaceClient() {
 
       <div className="max-w-lg mx-auto px-4 space-y-4">
 
-        {/* Character showcase — moved from /you */}
-        <HeroCard
-          charId={charId}
-          stats={rpgStats}
-          displayName={displayName}
-          kitColour={kitColour}
-          runnerColour={profileTyped?.runner_colour ?? '#06b6d4'}
-          charState={charState}
-          medal={medal}
-          onEditChar={() => { /* deep-link via /you/inventory cosmetics flow */ }}
-          onCustomise={() => { /* deep-link via /you/inventory cosmetics flow */ }}
-        />
+        {/* Character showcase — moved from /you, wrapped in glow ring
+            tinted by active kit colour for the gamified "this is YOUR
+            runner" feel. */}
+        <div className="rounded-3xl p-[2px]"
+          style={{
+            background: `linear-gradient(135deg, ${kitColour}aa, ${kitColour}33)`,
+            boxShadow: `0 0 0 1px ${kitColour}25, 0 8px 32px ${kitColour}30`,
+          }}>
+          <HeroCard
+            charId={charId}
+            stats={rpgStats}
+            displayName={displayName}
+            kitColour={kitColour}
+            runnerColour={profileTyped?.runner_colour ?? '#06b6d4'}
+            charState={charState}
+            medal={medal}
+            onEditChar={() => { /* deep-link via /you/inventory cosmetics flow */ }}
+            onCustomise={() => { /* deep-link via /you/inventory cosmetics flow */ }}
+          />
+        </div>
 
         {/* Build class picker / stat card */}
         <BuildClassCard />
