@@ -9,7 +9,7 @@ import { getSessionColour } from './_helpers'
 // HomeClient during R2 god-component decomp. The discriminator
 // (heroState) stays in the parent; this module just provides the shapes.
 
-export type HeroState = 'no_plan' | 'streak_risk' | 'coach' | 'training' | 'rest'
+export type HeroState = 'no_plan' | 'streak_risk' | 'coach' | 'training' | 'training_done' | 'rest'
 
 export function HeroTraining({ sessions, planName, weekN, totalWeeks, daysToRace }: {
   sessions: PlanSession[]
@@ -24,7 +24,7 @@ export function HeroTraining({ sessions, planName, weekN, totalWeeks, daysToRace
   const totalKm = sessions.reduce((s, s2) => s + (s2.km ?? 0), 0)
 
   return (
-    <Link href="/train" className="block mx-4 active:scale-[0.98] transition-all">
+    <div className="mx-4">
       <div className="rounded-3xl overflow-hidden"
         style={{
           background: `linear-gradient(135deg, ${colour}18, ${colour}08)`,
@@ -75,13 +75,15 @@ export function HeroTraining({ sessions, planName, weekN, totalWeeks, daysToRace
             ))}
           </div>
 
-          <div className="py-4 rounded-2xl text-center font-black text-base"
+          <Link href="/train?logToday=1"
+            className="block py-4 rounded-2xl text-center font-black text-base active:scale-[0.98] transition-all"
             style={{ background: colour, color: 'white', boxShadow: `0 4px 20px ${colour}60` }}>
             Start today&apos;s session →
-          </div>
+          </Link>
         </div>
 
-        <div className="px-5 py-3 border-t flex items-center justify-between"
+        <Link href="/train"
+          className="px-5 py-3 border-t flex items-center justify-between active:opacity-70 transition-opacity"
           style={{ borderColor: `${colour}20` }}>
           <span className="text-xs font-bold" style={{ color: 'var(--color-text-tertiary)' }}>
             📋 {planName}
@@ -89,9 +91,56 @@ export function HeroTraining({ sessions, planName, weekN, totalWeeks, daysToRace
           <span className="text-xs font-bold" style={{ color: colour }}>
             View full plan →
           </span>
-        </div>
+        </Link>
       </div>
-    </Link>
+    </div>
+  )
+}
+
+export function HeroTrainingDone({ planName, nextSessions, streak }: {
+  planName: string
+  nextSessions: PlanSession[]
+  streak: number
+}) {
+  const tomorrow = nextSessions[0]
+  const tomorrowColour = getSessionColour(tomorrow?.c)
+  return (
+    <div className="mx-4">
+      <div className="rounded-3xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, rgba(34,197,94,0.14), rgba(34,197,94,0.06))',
+          border: '3px solid #22c55e',
+          boxShadow: '0 0 0 1px rgba(34,197,94,0.12), 0 8px 32px rgba(34,197,94,0.25)',
+        }}>
+        <div className="p-5 flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
+            style={{ background: '#22c55e', boxShadow: '0 4px 16px rgba(34,197,94,0.5)' }}>
+            <span className="text-3xl">✓</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="ns-label" style={{ color: '#22c55e' }}>Today · Complete</span>
+            <p className="text-2xl font-black mt-0.5"
+              style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>
+              Nice work {streak > 0 ? `· ${streak}d streak 🔥` : ''}
+            </p>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
+              {planName}
+            </p>
+          </div>
+        </div>
+        {tomorrow && (
+          <Link href="/train"
+            className="flex items-center justify-between px-5 py-3 border-t active:opacity-70 transition-opacity"
+            style={{ borderColor: 'rgba(34,197,94,0.25)' }}>
+            <span className="text-xs font-bold" style={{ color: 'var(--color-text-tertiary)' }}>
+              Tomorrow: <span style={{ color: tomorrowColour }}>{tomorrow.n ?? tomorrow.c}</span>
+              {tomorrow.km > 0 ? ` · ${tomorrow.km}km` : ''}
+            </span>
+            <span className="text-xs font-black" style={{ color: '#22c55e' }}>See plan →</span>
+          </Link>
+        )}
+      </div>
+    </div>
   )
 }
 

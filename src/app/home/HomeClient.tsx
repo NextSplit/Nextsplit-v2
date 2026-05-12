@@ -23,7 +23,7 @@ import { TrialLapsedBanner } from '@/components/TrialLapsedBanner'
 import { TrialWelcomeModal, shouldShowTrialWelcome } from '@/components/TrialWelcomeModal'
 import { todayDayIndex, getWeeklyKm, getTodaySessions } from './_helpers'
 import {
-  HeroTraining, HeroRest, HeroStreakAtRisk, HeroNoPlan, HeroCoach,
+  HeroTraining, HeroTrainingDone, HeroRest, HeroStreakAtRisk, HeroNoPlan, HeroCoach,
   type HeroState,
 } from './HomeHeroes'
 import { XPHeaderBar, RaceCountdown, StatsStrip, SquadMini, NotifStrip } from './HomeChrome'
@@ -93,7 +93,7 @@ export default function HomeClient() {
       : hasCoach && coach && !plan
         ? 'coach'
         : !isRestDay
-          ? 'training'
+          ? (hasLoggedToday ? 'training_done' : 'training')
           : 'rest'
 
   return (
@@ -126,7 +126,7 @@ export default function HomeClient() {
             </Link>
           </div>
         </div>
-        <XPHeaderBar xp={xp} streak={streak} onShareStreak={() => setShowStreakShare(true)} />
+        <XPHeaderBar xp={xp} streak={streak} hasPlan={!!plan} onShareStreak={() => setShowStreakShare(true)} />
       </div>
 
       <div className="max-w-lg mx-auto py-4 space-y-3">
@@ -186,6 +186,13 @@ export default function HomeClient() {
             weekN={plan.current_week}
             totalWeeks={plan.total_weeks}
             daysToRace={daysToRace}
+          />
+        )}
+        {heroState === 'training_done' && plan && (
+          <HeroTrainingDone
+            planName={plan.name}
+            nextSessions={nextSessions}
+            streak={streak}
           />
         )}
         {heroState === 'rest'        && plan && (

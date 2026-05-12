@@ -7,7 +7,7 @@ const APP_PATHS = [
   '/home', '/train', '/explore', '/you',
   '/coach', '/plan', '/today', '/profile', '/community',
   '/squad', '/dashboard', '/marketplace', '/history',
-  '/races', '/gym', '/settings',
+  '/race', '/races', '/gym', '/settings',
 ]
 
 export default function BottomNavWrapper() {
