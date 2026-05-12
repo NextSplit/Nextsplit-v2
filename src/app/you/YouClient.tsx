@@ -33,9 +33,6 @@ import { computeRPGStats, RPG_BADGES } from '@/lib/rpg'
 // RPG_BADGES is the canonical badge catalogue; each entry's `check(stats)`
 // predicate decides unlock. RPGStats itself doesn't carry a badges field
 // (intentional — badges are derived, not stored).
-import HeroCard from '@/components/rpg/HeroCard'
-import { BuildClassCard } from '@/components/rpg/BuildClassCard'
-import { useActiveCosmetics, activeKitColour } from '@/hooks/useActiveCosmetics'
 import { EliteTriggerBanner } from '@/components/EliteTriggerBanner'
 import WeeklyXPChart from '@/components/rpg/WeeklyXPChart'
 import XPFeed from '@/components/rpg/XPFeed'
@@ -49,11 +46,11 @@ interface Props {
   displayName:  string
 }
 
-export default function YouClient({ displayName: initialDisplayName }: Props) {
+export default function YouClient({ displayName: _initialDisplayName }: Props) {
   const { plan, weeks } = useActivePlan()
   const { logs }                         = useTrainingLog(plan?.id ?? null)
-  const { logs: allPlanLogs, loading: allLogsLoading } = useAllTrainingLogs()
-  const { profile }                      = useProfile()
+  const { logs: allPlanLogs }            = useAllTrainingLogs()
+  const { profile: _profile }            = useProfile()
   const { recent: wellnessLogs }         = useWellness()
 
   const mealWeekStart = useMemo(() => {
@@ -69,23 +66,9 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
   }, [mealWeekStart])
   const { byDate: mealsByDate } = useMealPlan(mealWeekStart, mealWeekEnd)
 
-  const [charId, setCharId]                 = useState('m1')
-  const [baseKitColour, setKitColour]       = useState('var(--ns-cyan)')
-  const { active: activeCosmetics }         = useActiveCosmetics()
-  // Active kit_colour cosmetic overrides the localStorage default — drives
-  // the runner's SVG accent inside HeroCard. Falls through to baseKitColour
-  // when no cosmetic is active.
-  const kitColour = activeKitColour(activeCosmetics) ?? baseKitColour
   const [levelUpShow, setLevelUpShow]       = useState(false)
   const [levelUpLevel, setLevelUpLevel]     = useState(0)
   const [prevLevel, setPrevLevel]           = useState<number | null>(null)
-
-  useEffect(() => {
-    const saved = localStorage.getItem('nextsplit_rpg_char')
-    if (saved) setCharId(saved)
-    const savedKit = localStorage.getItem('nextsplit_kit_colour')
-    if (savedKit) setKitColour(savedKit)
-  }, [])
 
   // Cross-plan logs power XP (RPG persists across plan resets); plan-scoped
   // logs power streak. useAllTrainingLogs returns an array; XPFeed wants a
@@ -143,10 +126,7 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rpgStats.level.level])
 
-  const heroDisplayName = profile?.display_name ?? initialDisplayName
   const planComplete    = plan?.status === 'completed'
-  const medal           = planComplete ? '🥇' : rpgStats.streak >= 30 ? '🥈' : rpgStats.streak >= 7 ? '🥉' : null
-  const charState       = rpgStats.streak === 0 ? 'idle' : rpgStats.streak < 7 ? 'running' : 'celebrating'
   const unlockedIds     = useMemo(
     () => new Set(RPG_BADGES.filter(b => b.check(rpgStats)).map(b => b.id)),
     [rpgStats],
@@ -170,52 +150,27 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
 
       <div className="max-w-lg mx-auto pt-4 px-4 space-y-4">
 
-        {/* Hero RPG Card */}
-        {allLogsLoading ? (
-          <div className="rounded-3xl overflow-hidden animate-pulse"
-            style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', height: 280 }} />
-        ) : (
-          <HeroCard
-            charId={charId}
-            stats={rpgStats}
-            displayName={heroDisplayName}
-            kitColour={kitColour}
-            runnerColour={(profile as { runner_colour?: string })?.runner_colour ?? '#06b6d4'}
-            charState={charState}
-            medal={medal}
-            onEditChar={() => { /* deferred — tap settings to change */ }}
-            onCustomise={() => { /* deferred — tap settings to customise */ }}
-          />
-        )}
+        {/* Character + cosmetics + inventory now live on /race (PR B re-shuffle) */}
+        <Link href="/race"
+          className="flex items-center gap-3 rounded-2xl px-4 py-3 active:scale-[0.99] transition-transform"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,109,46,0.12), rgba(255,109,46,0.05))',
+            border: '2px solid rgba(255,109,46,0.45)',
+          }}>
+          <span className="text-2xl" aria-hidden>🏃</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-black" style={{ color: 'var(--ns-ember)' }}>
+              Your runner
+            </p>
+            <p className="text-[11px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
+              Character, cosmetics, and your build class are on /race →
+            </p>
+          </div>
+        </Link>
 
         {/* P4.3 — plan-completion Elite trigger. Inert today; lights up
-            when paywall enforced. Trigger: user's current plan has
-            status='completed' (most recent plan in useActivePlan returns
-            it briefly until they archive + start a new one). */}
+            when paywall enforced. */}
         <EliteTriggerBanner kind="plan_complete" show={planComplete} />
-
-        {/* Build class picker / stat card (Phase 3+ Race tab foundation) */}
-        <BuildClassCard />
-
-        {/* Inventory link — Phase 3+ boost + cosmetic surface */}
-        <Link
-          href="/you/inventory"
-          className="flex items-center justify-between rounded-2xl px-4 py-3"
-          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-2xl" aria-hidden>🎁</span>
-            <div>
-              <p className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>
-                Inventory
-              </p>
-              <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
-                Boosts, kits, and unlocked drops
-              </p>
-            </div>
-          </div>
-          <span className="text-xl" style={{ color: 'var(--color-text-tertiary)' }} aria-hidden>→</span>
-        </Link>
 
         {/* Weekly XP chart */}
         <WeeklyXPChart logs={logs} weeks={weeks} />
@@ -247,7 +202,7 @@ export default function YouClient({ displayName: initialDisplayName }: Props) {
       {levelUpShow && (
         <LevelUpScreen
           level={levelUpLevel}
-          charId={charId}
+          charId="m1"
           onDismiss={() => setLevelUpShow(false)}
         />
       )}
