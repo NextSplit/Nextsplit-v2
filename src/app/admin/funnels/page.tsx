@@ -187,22 +187,33 @@ function LaunchCard({ projectUrl, path, label, colour }: {
   projectUrl: string; path: string; label: string; colour: string
 }) {
   const disabled = !projectUrl
-  const href     = projectUrl ? `${projectUrl}${path}` : '#'
-  return (
-    <a href={href} target="_blank" rel="noreferrer"
-      aria-disabled={disabled}
-      onClick={(e) => { if (disabled) e.preventDefault() }}
-      className={`rounded-2xl p-3 text-left active:scale-95 transition-transform ${disabled ? 'opacity-40 pointer-events-none' : ''}`}
-      style={{
-        background: `linear-gradient(135deg, ${colour}15, ${colour}05)`,
-        border:     `1.5px solid ${colour}40`,
-      }}>
+  const cardStyle = {
+    background: `linear-gradient(135deg, ${colour}15, ${colour}05)`,
+    border:     `1.5px solid ${colour}40`,
+  } as const
+  const inner = (
+    <>
       <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: colour }}>
         {label}
       </p>
       <p className="text-xs font-mono mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
         {path}
       </p>
+    </>
+  )
+
+  if (disabled) {
+    return (
+      <div className="rounded-2xl p-3 text-left opacity-40 pointer-events-none" style={cardStyle}>
+        {inner}
+      </div>
+    )
+  }
+  return (
+    <a href={`${projectUrl}${path}`} target="_blank" rel="noreferrer"
+      className="rounded-2xl p-3 text-left active:scale-95 transition-transform block"
+      style={cardStyle}>
+      {inner}
     </a>
   )
 }
