@@ -25,12 +25,29 @@ interface Inputs {
 
 export type PacingFeel = 'too-easy' | 'spot-on' | 'too-hard' | null
 
+// Session-type aware default RPE. Founder UX audit: previous flat default
+// of 7 felt high for most sessions (the user has to slide it down before
+// confirming, defeating "one-tap done"). Anchor each type to its typical
+// perceived effort instead.
+function defaultEffortFor(code: string | null | undefined): number {
+  const c = (code ?? '').toLowerCase()
+  if (c.includes('recovery'))                          return 3
+  if (c.includes('easy'))                              return 4
+  if (c.includes('long') || c.includes('steady'))      return 6
+  if (c.includes('tempo'))                             return 7
+  if (c.includes('threshold') || c.includes('interval') || c.includes('speed')) return 8
+  if (c.includes('race'))                              return 9
+  return 5
+}
+
 export function useLogFormState({ session, existingLog, prefillDurationSecs }: Inputs) {
   const initialDurationMins =
     existingLog?.duration_secs ? Math.round(existingLog.duration_secs / 60)
     : prefillDurationSecs       ? Math.round(prefillDurationSecs / 60) : 0
 
-  const [effort,         setEffort]         = useState(existingLog?.effort ?? 7)
+  const initialEffort = existingLog?.effort ?? defaultEffortFor(session.c)
+
+  const [effort,         setEffort]         = useState(initialEffort)
   const [km,             setKm]             = useState(existingLog?.km ?? session.km ?? 0)
   const [notes,          setNotes]          = useState(existingLog?.notes ?? '')
   const [durationMins,   setDurationMins]   = useState(initialDurationMins)
@@ -45,13 +62,13 @@ export function useLogFormState({ session, existingLog, prefillDurationSecs }: I
     if (paceInput         !== (existingLog?.pace   ?? ''))                    return true
     if (km                !== (existingLog?.km     ?? session.km ?? 0))       return true
     if (durationMins      !== initialDurationMins)                            return true
-    if (effort            !== (existingLog?.effort ?? 7))                     return true
+    if (effort            !== initialEffort)                                  return true
     if (repsCompleted     !== null)                                           return true
     if (pacingFeel        !== null)                                           return true
     return false
   }, [
     notes, paceInput, km, durationMins, effort, repsCompleted, pacingFeel,
-    existingLog, session.km, initialDurationMins,
+    existingLog, session.km, initialDurationMins, initialEffort,
   ])
 
   return {

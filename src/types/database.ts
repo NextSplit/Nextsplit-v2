@@ -203,8 +203,16 @@ export interface Database {
           user_id: string
           plan_date: string
           meal_slot: string
-          recipe_id: string
+          // PR E5: recipe_id is now nullable (freeform entries supported);
+          // either recipe_id or name must be set per the DB CHECK constraint
+          // meal_plan_entries_recipe_or_name_present.
+          recipe_id: string | null
           portions: number
+          name: string | null
+          kcal_total: number | null
+          protein_total: number | null
+          carbs_total: number | null
+          fat_total: number | null
           created_at: string
         }
         Insert: Omit<Database['public']['Tables']['meal_plan_entries']['Row'], 'id' | 'created_at'>

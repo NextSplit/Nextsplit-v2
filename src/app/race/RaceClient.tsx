@@ -15,6 +15,7 @@ import { RaceResultReplay, type RaceTimelineRunner } from '@/components/race/Rac
 import HeroCard from '@/components/rpg/HeroCard'
 import { BuildClassCard } from '@/components/rpg/BuildClassCard'
 import CharacterProfileModal from '@/components/CharacterProfileModal'
+import { AppHeader } from '@/components/AppHeader'
 import { computeRPGStats, RUNNER_CLASSES } from '@/lib/rpg'
 import type { BuildClass } from '@/lib/character'
 import type { TrainingLog } from '@/types/database'
@@ -121,17 +122,12 @@ export default function RaceClient() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--color-bg)' }}>
-      <div className="max-w-lg mx-auto px-4 pt-12 pb-3 flex items-center justify-between"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)' }}>
-        <div>
-          <h1 className="text-2xl font-black" style={{ color: 'var(--color-text-primary)' }}>Race</h1>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
-            Your runner, today&apos;s race, the season leaderboard.
-          </p>
-        </div>
-      </div>
+      <AppHeader
+        title="Race"
+        subtitle="Your runner · today's race · season leaderboard"
+      />
 
-      <div className="max-w-lg mx-auto px-4 space-y-4">
+      <div className="max-w-lg mx-auto px-4 pt-4 space-y-4">
 
         {/* Character showcase — moved from /you, wrapped in glow ring
             tinted by active kit colour for the gamified "this is YOUR

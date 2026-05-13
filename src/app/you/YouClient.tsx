@@ -23,6 +23,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { AppHeader } from '@/components/AppHeader'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
@@ -135,18 +136,17 @@ export default function YouClient({ displayName: _initialDisplayName }: Props) {
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--color-bg)' }}>
 
-      {/* Header */}
-      <div className="sticky top-0 z-40 border-b"
-        style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-        <div className="max-w-lg mx-auto px-4 pt-12 pb-3 flex items-center justify-between">
-          <h1 className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>You</h1>
+      <AppHeader
+        title="Your stats"
+        subtitle="XP · badges · weekly progression"
+        rightSlot={
           <Link href="/settings"
             className="text-xs font-bold px-3 py-1.5 rounded-lg"
             style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
             ⚙ Settings
           </Link>
-        </div>
-      </div>
+        }
+      />
 
       <div className="max-w-lg mx-auto pt-4 px-4 space-y-4">
 
