@@ -300,7 +300,12 @@ export default function TrainClient() {
             .catch(() => {}) // non-blocking, silent fail
         }
       }
-    } catch { toastError('Failed to log session') }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to log session'
+      toastError(msg.length > 120 ? 'Failed to log session — try again' : msg)
+      // Re-throw so the LogModal catches it and surfaces the in-modal banner.
+      throw err
+    }
   }
 
   function handleUndo() {

@@ -56,6 +56,7 @@ function LogModal({
   const [saving,             setSaving]             = useState(false)
   const [showDiscardWarning, setShowDiscardWarning] = useState(false)
   const [bottomInset,        setBottomInset]        = useState(0)
+  const [saveError,          setSaveError]          = useState<string | null>(null)
 
   // Extract rep count from session name e.g. "8 × 400m" → 8
   const targetReps = (() => {
@@ -100,6 +101,7 @@ function LogModal({
   async function handleSave(done = true) {
     hapticLight()
     setSaving(true)
+    setSaveError(null)
     try {
       await onSave({
         week_n:       weekN,
@@ -113,6 +115,9 @@ function LogModal({
         pace:         paceInput.trim() || autoPace || undefined,
       })
       onClose()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Save failed — please try again'
+      setSaveError(msg)
     } finally { setSaving(false) }
   }
 
@@ -129,8 +134,14 @@ function LogModal({
           <p className="text-sm text-[var(--color-text-tertiary)] mb-6 leading-relaxed">
             Your body is adapting today. Rest is training.
           </p>
-          <button onClick={() => handleSave(true)}
-            className="w-full py-4 rounded-2xl text-sm font-bold text-white mb-2"
+          {saveError && (
+            <div className="mb-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-left">
+              <p className="text-xs font-semibold text-red-800 mb-0.5">Couldn’t save</p>
+              <p className="text-xs text-red-700">{saveError}</p>
+            </div>
+          )}
+          <button onClick={() => handleSave(true)} disabled={saving}
+            className="w-full py-4 rounded-2xl text-sm font-bold text-white mb-2 disabled:opacity-50"
             style={{ background: 'var(--ns-ember)' }}>
             {saving ? 'Logging…' : 'Log rest day ✓'}
           </button>
@@ -154,9 +165,18 @@ function LogModal({
             <h2 className="text-lg font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>{session.n}</h2>
             {technical && <p className="text-sm text-[var(--color-text-tertiary)] mb-4 leading-relaxed">{technical}</p>}
 
+            <DiscardWarning show={showDiscardWarning} onKeep={() => setShowDiscardWarning(false)} onDiscard={onClose} />
+
+            {saveError && (
+              <div className="mb-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                <p className="text-xs font-semibold text-red-800 mb-0.5">Couldn’t save</p>
+                <p className="text-xs text-red-700">{saveError}</p>
+              </div>
+            )}
+
             {/* One-tap done */}
-            <button onClick={() => handleSave(true)}
-              className="w-full py-4 rounded-2xl text-base font-black text-white mb-3 active:scale-95 transition-all"
+            <button onClick={() => handleSave(true)} disabled={saving}
+              className="w-full py-4 rounded-2xl text-base font-black text-white mb-3 active:scale-95 transition-all disabled:opacity-50"
               style={{ background: 'var(--ns-ember)' }}>
               {saving ? 'Logging…' : 'Done ✓'}
             </button>
@@ -165,6 +185,12 @@ function LogModal({
             <button onClick={() => setShowExtra(true)}
               className="w-full py-2.5 text-xs font-semibold text-[var(--color-text-tertiary)] underline">
               Add distance, pace, or notes
+            </button>
+
+            {/* Explicit Cancel — backdrop click alone is not discoverable */}
+            <button onClick={handleBackdropClick}
+              className="w-full py-2.5 mt-1 text-xs font-semibold text-[var(--color-text-tertiary)]">
+              Cancel
             </button>
           </div>
 
@@ -289,6 +315,12 @@ function LogModal({
 
   <div className="px-6 pt-3 border-t" style={{ borderColor: "var(--color-border)", paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 0px) + 0.75rem)" }}>
             <DiscardWarning show={showDiscardWarning} onKeep={() => setShowDiscardWarning(false)} onDiscard={onClose} />
+            {saveError && (
+              <div className="mb-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                <p className="text-xs font-semibold text-red-800 mb-0.5">Couldn’t save</p>
+                <p className="text-xs text-red-700">{saveError}</p>
+              </div>
+            )}
             <div className="flex gap-3">
               <button onClick={handleBackdropClick}
                 className="flex-1 py-3 rounded-xl text-sm font-semibold" style={{ border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)' }}>
