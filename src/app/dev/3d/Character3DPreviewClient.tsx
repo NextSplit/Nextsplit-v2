@@ -18,6 +18,8 @@ export default function Character3DPreviewClient() {
   const [charId, setCharId] = useState('m1')
   const [state, setState]   = useState<CharState>('idle')
   const [kitHex, setKitHex] = useState('#06B6D4')
+  const [tier,   setTier]   = useState<0 | 1 | 2 | 3>(0)
+  const [classHex, setClassHex] = useState<string | null>(null)
 
   return (
     <div className="px-4 pb-24 max-w-md mx-auto">
@@ -32,6 +34,8 @@ export default function Character3DPreviewClient() {
           charId={charId}
           kitHex={kitHex}
           state={state}
+          tier={tier}
+          classHex={classHex}
           size={320}
           interactive
         />
@@ -74,6 +78,43 @@ export default function Character3DPreviewClient() {
       <input type="color" value={kitHex} onChange={e => setKitHex(e.target.value)}
         className="w-full h-12 rounded-xl cursor-pointer"
         style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }} />
+
+      {/* PR J9c — tier (drives aura + kit trim) */}
+      <p className="mt-4 text-xs font-black mb-1.5" style={{ color: 'var(--color-text-tertiary)' }}>
+        LEVEL TIER (aura + kit trim)
+      </p>
+      <div className="grid grid-cols-4 gap-2">
+        {[0, 1, 2, 3].map(t => (
+          <button key={t} onClick={() => setTier(t as 0|1|2|3)}
+            className="py-2 rounded-xl text-xs font-bold"
+            style={{
+              background: tier === t ? 'var(--ns-track)' : 'var(--color-surface-2)',
+              color: tier === t ? '#fff' : 'var(--color-text-primary)',
+              border: '1px solid var(--color-border)',
+            }}>
+            T{t}{t === 2 ? ' silver' : t === 3 ? ' gold' : ''}
+          </button>
+        ))}
+      </div>
+
+      {/* PR J9c — runner-class colour (drives rim light + aura tint) */}
+      <p className="mt-4 text-xs font-black mb-1.5" style={{ color: 'var(--color-text-tertiary)' }}>
+        RUNNER CLASS COLOUR (rim light + aura tint)
+      </p>
+      <div className="flex gap-2 items-center">
+        <button onClick={() => setClassHex(null)}
+          className="flex-1 py-2 rounded-xl text-xs font-bold"
+          style={{
+            background: classHex === null ? 'var(--ns-magenta)' : 'var(--color-surface-2)',
+            color: classHex === null ? '#fff' : 'var(--color-text-primary)',
+            border: '1px solid var(--color-border)',
+          }}>
+          None
+        </button>
+        <input type="color" value={classHex ?? '#ec4899'} onChange={e => setClassHex(e.target.value)}
+          className="flex-1 h-10 rounded-xl cursor-pointer"
+          style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }} />
+      </div>
 
       <p className="mt-6 text-xs leading-relaxed" style={{ color: 'var(--color-text-tertiary)' }}>
         Procedural placeholder — primitives only. When founder drops a rigged

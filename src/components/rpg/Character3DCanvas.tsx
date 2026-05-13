@@ -16,14 +16,24 @@ interface Character3DCanvasProps {
   kitHex:    string             // resolved kit colour (var() not allowed)
   state:     CharState          // idle | running | celebrating
   level?:    number
+  /** PR J9c — runner-class colour; tints the rim light + character aura.
+   *  Pass null for users without a revealed class. */
+  classHex?: string | null
+  /** PR J9c — level tier 0-3 from RPG_LEVELS[].tier. Drives aura intensity
+   *  + kit trim. */
+  tier?:     0 | 1 | 2 | 3
   size?:     number             // CSS pixels, square
   interactive?: boolean         // OrbitControls for dev preview
 }
 
 export default function Character3DCanvas({
-  charId, kitHex, state, level, size = 200, interactive = false,
+  charId, kitHex, state, level, classHex, tier = 0, size = 200, interactive = false,
 }: Character3DCanvasProps) {
   const ch = RPG_CHARS.find(c => c.id === charId) ?? RPG_CHARS[0]
+  // PR J9c — rim light adopts the runner class colour when set, falling back
+  // to kit hex. Lets a Marathon Runner read distinctly from a Speed Merchant
+  // even at small (HeroCard 80px) sizes.
+  const rimHex = classHex ?? kitHex
 
   return (
     <div style={{ width: size, height: size }}>
@@ -33,11 +43,12 @@ export default function Character3DCanvas({
         gl={{ alpha: true, antialias: true }}
       >
         {/* Three-point lighting — key (front-right), fill (front-left),
-            rim (behind). Tuned to read against the dark navy app background. */}
+            rim (behind). Tuned to read against the dark navy app background.
+            Rim picks up the class colour for J9c shader differentiation. */}
         <ambientLight intensity={0.4} />
         <directionalLight position={[2,  3,  2]} intensity={1.2} color="#ffffff" />
         <directionalLight position={[-2, 2, 1]} intensity={0.5} color="#7DD3FC" />
-        <directionalLight position={[0,  2, -3]} intensity={0.6} color={kitHex} />
+        <directionalLight position={[0,  2, -3]} intensity={0.8} color={rimHex} />
 
         <Character3D
           body={ch.body}
@@ -46,6 +57,8 @@ export default function Character3DCanvas({
           kitHex={kitHex}
           state={state}
           level={level}
+          tier={tier}
+          classHex={classHex}
         />
 
         {interactive && <OrbitControls enablePan={false} enableZoom={false} />}

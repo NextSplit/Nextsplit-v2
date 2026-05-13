@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import StatBar from '@/components/rpg/StatBar'
 import { CharacterAccessoryOverlay } from './CharacterAccessoryOverlay'
+import Character3DDynamic from './Character3DDynamic'
 import {
   RPG_CHARS, RPG_LEVELS, RARITY_CONFIG,
   getLevelForXP, getXPProgress, getXPToNext,
-  renderCharSVG,
   type RPGStats,
 } from '@/lib/rpg'
 
@@ -51,9 +51,21 @@ function HeroCard({
           <div className="relative flex-shrink-0">
             <CharacterAccessoryOverlay>
               <button onClick={onEditChar}
-                className={`block ${charState === 'celebrating' ? 'animate-bounce' : ''}`}
+                className="block"
                 title="Change character">
-                <div dangerouslySetInnerHTML={{ __html: renderCharSVG(charWithKit.id, stats.level.level, 80, 100, kitColour) }} />
+                {/* PR J9b — 3D character (SVG fallback while three.js loads).
+                    Tier + class colour drive the J9c aura + rim. Removed the
+                    outer `animate-bounce` since the celebrating state itself
+                    plays a V-jump in the canvas. */}
+                <Character3DDynamic
+                  charId={charWithKit.id}
+                  level={stats.level.level}
+                  kitHex={kitColour}
+                  state={charState}
+                  classHex={runnerColour ?? null}
+                  tier={stats.level.tier}
+                  size={84}
+                />
               </button>
             </CharacterAccessoryOverlay>
             {/* Level badge */}
