@@ -70,6 +70,43 @@ export function useNotifications() {
 
   useEffect(() => { fetch() }, [fetch])
 
+  // PR J16 — notifications realtime. Before this, the cron-fired pushes only
+  // appeared on the next manual page reload (the hook fetched once on mount
+  // and never refreshed). The `notifications` table is now in the
+  // `supabase_realtime` publication; RLS ("Users read own notifications")
+  // limits delivery to the recipient.
+  useEffect(() => {
+    let cancelled = false
+    const supabase = createClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let channel: any = null
+    async function subscribe() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (cancelled || !user) return
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      channel = (supabase as any).channel(`notifications-${user.id}`)
+        .on('postgres_changes', {
+          event:  'INSERT',
+          schema: 'public',
+          table:  'notifications',
+          filter: `user_id=eq.${user.id}`,
+        }, (payload: { new: AppNotification }) => {
+          if (payload.new.read) return
+          setNotifications(prev => {
+            if (prev.some(n => n.id === payload.new.id)) return prev
+            // Cap at 5 like the initial fetch.
+            return [payload.new, ...prev].slice(0, 5)
+          })
+        })
+        .subscribe()
+    }
+    void subscribe()
+    return () => {
+      cancelled = true
+      if (channel) channel.unsubscribe()
+    }
+  }, [])
+
   async function markRead(id: string) {
     const n = notifications.find(x => x.id === id)
     const supabase = createClient()
