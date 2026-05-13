@@ -275,6 +275,18 @@ export default function SessionCelebration({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // PR E2 — coordinate with CharacterStatToast. The toast otherwise fires
+  // underneath the celebration on the same log, producing the "multi-modal
+  // confetti sequence" the founder flagged. Broadcast lifecycle events so
+  // the global toast holds (and then flushes) its queue around us.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    window.dispatchEvent(new CustomEvent('nextsplit:celebration-shown'))
+    return () => {
+      window.dispatchEvent(new CustomEvent('nextsplit:celebration-dismissed'))
+    }
+  }, [])
+
   const splityMood: 'celebrating' | 'happy' | 'excited' =
     leveledUp ? 'celebrating' : session.c?.includes('long') ? 'happy' : 'excited'
 

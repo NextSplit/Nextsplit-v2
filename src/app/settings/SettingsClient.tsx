@@ -936,18 +936,11 @@ export default function SettingsClient({ email, initialProfile }: Props) {
           )}
         </Section>
 
-        {/* ── Squad & Coaching ── */}
-        <Section title="Squad & Coaching">
-          <SplitLeaderSection coachTier={coachTier} isPro={isPro} />
-          <ProCoachSection coachTier={coachTier} isPro={isPro} />
-        </Section>
-
-        {/* ── Coach Access ── */}
-        <Section title="Coach Access" id="coach-access">
-          <CoachAccessSection />
-        </Section>
-
         {/* ── Account ── */}
+        {/* PR E3 settings audit: Account moves above coach sections so the
+            user's primary account controls (sign out, export, delete) come
+            before the coach-economy promotional sections (which can feel
+            aspirational when buried mid-list). */}
         <Section title="Account">
           {/* Analytics consent — manageable after initial choice */}
           <ToggleRow
@@ -965,6 +958,21 @@ export default function SettingsClient({ email, initialProfile }: Props) {
           <ButtonRow label="Delete account" sublabel="Permanently removes all your data — cannot be undone"
             buttonLabel="Delete" onClick={handleDeleteAccount}
             danger />
+        </Section>
+
+        {/* ── Work with a coach ── */}
+        {/* Renamed from "Coach Access" — clearer about role (you, athlete,
+            working with a coach) vs "Become a coach" below. */}
+        <Section title="Work with a coach" id="coach-access">
+          <CoachAccessSection />
+        </Section>
+
+        {/* ── Become a coach ── */}
+        {/* Renamed from "Squad & Coaching" — both sub-sections are about
+            offering coaching services, not about your own squad. */}
+        <Section title="Become a coach">
+          <SplitLeaderSection coachTier={coachTier} isPro={isPro} />
+          <ProCoachSection coachTier={coachTier} isPro={isPro} />
         </Section>
 
         {/* ── Dev tools ── */}

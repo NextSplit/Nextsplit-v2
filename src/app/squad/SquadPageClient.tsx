@@ -9,6 +9,7 @@ import SquadLeaderboard from './SquadLeaderboard'
 import SquadFeed from './SquadFeed'
 import SquadSeasonCard from './SquadSeasonCard'
 import SquadDiscoverSection from './SquadDiscoverSection'
+import { AppHeader } from '@/components/AppHeader'
 import Link from 'next/link'
 
 interface Props { userId: string }
@@ -55,31 +56,23 @@ export default function SquadPageClient({ userId }: Props) {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--color-bg)' }}>
-      {/* Header + tab strip */}
-      <div className="sticky top-0 z-40 border-b"
-        style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-        <div className="max-w-lg mx-auto px-4 pt-12 pb-3">
-          <div className="flex items-center justify-between mb-3">
-            <h1 className="text-base font-black" style={{ color: 'var(--color-text-primary)' }}>
-              {tab === 'mine' ? 'My Squad' : 'Discover'}
-            </h1>
-            <div className="flex items-center gap-2">
-              {tab === 'mine' && (
-                <>
-                  <Link href="/leaderboard" className="text-xs font-bold px-3 py-1.5 rounded-lg"
-                    style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
-                    🏆 Leaderboard
-                  </Link>
-                  {role === 'leader' && squad && (
-                    <Link href="/squad/settings" className="text-xs font-bold px-3 py-1.5 rounded-lg"
-                      style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
-                      ⚙ Settings
-                    </Link>
-                  )}
-                </>
-              )}
-            </div>
+      <AppHeader
+        title={tab === 'mine' ? 'My Squad' : 'Discover'}
+        rightSlot={tab === 'mine' && (
+          <div className="flex items-center gap-2">
+            <Link href="/leaderboard" className="text-xs font-bold px-3 py-1.5 rounded-lg"
+              style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+              🏆 Leaderboard
+            </Link>
+            {role === 'leader' && squad && (
+              <Link href="/squad/settings" className="text-xs font-bold px-3 py-1.5 rounded-lg"
+                style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+                ⚙ Settings
+              </Link>
+            )}
           </div>
+        )}
+        bottomSlot={
           <div className="flex gap-1 rounded-xl p-1" style={{ background: 'var(--color-surface-2)' }}>
             {(['mine', 'discover'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
@@ -92,8 +85,8 @@ export default function SquadPageClient({ userId }: Props) {
               </button>
             ))}
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* MY SQUAD tab */}
       {tab === 'mine' && (

@@ -17,6 +17,7 @@ export function CharacterStatToast() {
   const [queue,   setQueue]   = useState<QueuedToast[]>([])
   const [current, setCurrent] = useState<QueuedToast | null>(null)
   const [visible, setVisible] = useState(false)
+  const [celebrationActive, setCelebrationActive] = useState(false)
   const lastEventAtRef = useRef(0)
 
   useEffect(() => {
@@ -46,7 +47,24 @@ export function CharacterStatToast() {
     })
   }, [])
 
+  // PR E2 — hold while SessionCelebration is mounted. The celebration
+  // already shows the XP/level delta; toast firing simultaneously is
+  // the "multi-modal confetti sequence" founder flagged. Queue keeps
+  // accumulating from background dispatches; flushes on dismissed.
   useEffect(() => {
+    if (typeof window === 'undefined') return
+    const onShown     = () => setCelebrationActive(true)
+    const onDismissed = () => setCelebrationActive(false)
+    window.addEventListener('nextsplit:celebration-shown',     onShown)
+    window.addEventListener('nextsplit:celebration-dismissed', onDismissed)
+    return () => {
+      window.removeEventListener('nextsplit:celebration-shown',     onShown)
+      window.removeEventListener('nextsplit:celebration-dismissed', onDismissed)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (celebrationActive) return
     if (current || queue.length === 0) return
     const [next, ...rest] = queue
     setQueue(rest)
@@ -56,7 +74,7 @@ export function CharacterStatToast() {
     const fadeAt = setTimeout(() => setVisible(false), VISIBLE_MS)
     const clearAt = setTimeout(() => setCurrent(null), VISIBLE_MS + FADE_OUT_MS)
     return () => { clearTimeout(fadeAt); clearTimeout(clearAt) }
-  }, [current, queue])
+  }, [current, queue, celebrationActive])
 
   const dismiss = () => {
     setVisible(false)
