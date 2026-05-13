@@ -189,10 +189,16 @@ export default function SquadFeed({ squadId, myUserId }: Props) {
   // each detection we fetch the full row by id with the joins. Cheap (single-
   // row PK lookup) and keeps the rendered shape consistent with initial-load
   // rows. Cleanup unsubscribes the channel on unmount or squadId change.
+  //
+  // PR J16: the broadcast was silently no-op'ing until phase-squad-realtime-v1
+  // added `squad_feed`, `squad_feed_reactions`, `notifications` to the
+  // `supabase_realtime` publication. RLS still filters delivery, so
+  // non-squad-members don't receive other squads' rows.
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const s = supabase as any
     const channel = s.channel(`squad-feed-${squadId}`)
+      // New milestone cards land via INSERT.
       .on('postgres_changes', {
         event:  'INSERT',
         schema: 'public',
@@ -217,9 +223,45 @@ export default function SquadFeed({ squadId, myUserId }: Props) {
           })
         }
       })
+      // Reactions added by other squad-mates. Skip our own (already applied
+      // optimistically by toggleReaction). RLS limits this to feed_items
+      // in squads we belong to.
+      .on('postgres_changes', {
+        event:  'INSERT',
+        schema: 'public',
+        table:  'squad_feed_reactions',
+      }, (payload: { new: { feed_item_id: string; user_id: string; reaction: Emoji } }) => {
+        const { feed_item_id, user_id, reaction } = payload.new
+        if (user_id === myUserId) return
+        setRows(prev => prev.map(row => {
+          if (row.id !== feed_item_id) return row
+          // De-dupe by (feed_item_id, user_id) — UNIQUE constraint guarantees one row.
+          const without = row.squad_feed_reactions.filter(r => r.user_id !== user_id)
+          return { ...row, squad_feed_reactions: [...without, { user_id, reaction }] }
+        }))
+      })
+      // Reactions removed (un-react). Requires REPLICA IDENTITY FULL on
+      // squad_feed_reactions (set in phase-squad-realtime-v1) so the
+      // DELETE payload carries the pre-delete row, not just the PK.
+      .on('postgres_changes', {
+        event:  'DELETE',
+        schema: 'public',
+        table:  'squad_feed_reactions',
+      }, (payload: { old: { feed_item_id?: string; user_id?: string } }) => {
+        const feedItemId = payload.old.feed_item_id
+        const userId     = payload.old.user_id
+        if (!feedItemId || !userId || userId === myUserId) return
+        setRows(prev => prev.map(row => {
+          if (row.id !== feedItemId) return row
+          return {
+            ...row,
+            squad_feed_reactions: row.squad_feed_reactions.filter(r => r.user_id !== userId),
+          }
+        }))
+      })
       .subscribe()
     return () => { s.removeChannel(channel) }
-  }, [supabase, squadId])
+  }, [supabase, squadId, myUserId])
 
   if (loading) {
     return (
