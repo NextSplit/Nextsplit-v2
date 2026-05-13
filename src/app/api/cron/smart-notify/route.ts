@@ -71,6 +71,17 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // PR J14 — when Inngest is the primary cron driver, Vercel's cron may
+  // still fire this route (if vercel.json hasn't been pruned yet) but
+  // Inngest will ALSO invoke it via fetch. Detect Inngest as caller via
+  // `x-source: inngest` header; if the env says Inngest is primary AND
+  // we're being invoked from Vercel's own cron pinger (no x-source), no-op
+  // to avoid double-firing the work.
+  const source = req.headers.get('x-source')
+  if (process.env.INNGEST_PRIMARY === 'true' && source !== 'inngest') {
+    return NextResponse.json({ ok: true, skipped: 'inngest-primary' })
+  }
+
   // PR H3 cron observability — start time + service-role client for writing
   // the persistent run-ledger row on completion (success OR error path).
   const startedAt = Date.now()
