@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed-plans": "tsx --env-file=.env.local scripts/seed-plans.ts",
+    "types:gen": "bash scripts/gen-types.sh",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
