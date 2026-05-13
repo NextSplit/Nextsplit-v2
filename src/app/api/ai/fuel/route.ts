@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { AiFuelCoachSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
+import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 
 // PR C2 — Nutrition AI Coach.
 // Single-paragraph plan-aware fuel advice. Uses prompt caching on the
@@ -82,6 +82,14 @@ export async function POST(req: Request) {
       .map(b => (b as { type: 'text'; text: string }).text)
       .join('')
       .trim()
+
+    // PR G2 — record token usage so the AI cost dashboard can attribute
+    // spend to this endpoint. Non-fatal — analytics, not gating.
+    await recordTokenUsage(
+      user.id,
+      message.usage.input_tokens,
+      message.usage.output_tokens,
+    )
 
     return NextResponse.json({ answer })
   } catch {
