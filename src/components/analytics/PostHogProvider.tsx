@@ -55,6 +55,14 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
+    // PR J10 — session replay sampling.
+    // The dashboard-side toggle in PostHog Project Settings → Session Replay
+    // must also be ON for any recording to happen. With both client-side
+    // sample_rate AND server-side capture enabled, 10% of sessions are
+    // captured by default (PII masked).
+    // To change: set NEXT_PUBLIC_POSTHOG_REPLAY_SAMPLE_RATE on Vercel
+    // (e.g. '0.05' for 5%, '1.0' for 100% during a debugging window).
+    const replayRate = Number(process.env.NEXT_PUBLIC_POSTHOG_REPLAY_SAMPLE_RATE ?? '0.1')
     posthog.init(key, {
       api_host:           host,
       ui_host:            'https://eu.posthog.com',
@@ -66,6 +74,11 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         maskAllInputs:    true,  // never record passwords/sensitive fields
         maskInputOptions: { password: true },
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...({
+        // Sampling lives at the top level of init opts in posthog-js v1.270+
+        session_replay_sample_rate: Number.isFinite(replayRate) ? replayRate : 0.1,
+      } as any),
     })
   }, [key, host, loaded, consent])
 
