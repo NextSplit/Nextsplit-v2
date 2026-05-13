@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react'
 import {
   RPG_CHARS, RPG_BADGES, RPG_LEVELS, RARITY_CONFIG, SESSION_XP,
   computeRPGStats, getLevelForXP, getXPProgress, getXPToNext,
-  checkNewBadges, renderCharSVG,
+  checkNewBadges,
   type RPGStats, type RPGBadge,
 } from '@/lib/rpg'
+import Character3DDynamic from './Character3DDynamic'
 
 // Council /council R2 animation-motion: prefers-reduced-motion read once at
 // mount via lazy initialiser. Used to gate the auto-dismiss timer (which was
@@ -89,9 +90,19 @@ function LevelUpScreen({
         </div>
         <div className="text-[var(--ns-magenta-light)] text-lg font-bold mb-5">{rpgLevel?.name}</div>
 
-        {/* Character at new level */}
+        {/* PR J9b — 3D character at new level, locked to celebrating state so
+            the V-jump animation pairs with the star burst. tier comes from
+            the level just unlocked. Kit colour uses the character's default
+            accent; runner-class colour isn't surfaced in this screen yet. */}
         <div className="flex justify-center mb-4">
-          <div dangerouslySetInnerHTML={{ __html: renderCharSVG(charId, level, 120, 150) }} />
+          <Character3DDynamic
+            charId={charId}
+            level={level}
+            kitHex={RPG_CHARS.find(c => c.id === charId)?.accent ?? '#06b6d4'}
+            state="celebrating"
+            tier={rpgLevel?.tier ?? 0}
+            size={150}
+          />
         </div>
 
         {/* Unlocks */}
