@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: plan, error: planErr } = await db(supabase)
       .from('plan_templates')
-      .select('id, name, meta, is_public, author_type, author_id, weeks_data, weeks_min, weeks_max, distance, level, total_starts')
+      .select('id, name, meta, is_public, author_type, author_id, weeks_data, weeks_min, weeks_max, distance, level')
       .eq('id', template_id)
       .eq('is_public', true)
       .single()
@@ -70,12 +70,12 @@ export async function POST(req: NextRequest) {
           platform_fee_gbp:  priceGbp ? Math.round(priceGbp * 0.3 * 100) / 100 : 0,
         })
 
-      // Increment total_starts on the template
+      // Increment total_starts on the template via SECURITY DEFINER RPC.
+      // Direct UPDATE was removed in PR J1 because its supporting policy
+      // ("Authenticated bump counters") allowed arbitrary edits to any
+      // template (advisor `rls_policy_always_true`).
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await db(supabase)
-        .from('plan_templates')
-        .update({ total_starts: (plan.total_starts ?? 0) + 1 })
-        .eq('id', template_id)
+      await (supabase.rpc as any)('bump_plan_template_starts', { p_template_id: template_id })
     }
 
     // Activate plan — archive existing active plan first

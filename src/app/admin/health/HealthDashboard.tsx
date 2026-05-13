@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { AppHeader } from '@/components/AppHeader'
+import { advisorSnapshot, type AdvisorLintSummary } from '@/lib/advisorSnapshot'
 import type { HealthSummary } from './page'
 
 // PR I1 — single-pane system pulse + Sentry healthcheck button.
@@ -88,7 +89,128 @@ export default function HealthDashboard(s: HealthSummary) {
           <SectionLabel>Sentry diagnostic</SectionLabel>
           <SentryDiag dsnPresent={s.sentry_dsn_present} />
         </section>
+
+        {/* Supabase advisor snapshot (PR J1) */}
+        <section>
+          <SectionLabel>DB linter · snapshot {advisorSnapshot.last_run}</SectionLabel>
+          <AdvisorCard />
+        </section>
       </div>
+    </div>
+  )
+}
+
+function AdvisorCard() {
+  const [open, setOpen] = useState<'security' | 'performance' | null>(null)
+
+  const secTotal  = advisorSnapshot.security.reduce((s, l) => s + l.count, 0)
+  const perfTotal = advisorSnapshot.performance.reduce((s, l) => s + l.count, 0)
+  const secWarn   = advisorSnapshot.security.filter(l => l.level === 'WARN').reduce((s, l) => s + l.count, 0)
+  const perfWarn  = advisorSnapshot.performance.filter(l => l.level === 'WARN').reduce((s, l) => s + l.count, 0)
+
+  return (
+    <div className="rounded-2xl p-4"
+      style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+      <div className="grid grid-cols-2 gap-2">
+        <button onClick={() => setOpen(open === 'security' ? null : 'security')}
+          className="text-left rounded-xl p-3 active:scale-95 transition-transform"
+          style={{
+            background: secWarn > 0
+              ? 'linear-gradient(135deg, #f59e0b15, #f59e0b05)'
+              : 'linear-gradient(135deg, #22c55e15, #22c55e05)',
+            border: `1.5px solid ${secWarn > 0 ? '#f59e0b40' : '#22c55e40'}`,
+          }}>
+          <p className="text-[10px] font-black uppercase tracking-widest"
+            style={{ color: secWarn > 0 ? '#f59e0b' : '#22c55e' }}>
+            Security · {secTotal}
+          </p>
+          <p className="text-xl font-black mt-1" style={{ color: 'var(--color-text-primary)' }}>
+            {secWarn} <span className="text-xs opacity-60">WARN</span>
+          </p>
+          <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
+            tap for breakdown
+          </p>
+        </button>
+
+        <button onClick={() => setOpen(open === 'performance' ? null : 'performance')}
+          className="text-left rounded-xl p-3 active:scale-95 transition-transform"
+          style={{
+            background: perfWarn > 0
+              ? 'linear-gradient(135deg, #3b82f615, #3b82f605)'
+              : 'linear-gradient(135deg, #22c55e15, #22c55e05)',
+            border: `1.5px solid ${perfWarn > 0 ? '#3b82f640' : '#22c55e40'}`,
+          }}>
+          <p className="text-[10px] font-black uppercase tracking-widest"
+            style={{ color: perfWarn > 0 ? '#3b82f6' : '#22c55e' }}>
+            Performance · {perfTotal}
+          </p>
+          <p className="text-xl font-black mt-1" style={{ color: 'var(--color-text-primary)' }}>
+            {perfWarn} <span className="text-xs opacity-60">WARN</span>
+          </p>
+          <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
+            tap for breakdown
+          </p>
+        </button>
+      </div>
+
+      {open && (
+        <div className="mt-3 space-y-2">
+          {(open === 'security' ? advisorSnapshot.security : advisorSnapshot.performance).map(l => (
+            <AdvisorRow key={l.name} lint={l} />
+          ))}
+        </div>
+      )}
+
+      {advisorSnapshot.founder_actions.length > 0 && (
+        <div className="mt-3 rounded-xl p-3"
+          style={{ background: '#f59e0b10', border: '1.5px solid #f59e0b40' }}>
+          <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: '#f59e0b' }}>
+            Founder action ({advisorSnapshot.founder_actions.length})
+          </p>
+          {advisorSnapshot.founder_actions.map(a => (
+            <div key={a.id} className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+              <strong>{a.description}</strong>
+              {a.remediation_url && (
+                <> · <a href={a.remediation_url} target="_blank" rel="noreferrer"
+                  className="underline" style={{ color: '#3b82f6' }}>docs</a></>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <p className="text-[10px] mt-3" style={{ color: 'var(--color-text-tertiary)' }}>
+        Snapshot — refresh via <span className="font-mono">mcp__supabase__get_advisors</span> in a Claude session,
+        then update <span className="font-mono">src/lib/advisorSnapshot.ts</span>.
+      </p>
+    </div>
+  )
+}
+
+function AdvisorRow({ lint }: { lint: AdvisorLintSummary }) {
+  const colour = lint.level === 'INFO' ? '#9ca3af' : lint.level === 'WARN' ? '#f59e0b' : '#ef4444'
+  return (
+    <div className="rounded-xl p-2.5"
+      style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-bold font-mono truncate" style={{ color: 'var(--color-text-primary)' }}>
+          {lint.name}
+        </p>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span className="text-[10px] font-black px-1.5 py-0.5 rounded"
+            style={{ background: `${colour}30`, color: colour }}>
+            {lint.level}
+          </span>
+          <span className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>
+            {lint.count}
+          </span>
+        </div>
+      </div>
+      {lint.note && (
+        <p className="text-[10px] mt-1 leading-snug" style={{ color: 'var(--color-text-tertiary)' }}>
+          {lint.note}
+        </p>
+      )}
     </div>
   )
 }
