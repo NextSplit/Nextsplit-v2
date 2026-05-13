@@ -10,6 +10,20 @@ import { requireCoachPro } from '@/lib/server/requireCoachPro'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
+// PR J2 — prompt caching. System framing is stable across all coaches +
+// all athletes; ephemeral cache cuts repeat-call input cost ~10x.
+const SYSTEM_PROMPT = `You are an AI assistant briefing a running coach
+about one of their athletes. Generate a concise weekly coaching digest.
+
+Structure (always):
+1. Summarise training adherence and load (1 sentence).
+2. Note any wellness concerns (1 sentence).
+3. Give 1-2 specific coaching recommendations for next week.
+4. Flag anything the coach should act on urgently (if anything).
+
+Be direct and actionable. Write as if briefing the coach. No fluff,
+no markdown, no greeting, no sign-off. 3-4 sentences total.`
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
@@ -65,9 +79,7 @@ export async function POST(req: NextRequest) {
     const avgSleep   = wellness.length ? wellness.reduce((a: number, w: { sleep: number | null }) => a + (w.sleep ?? 0), 0) / wellness.filter((w: { sleep: number | null }) => w.sleep).length : null
     const avgSoreness = wellness.length ? wellness.reduce((a: number, w: { soreness: number | null }) => a + (w.soreness ?? 0), 0) / wellness.filter((w: { soreness: number | null }) => w.soreness).length : null
 
-    const prompt = `You are an AI assistant for a running coach. Generate a concise weekly digest for the coach about their athlete.
-
-ATHLETE: ${profile?.display_name ?? 'Athlete'}
+    const athleteContext = `ATHLETE: ${profile?.display_name ?? 'Athlete'}
 PLAN: ${plan ? `${plan.name} (Week ${plan.current_week}/${plan.total_weeks}${plan.race_date ? `, race: ${plan.race_date}` : ''})` : 'No active plan'}
 EXPERIENCE: ${profile?.running_experience ?? 'unknown'}
 
@@ -79,23 +91,30 @@ LAST 2 WEEKS TRAINING:
 
 WELLNESS (last 2 weeks):
 - Avg sleep: ${avgSleep ? avgSleep.toFixed(1) : '—'}hrs
-- Avg soreness: ${avgSoreness ? avgSoreness.toFixed(1) : '—'}/10
-
-Write a 3-4 sentence coaching digest that:
-1. Summarises training adherence and load
-2. Notes any wellness concerns
-3. Gives 1-2 specific coaching recommendations for next week
-4. Flags anything the coach should act on urgently (if anything)
-
-Be direct and actionable. Write as if briefing the coach. No fluff.`
+- Avg soreness: ${avgSoreness ? avgSoreness.toFixed(1) : '—'}/10`
 
     const message = await anthropic.messages.create({
       model:      'claude-sonnet-4-20250514',
       max_tokens: 400,
-      messages:   [{ role: 'user', content: prompt }],
+      system: [
+        { type: 'text', text: SYSTEM_PROMPT,   cache_control: { type: 'ephemeral' } },
+        { type: 'text', text: athleteContext,  cache_control: { type: 'ephemeral' } },
+      ],
+      messages:   [{ role: 'user', content: 'Generate the coaching digest.' }],
     })
 
-    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_coach_digest')
+    const usage = message.usage as typeof message.usage & {
+      cache_read_input_tokens?:     number
+      cache_creation_input_tokens?: number
+    }
+    await recordTokenUsage(
+      user.id,
+      usage.input_tokens,
+      usage.output_tokens,
+      'ai_coach_digest',
+      usage.cache_read_input_tokens     ?? 0,
+      usage.cache_creation_input_tokens ?? 0,
+    )
 
     const digest = message.content[0].type === 'text' ? message.content[0].text : ''
 

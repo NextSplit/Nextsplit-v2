@@ -10,6 +10,41 @@ import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
+// PR J2 — prompt caching. Adaptation rules + response schema are stable
+// across all athletes/weeks; cache them.
+const SYSTEM_PROMPT = `You are an expert running coach. An athlete has
+missed some sessions this week and needs their remaining schedule
+adapted.
+
+ADAPTATION RULES:
+1. Never skip long runs — redistribute if needed.
+2. Reduce total weekly volume by at most 20% from missed sessions.
+3. Maintain the quality/easy balance (don't add extra hard sessions).
+4. If < 2 days remain, suggest carrying key sessions into next week.
+5. Be specific about paces and distances.
+
+Respond with ONLY a JSON object (no markdown, no extra text) with this
+exact shape:
+{
+  "recommendation": "2-3 sentences explaining what happened and the adaptation strategy",
+  "adapted_days": [
+    {
+      "day":       "Wednesday",
+      "day_index": 2,
+      "sessions": [
+        {
+          "c":   "run-easy",
+          "n":   "Easy recovery run",
+          "det": "35 min easy at 5:45-6:00/km. Keep HR conversational.",
+          "km":  6
+        }
+      ]
+    }
+  ],
+  "carry_forward": ["session name to do next week if applicable"],
+  "key_message":   "One line the athlete should remember this week"
+}`
+
 export async function POST(req: NextRequest) {
   try {
     if (!serverConfig.anthropicApiKey) {
@@ -69,51 +104,35 @@ export async function POST(req: NextRequest) {
       })
     ).join('\n')
 
-    const prompt = `You are an expert running coach. An athlete has missed some sessions this week and needs their remaining schedule adapted.
-
-PLAN: ${plan.name}, Week ${week_n}/${plan.total_weeks}${plan.race_date ? `, Race: ${plan.race_date}` : ''}
+    const weekContext = `PLAN: ${plan.name}, Week ${week_n}/${plan.total_weeks}${plan.race_date ? `, Race: ${plan.race_date}` : ''}
 
 THIS WEEK'S SESSIONS:
 ${sessionSummary}
 
 TODAY IS: ${DAYS[todayPlanIndex]}
-REMAINING DAYS: ${DAYS.slice(todayPlanIndex + 1).join(', ') || 'none (end of week)'}
-
-ADAPTATION RULES:
-1. Never skip long runs — redistribute if needed
-2. Reduce total weekly volume by at most 20% from missed sessions
-3. Maintain the quality/easy balance (don't add extra hard sessions)
-4. If < 2 days remain, suggest carrying key sessions into next week
-5. Be specific about paces and distances
-
-Respond with ONLY a JSON object (no markdown) with this structure:
-{
-  "recommendation": "2-3 sentences explaining what happened and the adaptation strategy",
-  "adapted_days": [
-    {
-      "day": "Wednesday",
-      "day_index": 2,
-      "sessions": [
-        {
-          "c": "run-easy",
-          "n": "Easy recovery run",
-          "det": "35 min easy at 5:45-6:00/km. Keep HR conversational.",
-          "km": 6
-        }
-      ]
-    }
-  ],
-  "carry_forward": ["session name to do next week if applicable"],
-  "key_message": "One line the athlete should remember this week"
-}`
+REMAINING DAYS: ${DAYS.slice(todayPlanIndex + 1).join(', ') || 'none (end of week)'}`
 
     const message = await anthropic.messages.create({
       model:      'claude-sonnet-4-20250514',
       max_tokens: 800,
-      messages:   [{ role: 'user', content: prompt }],
+      system: [
+        { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } },
+      ],
+      messages:   [{ role: 'user', content: weekContext }],
     })
 
-    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_adapt_plan')
+    const usage = message.usage as typeof message.usage & {
+      cache_read_input_tokens?:     number
+      cache_creation_input_tokens?: number
+    }
+    await recordTokenUsage(
+      user.id,
+      usage.input_tokens,
+      usage.output_tokens,
+      'ai_adapt_plan',
+      usage.cache_read_input_tokens     ?? 0,
+      usage.cache_creation_input_tokens ?? 0,
+    )
 
     const raw = message.content[0].type === 'text' ? message.content[0].text : '{}'
     const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
