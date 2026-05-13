@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { GeneratePlanSchema, zodError } from '@/lib/schemas'
-import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
+import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 import { validateGeneratedPlan, type PlanDistance } from '@/lib/planValidator'
 
 // S9 (audit): distance is needed for the taper-check; the prompt schema
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     // user could drain Anthropic quota. checkAndIncrementAIUsage upserts
     // on the same (user_id, date) row used elsewhere and returns 429 once
     // the daily cap is reached.
-    const rateCheck = await checkAndIncrementAIUsage(user.id)
+    const rateCheck = await checkAndIncrementAIUsage(user.id, 'ai_generate_plan')
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
     }
@@ -51,6 +51,8 @@ export async function POST(req: NextRequest) {
       max_tokens: 8000,
       messages:   [{ role: 'user', content: prompt }],
     })
+
+    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_generate_plan')
 
     const raw = message.content[0].type === 'text' ? message.content[0].text : ''
 

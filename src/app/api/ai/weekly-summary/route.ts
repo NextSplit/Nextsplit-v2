@@ -6,7 +6,7 @@ import { db } from '@/lib/supabase/db'
 import Anthropic from '@anthropic-ai/sdk'
 import { weeklyKm, calcACWR } from '@/lib/statsUtils'
 import type { TrainingLog, PlanWeek } from '@/types/database'
-import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
+import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -21,7 +21,7 @@ export async function POST() {
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
     // S6: rate-limit guard — was unguarded; any authenticated user could drain Anthropic quota.
-    const rateCheck = await checkAndIncrementAIUsage(user.id)
+    const rateCheck = await checkAndIncrementAIUsage(user.id, 'ai_weekly_summary')
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
     }
@@ -125,6 +125,8 @@ Keep the whole thing under 200 words. Sound like a coach, not a report.`
       max_tokens: 500,
       messages:   [{ role: 'user', content: prompt }],
     })
+
+    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_weekly_summary')
 
     const summary = message.content[0].type === 'text' ? message.content[0].text : ''
 

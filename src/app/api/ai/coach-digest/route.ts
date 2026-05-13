@@ -5,7 +5,7 @@ import { AiCoachDigestSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/supabase/db'
 import Anthropic from '@anthropic-ai/sdk'
-import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
+import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 import { requireCoachPro } from '@/lib/server/requireCoachPro'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (gate) return gate
 
     // S6: rate-limit guard — was unguarded; any authenticated user could drain Anthropic quota.
-    const rateCheck = await checkAndIncrementAIUsage(user.id)
+    const rateCheck = await checkAndIncrementAIUsage(user.id, 'ai_coach_digest')
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
     }
@@ -94,6 +94,8 @@ Be direct and actionable. Write as if briefing the coach. No fluff.`
       max_tokens: 400,
       messages:   [{ role: 'user', content: prompt }],
     })
+
+    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_coach_digest')
 
     const digest = message.content[0].type === 'text' ? message.content[0].text : ''
 

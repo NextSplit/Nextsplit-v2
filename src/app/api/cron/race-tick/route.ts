@@ -112,11 +112,46 @@ export async function GET(req: Request) {
     }
 
     summary.duration_ms = Date.now() - startedAt
+
+    // PR H3 — record run to cron_runs ledger.
+    try {
+      const supabase = createServiceClient()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('cron_runs').insert({
+        job:         'race-tick',
+        started_at:  new Date(startedAt).toISOString(),
+        finished_at: new Date().toISOString(),
+        duration_ms: summary.duration_ms,
+        ok:          true,
+        result:      summary,
+      })
+    } catch (logErr) {
+      Sentry.captureException(logErr, {
+        tags: { feature: 'cron-runs-ledger', route: 'race-tick' },
+      })
+    }
+
     return NextResponse.json({ ok: true, ...summary })
 
   } catch (err) {
     Sentry.captureException(err, { extra: { context: '[cron/race-tick] catch' } })
     summary.duration_ms = Date.now() - startedAt
+
+    // PR H3 — record failed run.
+    try {
+      const supabase = createServiceClient()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('cron_runs').insert({
+        job:           'race-tick',
+        started_at:    new Date(startedAt).toISOString(),
+        finished_at:   new Date().toISOString(),
+        duration_ms:   summary.duration_ms,
+        ok:            false,
+        result:        summary,
+        error_message: err instanceof Error ? err.message : String(err),
+      })
+    } catch { /* swallow — already in error path */ }
+
     return NextResponse.json(
       { ok: false, error: err instanceof Error ? err.message : String(err), ...summary },
       { status: 500 },

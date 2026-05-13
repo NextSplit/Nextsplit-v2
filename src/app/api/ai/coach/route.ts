@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
   // ── Rate limit check ────────────────────────────────────────────────────────
-  const rateCheck = await checkAndIncrementAIUsage(user.id)
+  const rateCheck = await checkAndIncrementAIUsage(user.id, 'ai_coach')
   if (!rateCheck.allowed) {
     return NextResponse.json(
       { error: rateCheck.reason, rateLimited: true, limit: rateCheck.limit },
@@ -191,7 +191,7 @@ ${recentNotes.length ? `ATHLETE NOTES:\n${recentNotes.join('\n')}` : ''}
       .join('')
 
     // Record token usage (non-fatal)
-    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens)
+    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_coach')
 
     return NextResponse.json({ note: text, context: { acwr, weekSummaries, currentWeekN } })
   } catch (err) {

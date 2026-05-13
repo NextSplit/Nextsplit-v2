@@ -39,7 +39,7 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  const rateCheck = await checkAndIncrementAIUsage(user.id)
+  const rateCheck = await checkAndIncrementAIUsage(user.id, 'ai_fuel')
   if (!rateCheck.allowed) {
     return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
   }
@@ -89,6 +89,7 @@ export async function POST(req: Request) {
       user.id,
       message.usage.input_tokens,
       message.usage.output_tokens,
+      'ai_fuel',
     )
 
     return NextResponse.json({ answer })

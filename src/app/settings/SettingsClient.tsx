@@ -8,6 +8,7 @@ import { useProfile } from '@/hooks/useProfile'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useSubscription } from '@/hooks/useSubscription'
 import { useToast } from '@/components/Toast'
+import { AppHeader } from '@/components/AppHeader'
 import { setThemePreference } from '@/components/ThemeWrapper'
 import { setUnits } from '@/lib/units'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
@@ -727,18 +728,21 @@ export default function SettingsClient({ email, initialProfile }: Props) {
   return (
     <div className="min-h-screen pb-24" style={{ background: "var(--color-bg)" }}>
 
-      {/* Header */}
-      <div className="border-b px-4 pt-12 pb-4 sticky top-0 z-40" style={{ background: "var(--color-bg)", borderColor: "var(--color-border)" }}>
-        <div className="max-w-lg mx-auto flex items-center gap-3">
+      {/* PR H4 — /settings unified under AppHeader. The font-display italic
+          brand mark is preserved by passing a ReactNode title. Back arrow
+          moves to leadSlot. */}
+      <AppHeader
+        leadSlot={
           <button onClick={() => router.back()} aria-label="Go back"
-            className="w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-tertiary)' }}>
+            className="w-8 h-8 flex items-center justify-center rounded-full"
+            style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-text-tertiary)' }}>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="font-display text-xl italic" style={{ color: 'var(--color-text-primary)' }}>Settings</h1>
-        </div>
-      </div>
+        }
+        title={<span className="font-display text-xl italic">Settings</span>}
+      />
 
       <div className="max-w-lg mx-auto px-4 py-5 space-y-6">
 

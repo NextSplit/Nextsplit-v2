@@ -4,7 +4,7 @@ import { AiSuggestionsSchema, zodError } from '@/lib/schemas'
 import { createClient } from '@/lib/supabase/server'
 import { getServerSubscription, requirePro } from '@/lib/serverSubscription'
 import Anthropic from '@anthropic-ai/sdk'
-import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
+import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   const proBlock = requirePro(sub)
   if (proBlock) return proBlock
 
-  const rateCheck = await checkAndIncrementAIUsage(user.id)
+  const rateCheck = await checkAndIncrementAIUsage(user.id, 'ai_suggestions')
   if (!rateCheck.allowed) {
     return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
   }
@@ -58,6 +58,9 @@ Be specific, not generic. Reference actual numbers from their data.`
       max_tokens: 1000,
       messages: [{ role: 'user', content: prompt }],
     })
+
+    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_suggestions')
+
     const text = message.content
       .filter(b => b.type === 'text')
       .map(b => (b as { type: 'text'; text: string }).text)
