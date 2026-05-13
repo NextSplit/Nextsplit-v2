@@ -27,6 +27,7 @@ import {
   type HeroState,
 } from './HomeHeroes'
 import { XPHeaderBar, RaceCountdown, StatsStrip, SquadMini, NotifStrip } from './HomeChrome'
+import { AppHeader } from '@/components/AppHeader'
 import { CoachNudge, SquadNudge, EliteNudge } from './HomeNudges'
 
 export default function HomeClient() {
@@ -99,35 +100,40 @@ export default function HomeClient() {
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--color-bg)' }}>
 
-      {/* Sticky header */}
-      <div className="sticky top-0 z-40"
-        style={{ background: 'var(--color-surface)', borderBottom: '2.5px solid var(--color-border-2)' }}>
-        <div className="max-w-lg mx-auto px-4 pt-12 pb-1 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Splity size={32} mood={streakAtRisk ? 'worried' : plan ? 'happy' : 'idle'} animate={false} />
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest"
-                style={{ color: 'var(--color-text-tertiary)' }}>
-                {greeting}, {firstName}
-              </p>
-              <p className="text-base font-black leading-tight"
-                style={{ color: '#00d4ff', letterSpacing: '-0.02em' }}>NextSplit</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link href="/settings" aria-label="Settings"
-              className="w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ background: 'var(--color-surface-2)', border: '2px solid var(--color-border-2)' }}>
-              <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
-                stroke="var(--color-text-tertiary)" strokeWidth={2}>
-                <circle cx={12} cy={12} r={3} />
-                <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-        <XPHeaderBar xp={xp} streak={streak} hasPlan={!!plan} onShareStreak={() => setShowStreakShare(true)} />
-      </div>
+      {/* PR G1 — /home unified under AppHeader. Uses leadSlot for the
+          mood-aware Splity, ReactNode title for the brand mark with
+          greeting overline, rightSlot for the Settings cog, and bottomSlot
+          for the XPHeaderBar (streak + XP progress + level pill OR day-1
+          CTA pill when fresh user). */}
+      <AppHeader
+        leadSlot={<Splity size={32} mood={streakAtRisk ? 'worried' : plan ? 'happy' : 'idle'} animate={false} />}
+        title={
+          <>
+            <span className="block text-[10px] font-black uppercase tracking-widest"
+              style={{ color: 'var(--color-text-tertiary)' }}>
+              {greeting}, {firstName}
+            </span>
+            <span className="block text-base font-black leading-tight"
+              style={{ color: '#00d4ff', letterSpacing: '-0.02em' }}>
+              NextSplit
+            </span>
+          </>
+        }
+        rightSlot={
+          <Link href="/settings" aria-label="Settings"
+            className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: 'var(--color-surface-2)', border: '2px solid var(--color-border-2)' }}>
+            <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
+              stroke="var(--color-text-tertiary)" strokeWidth={2}>
+              <circle cx={12} cy={12} r={3} />
+              <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+          </Link>
+        }
+        bottomSlot={
+          <XPHeaderBar xp={xp} streak={streak} hasPlan={!!plan} onShareStreak={() => setShowStreakShare(true)} />
+        }
+      />
 
       <div className="max-w-lg mx-auto py-4 space-y-3">
 

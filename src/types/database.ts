@@ -222,6 +222,24 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['meal_plan_entries']['Row'], 'id' | 'created_at'>
         Update: Partial<Database['public']['Tables']['meal_plan_entries']['Insert']>
       }
+      // PR G3: in-app notification inbox. Inserts from smart-notify cron
+      // via service-role; users read + mark-as-read their own rows.
+      notifications: {
+        Row: {
+          id:         string
+          user_id:    string
+          type:       string
+          title:      string | null
+          body:       string | null
+          data:       Json | null
+          read:       boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['notifications']['Row'], 'id' | 'created_at' | 'read'> & {
+          read?: boolean
+        }
+        Update: Partial<Database['public']['Tables']['notifications']['Insert']>
+      }
     }
   }
 }
