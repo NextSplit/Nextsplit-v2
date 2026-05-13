@@ -24,6 +24,10 @@ export interface Database {
           coach_verified: boolean
           coach_applied_at: string | null
           coach_tier: 'split_leader' | 'professional' | null
+          // PR F1: typed NutritionSettings { weight_kg, height_cm, age, sex,
+          // activity_level, goal }. Null pre-setup. Mirrored to localStorage
+          // by useNutritionSettings.
+          nutrition_settings: Json | null
           created_at: string
           updated_at: string
         }
