@@ -132,8 +132,11 @@ function HeroCard({
           </div>
         </div>
 
-        {/* Stat bars */}
-        <div className="mt-4 space-y-2">
+        {/* Stat bars — mt-7 (was mt-4) clears the absolutely-positioned
+            shoes chip (bottom: -22) + level badge (bottom: -6) that hang
+            below the avatar wrapper. Without this gap the Strength /
+            Endurance bars rendered behind those overlays. */}
+        <div className="mt-7 space-y-2">
           <StatBar label="Endurance" value={stats.endurance} colour="bg-blue-400" tip="Built through long runs and consistent mileage" />
           <StatBar label="Strength"  value={stats.strength}  colour="bg-purple-400" tip="Built through gym sessions and hill runs" />
           <StatBar label="Recovery"  value={stats.recovery}  colour="bg-green-400" tip="Built through rest days and wellness check-ins" />
