@@ -168,23 +168,30 @@ export async function checkAndIncrementAIUsage(
 /**
  * Record token usage after a successful AI call.
  * PR H1: `feature` tag matches the ai_usage row written by
- * checkAndIncrementAIUsage. Non-fatal — if this fails it doesn't affect
- * the user, but the cost dashboard under-attributes the call.
+ * checkAndIncrementAIUsage.
+ * PR I2: cache-token params separate the prompt-caching billing tier
+ * ($0.30/M on reads · $3.75/M on creation) from regular input ($3/M).
+ * Non-fatal — if this fails it doesn't affect the user, but the cost
+ * dashboard under-attributes.
  */
 export async function recordTokenUsage(
   userId: string,
   tokensIn: number,
   tokensOut: number,
   feature: string = '',
+  cacheReadTokens:     number = 0,
+  cacheCreationTokens: number = 0,
 ): Promise<void> {
   try {
     const supabase = getAdminClient()
     await supabase.rpc('increment_token_usage', {
-      p_user_id:    userId,
-      p_date:       todayStr(),
-      p_tokens_in:  tokensIn,
-      p_tokens_out: tokensOut,
-      p_feature:    feature,
+      p_user_id:                userId,
+      p_date:                   todayStr(),
+      p_tokens_in:              tokensIn,
+      p_tokens_out:             tokensOut,
+      p_feature:                feature,
+      p_cache_read_tokens:      cacheReadTokens,
+      p_cache_creation_tokens:  cacheCreationTokens,
     })
   } catch {
     // Non-fatal — token recording is for analytics, not gating

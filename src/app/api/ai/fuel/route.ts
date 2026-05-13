@@ -84,12 +84,23 @@ export async function POST(req: Request) {
       .trim()
 
     // PR G2 — record token usage so the AI cost dashboard can attribute
-    // spend to this endpoint. Non-fatal — analytics, not gating.
+    // spend to this endpoint. PR I2 — cache_* tokens passed separately so
+    // the dashboard prices them at the cache tier ($0.30/M reads, $3.75/M
+    // creation) instead of the $3/M standard input rate. /api/ai/fuel is
+    // the cache-heavy endpoint (system prompt + profile/targets block
+    // both ephemeral-cached), so this materially reduces reported spend.
+    // Non-fatal — analytics, not gating.
+    const usage = message.usage as typeof message.usage & {
+      cache_read_input_tokens?:     number
+      cache_creation_input_tokens?: number
+    }
     await recordTokenUsage(
       user.id,
-      message.usage.input_tokens,
-      message.usage.output_tokens,
+      usage.input_tokens,
+      usage.output_tokens,
       'ai_fuel',
+      usage.cache_read_input_tokens     ?? 0,
+      usage.cache_creation_input_tokens ?? 0,
     )
 
     return NextResponse.json({ answer })

@@ -43,24 +43,36 @@ export interface AiCostFeatureRow {
 }
 
 // Sonnet 4.6 list pricing — keep in sync if Anthropic changes rates.
-// Cache-hit pricing isn't broken out yet (ai_usage doesn't column-split
-// cache_read tokens); the rough estimate slightly over-counts cost on
-// cache-heavy endpoints like /api/ai/fuel.
-const PRICE_IN_PER_M_USD  = 3
-const PRICE_OUT_PER_M_USD = 15
+// PR I2 — cache-token columns now split out of ai_usage. Cache reads
+// get the 10× discount; cache creations get the 25% premium. Without
+// this, cache-heavy endpoints (eg /api/ai/fuel system+profile blocks)
+// over-report by ~3-5×.
+const PRICE_IN_PER_M_USD              = 3        // standard input
+const PRICE_OUT_PER_M_USD             = 15       // output
+const PRICE_CACHE_READ_PER_M_USD      = 0.30     // cache hit (10× cheaper)
+const PRICE_CACHE_CREATION_PER_M_USD  = 3.75     // cache-priming write (25% premium)
 
-function costFor(tokensIn: number, tokensOut: number): number {
-  return (tokensIn / 1_000_000) * PRICE_IN_PER_M_USD
-       + (tokensOut / 1_000_000) * PRICE_OUT_PER_M_USD
+function costFor(
+  tokensIn:             number,
+  tokensOut:            number,
+  cacheReadTokens:      number = 0,
+  cacheCreationTokens:  number = 0,
+): number {
+  return (tokensIn             / 1_000_000) * PRICE_IN_PER_M_USD
+       + (tokensOut            / 1_000_000) * PRICE_OUT_PER_M_USD
+       + (cacheReadTokens      / 1_000_000) * PRICE_CACHE_READ_PER_M_USD
+       + (cacheCreationTokens  / 1_000_000) * PRICE_CACHE_CREATION_PER_M_USD
 }
 
 interface UsageRow {
-  user_id:    string
-  date:       string
-  call_count: number
-  tokens_in:  number
-  tokens_out: number
-  feature:    string | null
+  user_id:               string
+  date:                  string
+  call_count:            number
+  tokens_in:             number
+  tokens_out:            number
+  cache_read_tokens:     number
+  cache_creation_tokens: number
+  feature:               string | null
 }
 
 async function loadAiCostData(): Promise<{
@@ -81,7 +93,7 @@ async function loadAiCostData(): Promise<{
   const todayStr  = today.toISOString().slice(0, 10)
 
   const { data: usageData } = await a.from('ai_usage')
-    .select('user_id, date, call_count, tokens_in, tokens_out, feature')
+    .select('user_id, date, call_count, tokens_in, tokens_out, cache_read_tokens, cache_creation_tokens, feature')
     .gte('date', cutoffStr)
     .order('date', { ascending: false })
 
@@ -98,19 +110,28 @@ async function loadAiCostData(): Promise<{
     (profileData ?? []).map((p: { id: string; display_name: string | null }) => [p.id, p.display_name])
   )
 
-  // Daily aggregation
-  const dailyMap = new Map<string, AiCostDailyRow & { _users: Set<string> }>()
+  // PR I2 internal aggregate carries cache tokens too; the public
+  // AiCost*Row shapes stay token-shaped for the UI and the cost_usd
+  // already reflects cache pricing via costFor().
+  type DailyAgg = AiCostDailyRow & {
+    _users: Set<string>
+    cache_read:     number
+    cache_creation: number
+  }
+  const dailyMap = new Map<string, DailyAgg>()
   for (const r of usage) {
     if (!dailyMap.has(r.date)) {
       dailyMap.set(r.date, {
         date: r.date, users: 0, calls: 0, tokens_in: 0, tokens_out: 0, cost_usd: 0,
-        _users: new Set<string>(),
+        _users: new Set<string>(), cache_read: 0, cache_creation: 0,
       })
     }
     const row = dailyMap.get(r.date)!
-    row.calls      += r.call_count
-    row.tokens_in  += r.tokens_in
-    row.tokens_out += r.tokens_out
+    row.calls          += r.call_count
+    row.tokens_in      += r.tokens_in
+    row.tokens_out     += r.tokens_out
+    row.cache_read     += r.cache_read_tokens ?? 0
+    row.cache_creation += r.cache_creation_tokens ?? 0
     row._users.add(r.user_id)
   }
   const daily30: AiCostDailyRow[] = [...dailyMap.values()].map(r => ({
@@ -119,16 +140,24 @@ async function loadAiCostData(): Promise<{
     calls: r.calls,
     tokens_in: r.tokens_in,
     tokens_out: r.tokens_out,
-    cost_usd: costFor(r.tokens_in, r.tokens_out),
+    cost_usd: costFor(r.tokens_in, r.tokens_out, r.cache_read, r.cache_creation),
   })).sort((a, b) => b.date.localeCompare(a.date))
 
-  // Top users by cost (30d)
-  const userMap = new Map<string, { calls: number; tokens_in: number; tokens_out: number }>()
+  // Top users by cost (30d) — cache-aware
+  type UserAgg = {
+    calls: number; tokens_in: number; tokens_out: number
+    cache_read: number; cache_creation: number
+  }
+  const userMap = new Map<string, UserAgg>()
   for (const r of usage) {
-    const u = userMap.get(r.user_id) ?? { calls: 0, tokens_in: 0, tokens_out: 0 }
-    u.calls      += r.call_count
-    u.tokens_in  += r.tokens_in
-    u.tokens_out += r.tokens_out
+    const u = userMap.get(r.user_id) ?? {
+      calls: 0, tokens_in: 0, tokens_out: 0, cache_read: 0, cache_creation: 0,
+    }
+    u.calls          += r.call_count
+    u.tokens_in      += r.tokens_in
+    u.tokens_out     += r.tokens_out
+    u.cache_read     += r.cache_read_tokens ?? 0
+    u.cache_creation += r.cache_creation_tokens ?? 0
     userMap.set(r.user_id, u)
   }
   const topUsers30: AiCostTopUserRow[] = [...userMap.entries()].map(([user_id, u]) => ({
@@ -137,17 +166,22 @@ async function loadAiCostData(): Promise<{
     calls:       u.calls,
     tokens_in:   u.tokens_in,
     tokens_out:  u.tokens_out,
-    cost_usd:    costFor(u.tokens_in, u.tokens_out),
+    cost_usd:    costFor(u.tokens_in, u.tokens_out, u.cache_read, u.cache_creation),
   })).sort((a, b) => b.cost_usd - a.cost_usd).slice(0, 10)
 
-  // Feature breakdown (when feature column populated)
-  const featureMap = new Map<string, { calls: number; tokens_in: number; tokens_out: number }>()
+  // Feature breakdown — cache-aware
+  type FeatureAgg = UserAgg
+  const featureMap = new Map<string, FeatureAgg>()
   for (const r of usage) {
     const f = r.feature ?? '(unlabelled)'
-    const v = featureMap.get(f) ?? { calls: 0, tokens_in: 0, tokens_out: 0 }
-    v.calls      += r.call_count
-    v.tokens_in  += r.tokens_in
-    v.tokens_out += r.tokens_out
+    const v = featureMap.get(f) ?? {
+      calls: 0, tokens_in: 0, tokens_out: 0, cache_read: 0, cache_creation: 0,
+    }
+    v.calls          += r.call_count
+    v.tokens_in      += r.tokens_in
+    v.tokens_out     += r.tokens_out
+    v.cache_read     += r.cache_read_tokens ?? 0
+    v.cache_creation += r.cache_creation_tokens ?? 0
     featureMap.set(f, v)
   }
   const features30: AiCostFeatureRow[] = [...featureMap.entries()].map(([feature, v]) => ({
@@ -155,7 +189,7 @@ async function loadAiCostData(): Promise<{
     calls:      v.calls,
     tokens_in:  v.tokens_in,
     tokens_out: v.tokens_out,
-    cost_usd:   costFor(v.tokens_in, v.tokens_out),
+    cost_usd:   costFor(v.tokens_in, v.tokens_out, v.cache_read, v.cache_creation),
   })).sort((a, b) => b.cost_usd - a.cost_usd)
 
   const totals30 = {

@@ -59,8 +59,9 @@ export default function AiCostDashboard({
         </div>
 
         <p className="text-[10px] px-1" style={{ color: 'var(--color-text-tertiary)' }}>
-          Pricing: Claude Sonnet 4.6 list — $3/M input · $15/M output. Cache-hit
-          discount not factored (over-estimates cache-heavy endpoints).
+          Pricing: Sonnet 4.6 — $3/M input · $15/M output · $0.30/M cache reads ·
+          $3.75/M cache creation. /api/ai/fuel is the cache-heavy endpoint;
+          others bill at standard rates until they wire prompt caching.
         </p>
 
         {/* Daily table */}
