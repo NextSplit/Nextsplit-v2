@@ -78,6 +78,22 @@ export function PlanHealthBanner({ plan }: Props) {
 
   if (!plan || issues.length === 0 || dismissed) return null
 
+  // Dedup the summary line: the validator emits one `oversized_long_run`
+  // per affected week, which produced repeats like "Long run too big ·
+  // Long run too big · Long run too big · Long run too big" in the
+  // collapsed banner. Group by issue code; count multiplicity.
+  const summary = (() => {
+    const counts = new Map<PlanValidationIssue['code'], number>()
+    for (const iss of issues) counts.set(iss.code, (counts.get(iss.code) ?? 0) + 1)
+    return Array.from(counts.entries()).map(([code, n]) =>
+      n > 1 ? `${ISSUE_LABEL[code]} (${n} weeks)` : ISSUE_LABEL[code]
+    ).join(' · ')
+  })()
+
+  // Distinct-issue count for the header chip ("Plan health · 2 issues"
+  // even when there are 6 raw items spanning 2 codes).
+  const distinctCount = new Set(issues.map(i => i.code)).size
+
   const handleDismiss = () => {
     setDismissed(true)
     try { window.localStorage.setItem(dismissKey(plan.id), '1') } catch { /* noop */ }
@@ -95,11 +111,11 @@ export function PlanHealthBanner({ plan }: Props) {
         <span className="text-xl flex-shrink-0">⚠️</span>
         <div className="flex-1 min-w-0">
           <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#ffb800' }}>
-            Plan health · {issues.length} issue{issues.length !== 1 ? 's' : ''}
+            Plan health · {distinctCount} issue{distinctCount !== 1 ? 's' : ''}
           </p>
           <p className="text-sm font-black mt-0.5"
             style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.01em' }}>
-            {issues.map(i => ISSUE_LABEL[i.code]).join(' · ')}
+            {summary}
           </p>
         </div>
         <span className="text-xs font-bold flex-shrink-0 mt-1"
