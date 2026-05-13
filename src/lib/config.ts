@@ -34,6 +34,10 @@ export const serverConfig = {
   stripeWebhookSecret:    process.env.STRIPE_WEBHOOK_SECRET ?? '',
   anthropicApiKey:        process.env.ANTHROPIC_API_KEY ?? '',
   stravaClientSecret:     process.env.STRAVA_CLIENT_SECRET ?? '',
+  // PR J11a — Strava webhook subscription verify token (founder-chosen
+  // random string; same value used in the curl that registers the
+  // webhook with Strava).
+  stravaWebhookVerifyToken: process.env.STRAVA_WEBHOOK_VERIFY_TOKEN ?? '',
   seedSecret:             process.env.SEED_SECRET ?? '',
   cronSecret:             process.env.CRON_SECRET ?? '',
   vapidPrivateKey:        process.env.VAPID_PRIVATE_KEY ?? '',
