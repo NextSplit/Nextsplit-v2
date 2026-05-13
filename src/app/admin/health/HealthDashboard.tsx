@@ -36,6 +36,11 @@ export default function HealthDashboard(s: HealthSummary) {
               style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
               Revenue
             </Link>
+            <Link href="/admin/feedback"
+              className="text-xs font-bold px-2.5 py-1 rounded-lg"
+              style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+              Feedback
+            </Link>
           </div>
         }
       />
