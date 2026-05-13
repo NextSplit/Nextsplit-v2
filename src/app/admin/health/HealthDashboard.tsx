@@ -120,6 +120,12 @@ export default function HealthDashboard(s: HealthSummary) {
           <SectionLabel>DB linter · snapshot {advisorSnapshot.last_run}</SectionLabel>
           <AdvisorCard />
         </section>
+
+        {/* Strava webhook manager (phone-friendly alternative to curl) */}
+        <section>
+          <SectionLabel>Strava webhook</SectionLabel>
+          <StravaWebhookCard />
+        </section>
       </div>
     </div>
   )
@@ -361,6 +367,117 @@ function SentryDiag({ dsnPresent }: { dsnPresent: boolean }) {
       <p className="text-[10px] mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
         Search Sentry for{' '}<span className="font-mono">feature:sentry-healthcheck</span>{' '}
         after firing — should appear within ~30s if wiring is healthy.
+      </p>
+    </div>
+  )
+}
+
+function StravaWebhookCard() {
+  interface Sub { id: number; callback_url: string; created_at: string; updated_at: string }
+  interface ListResp { status: number; subscriptions?: Sub[] | { message: string }; error?: string }
+  interface CreateResp { status: number; body?: { id?: number; errors?: unknown[]; message?: string } }
+
+  const [list, setList]     = useState<ListResp | null>(null)
+  const [busy, setBusy]     = useState<'check' | 'create' | 'delete' | null>(null)
+  const [result, setResult] = useState<string | null>(null)
+
+  async function check() {
+    setBusy('check'); setResult(null)
+    try {
+      const res = await fetch('/api/admin/strava-subscribe')
+      const data = await res.json() as ListResp
+      setList(data)
+    } catch (e) {
+      setResult(`✗ ${e instanceof Error ? e.message : 'request failed'}`)
+    } finally { setBusy(null) }
+  }
+
+  async function create() {
+    setBusy('create'); setResult(null)
+    try {
+      const res = await fetch('/api/admin/strava-subscribe', { method: 'POST' })
+      const data = await res.json() as CreateResp
+      if (data.status >= 200 && data.status < 300 && data.body?.id) {
+        setResult(`✓ Subscription created (id ${data.body.id}). Try posting a Strava activity.`)
+        check()
+      } else {
+        setResult(`✗ Strava returned ${data.status}: ${JSON.stringify(data.body)}`)
+      }
+    } catch (e) {
+      setResult(`✗ ${e instanceof Error ? e.message : 'request failed'}`)
+    } finally { setBusy(null) }
+  }
+
+  async function remove(id: number) {
+    if (!confirm(`Delete subscription ${id}? Activities will stop syncing until you re-create.`)) return
+    setBusy('delete'); setResult(null)
+    try {
+      const res = await fetch(`/api/admin/strava-subscribe?id=${id}`, { method: 'DELETE' })
+      const data = await res.json()
+      setResult(data.ok ? `✓ Deleted subscription ${id}` : `✗ Delete failed (${data.status})`)
+      check()
+    } catch (e) {
+      setResult(`✗ ${e instanceof Error ? e.message : 'request failed'}`)
+    } finally { setBusy(null) }
+  }
+
+  const subs = Array.isArray(list?.subscriptions) ? list!.subscriptions : []
+  const hasSubs = subs.length > 0
+
+  return (
+    <div className="rounded-2xl p-4"
+      style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+      <div className="flex gap-2 mb-3">
+        <button onClick={check} disabled={busy !== null}
+          className="text-xs font-black px-3 py-2 rounded-lg disabled:opacity-40 active:scale-95"
+          style={{ background: 'var(--color-surface-2)', color: 'var(--color-text-primary)' }}>
+          {busy === 'check' ? '…' : 'Check status'}
+        </button>
+        <button onClick={create} disabled={busy !== null || hasSubs}
+          className="text-xs font-black px-3 py-2 rounded-lg disabled:opacity-40 active:scale-95"
+          style={{ background: '#22c55e', color: 'white' }}>
+          {busy === 'create' ? '…' : 'Subscribe'}
+        </button>
+      </div>
+
+      {list && (
+        <div className="text-xs space-y-2">
+          {hasSubs ? (
+            subs.map(s => (
+              <div key={s.id} className="rounded-xl p-2.5"
+                style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}>
+                <p className="font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                  ✓ Active · id {s.id}
+                </p>
+                <p className="font-mono text-[10px] mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                  {s.callback_url}
+                </p>
+                <button onClick={() => remove(s.id)} disabled={busy !== null}
+                  className="mt-2 text-[10px] font-bold px-2 py-1 rounded disabled:opacity-40 active:scale-95"
+                  style={{ background: '#ef4444', color: 'white' }}>
+                  Delete
+                </button>
+              </div>
+            ))
+          ) : (
+            <p style={{ color: 'var(--color-text-tertiary)' }}>
+              No active subscriptions. Tap <strong>Subscribe</strong> to register{' '}
+              <span className="font-mono">/api/strava/webhook</span> with Strava.
+            </p>
+          )}
+        </div>
+      )}
+
+      {result && (
+        <p className="text-[10px] mt-2 leading-snug font-mono"
+          style={{ color: result.startsWith('✓') ? '#22c55e' : '#ef4444' }}>
+          {result}
+        </p>
+      )}
+
+      <p className="text-[10px] mt-3 leading-snug" style={{ color: 'var(--color-text-tertiary)' }}>
+        Strava allows one push subscription per app. Calls{' '}
+        <span className="font-mono">/api/admin/strava-subscribe</span> behind the same admin gate.
       </p>
     </div>
   )
