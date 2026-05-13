@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { getLevelForXP, getXPProgress, RPG_LEVELS } from '@/lib/rpg'
 import { Analytics } from '@/lib/analytics'
+import { hapticCelebration, hapticSuccess } from '@/lib/haptics'
+import { getCelebrationSoundMuted, setCelebrationSoundMuted } from '@/lib/celebrationPrefs'
 import Splity from './Splity'
 import type { PlanSession, TrainingLog } from '@/types/database'
 
@@ -134,6 +136,12 @@ export default function SessionCelebration({
   const [phase, setPhase] = useState<'enter' | 'show' | 'exit'>('enter')
   const [showLevelUp, setShowLevelUp] = useState(false)
   const [newLevel, setNewLevel]       = useState<number | null>(null)
+  const [muted, setMuted]             = useState(false)
+  // Hydrate persisted mute preference once on mount.
+  useEffect(() => { setMuted(getCelebrationSoundMuted()) }, [])
+  const toggleMute = useCallback(() => {
+    setMuted(prev => { const next = !prev; setCelebrationSoundMuted(next); return next })
+  }, [])
 
   // Check for level up
   const prevXP    = totalXP - xpEarned
@@ -146,6 +154,7 @@ export default function SessionCelebration({
 
   // Sound effect (Android only — graceful fail on iOS)
   const playSound = useCallback(() => {
+    if (getCelebrationSoundMuted()) return
     try {
       const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
       // Victory chord: ascending notes
@@ -168,15 +177,10 @@ export default function SessionCelebration({
     } catch { /* iOS or restricted — silent fail */ }
   }, [leveledUp])
 
-  // Haptic feedback (Android Chrome)
+  // Haptic feedback (Android Chrome) — canonical helpers, no inline patterns.
   const vibrate = useCallback(() => {
-    try {
-      if (leveledUp) {
-        navigator.vibrate?.([100, 50, 100, 50, 200])
-      } else {
-        navigator.vibrate?.([80, 40, 80])
-      }
-    } catch { /* not supported */ }
+    if (leveledUp) hapticCelebration()
+    else           hapticSuccess()
   }, [leveledUp])
 
   // Confetti canvas animation (skipped under prefers-reduced-motion, WCAG 2.3.3)
@@ -294,10 +298,31 @@ export default function SessionCelebration({
     <div
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
       style={{
-        background: `radial-gradient(ellipse at 50% 30%, ${style.glow}20 0%, #0c0c0c 70%)`,
+        // Layered: glow on top, opaque navy base underneath. The previous
+        // backdrop had a semi-transparent centre, so home-page content
+        // (km-week tile, hero card) bled through behind the +XP number.
+        // Opaque base guarantees readability regardless of what's underneath.
+        background: `
+          radial-gradient(ellipse at 50% 30%, ${style.glow}33 0%, transparent 60%),
+          #0a0e1a
+        `,
         animation: phase === 'enter' ? 'fadeIn 0.4s ease-out forwards' : undefined,
       }}
       onClick={onDismiss}>
+
+      {/* Mute toggle — top-right, doesn't dismiss the modal */}
+      <button
+        onClick={e => { e.stopPropagation(); toggleMute() }}
+        aria-label={muted ? 'Unmute celebration sound' : 'Mute celebration sound'}
+        className="absolute top-4 right-4 z-[103] w-9 h-9 rounded-full flex items-center justify-center text-lg active:scale-95 transition-all"
+        style={{
+          background: 'rgba(255,255,255,0.10)',
+          border: '1px solid rgba(255,255,255,0.20)',
+          color: 'white',
+          paddingTop: 'env(safe-area-inset-top, 0px)',
+        }}>
+        {muted ? '🔇' : '🔊'}
+      </button>
 
       {/* Confetti canvas */}
       <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none" style={{ zIndex: 101 }} />
