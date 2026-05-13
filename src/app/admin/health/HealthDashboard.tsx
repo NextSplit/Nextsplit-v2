@@ -95,6 +95,16 @@ export default function HealthDashboard(s: HealthSummary) {
           <SentryDiag dsnPresent={s.sentry_dsn_present} />
         </section>
 
+        {/* Recent Sentry events (PR J4) */}
+        <section>
+          <SectionLabel>Recent Sentry events · 24h</SectionLabel>
+          <SentryEvents
+            tokenPresent={s.sentry_token_present}
+            issues={s.sentry_issues_24h}
+            total={s.sentry_total_24h}
+          />
+        </section>
+
         {/* Supabase advisor snapshot (PR J1) */}
         <section>
           <SectionLabel>DB linter · snapshot {advisorSnapshot.last_run}</SectionLabel>
@@ -347,3 +357,68 @@ function SentryDiag({ dsnPresent }: { dsnPresent: boolean }) {
 }
 
 function fmtInt(n: number) { return n.toLocaleString('en-GB') }
+
+function SentryEvents({ tokenPresent, issues, total }: {
+  tokenPresent: boolean
+  issues:       Array<{ id: string; title: string; count: number; last_seen: string; level: string; web_url: string }>
+  total:        number
+}) {
+  if (!tokenPresent) {
+    return (
+      <div className="rounded-2xl p-4"
+        style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+        <p className="text-xs" style={{ color: '#f59e0b' }}>
+          ✗ <span className="font-mono">SENTRY_AUTH_TOKEN</span> not set
+        </p>
+        <p className="text-[10px] mt-1 leading-snug" style={{ color: 'var(--color-text-tertiary)' }}>
+          Create a Sentry user auth token (Settings → Account → API → Auth Tokens)
+          scoped to <span className="font-mono">project:read event:read</span>.
+          Set <span className="font-mono">SENTRY_AUTH_TOKEN</span> on Vercel.
+          For events from a single project, also set <span className="font-mono">SENTRY_PROJECT_SLUG</span>.
+        </p>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-2xl p-3"
+      style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+      {total === 0 ? (
+        <p className="text-xs" style={{ color: '#22c55e' }}>✓ no unresolved issues in last 24h</p>
+      ) : (
+        <>
+          <p className="text-[10px] font-black uppercase tracking-widest mb-2"
+            style={{ color: '#ef4444' }}>
+            {total} unresolved issue{total !== 1 ? 's' : ''}
+          </p>
+          <div className="space-y-1.5">
+            {issues.map(iss => {
+              const colour = iss.level === 'fatal' ? '#ef4444' : iss.level === 'error' ? '#f59e0b' : '#3b82f6'
+              return (
+                <a key={iss.id} href={iss.web_url} target="_blank" rel="noreferrer"
+                  className="block rounded-xl p-2 hover:opacity-80 transition-opacity"
+                  style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}>
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-xs font-bold truncate flex-1" style={{ color: 'var(--color-text-primary)' }}>
+                      {iss.title}
+                    </p>
+                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded flex-shrink-0"
+                      style={{ background: `${colour}30`, color: colour }}>
+                      {iss.level}
+                    </span>
+                  </div>
+                  <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
+                    {iss.count}× · last {new Date(iss.last_seen).toUTCString().slice(5, 22)}
+                  </p>
+                </a>
+              )
+            })}
+          </div>
+          <p className="text-[10px] mt-2 leading-snug" style={{ color: 'var(--color-text-tertiary)' }}>
+            Click through to Sentry. For root-cause analysis use the MCP&apos;s
+            <span className="font-mono"> analyze_issue_with_seer</span> tool in a Claude session.
+          </p>
+        </>
+      )}
+    </div>
+  )
+}

@@ -34,6 +34,12 @@ export interface HealthSummary {
 
   // Sentry config
   sentry_dsn_present: boolean
+
+  // PR J4 — recent Sentry issues (last 24h, top 5 by recency).
+  // sentry_token_present=false when SENTRY_AUTH_TOKEN env unset.
+  sentry_token_present: boolean
+  sentry_issues_24h:    Array<{ id: string; title: string; count: number; last_seen: string; level: string; web_url: string }>
+  sentry_total_24h:     number
 }
 
 async function loadHealth(): Promise<HealthSummary> {
@@ -89,6 +95,38 @@ async function loadHealth(): Promise<HealthSummary> {
   const activeUsers7: Array<{ user_id: string }> = profilesTouched7.data ?? []
   const activeUsers7Count = new Set(activeUsers7.map(r => r.user_id)).size
 
+  // PR J4 — recent Sentry issues. Only fetched if SENTRY_AUTH_TOKEN is
+  // set; fails open with empty list if the API errors. Non-fatal.
+  const sentryToken     = serverConfig.sentryAuthToken
+  const sentryOrg       = serverConfig.sentryOrgSlug
+  const sentryRegion    = serverConfig.sentryRegionUrl.replace(/\/$/, '')
+  let sentryIssues24h: HealthSummary['sentry_issues_24h'] = []
+  let sentryTotal24h   = 0
+  if (sentryToken) {
+    try {
+      const url = `${sentryRegion}/api/0/organizations/${sentryOrg}/issues/?statsPeriod=24h&query=is:unresolved&limit=5&sort=date`
+      const res = await fetch(url, {
+        headers: { 'authorization': `Bearer ${sentryToken}` },
+        // Force-dynamic + no cache so the admin pane shows real-time data.
+        cache: 'no-store',
+      })
+      if (res.ok) {
+        const data = await res.json() as Array<{
+          id: string; title: string; count: string; lastSeen: string; level: string; permalink: string
+        }>
+        sentryIssues24h = data.map(d => ({
+          id:        d.id,
+          title:     d.title,
+          count:     parseInt(d.count, 10) || 0,
+          last_seen: d.lastSeen,
+          level:     d.level,
+          web_url:   d.permalink,
+        }))
+        sentryTotal24h = sentryIssues24h.length
+      }
+    } catch { /* swallow — non-fatal */ }
+  }
+
   return {
     smart_notify_last: smartNotifyLast,
     race_tick_last:    raceTickLast,
@@ -106,6 +144,10 @@ async function loadHealth(): Promise<HealthSummary> {
     active_users_7d:   activeUsers7Count,
 
     sentry_dsn_present: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
+
+    sentry_token_present: !!sentryToken,
+    sentry_issues_24h:    sentryIssues24h,
+    sentry_total_24h:     sentryTotal24h,
   }
 }
 

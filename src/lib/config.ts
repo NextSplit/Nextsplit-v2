@@ -39,6 +39,12 @@ export const serverConfig = {
   vapidPrivateKey:        process.env.VAPID_PRIVATE_KEY ?? '',
   vapidEmail:             process.env.VAPID_EMAIL ?? '',
   resendApiKey:           process.env.RESEND_API_KEY ?? '',
+  // PR J4 — Sentry Management API token. Set on Vercel to enable
+  // the /admin/health "Recent Sentry events" card.
+  sentryAuthToken:        process.env.SENTRY_AUTH_TOKEN ?? '',
+  sentryOrgSlug:          process.env.SENTRY_ORG_SLUG  ?? 'nextsplot',
+  sentryProjectSlug:      process.env.SENTRY_PROJECT_SLUG ?? '',
+  sentryRegionUrl:        process.env.SENTRY_REGION_URL ?? 'https://de.sentry.io',
   // P1.3: relocated from public config so the value cannot be inlined into
   // the client bundle. Client code reads effective dev-mode via
   // /api/subscription/dev-mode, which reads this field server-side.
