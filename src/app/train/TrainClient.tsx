@@ -32,6 +32,7 @@ import { TrainNoPlanState } from './TrainNoPlanState'
 import { WeekDetailSheet } from './WeekDetailSheet'
 import { TrainFuelTab } from './TrainFuelTab'
 import { TrainBanners } from './TrainBanners'
+import { PlanHealthBanner } from '@/components/PlanHealthBanner'
 
 export default function TrainClient() {
   const router = useRouter()
@@ -371,6 +372,13 @@ export default function TrainClient() {
               />
             )
           })()}
+
+          {/* PR H5 — plan-health warning. Surfaces when planValidator flags
+              structural issues (missing taper / oversized long run).
+              Distinct from TrainBanners (acute injury/gap signal) — this
+              is chronic structural drift, mounted below so acute signals
+              take visual priority. */}
+          <PlanHealthBanner plan={plan} />
 
           {/* ══ TODAY section ══ */}
           <div>

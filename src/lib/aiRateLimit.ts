@@ -64,8 +64,16 @@ interface RateLimitResult {
  * Check if a user can make an AI call, and increment their counter if so.
  * Tier is looked up server-side from profiles — callers don't pass it,
  * which prevents the previous bug of every caller hardcoding 'free'.
+ *
+ * PR H1: `feature` tag enables per-feature attribution in /admin/ai-cost.
+ * Stored on the ai_usage row; daily totals SUM across features for the
+ * rate-limit check. Defaults to '' for back-compat with any caller that
+ * forgets to pass one (those calls land in the "(unlabelled)" bucket).
  */
-export async function checkAndIncrementAIUsage(userId: string): Promise<RateLimitResult> {
+export async function checkAndIncrementAIUsage(
+  userId: string,
+  feature: string = '',
+): Promise<RateLimitResult> {
   let tier: Tier = 'free'
   const supabase = getAdminClient()
 
@@ -98,35 +106,48 @@ export async function checkAndIncrementAIUsage(userId: string): Promise<RateLimi
   try {
     const today = todayStr()
 
-    // Upsert today's row, increment counter
+    // Upsert today's row for THIS feature; conflict key is now
+    // (user_id, date, feature) per phase_ai_usage_per_feature_v1.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
+    const { error: upsertErr } = await (supabase as any)
       .from('ai_usage')
       .upsert(
-        { user_id: userId, date: today, call_count: 1 },
-        {
-          onConflict: 'user_id,date',
-          ignoreDuplicates: false,
-        }
+        { user_id: userId, date: today, feature, call_count: 1 },
+        { onConflict: 'user_id,date,feature', ignoreDuplicates: false },
       )
-      .select('call_count')
-      .single()
 
-    if (error) {
+    if (upsertErr) {
       // Table doesn't exist yet — allow the call (will be rate limited once table exists)
       return { allowed: true, callsToday: 0, limit, tier }
     }
 
-    const callsToday = data?.call_count ?? 1
+    // Read daily total across ALL features for the rate-limit check.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: rows } = await (supabase as any)
+      .from('ai_usage')
+      .select('call_count, feature')
+      .eq('user_id', userId)
+      .eq('date', today)
+
+    const callsToday: number = (rows ?? []).reduce(
+      (s: number, r: { call_count: number }) => s + (r.call_count ?? 0),
+      0,
+    )
 
     if (callsToday > limit) {
-      // Roll back the increment
+      // Roll back this feature's increment so the user can retry
+      // tomorrow without our overshoot polluting the count.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
-        .from('ai_usage')
-        .update({ call_count: limit })
-        .eq('user_id', userId)
-        .eq('date', today)
+      const thisRow = (rows ?? []).find((r: { feature: string }) => r.feature === feature)
+      if (thisRow) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any)
+          .from('ai_usage')
+          .update({ call_count: Math.max(0, thisRow.call_count - 1) })
+          .eq('user_id', userId)
+          .eq('date', today)
+          .eq('feature', feature)
+      }
 
       return {
         allowed: false,
@@ -146,20 +167,24 @@ export async function checkAndIncrementAIUsage(userId: string): Promise<RateLimi
 
 /**
  * Record token usage after a successful AI call.
- * Non-fatal — if this fails it doesn't affect the user.
+ * PR H1: `feature` tag matches the ai_usage row written by
+ * checkAndIncrementAIUsage. Non-fatal — if this fails it doesn't affect
+ * the user, but the cost dashboard under-attributes the call.
  */
 export async function recordTokenUsage(
   userId: string,
   tokensIn: number,
-  tokensOut: number
+  tokensOut: number,
+  feature: string = '',
 ): Promise<void> {
   try {
     const supabase = getAdminClient()
     await supabase.rpc('increment_token_usage', {
-      p_user_id: userId,
-      p_date: todayStr(),
-      p_tokens_in: tokensIn,
+      p_user_id:    userId,
+      p_date:       todayStr(),
+      p_tokens_in:  tokensIn,
       p_tokens_out: tokensOut,
+      p_feature:    feature,
     })
   } catch {
     // Non-fatal — token recording is for analytics, not gating

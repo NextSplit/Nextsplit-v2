@@ -71,6 +71,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // PR H3 cron observability — start time + service-role client for writing
+  // the persistent run-ledger row on completion (success OR error path).
+  const startedAt = Date.now()
+
   try {
     const supabase = await createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -318,9 +322,42 @@ export async function GET(req: Request) {
       })
     }
 
+    // PR H3 — record successful run to cron_runs ledger.
+    try {
+      await s.from('cron_runs').insert({
+        job:         'smart-notify',
+        started_at:  new Date(startedAt).toISOString(),
+        finished_at: new Date().toISOString(),
+        duration_ms: Date.now() - startedAt,
+        ok:          true,
+        result:      { sent, eligible: toNotify.length, isSunday, skippedQuietHours },
+      })
+    } catch (logErr) {
+      Sentry.captureException(logErr, {
+        tags: { feature: 'cron-runs-ledger', route: 'smart-notify' },
+      })
+    }
+
     return NextResponse.json({ sent, eligible: toNotify.length, isSunday, skippedQuietHours })
   } catch (err) {
     Sentry.captureException(err)
+
+    // PR H3 — record failed run. Best-effort; uses a fresh service-role
+    // client because the original supabase from the try block isn't in
+    // scope here.
+    try {
+      const supabase = await createClient()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('cron_runs').insert({
+        job:           'smart-notify',
+        started_at:    new Date(startedAt).toISOString(),
+        finished_at:   new Date().toISOString(),
+        duration_ms:   Date.now() - startedAt,
+        ok:            false,
+        error_message: err instanceof Error ? err.message : String(err),
+      })
+    } catch { /* swallow — already in error path */ }
+
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

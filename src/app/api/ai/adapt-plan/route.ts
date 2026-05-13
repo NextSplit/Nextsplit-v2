@@ -6,7 +6,7 @@ import { db } from '@/lib/supabase/db'
 import Anthropic from '@anthropic-ai/sdk'
 import type { PlanWeek, TrainingLog } from '@/types/database'
 import { AdaptPlanSchema, zodError } from '@/lib/schemas'
-import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
+import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
     // S6: rate-limit guard — was unguarded; any authenticated user could drain Anthropic quota.
-    const rateCheck = await checkAndIncrementAIUsage(user.id)
+    const rateCheck = await checkAndIncrementAIUsage(user.id, 'ai_adapt_plan')
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
     }
@@ -112,6 +112,8 @@ Respond with ONLY a JSON object (no markdown) with this structure:
       max_tokens: 800,
       messages:   [{ role: 'user', content: prompt }],
     })
+
+    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_adapt_plan')
 
     const raw = message.content[0].type === 'text' ? message.content[0].text : '{}'
     const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()

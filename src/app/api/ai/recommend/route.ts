@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 import { AiRecommendSchema, zodError } from '@/lib/schemas'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
-import { checkAndIncrementAIUsage } from '@/lib/aiRateLimit'
+import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
   // S6: rate-limit guard — was unguarded; any authenticated user could drain Anthropic quota.
-  const rateCheck = await checkAndIncrementAIUsage(user.id)
+  const rateCheck = await checkAndIncrementAIUsage(user.id, 'ai_recommend')
   if (!rateCheck.allowed) {
     return NextResponse.json({ error: rateCheck.reason, rateLimited: true }, { status: 429 })
   }
@@ -53,6 +53,8 @@ Recommend the single best plan slug for this runner. Respond with JSON only:
       max_tokens: 200,
       messages:   [{ role: 'user', content: prompt }],
     })
+
+    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_recommend')
 
     const raw     = message.content[0].type === 'text' ? message.content[0].text : '{}'
     const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
