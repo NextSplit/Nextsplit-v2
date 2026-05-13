@@ -25,6 +25,43 @@ function inferDistanceFromPrompt(prompt: string): PlanDistance {
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
+// PR J2 — prompt caching. The output structure + coaching style guidance
+// applies to every plan generation; cache it. The user-side prompt is
+// free-form (different per runner goal), so only the system framing
+// caches reliably.
+const SYSTEM_PROMPT = `You are an expert running coach generating a
+structured training plan as JSON.
+
+Output a JSON object (no markdown, no extra text) with this shape:
+{
+  "name":        "Plan name",
+  "totalWeeks":  number,
+  "peakWeeklyKm": number,
+  "weeks": [
+    {
+      "n":     1,
+      "title": "Base building 1",
+      "b":     "build" | "deload" | "race",
+      "kl":    [minKm, maxKm],
+      "note":  "Optional brief week note",
+      "days":  [
+        { "sessions": [{ "c": "run-easy", "n": "Easy 5km", "km": 5 }] }
+      ]
+    }
+  ]
+}
+
+Coaching rules:
+- Long runs grow gradually (max +20% per week).
+- Include a taper for distance plans of 10mi and longer (10-30% volume cut
+  in the final 1-3 weeks).
+- Balance quality (intervals/tempo/threshold) with easy aerobic volume.
+- Use codes from the canonical set: run-easy, run-long, run-tempo,
+  run-int (intervals), run-mp (marathon pace), run-race, gym-strength,
+  pilates, sauna, rest.
+- Always be specific about paces/durations in the session "n" (name)
+  and detail fields.`
+
 export async function POST(req: NextRequest) {
   try {
     // Auth check
@@ -49,10 +86,24 @@ export async function POST(req: NextRequest) {
     const message = await anthropic.messages.create({
       model:      'claude-sonnet-4-20250514',
       max_tokens: 8000,
+      system: [
+        { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } },
+      ],
       messages:   [{ role: 'user', content: prompt }],
     })
 
-    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_generate_plan')
+    const usage = message.usage as typeof message.usage & {
+      cache_read_input_tokens?:     number
+      cache_creation_input_tokens?: number
+    }
+    await recordTokenUsage(
+      user.id,
+      usage.input_tokens,
+      usage.output_tokens,
+      'ai_generate_plan',
+      usage.cache_read_input_tokens     ?? 0,
+      usage.cache_creation_input_tokens ?? 0,
+    )
 
     const raw = message.content[0].type === 'text' ? message.content[0].text : ''
 

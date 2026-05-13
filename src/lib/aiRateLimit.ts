@@ -30,8 +30,10 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
+import { Ratelimit } from '@upstash/ratelimit'
 import { AI_RATE_LIMIT_DEV, AI_RATE_LIMITS, type Tier } from './features'
 import { config, serverConfig } from '@/lib/config'
+import { getRedis, isRedisConfigured } from './redis'
 
 const SUPABASE_URL = config.supabaseUrl
 
@@ -58,6 +60,31 @@ interface RateLimitResult {
   limit: number
   tier: Tier
   reason?: string
+}
+
+// PR J17 — Upstash fast-path. When Redis is configured, the rate-limit
+// counter lives in Redis (sub-ms via REST) and the DB write becomes
+// fire-and-forget (cost attribution still lands in ai_usage). When Redis
+// is NOT configured, the old DB-only path runs unchanged.
+//
+// One Ratelimit instance per tier is cached at module scope. Sliding-window
+// algorithm with a 24h window — matches "X calls per UTC day" semantics
+// closely enough; the small overlap at day boundary is acceptable for a
+// cost-cap rate limit (vs e.g. anti-abuse on auth).
+const _rlByTier: Map<string, Ratelimit> = new Map()
+function getUpstashLimiter(limit: number, tag: string): Ratelimit | null {
+  const cacheKey = `${tag}:${limit}`
+  if (_rlByTier.has(cacheKey)) return _rlByTier.get(cacheKey)!
+  const redis = getRedis()
+  if (!redis) return null
+  const rl = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(limit, '24 h'),
+    analytics: false,
+    prefix:  `nextsplit:ai-rl:${tag}`,
+  })
+  _rlByTier.set(cacheKey, rl)
+  return rl
 }
 
 /**
@@ -102,6 +129,44 @@ export async function checkAndIncrementAIUsage(
   const limit = serverConfig.premiumEnforced
     ? AI_RATE_LIMITS[tier]
     : AI_RATE_LIMIT_DEV
+
+  // ── Upstash fast-path ──────────────────────────────────────────────────
+  // PR J17. When Redis is configured, the rate-limit decision is one REST
+  // call (~5ms). Cost attribution still lands in ai_usage but
+  // fire-and-forget so it doesn't block the response. Falls through to
+  // the DB-only path below if Redis isn't configured.
+  if (isRedisConfigured()) {
+    const rl = getUpstashLimiter(limit, tier)
+    if (rl) {
+      try {
+        const r = await rl.limit(userId)
+        // Fire-and-forget cost attribution. Errors swallowed — the rate-limit
+        // decision has already been made; cost dashboard under-attributes if
+        // this fails, which is acceptable for analytics.
+        void supabase
+          .from('ai_usage')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .upsert(
+            { user_id: userId, date: todayStr(), feature, call_count: 1 },
+            { onConflict: 'user_id,date,feature', ignoreDuplicates: false },
+          )
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .then(() => {}, () => {})
+        if (r.success) {
+          return { allowed: true, callsToday: limit - r.remaining, limit, tier }
+        }
+        return {
+          allowed: false,
+          callsToday: limit,
+          limit,
+          tier,
+          reason: `Daily AI limit reached (${limit} calls/day). Resets at midnight.`,
+        }
+      } catch {
+        // Upstash failed transiently — fall through to DB path
+      }
+    }
+  }
 
   try {
     const today = todayStr()

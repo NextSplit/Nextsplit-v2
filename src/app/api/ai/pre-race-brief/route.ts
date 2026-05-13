@@ -8,6 +8,23 @@ import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
+// PR J2 — prompt caching. The role + response schema is stable across
+// every athlete's pre-race brief; cache it.
+const SYSTEM_PROMPT = `You are an expert running coach generating a
+concise pre-race brief for an athlete.
+
+Respond with ONLY a JSON object (no markdown, no extra text) with this
+exact shape:
+{
+  "pacing":   "2-3 sentence pacing strategy specific to their goal and recent training",
+  "fuelling": "2-3 sentence race-day nutrition plan based on distance and timing",
+  "taper":    "1-2 sentence taper advice based on days remaining",
+  "mindset":  "1-2 sentence confidence-building message based on their training"
+}
+
+Be specific, practical and encouraging. Reference their actual data
+where possible.`
+
 export async function POST(req: Request) {
   if (!serverConfig.anthropicApiKey) {
     return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
@@ -31,29 +48,30 @@ export async function POST(req: Request) {
   if (!parsed.success) return zodError(parsed.error)
   const { context } = parsed.data
 
-  const prompt = `You are an expert running coach. Generate a concise pre-race brief for this athlete.
-
-Race context:
-${JSON.stringify(context, null, 2)}
-
-Respond with ONLY a JSON object (no markdown, no extra text):
-{
-  "pacing": "2-3 sentence pacing strategy specific to their goal and recent training",
-  "fuelling": "2-3 sentence race-day nutrition plan based on distance and timing",
-  "taper": "1-2 sentence taper advice based on days remaining",
-  "mindset": "1-2 sentence confidence-building message based on their training"
-}
-
-Be specific, practical and encouraging. Reference their actual data where possible.`
+  const raceContext = `Race context:\n${JSON.stringify(context, null, 2)}`
 
   try {
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }],
+      system: [
+        { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } },
+      ],
+      messages: [{ role: 'user', content: raceContext }],
     })
 
-    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_pre_race_brief')
+    const usage = message.usage as typeof message.usage & {
+      cache_read_input_tokens?:     number
+      cache_creation_input_tokens?: number
+    }
+    await recordTokenUsage(
+      user.id,
+      usage.input_tokens,
+      usage.output_tokens,
+      'ai_pre_race_brief',
+      usage.cache_read_input_tokens     ?? 0,
+      usage.cache_creation_input_tokens ?? 0,
+    )
 
     const text = message.content
       .filter(b => b.type === 'text')

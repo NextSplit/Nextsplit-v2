@@ -40,13 +40,11 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) return zodError(parsed.error)
     const { template_id, athlete_id, reason } = parsed.data
 
-    // 1. Template ownership check — caller must be the author. total_starts
-    // is selected here so the bump in step 5 reads the actual value (not
-    // a default-0 from a missing field).
+    // 1. Template ownership check — caller must be the author.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: tmpl } = await db(supabase)
       .from('plan_templates')
-      .select('id, author_id, name, weeks_data, weeks_min, weeks_max, total_starts')
+      .select('id, author_id, name, weeks_data, weeks_min, weeks_max')
       .eq('id', template_id)
       .maybeSingle()
 
@@ -115,11 +113,10 @@ export async function POST(req: NextRequest) {
     // a cast. Wrapped in try/catch so a counter-bump failure doesn't
     // shadow the successful plan creation.
     try {
-      const tmplStarts = (tmpl as { total_starts?: number | null }).total_starts ?? 0
-      await db(supabase)
-        .from('plan_templates')
-        .update({ total_starts: tmplStarts + 1 })
-        .eq('id', template_id)
+      // PR J1 — route through SECURITY DEFINER RPC. Direct UPDATE was
+      // removed because its supporting policy allowed arbitrary edits.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.rpc as any)('bump_plan_template_starts', { p_template_id: template_id })
     } catch { /* non-blocking — counter is decorative */ }
 
     // 6. BL-C3 — push the rationale to the athlete. fire-and-forget; the

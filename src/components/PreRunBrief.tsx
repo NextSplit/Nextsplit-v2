@@ -1,7 +1,77 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { PlanSession } from '@/types/database'
+
+// PR J12 — running-aware weather strip.
+interface WeatherResp {
+  configured: boolean
+  snapshot?: {
+    temp_c: number; feels_like_c: number; wind_kph: number
+    condition: string; description: string; icon: string
+  }
+  advice?: {
+    pace_adjust: string | null
+    warning:     string | null
+    layering:    string | null
+  }
+}
+
+function WeatherStrip() {
+  const [data, setData] = useState<WeatherResp | null>(null)
+
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) return
+    let cancelled = false
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        if (cancelled) return
+        const { latitude, longitude } = pos.coords
+        fetch(`/api/weather?lat=${latitude.toFixed(3)}&lon=${longitude.toFixed(3)}`)
+          .then(r => r.ok ? r.json() : null)
+          .then(d => { if (!cancelled) setData(d) })
+          .catch(() => { /* silent */ })
+      },
+      () => { /* user denied; skip silently */ },
+      { timeout: 5000, maximumAge: 1000 * 60 * 30 },
+    )
+    return () => { cancelled = true }
+  }, [])
+
+  if (!data?.configured || !data.snapshot) return null
+  const s = data.snapshot
+  const a = data.advice
+  const iconUrl = `https://openweathermap.org/img/wn/${s.icon}@2x.png`
+
+  return (
+    <div className="rounded-2xl p-4"
+      style={{ background: 'var(--color-surface)', border: '2px solid var(--color-border-2)' }}>
+      <p className="text-[10px] font-black uppercase tracking-widest mb-2"
+        style={{ color: 'var(--color-text-tertiary)' }}>
+        🌤 Conditions
+      </p>
+      <div className="flex items-center gap-3">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={iconUrl} alt="" width={48} height={48} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }} />
+        <div className="flex-1 min-w-0">
+          <p className="text-2xl font-black" style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>
+            {s.temp_c.toFixed(0)}°C
+          </p>
+          <p className="text-xs capitalize" style={{ color: 'var(--color-text-tertiary)' }}>
+            {s.description} · feels {s.feels_like_c.toFixed(0)}°C · {s.wind_kph.toFixed(0)} kph
+          </p>
+        </div>
+      </div>
+      {a && (a.pace_adjust || a.warning || a.layering) && (
+        <div className="mt-3 space-y-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+          {a.layering    && <p>👕 {a.layering}</p>}
+          {a.pace_adjust && <p>⏱ {a.pace_adjust}</p>}
+          {a.warning     && <p style={{ color: '#f59e0b' }}>⚠ {a.warning}</p>}
+        </div>
+      )}
+    </div>
+  )
+}
 
 interface Props {
   session:  PlanSession
@@ -102,6 +172,9 @@ export default function PreRunBrief({ session, onReady, onClose }: Props) {
             {getCoachingCue(session.c)}
           </p>
         </div>
+
+        {/* Weather + running advice (PR J12) */}
+        <WeatherStrip />
 
         {/* Warmup */}
         <div className="rounded-2xl p-4"

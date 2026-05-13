@@ -22,6 +22,9 @@ const nextConfig: NextConfig = {
       { source: '/you/', destination: '/you', permanent: true },
       { source: '/home/', destination: '/home', permanent: true },
       { source: '/train/', destination: '/train', permanent: true },
+      // PR J11a follow-on — /admin/ trailing-slash → /admin (which
+      // then redirects to /admin/health via the index page).
+      { source: '/admin/', destination: '/admin', permanent: true },
     ]
   },
   experimental: {

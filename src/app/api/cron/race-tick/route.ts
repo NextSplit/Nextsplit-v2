@@ -32,6 +32,13 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // PR J14 — gate against double-fire when Inngest is primary.
+  // See smart-notify/route.ts for the full pattern explainer.
+  const source = req.headers.get('x-source')
+  if (process.env.INNGEST_PRIMARY === 'true' && source !== 'inngest') {
+    return NextResponse.json({ ok: true, skipped: 'inngest-primary' })
+  }
+
   const startedAt = Date.now()
   const summary = {
     seeded_today_race_id: null as string | null,

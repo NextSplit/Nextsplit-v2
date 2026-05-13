@@ -11,6 +11,25 @@ import { secsToMMSS } from '@/lib/sessionUtils'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
+// PR J2 — prompt caching. The role + style guide is identical across all
+// modes (insight / weekly / patterns) and stable across calls; the
+// athlete-context block is stable within a session (same plan, same recent
+// weeks). Both are sent as cached system blocks; only the mode-specific
+// ask travels as the user message.
+const SYSTEM_PROMPT = `You are a world-class running coach. Give concise,
+personalised coaching. Reference the athlete's actual numbers from the
+context block. Be encouraging but honest. No generic advice, no fluff,
+no headers or markdown.
+
+When asked for an INSIGHT: 4-6 sentences. Give ONE clear action for this
+week. Reference real data.
+
+When asked for a WEEKLY summary: 6-8 sentences covering what went well,
+what needs attention, load trend, one specific recommendation for next
+week. End with a motivational sentence tied to their race timeline.
+
+When asked for PATTERNS: 3 bullet points (one sentence each — a strength,
+a warning, an underrated area), then a 2-sentence overall assessment.`
 
 function paceToSecs(pace: string): number {
   const parts = pace.split(':')
@@ -172,17 +191,21 @@ ${weekSummaries.map(w =>
 ${recentNotes.length ? `ATHLETE NOTES:\n${recentNotes.join('\n')}` : ''}
 `.trim()
 
-  const prompts: Record<string, string> = {
-    insight: `${context}\n\nYou are a world-class running coach. Give a concise personalised coaching insight (4-6 sentences). Reference their actual numbers. Give ONE clear action for this week. Be encouraging but honest. No generic advice.`,
-    weekly: `${context}\n\nYou are a world-class running coach. Write a weekly summary (6-8 sentences): what went well, what needs attention, load trend, one specific recommendation for next week. End with a motivational sentence relevant to their race timeline.`,
-    patterns: `${context}\n\nYou are a world-class running coach. Identify training patterns. Format: 3 bullet points (one sentence each — a strength, a warning, an underrated area), then a 2-sentence overall assessment.`,
+  const userAsk: Record<string, string> = {
+    insight:  'Give an INSIGHT for this athlete.',
+    weekly:   'Give a WEEKLY summary for this athlete.',
+    patterns: 'Identify training PATTERNS for this athlete.',
   }
 
   try {
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 400,
-      messages: [{ role: 'user', content: prompts[mode] ?? prompts.insight }],
+      system: [
+        { type: 'text', text: SYSTEM_PROMPT,                        cache_control: { type: 'ephemeral' } },
+        { type: 'text', text: `ATHLETE CONTEXT:\n${context}`,        cache_control: { type: 'ephemeral' } },
+      ],
+      messages: [{ role: 'user', content: userAsk[mode] ?? userAsk.insight }],
     })
 
     const text = message.content
@@ -190,8 +213,19 @@ ${recentNotes.length ? `ATHLETE NOTES:\n${recentNotes.join('\n')}` : ''}
       .map(b => (b as { type: 'text'; text: string }).text)
       .join('')
 
-    // Record token usage (non-fatal)
-    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_coach')
+    // PR J2 — record cache tokens for the AI cost dashboard.
+    const usage = message.usage as typeof message.usage & {
+      cache_read_input_tokens?:     number
+      cache_creation_input_tokens?: number
+    }
+    await recordTokenUsage(
+      user.id,
+      usage.input_tokens,
+      usage.output_tokens,
+      'ai_coach',
+      usage.cache_read_input_tokens     ?? 0,
+      usage.cache_creation_input_tokens ?? 0,
+    )
 
     return NextResponse.json({ note: text, context: { acwr, weekSummaries, currentWeekN } })
   } catch (err) {

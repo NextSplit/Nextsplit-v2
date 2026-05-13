@@ -32,6 +32,37 @@ git remote set-url origin https://github.com/NextSplit/Nextsplit-v2.git
 - **Mobile-first** — everything built for Android Chrome first. Safe area insets on all bottom sheets.
 - **Update HANDOFF.md** at the end of every significant session with new commits and state changes.
 
+## Pre-merge hygiene (PR J8)
+
+Run the appropriate skill before merging any non-trivial PR. Both are
+zero-cost (in-session agents) and catch the kind of issues that
+single-author commits routinely miss.
+
+- **`/security-review`** — REQUIRED before merging a PR that touches:
+  - Payments (`/api/stripe/*`, anything reading `subscriptions`)
+  - Auth (`/auth/*`, anything calling `auth.getUser` / `auth.uid`)
+  - DB schema (any new migration or RLS policy)
+  - AI endpoints (`/api/ai/*`)
+  - User-input handling (any new POST route that accepts a body)
+
+- **`/review`** — RECOMMENDED for PRs at large scope:
+  - >300 LOC changed
+  - Cross-cutting refactors (e.g. PR B / PR C2 / PR H scale)
+  - New surface area (admin pages, dashboards, integrations)
+
+- **`/council`** — for proposals or design decisions before any code lands.
+  Especially for trade-off questions (e.g. "should we use Supabase Realtime
+  or GetStream?" — see PR J16 plan).
+
+Skill outputs are advisory, not gating. Run them, read the findings,
+fix the actionable ones, document any deliberate "won't fix" decisions
+in the PR body.
+
+Audit precedent: PR G3 found a P0 bug (missing `notifications` table
+referenced by the cron) by accident during smoke-testing. A
+`/security-review` pass on the relevant PR would have flagged the
+missing-table reference in the diff.
+
 ## Live URL
 https://nextsplit.app
 

@@ -10,6 +10,35 @@ import { checkAndIncrementAIUsage, recordTokenUsage } from '@/lib/aiRateLimit'
 
 const anthropic = new Anthropic({ apiKey: serverConfig.anthropicApiKey })
 
+// PR J2 — prompt caching. The coaching framing + response structure is
+// stable across every athlete; cache it so repeat calls pay cache-hit
+// rates ($0.30/M reads vs $3/M input).
+const SYSTEM_PROMPT = `You are an expert running coach giving a weekly
+debrief to an athlete. Be direct, specific, and coaching-focused —
+like a coach who knows the data deeply.
+
+ACWR guidance: under 0.8 = under-training, 0.8-1.3 = optimal,
+over 1.3 = injury risk.
+
+Write a coaching debrief in exactly this structure:
+
+**This week in numbers**
+One sentence summarising the training volume and adherence.
+
+**What the data tells me**
+2-3 sentences reading the patterns — what the ACWR, soreness, effort
+scores and km trends actually mean about the athlete's current state.
+
+**One thing to focus on next week**
+Specific, actionable. Not vague ("run more") — precise ("keep your easy
+runs below 5:45/km to build aerobic base without digging into recovery").
+
+**Watch out for**
+One brief flag if there's an injury risk, overtraining sign, or missed
+pattern. Skip this section if everything looks fine.
+
+Keep the whole thing under 200 words. Sound like a coach, not a report.`
+
 export async function POST() {
   try {
     if (!serverConfig.anthropicApiKey) {
@@ -87,9 +116,7 @@ export async function POST() {
     })
     const bestPace = paceRuns[0]?.pace ?? null
 
-    const prompt = `You are an expert running coach giving a weekly debrief to an athlete. Be direct, specific, and coaching-focused — like a coach who knows the data deeply.
-
-ATHLETE'S PLAN: ${plan ? `${plan.name} (Week ${plan.current_week}/${plan.total_weeks}${plan.race_date ? `, race: ${plan.race_date}` : ''})` : 'No active plan'}
+    const athleteData = `ATHLETE'S PLAN: ${plan ? `${plan.name} (Week ${plan.current_week}/${plan.total_weeks}${plan.race_date ? `, race: ${plan.race_date}` : ''})` : 'No active plan'}
 
 LAST 4 WEEKS TRAINING DATA:
 - Sessions completed: ${doneLogs.length} of ${logs.length} planned (${logs.length > 0 ? Math.round(doneLogs.length / logs.length * 100) : 0}%)
@@ -102,31 +129,30 @@ LAST 4 WEEKS TRAINING DATA:
 WELLNESS (last 4 weeks):
 - Avg sleep: ${avgSleep ? `${avgSleep.toFixed(1)}hrs` : '—'}
 - Avg soreness: ${avgSoreness ? `${avgSoreness.toFixed(1)}/10` : '—'}
-- Mood/energy trends: ${wellness.length > 0 ? 'data available' : 'no check-ins logged'}
-
-Write a coaching debrief in exactly this structure:
-
-**This week in numbers**
-One sentence summarising the training volume and adherence.
-
-**What the data tells me**
-2-3 sentences reading the patterns — what the ACWR, soreness, effort scores and km trends actually mean about the athlete's current state.
-
-**One thing to focus on next week**
-Specific, actionable. Not vague ("run more") — precise ("keep your easy runs below 5:45/km to build aerobic base without digging into recovery").
-
-**Watch out for**
-One brief flag if there's an injury risk, overtraining sign, or missed pattern. Skip this section if everything looks fine.
-
-Keep the whole thing under 200 words. Sound like a coach, not a report.`
+- Mood/energy trends: ${wellness.length > 0 ? 'data available' : 'no check-ins logged'}`
 
     const message = await anthropic.messages.create({
       model:      'claude-sonnet-4-20250514',
       max_tokens: 500,
-      messages:   [{ role: 'user', content: prompt }],
+      system: [
+        { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } },
+        { type: 'text', text: athleteData,   cache_control: { type: 'ephemeral' } },
+      ],
+      messages:   [{ role: 'user', content: 'Write the weekly debrief.' }],
     })
 
-    await recordTokenUsage(user.id, message.usage.input_tokens, message.usage.output_tokens, 'ai_weekly_summary')
+    const usage = message.usage as typeof message.usage & {
+      cache_read_input_tokens?:     number
+      cache_creation_input_tokens?: number
+    }
+    await recordTokenUsage(
+      user.id,
+      usage.input_tokens,
+      usage.output_tokens,
+      'ai_weekly_summary',
+      usage.cache_read_input_tokens     ?? 0,
+      usage.cache_creation_input_tokens ?? 0,
+    )
 
     const summary = message.content[0].type === 'text' ? message.content[0].text : ''
 
