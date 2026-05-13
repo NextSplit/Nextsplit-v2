@@ -120,6 +120,12 @@ export function useTrainingLog(planId: string | null): UseTrainingLogReturn {
 
     if (upsertErr) throw new Error(upsertErr.message)
 
+    // Cross-hook invalidation: tell useAllTrainingLogs (and any other
+    // subscribers — eg /home today-card) that a log was created/updated.
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('nextsplit:training-log-changed'))
+    }
+
     // Set first_session_logged_at on profile if this is the first completed session
     if (row.done) {
       try {

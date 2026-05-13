@@ -88,13 +88,18 @@ export default function DailyQuests({ logs, weeklyKm, streak, hasPlan }: Props) 
 
   const doneCount = quests.filter(q => q.done).length
   const totalXP   = quests.filter(q => q.done).reduce((s, q) => s + q.xp, 0)
+  const inProgress = doneCount > 0 && doneCount < quests.length
 
   return (
     <div className="rounded-2xl overflow-hidden"
-      style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+      style={inProgress ? {
+        background: 'linear-gradient(135deg, rgba(255,184,0,0.10), rgba(255,140,0,0.04))',
+        border: '2px solid rgba(255,184,0,0.40)',
+        boxShadow: '0 4px 24px rgba(255,184,0,0.10)',
+      } : { background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
       {/* Header */}
       <div className="px-4 pt-3 pb-2 flex items-center justify-between border-b"
-        style={{ borderColor: 'var(--color-border)' }}>
+        style={{ borderColor: inProgress ? 'rgba(255,184,0,0.25)' : 'var(--color-border)' }}>
         <div className="flex items-center gap-2">
           <span className="text-base">⚡</span>
           <p className="text-xs font-black uppercase tracking-widest"

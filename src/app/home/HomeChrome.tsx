@@ -8,11 +8,30 @@ import { getLevelForXP, getXPProgress } from '@/lib/rpg'
 // decomp. Shared trait: small presentational cards that wrap external state
 // without owning data fetching themselves.
 
-export function XPHeaderBar({ xp, streak, onShareStreak }: { xp: number; streak: number; onShareStreak?: () => void }) {
+export function XPHeaderBar({ xp, streak, hasPlan, onShareStreak }: { xp: number; streak: number; hasPlan?: boolean; onShareStreak?: () => void }) {
   const level = getLevelForXP(xp)
   const pct   = getXPProgress(xp)
   const hour  = new Date().getHours()
   const atRisk = streak > 0 && hour >= 19
+
+  // Day-1 users (no plan, no XP, no streak) get a single CTA pill instead
+  // of the empty streak/progress/level triple. Without this, the header
+  // renders as a "dead" dark strip below the user chip.
+  if (xp === 0 && streak === 0 && !hasPlan) {
+    return (
+      <Link href="/onboarding/ai"
+        className="mx-4 mb-2 flex items-center justify-between px-3.5 py-2 rounded-full active:scale-[0.98] transition-transform"
+        style={{
+          background: 'linear-gradient(135deg, rgba(0,212,255,0.18), rgba(0,212,255,0.08))',
+          border: '2px solid rgba(0,212,255,0.5)',
+        }}>
+        <span className="text-[11px] font-black" style={{ color: '#00d4ff' }}>
+          🚀 Build your first plan
+        </span>
+        <span className="text-[11px] font-black" style={{ color: '#00d4ff' }}>→</span>
+      </Link>
+    )
+  }
   // Streak-milestone share affordance — surfaces at 7/30/100/365 day
   // milestones. Tap routes to MilestoneShareCard via parent's onShareStreak
   // handler. No localStorage gating; the surface stays visible while the
@@ -131,9 +150,13 @@ export function SquadMini({ squad }: { squad: { name: string; colour?: string; s
   return (
     <Link href="/squad" className="mx-4 block active:scale-[0.98] transition-all">
       <div className="rounded-2xl p-4 flex items-center gap-3"
-        style={{ background: 'var(--color-surface)', border: `2.5px solid ${colour}50` }}>
+        style={{
+          background: `linear-gradient(135deg, ${colour}18, ${colour}06)`,
+          border: `2.5px solid ${colour}55`,
+          boxShadow: `0 4px 24px ${colour}15`,
+        }}>
         <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-          style={{ background: `${colour}15`, border: `2px solid ${colour}40` }}>👥</div>
+          style={{ background: `${colour}25`, border: `2px solid ${colour}55` }}>👥</div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-black truncate" style={{ color: colour }}>{squad.name}</p>
           <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>

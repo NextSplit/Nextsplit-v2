@@ -14,7 +14,11 @@ export function CoachNudge({ showTrialUnlock }: { showTrialUnlock: boolean }) {
   return (
     <Link href="/coaches" className="mx-4 block active:scale-[0.98] transition-all">
       <div className="rounded-2xl p-4 flex items-center gap-3"
-        style={{ background: 'var(--color-surface)', border: '2.5px solid rgba(168,85,247,0.35)' }}>
+        style={{
+          background: 'linear-gradient(135deg, rgba(168,85,247,0.14), rgba(168,85,247,0.05))',
+          border: '2.5px solid rgba(168,85,247,0.5)',
+          boxShadow: '0 4px 24px rgba(168,85,247,0.12)',
+        }}>
         <div className="text-2xl">🎓</div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-black" style={{ color: '#a855f7' }}>Get a verified coach</p>
@@ -37,7 +41,11 @@ export function SquadNudge({ showTrialUnlock }: { showTrialUnlock: boolean }) {
   return (
     <Link href="/squad" className="mx-4 block active:scale-[0.98] transition-all">
       <div className="rounded-2xl p-4 flex items-center gap-3"
-        style={{ background: 'var(--color-surface)', border: '2.5px solid rgba(127,255,77,0.35)' }}>
+        style={{
+          background: 'linear-gradient(135deg, rgba(127,255,77,0.14), rgba(127,255,77,0.05))',
+          border: '2.5px solid rgba(127,255,77,0.5)',
+          boxShadow: '0 4px 24px rgba(127,255,77,0.12)',
+        }}>
         <div className="text-2xl">👥</div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-black" style={{ color: '#7fff4d' }}>Start a squad</p>

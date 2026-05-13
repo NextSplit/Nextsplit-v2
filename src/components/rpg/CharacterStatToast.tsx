@@ -1,40 +1,51 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { onCharacterXP, type CharacterXPDeltas } from '@/lib/character-events'
 import { BUILD_CLASS_META, type BuildClass } from '@/lib/character'
 
-// Global toast that surfaces character-system stat deltas after a session
-// log fires. Mounted once in app/layout.tsx and listens for the
-// 'nextsplit:character-xp' CustomEvent dispatched from the session-log
-// flows in TrainClient + useSessionLogging.
-//
-// UX: slides up from the bottom (above the bottom-nav safe-area), stays
-// for 4s, fades out. Multiple deltas in quick succession queue rather than
-// stomp — the next toast slides in once the previous finishes.
-
 interface QueuedToast extends CharacterXPDeltas {
-  id: number  // monotonic for React key
+  id: number
 }
 
-const VISIBLE_MS  = 4000
-const FADE_OUT_MS = 400
+const VISIBLE_MS  = 2500
+const FADE_OUT_MS = 300
+const COALESCE_WINDOW_MS = 200
+const MAX_QUEUE = 2
 
 export function CharacterStatToast() {
   const [queue,   setQueue]   = useState<QueuedToast[]>([])
   const [current, setCurrent] = useState<QueuedToast | null>(null)
   const [visible, setVisible] = useState(false)
+  const lastEventAtRef = useRef(0)
 
-  // Listen for character-XP events; push onto queue.
   useEffect(() => {
     let counter = 0
     return onCharacterXP((d) => {
       counter += 1
-      setQueue(q => [...q, { ...d, id: counter }])
+      const now = Date.now()
+      const withinCoalesce = now - lastEventAtRef.current < COALESCE_WINDOW_MS
+      lastEventAtRef.current = now
+
+      setQueue(q => {
+        if (withinCoalesce && q.length > 0) {
+          const last = q[q.length - 1]
+          const merged: QueuedToast = {
+            ...last,
+            speed_delta: last.speed_delta + d.speed_delta,
+            endurance_delta: last.endurance_delta + d.endurance_delta,
+            resilience_delta: last.resilience_delta + d.resilience_delta,
+            new_level: Math.max(last.new_level, d.new_level),
+            multiplier_applied: Math.max(last.multiplier_applied, d.multiplier_applied),
+          }
+          return [...q.slice(0, -1), merged]
+        }
+        if (q.length >= MAX_QUEUE) return [...q.slice(1), { ...d, id: counter }]
+        return [...q, { ...d, id: counter }]
+      })
     })
   }, [])
 
-  // Drain queue: when nothing is visible, pop next + show it.
   useEffect(() => {
     if (current || queue.length === 0) return
     const [next, ...rest] = queue
@@ -47,15 +58,20 @@ export function CharacterStatToast() {
     return () => { clearTimeout(fadeAt); clearTimeout(clearAt) }
   }, [current, queue])
 
+  const dismiss = () => {
+    setVisible(false)
+    setTimeout(() => setCurrent(null), FADE_OUT_MS)
+  }
+
   if (!current) return null
 
   const meta = BUILD_CLASS_META[current.build_class as BuildClass]
 
   return (
     <div
-      className="fixed left-1/2 -translate-x-1/2 z-50 pointer-events-none"
+      className="fixed left-1/2 -translate-x-1/2 z-50"
       style={{
-        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 92px)', // above bottom nav
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 92px)',
         opacity: visible ? 1 : 0,
         transform: `translateX(-50%) translateY(${visible ? 0 : 20}px)`,
         transition: `opacity ${FADE_OUT_MS}ms ease, transform ${FADE_OUT_MS}ms ease`,
@@ -63,8 +79,11 @@ export function CharacterStatToast() {
       role="status"
       aria-live="polite"
     >
-      <div
-        className="rounded-2xl px-4 py-3 flex items-center gap-3"
+      <button
+        type="button"
+        onClick={dismiss}
+        aria-label="Dismiss stats toast"
+        className="rounded-2xl px-4 py-3 flex items-center gap-3 cursor-pointer"
         style={{
           background: 'linear-gradient(135deg, var(--ns-magenta) 0%, var(--ns-magenta-light) 100%)',
           color: 'white',
@@ -98,7 +117,7 @@ export function CharacterStatToast() {
         <span className="text-xs font-black tabular-nums opacity-90">
           LV {current.new_level}
         </span>
-      </div>
+      </button>
     </div>
   )
 }

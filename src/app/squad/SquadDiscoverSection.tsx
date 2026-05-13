@@ -1,25 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useCommunity } from '@/hooks/useCommunity'
 import { RUNNER_CLASSES } from '@/lib/rpg'
-import CharacterProfileModal from '@/components/CharacterProfileModal'
 
-// R1 — Resurrect of /community content under /squad. The /community route
-// previously had its own header (title, season XP bar, league badge) and a
-// 5-tab inner nav (Feed / Clubs / Challenges / Races / Leaderboard). When
-// we lift it into a "Discover" tab of /squad we drop the duplicate header
-// chrome and the inner tabs — instead each section renders as a stacked
-// scrollable block. The /squad tab strip is the primary nav; nesting tabs
-// inside tabs is the user-confusion failure mode we're avoiding.
-
-const LEAGUE_CONFIG = {
-  bronze:   { label: 'Bronze',   emoji: '🥉', colour: 'text-amber-700 bg-amber-50 border-amber-200' },
-  silver:   { label: 'Silver',   emoji: '🥈', colour: 'text-[var(--color-text-secondary)] bg-[#f8f8f6] border-[var(--color-border)]' },
-  gold:     { label: 'Gold',     emoji: '🥇', colour: 'text-yellow-700 bg-yellow-50 border-yellow-200' },
-  platinum: { label: 'Platinum', emoji: '💎', colour: 'text-blue-700 bg-blue-50 border-blue-200' },
-  elite:    { label: 'Elite',    emoji: '👑', colour: 'text-purple-700 bg-purple-50 border-purple-200' },
-}
+// PR B re-shuffle: virtual races + global season leaderboard + season XP
+// card moved to /race (the new gamification home). What stays here:
+// activity feed from your clubs · clubs · challenges. Plus a single
+// link card surfacing the move ("Find races + leaderboard on /race").
 
 interface Profile {
   display_name: string | null; handle: string | null
@@ -133,20 +122,14 @@ function CreateClubModal({ onClose, onCreated }: { onClose: () => void; onCreate
 
 interface Props { userId: string; profile: Profile | null }
 
-export default function SquadDiscoverSection({ userId, profile }: Props) {
-  const { myClubs, challenges, races, leaderboard, season, loading, refresh } = useCommunity()
+export default function SquadDiscoverSection({ userId: _userId, profile: _profile }: Props) {
+  const { myClubs, challenges, loading, refresh } = useCommunity()
   const [showJoin, setShowJoin]     = useState(false)
   const [showCreate, setShowCreate] = useState(false)
-  const [viewingCharacter, setViewingCharacter] = useState<{ userId: string; displayName: string; handle?: string } | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [feed, setFeed]             = useState<any[]>([])
   const [feedLoading, setFeedLoading] = useState(false)
   const [reactions, setReactions]   = useState<Record<string, string>>({})
-
-  const league    = (profile?.current_league ?? 'bronze') as keyof typeof LEAGUE_CONFIG
-  const leagueCfg = LEAGUE_CONFIG[league] ?? LEAGUE_CONFIG.bronze
-  const myRank    = leaderboard.findIndex(l => l.user_id === userId) + 1
-  const daysLeft  = season ? Math.max(0, Math.ceil((new Date(season.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24))) : null
 
   useEffect(() => {
     setFeedLoading(true)
@@ -173,21 +156,6 @@ export default function SquadDiscoverSection({ userId, profile }: Props) {
     refresh()
   }
 
-  const enterRace = async (id: string) => {
-    await fetch('/api/community/races', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ race_id: id, action: 'enter' }),
-    })
-    refresh()
-  }
-
-  const fmtTime = (secs: number) => {
-    const h = Math.floor(secs / 3600)
-    const m = Math.floor((secs % 3600) / 60)
-    const s = secs % 60
-    return h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`
-  }
-
   const FEED_REACTIONS = ['🔥', '👏', '💪', '🏃']
   const MILESTONE_LABELS: Record<string, string> = {
     first_session: '🌅 First session!',
@@ -202,35 +170,23 @@ export default function SquadDiscoverSection({ userId, profile }: Props) {
   return (
     <div className="max-w-lg mx-auto px-4 pt-4 space-y-4">
 
-      {/* Season XP / league chip — global standing, distinct from squad-level season */}
-      <div className="rounded-2xl p-4" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--color-text-tertiary)' }}>
-              {season?.name ?? 'Season'}
-            </p>
-            {daysLeft !== null && (
-              <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{daysLeft}d remaining</p>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${leagueCfg.colour}`}>
-              {leagueCfg.emoji} {leagueCfg.label}
-            </span>
-            {myRank > 0 && (
-              <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>#{myRank}</span>
-            )}
-          </div>
+      {/* Races + leaderboard now live on /race (PR B re-shuffle) */}
+      <Link href="/race"
+        className="flex items-center gap-3 rounded-2xl px-4 py-3 active:scale-[0.99] transition-transform"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,109,46,0.12), rgba(255,109,46,0.05))',
+          border: '2px solid rgba(255,109,46,0.45)',
+        }}>
+        <span className="text-2xl" aria-hidden>🏁</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-black" style={{ color: 'var(--ns-ember)' }}>
+            Races + season leaderboard
+          </p>
+          <p className="text-[11px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
+            Find races and the global standings on /race →
+          </p>
         </div>
-        <div className="flex justify-between text-[10px] mb-1" style={{ color: 'var(--color-text-tertiary)' }}>
-          <span>{profile?.season_xp ?? 0} season XP</span>
-          <span>Next league at {league === 'bronze' ? 500 : league === 'silver' ? 1500 : league === 'gold' ? 3000 : league === 'platinum' ? 6000 : '∞'} XP</span>
-        </div>
-        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-2)' }}>
-          <div className="h-full bg-[var(--ns-ember)] rounded-full transition-all"
-            style={{ width: `${Math.min(100, ((profile?.season_xp ?? 0) / (league === 'bronze' ? 500 : 1500)) * 100)}%` }} />
-        </div>
-      </div>
+      </Link>
 
       {/* ── ACTIVITY FEED ── */}
       <section>
@@ -430,143 +386,8 @@ export default function SquadDiscoverSection({ userId, profile }: Props) {
         </div>
       </section>
 
-      {/* ── RACES ── */}
-      <section>
-        <p className="text-[10px] font-black uppercase tracking-widest mb-2 px-1" style={{ color: 'var(--color-text-tertiary)' }}>
-          🏁 Virtual races
-        </p>
-        <div className="space-y-2">
-          {races.length === 0 && !loading && (
-            <div className="rounded-2xl p-6 text-center"
-              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-              <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>No upcoming races. Check back soon.</p>
-            </div>
-          )}
-          {races.map(r => {
-            const isActive = new Date(r.starts_at) <= new Date()
-            const racedaysLeft = Math.max(0, Math.ceil((new Date(r.ends_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24)))
-            const isFull = r.max_entries ? r.entry_count >= r.max_entries : false
-            return (
-              <div key={r.id} className="rounded-2xl p-4 space-y-3"
-                style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{r.name}</p>
-                    <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>{r.distance_km}km · {racedaysLeft}d left</p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-sm font-black" style={{ color: 'var(--color-text-primary)' }}>
-                      {r.entry_fee_gbp > 0 ? `£${r.entry_fee_gbp}` : 'Free'}
-                    </p>
-                    <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>{r.entry_count} entered</p>
-                  </div>
-                </div>
-                {r.description && <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{r.description}</p>}
-                {r.my_entry ? (
-                  r.my_entry.finish_time_secs ? (
-                    <div className="rounded-xl p-3 text-center"
-                      style={{ background: 'rgba(16,185,129,0.10)', border: '1px solid rgba(16,185,129,0.30)' }}>
-                      <p className="text-sm font-black font-data" style={{ color: '#10b981' }}>{fmtTime(r.my_entry.finish_time_secs)}</p>
-                      <p className="text-xs" style={{ color: '#10b981' }}>
-                        {r.my_entry.position === 1 ? '🥇 1st place' :
-                         r.my_entry.position === 2 ? '🥈 2nd place' :
-                         r.my_entry.position === 3 ? '🥉 3rd place' :
-                         r.my_entry.position ? `#${r.my_entry.position} place` : 'Time submitted'}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="rounded-xl p-3 text-center"
-                      style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}>
-                      <p className="text-xs font-bold" style={{ color: 'var(--ns-ember)' }}>✓ Entered — submit your time when done</p>
-                    </div>
-                  )
-                ) : (
-                  <button onClick={() => !isFull && isActive && enterRace(r.id)}
-                    disabled={isFull || !isActive}
-                    className="w-full py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 active:scale-95"
-                    style={{ background: 'var(--ns-ember)' }}>
-                    {isFull ? 'Race full' : !isActive ? 'Opens soon' : 'Enter race →'}
-                  </button>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      </section>
-
-      {/* ── GLOBAL LEADERBOARD ── */}
-      <section>
-        <p className="text-[10px] font-black uppercase tracking-widest mb-2 px-1" style={{ color: 'var(--color-text-tertiary)' }}>
-          🏆 Global season leaderboard
-        </p>
-        <div className="space-y-2">
-          {leaderboard.map((entry, i) => {
-            const isMe = entry.user_id === userId
-            const lCfg = LEAGUE_CONFIG[(entry.current_league as keyof typeof LEAGUE_CONFIG) ?? 'bronze']
-            const name = entry.display_name ?? (entry.handle ? `@${entry.handle}` : 'Runner')
-            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
-            const cls = entry.runner_class
-              ? (RUNNER_CLASSES as Record<string, typeof RUNNER_CLASSES[keyof typeof RUNNER_CLASSES]>)[entry.runner_class]
-              : null
-            return (
-              <button
-                key={entry.user_id}
-                onClick={() => !isMe && setViewingCharacter({ userId: entry.user_id, displayName: name, handle: entry.handle ?? undefined })}
-                className={`w-full flex items-center gap-3 rounded-2xl p-3 text-left transition-all active:scale-[0.98] ${
-                  isMe ? 'border-2 border-[var(--ns-ember)]' : 'border border-[var(--color-border)]'
-                }`}
-                style={{ background: isMe ? 'var(--ns-cyan-light)' : 'var(--color-surface)' }}>
-                <div className="w-7 text-center shrink-0">
-                  {medal ? <span className="text-lg">{medal}</span> : <span className="text-xs font-bold" style={{ color: 'var(--color-text-tertiary)' }}>#{i + 1}</span>}
-                </div>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-base shrink-0`}
-                  style={cls ? { background: cls.bg.replace('bg-', '') } : { background: 'var(--color-surface-2)' }}>
-                  {cls ? cls.emoji : '🏃'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold truncate"
-                    style={{ color: isMe ? 'var(--ns-cyan)' : 'var(--color-text-primary)' }}>
-                    {name} {isMe && '(you)'}
-                    {entry.is_split_leader && (
-                      <span title="Split Leader" className="ml-1 inline-block leading-none">👑</span>
-                    )}
-                  </p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>{lCfg.emoji} {lCfg.label}</span>
-                    {cls && (
-                      <>
-                        <span className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>·</span>
-                        <span className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>{cls.name}</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <p className="text-sm font-black shrink-0"
-                  style={{ color: isMe ? 'var(--ns-cyan)' : 'var(--color-text-secondary)' }}>
-                  {entry.season_xp} XP
-                </p>
-              </button>
-            )
-          })}
-          {leaderboard.length === 0 && !loading && (
-            <div className="rounded-2xl p-6 text-center"
-              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-              <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>No runners yet this season. Be the first!</p>
-            </div>
-          )}
-        </div>
-      </section>
-
       {showJoin   && <JoinClubModal   onClose={() => setShowJoin(false)}   onJoined={refresh} />}
       {showCreate && <CreateClubModal onClose={() => setShowCreate(false)} onCreated={refresh} />}
-      {viewingCharacter && (
-        <CharacterProfileModal
-          userId={viewingCharacter.userId}
-          displayName={viewingCharacter.displayName}
-          handle={viewingCharacter.handle}
-          onClose={() => setViewingCharacter(null)}
-        />
-      )}
     </div>
   )
 }

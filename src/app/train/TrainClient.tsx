@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useActivePlan } from '@/hooks/useActivePlan'
 import { useTrainingLog } from '@/hooks/useTrainingLog'
 import { useAllTrainingLogs } from '@/hooks/useAllTrainingLogs'
@@ -35,6 +35,7 @@ import { TrainBanners } from './TrainBanners'
 
 export default function TrainClient() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { plan, weeks, currentWeek, loading, advanceWeek } = useActivePlan()
   const { logs, logSession, undoSession } = useTrainingLog(plan?.id ?? null)
   const { logs: allLogs } = useAllTrainingLogs()
@@ -98,6 +99,54 @@ export default function TrainClient() {
       localStorage.setItem(seenKey, '1')
     } catch { /* localStorage unavailable */ }
   }, [plan?.id, plan?.current_week, allLogs])
+
+  // Week-completion auto-advance. Fires when every non-rest session in the
+  // current week has a done log. Non-final weeks advance silently; the final
+  // week triggers the completion ceremony first, then advances after 3s.
+  // Guarded by lastAdvancedWeekRef so repeated renders don't re-trigger.
+  const lastAdvancedWeekRef = useRef<number | null>(null)
+  useEffect(() => {
+    if (!plan || !currentWeek) return
+    if (lastAdvancedWeekRef.current === plan.current_week) return
+
+    const allSessions = currentWeek.days.flatMap((d, dIdx) =>
+      (d.sessions ?? [])
+        .map((s, sIdx) => ({ s, dIdx, sIdx }))
+        .filter(({ s }) => s.c && s.c !== 'rest'),
+    )
+    if (allSessions.length === 0) return
+
+    const allDone = allSessions.every(({ dIdx, sIdx }) =>
+      logs[`${plan.current_week}_${dIdx}_${sIdx}`]?.done,
+    )
+    if (!allDone) return
+
+    lastAdvancedWeekRef.current = plan.current_week
+    const isFinalWeek = plan.current_week === plan.total_weeks
+    if (isFinalWeek) {
+      setTimeout(() => {
+        setShowCompletion(true)
+        advanceWeek().catch(() => {})
+      }, 3000)
+    } else {
+      advanceWeek().catch(() => {})
+    }
+  }, [plan, currentWeek, logs, advanceWeek])
+
+  // Auto-open today's log modal when arriving via /train?logToday=1 from the
+  // /home "Start today's session" CTA. Opens the first unfinished session
+  // for today; clears the param to avoid re-firing on back-nav.
+  useEffect(() => {
+    if (searchParams?.get('logToday') !== '1') return
+    if (!currentWeek) return
+    const firstUnfinished = todaySessions.findIndex(
+      (_, i) => !logs[`${weekN}_${todayDayIndex}_${i}`]?.done,
+    )
+    const sessI = firstUnfinished === -1 ? 0 : firstUnfinished
+    const session = todaySessions[sessI]
+    if (session) setModalSession({ session, dayI: todayDayIndex, sessI, weekN })
+    router.replace('/train')
+  }, [searchParams, currentWeek, todaySessions, logs, weekN, todayDayIndex, router])
 
   const totalXP = allLogs.filter((l: TrainingLog) => l.done).length * 15
   const streak = computeStreak(allLogs.map((l: TrainingLog) => ({ logged_at: l.created_at, done: l.done }))).current
@@ -209,24 +258,9 @@ export default function TrainClient() {
           else if (streak === 7) setMilestone('streak_7')
           else if (streak === 30) setMilestone('streak_30')
 
-          // Check if final week is now complete
-          const isFinalWeek = plan.current_week === plan.total_weeks
-          if (isFinalWeek && plan.total_weeks > 0) {
-            const finalWeek = weeks.find((w: PlanWeek) => w.n === plan.current_week)
-            if (finalWeek) {
-              const allSessions = finalWeek.days.flatMap((d) => d.sessions?.filter(s => s.c && s.c !== 'rest') ?? [])
-              const allDone = allSessions.every((_, sIdx) => {
-                const dIdx = finalWeek.days.findIndex(d => (d.sessions ?? []).some((_, si) => si === sIdx))
-                return logs[`${plan.current_week}_${dIdx}_${sIdx}`]?.done
-              })
-              if (allDone && allSessions.length > 0) {
-                setTimeout(() => {
-                  setShowCompletion(true)
-                  advanceWeek().catch(() => {})
-                }, 3000)
-              }
-            }
-          }
+          // Week-completion advance is handled by the useEffect below
+          // (watches logs + currentWeek to fire for ANY completed week, not
+          // just the final one — bug fix for week-progression freeze).
 
           // Fire community progress + squad feed (non-blocking). Capture
           // response so we can dispatch the +N stat toast for the character

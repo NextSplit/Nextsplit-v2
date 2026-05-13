@@ -45,5 +45,15 @@ export function useAllTrainingLogs() {
     return () => { cancelled = true }
   }, [supabase, tick])
 
+  // Cross-route invalidation: refetch when any logSession fires anywhere
+  // (used by /home today-card so it flips to "completed" after a session
+  // is logged on /train without requiring a full route reload).
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handler = () => refresh()
+    window.addEventListener('nextsplit:training-log-changed', handler)
+    return () => window.removeEventListener('nextsplit:training-log-changed', handler)
+  }, [refresh])
+
   return { logs, loading, error, refresh }
 }
