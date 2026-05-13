@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { db } from '@/lib/supabase/db'
+import { STARTER_RECIPES } from '@/lib/starterRecipes'
 import type { Recipe } from '@/types/database'
 
 // PR E5 — Assign a recipe (or a freeform meal) to a meal slot.
@@ -47,8 +48,31 @@ export function AssignMealModal({ slotLabel, onClose, onAssignRecipe, onAssignFr
         .select('*')
         .eq('user_id', user.id)
         .order('name', { ascending: true })
+
+      const existing = (data ?? []) as Recipe[]
+
+      // PR F2 — auto-seed starter recipes on first interaction if the
+      // user opens the modal before visiting /train/fuel/recipes.
+      // Mirrors the seed in RecipeLibraryClient; RLS-scoped per user.
+      if (existing.length === 0) {
+        const seeded: Recipe[] = []
+        for (const r of STARTER_RECIPES) {
+          const { data: inserted } = await db(supabase)
+            .from('recipes')
+            .insert({ user_id: user.id, ...r })
+            .select()
+            .single()
+          if (inserted) seeded.push(inserted as Recipe)
+        }
+        if (!cancelled) {
+          setRecipes(seeded.sort((a, b) => a.name.localeCompare(b.name)))
+          setRecipesLoading(false)
+        }
+        return
+      }
+
       if (!cancelled) {
-        setRecipes((data ?? []) as Recipe[])
+        setRecipes(existing)
         setRecipesLoading(false)
       }
     }

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { calculateMacroTargets, type NutritionSettings } from '@/lib/nutrition'
+import { useVoiceInput } from '@/hooks/useVoiceInput'
 import type { PlanSession } from '@/types/database'
 
 // PR C2 — Nutrition AI Coach.
@@ -67,6 +68,15 @@ export function AIFuelCoach({ settings, todaySessions }: Props) {
     }
   }
 
+  // PR F3 — voice-first input. Mic taps Web Speech API; final transcript
+  // auto-submits as a question. Live transcript renders in the input.
+  const voice = useVoiceInput({
+    onFinal: (text) => { setQuestion(text); ask(text) },
+  })
+  useEffect(() => {
+    if (voice.listening && voice.transcript) setQuestion(voice.transcript)
+  }, [voice.listening, voice.transcript])
+
   return (
     <div className="rounded-2xl overflow-hidden"
       style={{
@@ -92,19 +102,36 @@ export function AIFuelCoach({ settings, todaySessions }: Props) {
             value={question}
             onChange={e => setQuestion(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') ask(question) }}
-            placeholder="e.g. What should I eat tonight?"
+            placeholder={voice.listening ? 'Listening…' : 'e.g. What should I eat tonight?'}
             className="flex-1 px-3 py-2.5 rounded-xl text-sm outline-none"
             style={{
               background: 'var(--color-surface-2)',
-              border: '2px solid var(--color-border-2)',
+              border: voice.listening ? '2px solid #a855f7' : '2px solid var(--color-border-2)',
               color: 'var(--color-text-primary)',
             }} />
+          {voice.supported && (
+            <button
+              onClick={() => voice.listening ? voice.stop() : voice.start()}
+              disabled={loading}
+              aria-label={voice.listening ? 'Stop listening' : 'Ask by voice'}
+              className="px-3 py-2.5 rounded-xl active:scale-95 disabled:opacity-40"
+              style={{
+                background: voice.listening ? '#a855f7' : 'var(--color-surface-2)',
+                border: voice.listening ? '2px solid #a855f7' : '2px solid var(--color-border-2)',
+                color: voice.listening ? 'white' : '#a855f7',
+              }}>
+              {voice.listening ? <span className="inline-block animate-pulse">🎙️</span> : '🎙️'}
+            </button>
+          )}
           <button onClick={() => ask(question)} disabled={!question.trim() || loading}
             className="px-4 py-2.5 rounded-xl text-sm font-black text-white disabled:opacity-40 active:scale-95"
             style={{ background: '#a855f7', boxShadow: '0 4px 16px rgba(168,85,247,0.4)' }}>
             {loading ? '…' : 'Ask'}
           </button>
         </div>
+        {voice.error && (
+          <p className="text-[11px]" style={{ color: '#ef4444' }}>{voice.error}</p>
+        )}
 
         <div className="flex gap-1.5 flex-wrap">
           {QUICK_QUESTIONS.map(q => (
