@@ -671,13 +671,12 @@ export default function SettingsClient({ email, initialProfile }: Props) {
 
   async function handleDataExport() {
     try {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await db(supabase).rpc('export_user_data', { p_user_id: user.id })
-      if (error) throw error
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      // K31 — server endpoint that streams a JSON file with all
+      // user-linked rows and records the audit event. Replaces the
+      // deprecated export_user_data RPC which had no audit trail.
+      const res = await fetch('/api/account/export', { method: 'GET' })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const blob = await res.blob()
       const url  = URL.createObjectURL(blob)
       const a    = document.createElement('a')
       a.href     = url
@@ -692,20 +691,29 @@ export default function SettingsClient({ email, initialProfile }: Props) {
 
   async function handleDeleteAccount() {
     const confirmed = window.confirm(
-      'Are you sure? This permanently deletes all your data and cannot be undone.'
+      'Are you sure? Your account enters a 30-day grace period — you can cancel within that window from Settings. After 30 days everything is permanently deleted.'
     )
     if (!confirmed) return
-    const doubleConfirm = window.confirm('Final confirmation — delete everything?')
-    if (!doubleConfirm) return
     try {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await db(supabase).rpc('delete_user_account', { p_user_id: user.id })
-      router.push('/')
+      // K31 — request deletion (30-day grace), not immediate delete.
+      const res = await fetch('/api/account/delete', { method: 'POST' })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      success('Deletion scheduled — you have 30 days to cancel.')
+      // Refresh so the UI re-renders with the cancel affordance.
+      router.refresh()
     } catch {
-      toastError('Deletion failed — contact support@nextsplit.com')
+      toastError('Deletion request failed — contact support@nextsplit.com')
+    }
+  }
+
+  async function handleCancelDeletion() {
+    try {
+      const res = await fetch('/api/account/delete/cancel', { method: 'POST' })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      success('Deletion cancelled — your account is active.')
+      router.refresh()
+    } catch {
+      toastError('Cancellation failed — contact support@nextsplit.com')
     }
   }
 
@@ -959,9 +967,34 @@ export default function SettingsClient({ email, initialProfile }: Props) {
             buttonLabel="Export" onClick={handleDataExport} />
           <ButtonRow label="Sign out" buttonLabel="Sign out"
             onClick={handleSignOut} disabled={signingOut} />
-          <ButtonRow label="Delete account" sublabel="Permanently removes all your data — cannot be undone"
-            buttonLabel="Delete" onClick={handleDeleteAccount}
-            danger />
+          {(() => {
+            // K31 — show "Cancel pending deletion" when the user is mid-
+            // grace, "Delete account" otherwise. The 30-day countdown is
+            // computed from the requested timestamp on the profile.
+            const requestedAt = (initialProfile as { deletion_requested_at?: string } | null)?.deletion_requested_at
+            if (requestedAt) {
+              const elapsedMs   = Date.now() - new Date(requestedAt).getTime()
+              const remainingMs = 30 * 24 * 60 * 60 * 1000 - elapsedMs
+              const daysLeft    = Math.max(0, Math.ceil(remainingMs / (24 * 60 * 60 * 1000)))
+              return (
+                <ButtonRow
+                  label="Cancel pending deletion"
+                  sublabel={`Your account is scheduled for permanent deletion in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}. Click to keep it.`}
+                  buttonLabel="Cancel deletion"
+                  onClick={handleCancelDeletion}
+                />
+              )
+            }
+            return (
+              <ButtonRow
+                label="Delete account"
+                sublabel="30-day grace period before permanent deletion. You can cancel within that window."
+                buttonLabel="Delete"
+                onClick={handleDeleteAccount}
+                danger
+              />
+            )
+          })()}
         </Section>
 
         {/* ── Work with a coach ── */}

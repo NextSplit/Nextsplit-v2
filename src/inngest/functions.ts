@@ -46,8 +46,20 @@ export const raceTickDaily = inngest.createFunction(
   async () => invokeCronRoute('/api/cron/race-tick'),
 )
 
+// 02:00 UTC daily — K31 GDPR deletion cron. Scans profiles for
+// deletion_requested_at older than 30 days and hard-deletes the
+// auth user (cascading to every public.* row).
+export const processDeletionsDaily = inngest.createFunction(
+  {
+    id:       'process-deletions-daily',
+    name:     'Process pending account deletions (GDPR)',
+    triggers: [{ cron: '0 2 * * *' }],
+  },
+  async () => invokeCronRoute('/api/cron/process-deletions'),
+)
+
 // Future: Supabase advisor weekly check (PR J1 sequel), hot-weather
 // alert when OpenWeatherMap forecast crosses thresholds (PR J12 sequel),
 // retention digest emails (PR J15 sequel).
 
-export const inngestFunctions = [smartNotifyDaily, raceTickDaily]
+export const inngestFunctions = [smartNotifyDaily, raceTickDaily, processDeletionsDaily]
