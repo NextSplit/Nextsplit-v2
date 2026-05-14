@@ -15,8 +15,8 @@ const BODY_AREAS = [
 
 const SEVERITY = [
   { level: 1, label: 'Minor niggle', desc: 'Barely notice it', colour: '#ffb800' },
-  { level: 2, label: 'Noticeable', desc: 'Present throughout run', colour: '#ff7438' },
-  { level: 3, label: 'Painful', desc: 'Affecting my form', colour: '#ff3d6e' },
+  { level: 2, label: 'Noticeable',   desc: 'Present throughout run', colour: '#ff7438' },
+  { level: 3, label: 'Sharp or worsening', desc: 'Affecting form or gait', colour: '#ff3d6e' },
 ]
 
 interface Props {
@@ -24,17 +24,23 @@ interface Props {
   onSave: (flag: { area: string; severity: number; notes?: string } | null) => void
 }
 
-export default function InjuryFlag({ sessionCode, onSave }: Props) {
-  const [step, setStep]     = useState<'prompt' | 'area' | 'severity' | 'done'>('prompt')
-  const [area, setArea]     = useState<string | null>(null)
+/**
+ * K33 MHRA Path B — body-check prompt offered AFTER any logged session,
+ * not just hard sessions. Easy-run stress fractures are exactly the
+ * cohort the council flagged as currently invisible.
+ *
+ * Severity 1 + 2: log the flag, continue.
+ * Severity 3: HARD STOP. No AI suggestion. Static medical-assessment
+ *   message. The flag is still saved so the user has a record, but
+ *   the path explicitly does not generate AI training advice.
+ */
+export default function InjuryFlag({ sessionCode: _sessionCode, onSave }: Props) {
+  // _sessionCode retained for backwards compat; gating is removed per K33.
+  void _sessionCode
+
+  const [step,     setStep]     = useState<'prompt' | 'area' | 'severity' | 'severe' | 'done'>('prompt')
+  const [area,     setArea]     = useState<string | null>(null)
   const [severity, setSeverity] = useState<number | null>(null)
-
-  // Only show for harder sessions
-  const shouldShow = sessionCode
-    ? ['tempo', 'interval', 'speed', 'long', 'race'].some(t => sessionCode.toLowerCase().includes(t))
-    : false
-
-  if (!shouldShow) return null
 
   if (step === 'done') {
     return (
@@ -42,6 +48,39 @@ export default function InjuryFlag({ sessionCode, onSave }: Props) {
         style={{ background: 'rgba(0,230,118,0.08)', border: '1.5px solid rgba(0,230,118,0.25)' }}>
         <span className="text-sm">✅</span>
         <p className="text-xs font-bold" style={{ color: '#00e676' }}>Body check logged</p>
+      </div>
+    )
+  }
+
+  if (step === 'severe') {
+    return (
+      <div
+        className="rounded-2xl p-4 mt-3"
+        role="alert"
+        aria-live="assertive"
+        style={{ background: 'rgba(255,61,110,0.10)', border: '2px solid #ff3d6e' }}
+      >
+        <p className="text-sm font-black mb-2" style={{ color: '#ff3d6e' }}>
+          Stop running on this.
+        </p>
+        <p className="text-xs leading-relaxed mb-3" style={{ color: 'var(--color-text-primary)' }}>
+          Sharp, localised or worsening pain — especially anything that
+          changes your gait — needs a medical assessment before your next
+          session. We&rsquo;ve logged the flag and will <strong>not</strong>{' '}
+          suggest training advice for this entry.
+        </p>
+        <p className="text-[10px] mb-3" style={{ color: 'var(--color-text-tertiary)' }}>
+          NHS 111 if you&rsquo;re unsure where to start, or contact your
+          GP / physiotherapist. NextSplit&rsquo;s AI is informational only
+          and not a medical service.
+        </p>
+        <button
+          onClick={() => { if (area && severity) onSave({ area, severity }); setStep('done') }}
+          className="w-full py-3 rounded-xl font-black text-xs"
+          style={{ background: '#ff3d6e', color: 'white' }}
+        >
+          Log and rest
+        </button>
       </div>
     )
   }
@@ -115,13 +154,17 @@ export default function InjuryFlag({ sessionCode, onSave }: Props) {
         <button
           onClick={() => {
             if (!area || !severity) return
+            // K33: severity 3 hard-stops the AI suggestion path. No
+            // "Log & get advice" — replace with a medical-assessment
+            // message and a Log-and-rest action.
+            if (severity === 3) { setStep('severe'); return }
             onSave({ area, severity })
             setStep('done')
           }}
           disabled={!severity}
           className="w-full py-3 rounded-xl font-black text-xs disabled:opacity-40"
-          style={{ background: '#ff3d6e', color: 'white' }}>
-          Log & get advice →
+          style={{ background: severity === 3 ? '#ff3d6e' : 'var(--ns-ember)', color: 'white' }}>
+          {severity === 3 ? 'Continue →' : 'Log it →'}
         </button>
       </div>
     )

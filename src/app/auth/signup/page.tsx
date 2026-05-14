@@ -6,9 +6,11 @@ import Link from 'next/link'
 import { signup, signInWithGoogle } from '../actions'
 
 function SignupForm() {
-  const [error, setError]     = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [refCode, setRefCode] = useState<string | null>(null)
+  const [error,        setError]        = useState<string | null>(null)
+  const [loading,      setLoading]      = useState(false)
+  const [refCode,      setRefCode]      = useState<string | null>(null)
+  const [acceptTerms,  setAcceptTerms]  = useState(false)
+  const [confirmAge,   setConfirmAge]   = useState(false)
   const router       = useRouter()
   const searchParams = useSearchParams()
 
@@ -44,6 +46,14 @@ function SignupForm() {
   }
 
   async function handleSubmit(formData: FormData) {
+    if (!acceptTerms || !confirmAge) {
+      setError('Please confirm you are 16 or older and accept the Terms and Privacy Policy.')
+      return
+    }
+    // Ensure the server action receives the same consent record the
+    // user just acknowledged in the UI.
+    formData.set('accept_terms', 'on')
+    formData.set('confirm_age',  'on')
     setLoading(true)
     setError(null)
     try {
@@ -135,19 +145,44 @@ function SignupForm() {
                 placeholder="Minimum 8 characters" />
             </div>
 
+            {/* K33 — consents ABOVE the CTA, both mandatory. Submit is
+                disabled until both are ticked. Reject-as-easy-as-accept
+                is preserved because the user can simply not tick and
+                navigate away. */}
+            <label className="flex items-start gap-2.5 text-xs leading-snug cursor-pointer pt-1" style={{ color: "var(--color-text-secondary)" }}>
+              <input
+                type="checkbox"
+                name="confirm_age"
+                checked={confirmAge}
+                onChange={e => setConfirmAge(e.target.checked)}
+                className="mt-0.5 w-4 h-4 flex-shrink-0 accent-[var(--ns-ember)]"
+                aria-label="Confirm age 16 or over"
+              />
+              <span>I am <strong>16 or older</strong>.</span>
+            </label>
+            <label className="flex items-start gap-2.5 text-xs leading-snug cursor-pointer" style={{ color: "var(--color-text-secondary)" }}>
+              <input
+                type="checkbox"
+                name="accept_terms"
+                checked={acceptTerms}
+                onChange={e => setAcceptTerms(e.target.checked)}
+                className="mt-0.5 w-4 h-4 flex-shrink-0 accent-[var(--ns-ember)]"
+                aria-label="Accept terms and privacy policy"
+              />
+              <span>
+                I have read and accept the <Link href="/terms" target="_blank" className="underline" style={{ color: 'var(--ns-ember)' }}>Terms</Link> and the <Link href="/privacy" target="_blank" className="underline" style={{ color: 'var(--ns-ember)' }}>Privacy Policy</Link>.
+              </span>
+            </label>
+
             {error && (
               <p className="text-xs text-red-400 px-3 py-2 rounded-xl" style={{ background: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.3)" }}>{error}</p>
             )}
 
-            <button type="submit" disabled={loading}
+            <button type="submit" disabled={loading || !acceptTerms || !confirmAge}
               className="w-full text-white py-3 rounded-xl text-sm font-bold disabled:opacity-50 transition-all active:scale-95" style={{ background: "var(--ns-ember)" }}>
               {loading ? 'Creating account…' : 'Create free account →'}
             </button>
           </form>
-
-          <p className="text-xs text-center" style={{ color: "var(--color-text-tertiary)" }}>
-            By signing up you agree to our <a href="/terms" className="underline">Terms</a> & <a href="/privacy" className="underline">Privacy Policy</a>.
-          </p>
         </div>
 
         <p className="text-center text-sm mt-6" style={{ color: "var(--color-text-tertiary)" }}>
