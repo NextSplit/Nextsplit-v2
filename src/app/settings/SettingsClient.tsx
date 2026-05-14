@@ -504,7 +504,13 @@ export default function SettingsClient({ email, initialProfile }: Props) {
   const { success, error: toastError, warning } = useToast()
   const { subscribe: pushSubscribe, unsubscribe: pushUnsubscribe, status: pushStatus } = usePushNotifications()
   const { isPro } = useSubscription()
-  const { consent: cookieConsent, accept: acceptCookies, decline: declineCookies } = useCookieConsent()
+  const {
+    state:              cookieState,
+    analyticsAllowed,
+    performanceAllowed,
+    savePreferences:    saveCookiePreferences,
+    reset:              resetCookieChoice,
+  } = useCookieConsent()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const coachTier = (profile as Record<string, unknown>)?.coach_tier as string ?? null
@@ -946,13 +952,29 @@ export default function SettingsClient({ email, initialProfile }: Props) {
             before the coach-economy promotional sections (which can feel
             aspirational when buried mid-list). */}
         <Section title="Account">
-          {/* Analytics consent — manageable after initial choice */}
+          {/* K32 v2 — categorical consent. Each toggle saves preferences
+              immediately so users can opt out of a single category
+              without losing the other. */}
           <ToggleRow
             label="Analytics"
-            sublabel="Help us improve NextSplit by sharing anonymous usage data. No advertising, no third-party sharing."
-            value={cookieConsent === 'accepted'}
-            onChange={val => val ? acceptCookies() : declineCookies()}
+            sublabel="Anonymous usage events so we can see which features land. No advertising, no third-party sharing."
+            value={analyticsAllowed}
+            onChange={val => saveCookiePreferences({ analytics: val, performance: performanceAllowed })}
           />
+          <ToggleRow
+            label="Performance monitoring"
+            sublabel="Crash and performance traces so we can fix problems we'd otherwise never see."
+            value={performanceAllowed}
+            onChange={val => saveCookiePreferences({ analytics: analyticsAllowed, performance: val })}
+          />
+          {cookieState.status === 'recorded' && (
+            <div className="px-4 pb-3 pt-1">
+              <p className="text-[10px]" style={{ color: 'var(--color-text-tertiary)' }}>
+                Choice recorded {new Date(cookieState.choice.recordedAt).toLocaleDateString()}.{' '}
+                <button onClick={resetCookieChoice} className="underline">Show banner again</button>
+              </p>
+            </div>
+          )}
           <ButtonRow label="Plan history" sublabel="View your completed and archived plans"
             buttonLabel="View" onClick={() => router.push('/history')} />
           <ButtonRow label="Export my data" sublabel="Download a copy of all your data (GDPR)"
