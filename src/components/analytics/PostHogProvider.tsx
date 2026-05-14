@@ -30,21 +30,26 @@ function PageViewTracker() {
 // persistent session cookie — landed BEFORE consent was confirmed. ICO 2019
 // guidance: no non-essential cookie may be set before opt-in.
 //
-// Fix: gate posthog.init behind consent === 'accepted'. While consent is
-// 'pending' or 'declined' (or dev), init never runs and no cookie is set.
-// When the user later accepts in Settings, the consent effect re-fires and
-// init runs at that point. Once initialised, opt-in/opt-out semantics
-// continue to apply for any later toggle.
+// Fix: gate posthog.init behind explicit analytics consent. While consent
+// is pending, declined, or analytics is unchecked (or dev), init never
+// runs and no cookie is set. When the user later opts in via Settings,
+// the consent effect re-fires and init runs at that point. Once
+// initialised, opt-in/opt-out semantics continue to apply for any
+// later toggle.
+//
+// K32 v2 — gates on the categorical `analyticsAllowed` flag, not the
+// old binary 'accepted' string. Performance category is independent
+// and handled by the Sentry client.
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  const key                  = config.posthogKey
-  const host                 = config.posthogHost
-  const { consent, loaded }  = useCookieConsent()
+  const key                                = config.posthogKey
+  const host                               = config.posthogHost
+  const { analyticsAllowed, loaded }       = useCookieConsent()
 
   useEffect(() => {
     if (!key) return
     if (!loaded) return                              // wait for localStorage check
     if (process.env.NODE_ENV !== 'production') return // never init in dev
-    if (consent !== 'accepted') return               // PECR gate: no init pre-consent
+    if (!analyticsAllowed) return                    // PECR gate: no init without analytics consent
 
     // posthog.__loaded is set to true after init; guard against double-init
     // when the consent effect re-fires (StrictMode double-invoke + later
@@ -80,21 +85,22 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         session_replay_sample_rate: Number.isFinite(replayRate) ? replayRate : 0.1,
       } as any),
     })
-  }, [key, host, loaded, consent])
+  }, [key, host, loaded, analyticsAllowed])
 
   // Respond to a later consent change — opt out without uninstalling.
   // (PostHog has no clean uninit API; opt_out_capturing stops events but
   // already-set cookies persist until they expire or the user clears them.
-  // To wipe cookies on decline, posthog.reset() is called in the effect.)
+  // To wipe cookies on opt-out, posthog.reset() is called in the effect.)
   useEffect(() => {
     if (!key || process.env.NODE_ENV !== 'production') return
+    if (!loaded) return
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(posthog as any).__loaded) return // not yet initialised — nothing to opt
-    if (consent === 'declined') {
+    if (!analyticsAllowed) {
       posthog.opt_out_capturing()
       try { posthog.reset() } catch { /* no session to reset */ }
     }
-  }, [consent, key])
+  }, [analyticsAllowed, loaded, key])
 
   if (!key) return <>{children}</>
 
