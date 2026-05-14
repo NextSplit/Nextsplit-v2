@@ -13,7 +13,7 @@ export default function TermsPage() {
         <div className="mb-10">
           <Link href="/" className="text-[var(--ns-ember)] text-sm font-semibold hover:underline">← NextSplit</Link>
           <h1 className="text-3xl font-black text-gray-900 mt-4">Terms of Service</h1>
-          <p className="text-[var(--color-text-tertiary)] text-sm mt-2">Last updated: May 2026</p>
+          <p className="text-[var(--color-text-tertiary)] text-sm mt-2">Last updated: 14 May 2026</p>
         </div>
 
         <div className="prose prose-slate max-w-none space-y-8 text-sm leading-relaxed text-gray-700">
@@ -36,8 +36,8 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">4. Subscriptions and payments</h2>
             <div className="space-y-2">
-              <p><strong>NextSplit Pro</strong> — Founding rate £7.99/month or £79.99/year (first 500 subscribers). Standard rate £9.99/month or £99.99/year. Billed via Stripe. Cancel anytime in Settings. No refunds for partial billing periods.</p>
-              <p><strong>Professional Coach platform fee</strong> — £29/month. Cancel anytime. No refunds for partial periods.</p>
+              <p><strong>NextSplit Pro</strong> — Founding rate £7.99/month or £79.99/year (first 500 subscribers). Standard rate £9.99/month or £99.99/year. Includes SplitForecast race predictor, adaptive plans, AI coach (chat + voice), and automatic activity import from Strava, Garmin, Apple Watch and supported third-party platforms. Billed via Stripe. Cancel anytime in Settings. No refunds for partial billing periods.</p>
+              <p><strong>NextSplit Coach Pro</strong> — £29/month or £290/year. Includes everything in Pro plus the athlete-coach dashboard, Stripe Connect payouts, and the ability to assign custom training plans to athletes. Cancel anytime. No refunds for partial periods.</p>
               <p><strong>Coach plans</strong> — purchased plans have a 14-day refund window if the plan has not been activated. Contact support@nextsplit.com to request a refund.</p>
               <p><strong>Coaching subscriptions</strong> — set by the coach, billed via Stripe Connect. No refunds; cancel anytime to stop future billing.</p>
               <p>All prices are inclusive of UK VAT where applicable. Prices may change with 30 days notice. The founding rate, once granted, remains anchored to your active subscription — if you cancel and resubscribe later, the prevailing rate at that time applies.</p>

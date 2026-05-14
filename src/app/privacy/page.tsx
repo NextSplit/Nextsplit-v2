@@ -14,7 +14,7 @@ export default function PrivacyPage() {
         <div className="mb-10">
           <Link href="/" className="text-[var(--ns-ember)] text-sm font-semibold hover:underline">← NextSplit</Link>
           <h1 className="text-3xl font-black text-gray-900 mt-4">Privacy Policy</h1>
-          <p className="text-[var(--color-text-tertiary)] text-sm mt-2">Last updated: May 2026</p>
+          <p className="text-[var(--color-text-tertiary)] text-sm mt-2">Last updated: 14 May 2026</p>
         </div>
 
         <div className="prose prose-slate max-w-none space-y-8 text-sm leading-relaxed text-gray-700">
@@ -71,8 +71,16 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">AI and your data</h2>
-            <p>NextSplit uses the Anthropic Claude API to generate training plans and provide coaching feedback. Your training data, profile information and goals are sent to the Claude API to generate personalised responses.</p>
-            <p className="mt-2">Anthropic's data processing is governed by their own privacy policy. We do not use your data to train AI models.</p>
+            <p>NextSplit uses the Anthropic Claude API for several AI-powered features:</p>
+            <ul className="mt-2 space-y-1 list-disc list-inside">
+              <li>Generating and adapting your training plan</li>
+              <li>Conversational AI coach (asking &ldquo;what should I run tomorrow?&rdquo;)</li>
+              <li>Race-day pacing strategy from weather + course profile</li>
+              <li>Post-run feedback on logged sessions</li>
+              <li>Strength + mobility exercise prescription</li>
+            </ul>
+            <p className="mt-2">Your training data, profile, goals, and (for voice features) audio prompts are sent to the Claude API to generate personalised responses. Where voice synthesis is used, we additionally engage ElevenLabs as a sub-processor (listed below).</p>
+            <p className="mt-2">Anthropic and ElevenLabs are bound by their own privacy policies and DPAs. We do not authorise either to use your data to train their AI models.</p>
           </section>
 
           <section>
@@ -88,6 +96,9 @@ export default function PrivacyPage() {
                 { name: 'Strava',    purpose: 'Activity import (only if you connect)',   region: 'US — UK SCCs in place', link: 'https://www.strava.com/legal/privacy', dpa: 'https://www.strava.com/legal/api' },
                 { name: 'Stripe',    purpose: 'Payment processing (if you subscribe)',  region: 'US/IE — UK SCCs in place', link: 'https://stripe.com/gb/privacy', dpa: 'https://stripe.com/gb/legal/dpa' },
                 { name: 'Resend',    purpose: 'Transactional email delivery',           region: 'US — UK SCCs in place', link: 'https://resend.com/privacy', dpa: 'https://resend.com/legal/dpa' },
+                { name: 'OpenWeatherMap', purpose: 'Weather forecasts for sessions + races (no PII sent — coordinates only)', region: 'EU', link: 'https://openweather.co.uk/privacy-policy', dpa: 'https://openweather.co.uk/privacy-policy' },
+                { name: 'Inngest',   purpose: 'Background workflow execution (scheduled jobs)', region: 'US — UK SCCs in place', link: 'https://www.inngest.com/privacy', dpa: 'https://www.inngest.com/dpa' },
+                { name: 'ElevenLabs', purpose: 'Voice synthesis (optional AI voice coach features only)', region: 'US — UK SCCs in place', link: 'https://elevenlabs.io/privacy', dpa: 'https://elevenlabs.io/dpa' },
               ].map(s => (
                 <div key={s.name} className="flex gap-3">
                   <span className="text-[var(--ns-ember)] font-bold shrink-0">→</span>
@@ -119,7 +130,8 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">Data retention</h2>
-            <p>We keep your data for as long as your account is active. When you delete your account, all personal data is permanently deleted within 30 days, including training logs, wellness data, goals, and profile information.</p>
+            <p>We keep your data for as long as your account is active. When you tap &ldquo;Delete account&rdquo; in Settings, your request enters a 30-day grace period — you can cancel during this window if you change your mind. After 30 days, all personal data is permanently deleted: training logs, wellness data, goals, profile information, and any data held by sub-processors that we control.</p>
+            <p className="mt-2">A short audit log of account-lifecycle events (deletion requested, deletion processed, data exported) is retained for one year after deletion for legal-compliance purposes. This log does not contain training data — only timestamps and the type of event.</p>
           </section>
 
           <section>
@@ -138,7 +150,22 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">Cookies and tracking</h2>
-            <p>We use essential cookies for authentication (Supabase session cookies). We use PostHog for analytics, which sets a cookie to identify returning users for product improvement purposes. We do not use advertising cookies.</p>
+            <p>We use three categories of cookies and tracking technologies:</p>
+            <div className="mt-3 space-y-3">
+              <div>
+                <p className="font-semibold text-gray-800">Strictly necessary (no consent needed)</p>
+                <p className="text-[var(--color-text-tertiary)] mt-0.5">Supabase session cookies for keeping you logged in. Without these the service cannot function.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-800">Analytics (consent required)</p>
+                <p className="text-[var(--color-text-tertiary)] mt-0.5">PostHog sets a cookie to identify returning users for product-improvement purposes. We only set this cookie after you tap &ldquo;Accept analytics&rdquo; in the consent banner. You can revoke this at any time in Settings.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-800">Error monitoring (legitimate interest)</p>
+                <p className="text-[var(--color-text-tertiary)] mt-0.5">Sentry captures error reports to help us fix bugs. We do not set tracking cookies for this. If you decline analytics consent, we additionally strip URL and navigational context from error events.</p>
+              </div>
+            </div>
+            <p className="mt-3">We do not use advertising cookies. We do not track you across other sites.</p>
           </section>
 
           <section>
