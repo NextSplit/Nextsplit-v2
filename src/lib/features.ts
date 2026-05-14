@@ -31,41 +31,65 @@ export type FeatureKey =
   | 'ai_coaching_card'
   | 'ai_post_session_feedback'
   | 'ai_bespoke_plan'
+  | 'ai_chat_coach'          // K41 — conversational AI coach (chat)
+  | 'ai_race_strategy'       // K42 — AI race-day pacing strategy
+  | 'ai_strength_prescriber' // K44 — AI strength + mobility prescription
+  | 'ai_voice_coach'         // J13 — ElevenLabs voice coach
   // Plan features
   | 'multiple_active_plans'
   | 'plan_history_full'
   | 'plan_history_preview'   // free users see last 1 plan
+  | 'adaptive_plan_refit'    // K8 — weekly volume re-fitting
+  | 'split_forecast'         // K11-K13 — race predictor (paid headline)
   // Analytics
   | 'advanced_stats'
   | 'pace_trends'
   | 'acwr_chart'
   | 'wellness_trends'
+  | 'peer_benchmarking'      // K59 — anonymised cohort percentile
+  | 'wellness_aggregate'     // K76 — Body-Battery-style daily score
   // Integrations
   | 'strava_sync'
   | 'garmin_export'          // Phase 10
+  | 'apple_health_sync'      // K45 — Apple Watch / HealthKit
+  | 'coros_sync'             // K46 — COROS Watch
+  | 'whoop_oura_sync'        // K-Lambda — Whoop + Oura
   // Social
   | 'share_session_card'
   | 'leaderboard'            // Phase 10
+  | 'multi_squad'            // K63 — being in multiple squads
+  // Coach Pro (paid coach tier)
+  | 'coach_dashboard'        // K50 — read athletes' data, comment
+  | 'coach_assigned_plans'   // K52 — push custom plans to athletes
+  | 'coach_stripe_payouts'   // K51 — receive payouts via Stripe Connect
   // Misc
   | 'push_notifications'
   | 'custom_goals'
+  | 'custom_workouts'        // K55 — interval builder + library
 
 /**
  * Maps each feature to the minimum tier required.
  * Change a feature's tier here to move it behind/ahead of a paywall.
  */
 export const FEATURE_TIERS: Record<FeatureKey, Tier> = {
-  // AI — all Pro
+  // AI — all Pro. Founder direction (2026-05-14): paid features are
+  // AI + predictor + adaptive + integrations. Squad mechanics stay free.
   ai_pre_race_brief:         'pro',
   ai_adaptive_suggestions:   'pro',
   ai_coaching_card:          'pro',
   ai_post_session_feedback:  'pro',
   ai_bespoke_plan:           'pro',
+  ai_chat_coach:             'pro',   // K41
+  ai_race_strategy:          'pro',   // K42
+  ai_strength_prescriber:    'pro',   // K44
+  ai_voice_coach:            'pro',   // J13
 
-  // Plans — free gets 1, pro gets unlimited
+  // Plans — free gets 1, pro gets unlimited + adaptivity
   multiple_active_plans:     'pro',
   plan_history_full:         'pro',
   plan_history_preview:      'free',
+  adaptive_plan_refit:       'pro',   // K8
+  split_forecast:            'pro',   // K11-K13 — paid headline differentiator
 
   // Analytics — basic free, advanced pro
   // P2.7 (Third-Week Hold-the-Line): acwr_chart moves pro → free.
@@ -77,18 +101,31 @@ export const FEATURE_TIERS: Record<FeatureKey, Tier> = {
   pace_trends:               'pro',
   acwr_chart:                'free',
   wellness_trends:           'pro',
+  peer_benchmarking:         'pro',   // K59
+  wellness_aggregate:        'free',  // K76 — like ACWR, this is a safety-adjacent signal
 
-  // Integrations
+  // Integrations — auto-import is paid; manual log stays free
   strava_sync:               'pro',
   garmin_export:             'pro',
+  apple_health_sync:         'pro',   // K45
+  coros_sync:                'pro',   // K46
+  whoop_oura_sync:           'pro',
 
-  // Social
-  share_session_card:        'free',   // sharing is marketing — keep free
-  leaderboard:               'pro',
+  // Social — squad mechanics stay free (founding thesis: social
+  // accountability is the differentiator and shouldn't be paywalled)
+  share_session_card:        'free',
+  leaderboard:               'free',  // moved from pro per 2026-05-14 founder direction
+  multi_squad:               'free',  // K63
+
+  // Coach Pro tier — separate £29/mo tier, requires 'coach' tier rank
+  coach_dashboard:           'coach',   // K50
+  coach_assigned_plans:      'coach',   // K52
+  coach_stripe_payouts:      'coach',   // K51
 
   // Core features — always free
   push_notifications:        'free',
   custom_goals:              'free',
+  custom_workouts:           'free',    // K55 — power-user retention, keep free
 }
 
 /**
